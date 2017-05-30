@@ -1,0 +1,32 @@
+{
+    "type": "NodeList",
+    "children": [
+        {
+            "type": "TextNode",
+            "value": "Before\n"
+        },
+        {
+            "type": "BlockNode",
+            "children": [],
+            "name": "content"
+        },
+        {
+            "type": "TextNode",
+            "value": "\n"
+        },
+        {
+            "type": "BlockNode",
+            "children": [
+                {
+                    "type": "TextNode",
+                    "value": "FOOTER"
+                }
+            ],
+            "name": "footer"
+        },
+        {
+            "type": "TextNode",
+            "value": "\nAfter\n"
+        }
+    ]
+}

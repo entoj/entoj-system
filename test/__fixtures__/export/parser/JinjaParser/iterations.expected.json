@@ -1,0 +1,68 @@
+{
+    "type": "NodeList",
+    "children": [
+        {
+            "type": "ForNode",
+            "children": [
+                {
+                    "type": "TextNode",
+                    "value": "COPY"
+                }
+            ],
+            "value": {
+                "type": "VariableNode",
+                "fields": [
+                    "model",
+                    "items"
+                ]
+            },
+            "valueName": "item"
+        },
+        {
+            "type": "TextNode",
+            "value": "\n"
+        },
+        {
+            "type": "ForNode",
+            "children": [
+                {
+                    "type": "TextNode",
+                    "value": "BREAKPOINT"
+                }
+            ],
+            "value": {
+                "type": "VariableNode",
+                "fields": [
+                    "breakpoints"
+                ]
+            },
+            "keyName": "breakpoint",
+            "valueName": "image"
+        },
+        {
+            "type": "TextNode",
+            "value": "\n"
+        },
+        {
+            "type": "ForNode",
+            "children": [
+                {
+                    "type": "TextNode",
+                    "value": "ITEM"
+                }
+            ],
+            "value": {
+                "type": "VariableNode",
+                "fields": [
+                    "model",
+                    "items"
+                ]
+            },
+            "valueName": "item"
+        },
+        {
+            "type": "TextNode",
+            "value": "\n"
+        }
+    ]
+}

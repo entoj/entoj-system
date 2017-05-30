@@ -1,0 +1,38 @@
+{
+    "type": "NodeList",
+    "children": [
+        {
+            "type": "OutputNode",
+            "children": [
+                {
+                    "type": "VariableNode",
+                    "fields": [
+                        "moduleClass"
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "TextNode",
+            "value": "\n"
+        },
+        {
+            "type": "OutputNode",
+            "children": [
+                {
+                    "type": "VariableNode",
+                    "fields": [
+                        "model",
+                        "image",
+                        "url",
+                        "1x1"
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "TextNode",
+            "value": "\n"
+        }
+    ]
+}

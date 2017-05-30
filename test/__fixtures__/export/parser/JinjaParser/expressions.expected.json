@@ -1,0 +1,111 @@
+{
+    "type": "NodeList",
+    "children": [
+        {
+            "type": "OutputNode",
+            "children": [
+                {
+                    "type": "ExpressionNode",
+                    "children": [
+                        {
+                            "type": "FilterNode",
+                            "children": [],
+                            "name": "default",
+                            "arguments": [
+                                {
+                                    "type": "ParameterNode",
+                                    "value": {
+                                        "type": "ExpressionNode",
+                                        "children": [
+                                            {
+                                                "type": "LiteralNode",
+                                                "value": 0
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "value": {
+                                "type": "ExpressionNode",
+                                "children": [
+                                    {
+                                        "type": "GroupNode",
+                                        "children": [
+                                            {
+                                                "type": "LiteralNode",
+                                                "value": 1
+                                            },
+                                            {
+                                                "type": "OperandNode",
+                                                "value": "*"
+                                            },
+                                            {
+                                                "type": "FilterNode",
+                                                "children": [],
+                                                "name": "pow",
+                                                "arguments": [
+                                                    {
+                                                        "type": "ParameterNode",
+                                                        "value": {
+                                                            "type": "ExpressionNode",
+                                                            "children": [
+                                                                {
+                                                                    "type": "LiteralNode",
+                                                                    "value": 2
+                                                                }
+                                                            ]
+                                                        }
+                                                    }
+                                                ],
+                                                "value": {
+                                                    "type": "LiteralNode",
+                                                    "value": 2
+                                                }
+                                            },
+                                            {
+                                                "type": "OperandNode",
+                                                "value": "/"
+                                            },
+                                            {
+                                                "type": "LiteralNode",
+                                                "value": 3
+                                            },
+                                            {
+                                                "type": "OperandNode",
+                                                "value": "%"
+                                            },
+                                            {
+                                                "type": "LiteralNode",
+                                                "value": 2
+                                            },
+                                            {
+                                                "type": "OperandNode",
+                                                "value": "-"
+                                            },
+                                            {
+                                                "type": "LiteralNode",
+                                                "value": 5
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "type": "OperandNode",
+                            "value": "+"
+                        },
+                        {
+                            "type": "LiteralNode",
+                            "value": 1
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "TextNode",
+            "value": "\n"
+        }
+    ]
+}

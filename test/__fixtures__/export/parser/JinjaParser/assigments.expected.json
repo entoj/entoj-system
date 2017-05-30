@@ -1,0 +1,168 @@
+{
+    "type": "NodeList",
+    "children": [
+        {
+            "type": "SetNode",
+            "variable": {
+                "type": "VariableNode",
+                "fields": [
+                    "className"
+                ]
+            },
+            "value": {
+                "type": "ExpressionNode",
+                "children": [
+                    {
+                        "type": "VariableNode",
+                        "fields": [
+                            "model",
+                            "headline"
+                        ]
+                    },
+                    {
+                        "type": "OperandNode",
+                        "value": "+"
+                    },
+                    {
+                        "type": "LiteralNode",
+                        "value": "\"-teaser\""
+                    }
+                ]
+            }
+        },
+        {
+            "type": "TextNode",
+            "value": "\n"
+        },
+        {
+            "type": "SetNode",
+            "variable": {
+                "type": "VariableNode",
+                "fields": [
+                    "model",
+                    "nr"
+                ]
+            },
+            "value": {
+                "type": "ExpressionNode",
+                "children": [
+                    {
+                        "type": "VariableNode",
+                        "fields": [
+                            "model",
+                            "id"
+                        ]
+                    },
+                    {
+                        "type": "OperandNode",
+                        "value": "+"
+                    },
+                    {
+                        "type": "LiteralNode",
+                        "value": 1
+                    }
+                ]
+            }
+        },
+        {
+            "type": "TextNode",
+            "value": "\n"
+        },
+        {
+            "type": "SetNode",
+            "variable": {
+                "type": "VariableNode",
+                "fields": [
+                    "simple"
+                ]
+            },
+            "value": {
+                "type": "ExpressionNode",
+                "children": [
+                    {
+                        "type": "LiteralNode",
+                        "value": 1.5
+                    }
+                ]
+            }
+        },
+        {
+            "type": "TextNode",
+            "value": "\n"
+        },
+        {
+            "type": "SetNode",
+            "variable": {
+                "type": "VariableNode",
+                "fields": [
+                    "className"
+                ]
+            },
+            "value": {
+                "type": "ExpressionNode",
+                "children": [
+                    {
+                        "type": "IfNode",
+                        "children": [
+                            {
+                                "type": "ExpressionNode",
+                                "children": [
+                                    {
+                                        "type": "VariableNode",
+                                        "fields": [
+                                            "moduleClass"
+                                        ]
+                                    },
+                                    {
+                                        "type": "OperandNode",
+                                        "value": "+"
+                                    },
+                                    {
+                                        "type": "LiteralNode",
+                                        "value": "--"
+                                    },
+                                    {
+                                        "type": "OperandNode",
+                                        "value": "+"
+                                    },
+                                    {
+                                        "type": "VariableNode",
+                                        "fields": [
+                                            "type"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ],
+                        "condition": {
+                            "type": "ConditionNode",
+                            "children": [
+                                {
+                                    "type": "VariableNode",
+                                    "fields": [
+                                        "type"
+                                    ]
+                                }
+                            ]
+                        },
+                        "elseChildren": [
+                            {
+                                "type": "ExpressionNode",
+                                "children": [
+                                    {
+                                        "type": "LiteralNode",
+                                        "value": ""
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "type": "TextNode",
+            "value": "\n"
+        }
+    ]
+}

@@ -1,0 +1,207 @@
+{
+    "type": "NodeList",
+    "children": [
+        {
+            "type": "IfNode",
+            "children": [
+                {
+                    "type": "TextNode",
+                    "value": "COPY"
+                }
+            ],
+            "condition": {
+                "type": "ConditionNode",
+                "children": [
+                    {
+                        "type": "VariableNode",
+                        "fields": [
+                            "model",
+                            "copy"
+                        ]
+                    },
+                    {
+                        "type": "BooleanOperandNode",
+                        "value": "or"
+                    },
+                    {
+                        "type": "GroupNode",
+                        "children": [
+                            {
+                                "type": "VariableNode",
+                                "fields": [
+                                    "model",
+                                    "headline"
+                                ]
+                            },
+                            {
+                                "type": "OperandNode",
+                                "value": "=="
+                            },
+                            {
+                                "type": "LiteralNode",
+                                "value": ""
+                            }
+                        ]
+                    }
+                ]
+            },
+            "elseChildren": []
+        },
+        {
+            "type": "TextNode",
+            "value": "\n"
+        },
+        {
+            "type": "IfNode",
+            "children": [
+                {
+                    "type": "TextNode",
+                    "value": "COPY"
+                }
+            ],
+            "condition": {
+                "type": "ConditionNode",
+                "children": [
+                    {
+                        "type": "VariableNode",
+                        "fields": [
+                            "model",
+                            "copy"
+                        ]
+                    }
+                ]
+            },
+            "elseChildren": [
+                {
+                    "type": "TextNode",
+                    "value": "NOCOPY"
+                }
+            ]
+        },
+        {
+            "type": "TextNode",
+            "value": "\n"
+        },
+        {
+            "type": "IfNode",
+            "children": [
+                {
+                    "type": "TextNode",
+                    "value": "NOCOPY"
+                }
+            ],
+            "condition": {
+                "type": "ConditionNode",
+                "children": [
+                    {
+                        "type": "BooleanOperandNode",
+                        "value": "not"
+                    },
+                    {
+                        "type": "VariableNode",
+                        "fields": [
+                            "model",
+                            "copy"
+                        ]
+                    },
+                    {
+                        "type": "BooleanOperandNode",
+                        "value": "and"
+                    },
+                    {
+                        "type": "FilterNode",
+                        "children": [],
+                        "name": "default",
+                        "arguments": [
+                            {
+                                "type": "ParameterNode",
+                                "value": {
+                                    "type": "ExpressionNode",
+                                    "children": [
+                                        {
+                                            "type": "LiteralNode",
+                                            "value": "empty"
+                                        }
+                                    ]
+                                }
+                            }
+                        ],
+                        "value": {
+                            "type": "VariableNode",
+                            "fields": [
+                                "mode",
+                                "headline"
+                            ]
+                        }
+                    }
+                ]
+            },
+            "elseChildren": [
+                {
+                    "type": "TextNode",
+                    "value": "COPY"
+                }
+            ]
+        },
+        {
+            "type": "TextNode",
+            "value": "\n<!-- inside a expression -->\n"
+        },
+        {
+            "type": "SetNode",
+            "value": {
+                "type": "ExpressionNode",
+                "children": [
+                    {
+                        "type": "IfNode",
+                        "children": [
+                            {
+                                "type": "ExpressionNode",
+                                "children": [
+                                    {
+                                        "type": "VariableNode",
+                                        "fields": [
+                                            "type"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ],
+                        "condition": {
+                            "type": "ConditionNode",
+                            "children": [
+                                {
+                                    "type": "VariableNode",
+                                    "fields": [
+                                        "type"
+                                    ]
+                                }
+                            ]
+                        },
+                        "elseChildren": [
+                            {
+                                "type": "ExpressionNode",
+                                "children": [
+                                    {
+                                        "type": "LiteralNode",
+                                        "value": ""
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            "variable": {
+                "type": "VariableNode",
+                "fields": [
+                    "value"
+                ]
+            }
+        },
+        {
+            "type": "TextNode",
+            "value": "\n"
+        }
+    ]
+}

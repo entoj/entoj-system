@@ -1,0 +1,165 @@
+{
+    "type": "NodeList",
+    "children": [
+        {
+            "type": "OutputNode",
+            "children": [
+                {
+                    "type": "FilterNode",
+                    "children": [],
+                    "name": "default",
+                    "arguments": [],
+                    "value": {
+                        "type": "VariableNode",
+                        "fields": [
+                            "model",
+                            "text"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "type": "TextNode",
+            "value": "\n"
+        },
+        {
+            "type": "OutputNode",
+            "children": [
+                {
+                    "type": "FilterNode",
+                    "children": [],
+                    "name": "default",
+                    "arguments": [
+                        {
+                            "type": "ParameterNode",
+                            "value": {
+                                "type": "ExpressionNode",
+                                "children": [
+                                    {
+                                        "type": "LiteralNode",
+                                        "value": "#Lipsum"
+                                    }
+                                ]
+                            }
+                        }
+                    ],
+                    "value": {
+                        "type": "VariableNode",
+                        "fields": [
+                            "model",
+                            "text"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "type": "TextNode",
+            "value": "\n"
+        },
+        {
+            "type": "OutputNode",
+            "children": [
+                {
+                    "type": "FilterNode",
+                    "children": [],
+                    "name": "concat",
+                    "arguments": [
+                        {
+                            "type": "ParameterNode",
+                            "value": {
+                                "type": "ExpressionNode",
+                                "children": [
+                                    {
+                                        "type": "LiteralNode",
+                                        "value": "z"
+                                    }
+                                ]
+                            }
+                        }
+                    ],
+                    "value": {
+                        "type": "FilterNode",
+                        "children": [],
+                        "name": "concat",
+                        "arguments": [
+                            {
+                                "type": "ParameterNode",
+                                "value": {
+                                    "type": "ExpressionNode",
+                                    "children": [
+                                        {
+                                            "type": "LiteralNode",
+                                            "value": "y"
+                                        }
+                                    ]
+                                }
+                            }
+                        ],
+                        "value": {
+                            "type": "FilterNode",
+                            "children": [],
+                            "name": "concat",
+                            "arguments": [
+                                {
+                                    "type": "ParameterNode",
+                                    "value": {
+                                        "type": "ExpressionNode",
+                                        "children": [
+                                            {
+                                                "type": "LiteralNode",
+                                                "value": "x"
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "value": {
+                                "type": "VariableNode",
+                                "fields": [
+                                    "model",
+                                    "text"
+                                ]
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "type": "TextNode",
+            "value": "\n"
+        },
+        {
+            "type": "OutputNode",
+            "children": [
+                {
+                    "type": "FilterNode",
+                    "children": [],
+                    "name": "default",
+                    "arguments": [],
+                    "value": {
+                        "type": "ArrayNode",
+                        "children": [
+                            {
+                                "type": "LiteralNode",
+                                "value": "one"
+                            },
+                            {
+                                "type": "VariableNode",
+                                "fields": [
+                                    "two"
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "type": "TextNode",
+            "value": "\n"
+        }
+    ]
+}

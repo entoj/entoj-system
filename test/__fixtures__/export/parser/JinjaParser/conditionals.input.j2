@@ -1,0 +1,5 @@
+{% if model.copy or (model.headline == '') %}COPY{% endif %}
+{% if model.copy %}COPY{% else %}NOCOPY{% endif %}
+{% if not model.copy and mode.headline|default('empty') %}NOCOPY{% else %}COPY{% endif %}
+<!-- inside a expression -->
+{% set value = type if type else '' %}

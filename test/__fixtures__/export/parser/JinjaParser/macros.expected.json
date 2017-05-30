@@ -1,0 +1,42 @@
+{
+    "type": "NodeList",
+    "children": [
+        {
+            "type": "MacroNode",
+            "children": [
+                {
+                    "type": "TextNode",
+                    "value": "\n"
+                }
+            ],
+            "name": "macro",
+            "parameters": [
+                {
+                    "type": "ParameterNode",
+                    "name": "type"
+                },
+                {
+                    "type": "ParameterNode",
+                    "name": "model"
+                },
+                {
+                    "type": "ParameterNode",
+                    "value": {
+                        "type": "ExpressionNode",
+                        "children": [
+                            {
+                                "type": "LiteralNode",
+                                "value": "foo"
+                            }
+                        ]
+                    },
+                    "name": "classes"
+                }
+            ]
+        },
+        {
+            "type": "TextNode",
+            "value": "\n"
+        }
+    ]
+}

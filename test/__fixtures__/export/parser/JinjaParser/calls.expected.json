@@ -1,0 +1,133 @@
+{
+    "type": "NodeList",
+    "children": [
+        {
+            "type": "CallNode",
+            "children": [],
+            "name": "simple",
+            "arguments": [
+                {
+                    "type": "ArgumentNode",
+                    "value": {
+                        "type": "VariableNode",
+                        "fields": [
+                            "model"
+                        ]
+                    }
+                },
+                {
+                    "type": "ArgumentNode",
+                    "value": {
+                        "type": "LiteralNode",
+                        "value": "literal"
+                    }
+                },
+                {
+                    "type": "ArgumentNode",
+                    "value": {
+                        "type": "ExpressionNode",
+                        "children": [
+                            {
+                                "type": "VariableNode",
+                                "fields": [
+                                    "model",
+                                    "button"
+                                ]
+                            }
+                        ]
+                    },
+                    "name": "model"
+                }
+            ]
+        },
+        {
+            "type": "TextNode",
+            "value": "\n"
+        },
+        {
+            "type": "CallNode",
+            "children": [
+                {
+                    "type": "TextNode",
+                    "value": "children"
+                }
+            ],
+            "name": "yield",
+            "arguments": [
+                {
+                    "type": "ArgumentNode",
+                    "value": {
+                        "type": "ExpressionNode",
+                        "children": [
+                            {
+                                "type": "VariableNode",
+                                "fields": [
+                                    "self"
+                                ]
+                            }
+                        ]
+                    },
+                    "name": "model"
+                },
+                {
+                    "type": "ArgumentNode",
+                    "value": {
+                        "type": "ExpressionNode",
+                        "children": [
+                            {
+                                "type": "LiteralNode",
+                                "value": "literal"
+                            }
+                        ]
+                    },
+                    "name": "text"
+                }
+            ]
+        },
+        {
+            "type": "TextNode",
+            "value": "\n"
+        },
+        {
+            "type": "CallNode",
+            "children": [],
+            "name": "simple",
+            "arguments": [
+                {
+                    "type": "ArgumentNode",
+                    "value": {
+                        "type": "ExpressionNode",
+                        "children": [
+                            {
+                                "type": "VariableNode",
+                                "fields": [
+                                    "moduleName"
+                                ]
+                            },
+                            {
+                                "type": "OperandNode",
+                                "value": "+"
+                            },
+                            {
+                                "type": "LiteralNode",
+                                "value": "--check"
+                            }
+                        ]
+                    },
+                    "name": "classes"
+                }
+            ]
+        },
+        {
+            "type": "TextNode",
+            "value": "\n"
+        },
+        {
+            "type": "YieldNode"
+        },
+        {
+            "type": "TextNode",
+            "value": "\n"
+        }
+    ]
+}
