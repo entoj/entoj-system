@@ -10,7 +10,7 @@ install:
 
 # Post-install test scripts.
 test_script:
-  - bash -lc "/c/projects/entoj-core/scripts/test"
+  - bash -lc "/c/projects/entoj-system/scripts/test"
 
 # Don't actually build.
 build: off
