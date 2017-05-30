@@ -63,7 +63,6 @@
     "babel-preset-es2015": "*",
     "babel-runtime": "*",
     "chai": "*",
-    "chai-as-promised": "*",
     "chai-string": "*",
     "chai-subset": "*",
     "chai-things": "*",
