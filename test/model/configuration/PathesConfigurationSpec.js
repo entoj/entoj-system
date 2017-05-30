@@ -7,6 +7,7 @@ const PathesConfiguration = require(ES_SOURCE + '/model/configuration/PathesConf
 const projectFixture = require(ES_FIXTURES + '/project/index.js');
 const baseSpec = require(ES_TEST + '/BaseShared.js').spec;
 const path = require('path');
+const co = require('co');
 
 
 /**
@@ -82,9 +83,12 @@ describe(PathesConfiguration.className, function()
     {
         it('should return a path based on the configured cache template', function()
         {
-            const testee = new PathesConfiguration({ root: '/', cacheTemplate: '${root}/yes' });
-            const promise = expect(testee.resolveCache('css'))
-                .to.eventually.contains(path.sep + 'yes' + path.sep + 'css');
+            const promise = co(function*()
+            {
+                const testee = new PathesConfiguration({ root: '/', cacheTemplate: '${root}/yes' });
+                const result = yield testee.resolveCache('css');
+                expect(result).to.be.equal(path.sep + 'yes' + path.sep + 'css');
+            });
             return promise;
         });
     });
@@ -94,17 +98,23 @@ describe(PathesConfiguration.className, function()
     {
         it('should return a path based on the given site', function()
         {
-            const testee = new PathesConfiguration({ root: '/', siteTemplate: '${sites}/yes/${site.name}' });
-            const promise = expect(testee.resolveSite(global.fixtures.siteBase))
-                .to.eventually.contains(path.sep + 'sites' + path.sep + 'yes' + path.sep + 'Base');
+            const promise = co(function*()
+            {
+                const testee = new PathesConfiguration({ root: '/', siteTemplate: '${sites}/yes/${site.name}' });
+                const result = yield testee.resolveSite(global.fixtures.siteBase);
+                expect(result).to.be.equal(path.sep + 'sites' + path.sep + 'yes' + path.sep + 'Base');
+            });
             return promise;
         });
 
         it('should allow to add a custom path', function()
         {
-            const testee = new PathesConfiguration({ root: '/', siteTemplate: '${sites}/yes/${site.name}' });
-            const promise = expect(testee.resolveSite(global.fixtures.siteBase, '/${site.name}'))
-                .to.eventually.contains(path.sep + 'sites' + path.sep + 'yes' + path.sep + 'Base' + path.sep + 'Base');
+            const promise = co(function*()
+            {
+                const testee = new PathesConfiguration({ root: '/', siteTemplate: '${sites}/yes/${site.name}' });
+                const result = yield testee.resolveSite(global.fixtures.siteBase, '/${site.name}');
+                expect(result).to.be.equal(path.sep + 'sites' + path.sep + 'yes' + path.sep + 'Base' + path.sep + 'Base');
+            });
             return promise;
         });
     });
@@ -114,25 +124,34 @@ describe(PathesConfiguration.className, function()
     {
         it('should return a path based on the given category', function()
         {
-            const testee = new PathesConfiguration({ root: '/',  entityCategoryTemplate: '${sites}/${site.name}/${entityCategory.shortName}' });
-            const promise = expect(testee.resolveEntityCategory(global.fixtures.siteBase, global.fixtures.categoryElement))
-                .to.eventually.contains(path.sep + 'sites' + path.sep + 'Base' + path.sep + 'e');
+            const promise = co(function*()
+            {
+                const testee = new PathesConfiguration({ root: '/', entityCategoryTemplate: '${sites}/${site.name}/${entityCategory.shortName}' });
+                const result = yield testee.resolveEntityCategory(global.fixtures.siteBase, global.fixtures.categoryElement);
+                expect(result).to.be.equal(path.sep + 'sites' + path.sep + 'Base' + path.sep + 'e');
+            });
             return promise;
         });
 
         it('should allow to add a custom path', function()
         {
-            const testee = new PathesConfiguration({ root: '/',  entityCategoryTemplate: '${sites}/${site.name}/${entityCategory.shortName}' });
-            const promise = expect(testee.resolveEntityCategory(global.fixtures.siteBase, global.fixtures.categoryElement, '/${entityCategory.longName}'))
-                .to.eventually.contains(path.sep + 'sites' + path.sep + 'Base' + path.sep + 'e' + path.sep + 'Element');
+            const promise = co(function*()
+            {
+                const testee = new PathesConfiguration({ root: '/', entityCategoryTemplate: '${sites}/${site.name}/${entityCategory.shortName}' });
+                const result = yield testee.resolveEntityCategory(global.fixtures.siteBase, global.fixtures.categoryElement, '/${entityCategory.longName}');
+                expect(result).to.be.equal(path.sep + 'sites' + path.sep + 'Base' + path.sep + 'e' + path.sep + 'Element');
+            });
             return promise;
         });
 
         it('should allow to use helpers on prototype', function()
         {
-            const testee = new PathesConfiguration({ root: '/',  entityCategoryTemplate: '${sites}/${site.name}/${entityCategory.pluralName.urlify()}' });
-            const promise = expect(testee.resolveEntityCategory(global.fixtures.siteBase, global.fixtures.categoryModuleGroup))
-                .to.eventually.contains(path.sep + 'sites' + path.sep + 'Base' + path.sep + 'module-groups');
+            const promise = co(function*()
+            {
+                const testee = new PathesConfiguration({ root: '/', entityCategoryTemplate: '${sites}/${site.name}/${entityCategory.pluralName.urlify()}' });
+                const result = yield testee.resolveEntityCategory(global.fixtures.siteBase, global.fixtures.categoryModuleGroup);
+                expect(result).to.be.equal(path.sep + 'sites' + path.sep + 'Base' + path.sep + 'module-groups');
+            });
             return promise;
         });
     });
@@ -142,25 +161,34 @@ describe(PathesConfiguration.className, function()
     {
         it('should return a path based on the given entity id', function()
         {
-            const testee = new PathesConfiguration({ root: '/', entityIdTemplate: '${sites}/${site.name}/${entityCategory.shortName}/${entityId.name}' });
-            const promise = expect(testee.resolveEntityId(global.fixtures.entityTeaser.id))
-                .to.eventually.contains(path.sep + 'sites' + path.sep + 'Base' + path.sep + 'm' + path.sep + 'teaser');
+            const promise = co(function*()
+            {
+                const testee = new PathesConfiguration({ root: '/', entityIdTemplate: '${sites}/${site.name}/${entityCategory.shortName}/${entityId.name}' });
+                const result = yield testee.resolveEntityId(global.fixtures.entityTeaser.id);
+                expect(result).to.be.equal(path.sep + 'sites' + path.sep + 'Base' + path.sep + 'm' + path.sep + 'teaser');
+            });
             return promise;
         });
 
         it('should return a path based on the given global entity id', function()
         {
-            const testee = new PathesConfiguration({ root: '/', entityIdGlobalTemplate: '${sites}/${site.name}/${entityCategory.shortName}' });
-            const promise = expect(testee.resolveEntityId(global.fixtures.entityGlobal.id))
-                .to.eventually.contains(path.sep + 'sites' + path.sep + 'Base' + path.sep + 'l');
+            const promise = co(function*()
+            {
+                const testee = new PathesConfiguration({ root: '/', entityIdGlobalTemplate: '${sites}/${site.name}/${entityCategory.shortName}' });
+                const result = yield testee.resolveEntityId(global.fixtures.entityGlobal.id);
+                expect(result).to.be.equal(path.sep + 'sites' + path.sep + 'Base' + path.sep + 'l');
+            });
             return promise;
         });
 
         it('should allow to add a custom path', function()
         {
-            const testee = new PathesConfiguration({ root: '/', entityIdTemplate: '${sites}/${site.name}/${entityCategory.shortName}/${entityId.name}' });
-            const promise = expect(testee.resolveEntityId(global.fixtures.entityTeaser.id, '-${entityId.number.format(3)}'))
-                .to.eventually.contains(path.sep + 'sites' + path.sep + 'Base' + path.sep + 'm' + path.sep + 'teaser-000');
+            const promise = co(function*()
+            {
+                const testee = new PathesConfiguration({ root: '/', entityIdTemplate: '${sites}/${site.name}/${entityCategory.shortName}/${entityId.name}' });
+                const result = yield testee.resolveEntityId(global.fixtures.entityTeaser.id, '-${entityId.number.format(3)}');
+                expect(result).to.be.equal(path.sep + 'sites' + path.sep + 'Base' + path.sep + 'm' + path.sep + 'teaser-000');
+            });
             return promise;
         });
     });
@@ -170,9 +198,12 @@ describe(PathesConfiguration.className, function()
     {
         it('should return a path based on the given entity id and site', function()
         {
-            const testee = new PathesConfiguration({ root: '/', entityIdTemplate: '${sites}/${site.name}/${entityCategory.shortName}/${entityId.name}' });
-            const promise = expect(testee.resolveEntityIdForSite(global.fixtures.entityTeaser.id, global.fixtures.siteExtended))
-                .to.eventually.contains(path.sep + 'sites' + path.sep + 'Extended' + path.sep + 'm' + path.sep + 'teaser');
+            const promise = co(function*()
+            {
+                const testee = new PathesConfiguration({ root: '/', entityIdTemplate: '${sites}/${site.name}/${entityCategory.shortName}/${entityId.name}' });
+                const result = yield testee.resolveEntityIdForSite(global.fixtures.entityTeaser.id, global.fixtures.siteExtended);
+                expect(result).to.be.equal(path.sep + 'sites' + path.sep + 'Extended' + path.sep + 'm' + path.sep + 'teaser');
+            });
             return promise;
         });
     });
@@ -182,25 +213,34 @@ describe(PathesConfiguration.className, function()
     {
         it('should return a path based on the given entity', function()
         {
-            const testee = new PathesConfiguration({ root: '/', entityIdTemplate: '${sites}/${site.name}/${entityCategory.shortName}/${entityId.name}' });
-            const promise = expect(testee.resolveEntity(global.fixtures.entityTeaser))
-                .to.eventually.contains(path.sep + 'sites' + path.sep + 'Base' + path.sep + 'm' + path.sep + 'teaser');
+            const promise = co(function*()
+            {
+                const testee = new PathesConfiguration({ root: '/', entityIdTemplate: '${sites}/${site.name}/${entityCategory.shortName}/${entityId.name}' });
+                const result = yield testee.resolveEntity(global.fixtures.entityTeaser);
+                expect(result).to.be.equal(path.sep + 'sites' + path.sep + 'Base' + path.sep + 'm' + path.sep + 'teaser');
+            });
             return promise;
         });
 
         it('should return a path based on the given global entity', function()
         {
-            const testee = new PathesConfiguration({ root: '/', entityIdGlobalTemplate: '${sites}/${site.name}/${entityCategory.shortName}' });
-            const promise = expect(testee.resolveEntity(global.fixtures.entityGlobal))
-                .to.eventually.contains(path.sep + 'sites' + path.sep + 'Base' + path.sep + 'l');
+            const promise = co(function*()
+            {
+                const testee = new PathesConfiguration({ root: '/', entityIdGlobalTemplate: '${sites}/${site.name}/${entityCategory.shortName}' });
+                const result = yield testee.resolveEntity(global.fixtures.entityGlobal);
+                expect(result).to.be.equal(path.sep + 'sites' + path.sep + 'Base' + path.sep + 'l');
+            });
             return promise;
         });
 
         it('should allow to add a custom path', function()
         {
-            const testee = new PathesConfiguration({ root: '/', entityIdTemplate: '${sites}/${site.name}/${entityCategory.shortName}/${entityId.name}' });
-            const promise = expect(testee.resolveEntity(global.fixtures.entityTeaser, '-${entityId.number.format(3)}'))
-                .to.eventually.contains(path.sep + 'sites' + path.sep + 'Base' + path.sep + 'm' + path.sep + 'teaser-000');
+            const promise = co(function*()
+            {
+                const testee = new PathesConfiguration({ root: '/', entityIdTemplate: '${sites}/${site.name}/${entityCategory.shortName}/${entityId.name}' });
+                const result = yield testee.resolveEntity(global.fixtures.entityTeaser, '-${entityId.number.format(3)}');
+                expect(result).to.be.equal(path.sep + 'sites' + path.sep + 'Base' + path.sep + 'm' + path.sep + 'teaser-000');
+            });
             return promise;
         });
     });
@@ -210,9 +250,12 @@ describe(PathesConfiguration.className, function()
     {
         it('should return a path based on the given entity and site', function()
         {
-            const testee = new PathesConfiguration({ root: '/', entityIdTemplate: '${sites}/${site.name}/${entityCategory.shortName}/${entityId.name}' });
-            const promise = expect(testee.resolveEntityForSite(global.fixtures.entityTeaser, global.fixtures.siteExtended))
-                .to.eventually.contains(path.sep + 'sites' + path.sep + 'Extended' + path.sep + 'm' + path.sep + 'teaser');
+            const promise = co(function*()
+            {
+                const testee = new PathesConfiguration({ root: '/', entityIdTemplate: '${sites}/${site.name}/${entityCategory.shortName}/${entityId.name}' });
+                const result = yield testee.resolveEntityForSite(global.fixtures.entityTeaser, global.fixtures.siteExtended);
+                expect(result).to.be.equal(path.sep + 'sites' + path.sep + 'Extended' + path.sep + 'm' + path.sep + 'teaser');
+            });
             return promise;
         });
     });
@@ -222,58 +265,79 @@ describe(PathesConfiguration.className, function()
     {
         it('should return false when no value object given', function()
         {
-            const testee = new PathesConfiguration({ root: '/', siteTemplate: '${sites}/yes/${site.name}' });
-            const promise = expect(testee.resolve())
-                .to.eventually.be.not.ok;
+            const promise = co(function*()
+            {
+                const testee = new PathesConfiguration({ root: '/', siteTemplate: '${sites}/yes/${site.name}' });
+                const result = yield testee.resolve();
+                expect(result).to.be.not.ok;
+            });
             return promise;
         });
 
         it('should return false when unknown value object given', function()
         {
-            const testee = new PathesConfiguration({ root: '/', siteTemplate: '${sites}/yes/${site.name}' });
-            const promise = expect(testee.resolve({}))
-                .to.eventually.be.not.ok;
+            const promise = co(function*()
+            {
+                const testee = new PathesConfiguration({ root: '/', siteTemplate: '${sites}/yes/${site.name}' });
+                const result = yield testee.resolve({});
+                expect(result).to.be.not.ok;
+            });
             return promise;
         });
 
 
         it('should return a path based on the given site', function()
         {
-            const testee = new PathesConfiguration({ root: '/', siteTemplate: '${sites}/yes/${site.name}' });
-            const promise = expect(testee.resolve(global.fixtures.siteBase))
-                .to.eventually.contains(path.sep + 'sites' + path.sep + 'yes' + path.sep + 'Base');
+            const promise = co(function*()
+            {
+                const testee = new PathesConfiguration({ root: '/', siteTemplate: '${sites}/yes/${site.name}' });
+                const result = yield testee.resolve(global.fixtures.siteBase);
+                expect(result).to.be.equal(path.sep + 'sites' + path.sep + 'yes' + path.sep + 'Base');
+            });
             return promise;
         });
 
         it('should return a path based on the given entity', function()
         {
-            const testee = new PathesConfiguration({ root: '/', entityIdTemplate: '${sites}/${site.name}/${entityCategory.shortName}/${entityId.name}' });
-            const promise = expect(testee.resolve(global.fixtures.entityTeaser))
-                .to.eventually.contains(path.sep + 'sites' + path.sep + 'Base' + path.sep + 'm' + path.sep + 'teaser');
+            const promise = co(function*()
+            {
+                const testee = new PathesConfiguration({ root: '/', entityIdTemplate: '${sites}/${site.name}/${entityCategory.shortName}/${entityId.name}' });
+                const result = yield testee.resolve(global.fixtures.entityTeaser);
+                expect(result).to.be.equal(path.sep + 'sites' + path.sep + 'Base' + path.sep + 'm' + path.sep + 'teaser');
+            });
             return promise;
         });
 
         it('should return a path based on the given entity id', function()
         {
-            const testee = new PathesConfiguration({ root: '/', entityIdTemplate: '${sites}/${site.name}/${entityCategory.shortName}/${entityId.name}' });
-            const promise = expect(testee.resolve(global.fixtures.entityTeaser.id))
-                .to.eventually.contains(path.sep + 'sites' + path.sep + 'Base' + path.sep + 'm' + path.sep + 'teaser');
+            const promise = co(function*()
+            {
+                const testee = new PathesConfiguration({ root: '/', entityIdTemplate: '${sites}/${site.name}/${entityCategory.shortName}/${entityId.name}' });
+                const result = yield testee.resolve(global.fixtures.entityTeaser.id);
+                expect(result).to.be.equal(path.sep + 'sites' + path.sep + 'Base' + path.sep + 'm' + path.sep + 'teaser');
+            });
             return promise;
         });
 
         it('should return a path based on the given template', function()
         {
-            const testee = new PathesConfiguration({ root: '/' });
-            const promise = expect(testee.resolve('${cache}/css'))
-                .to.eventually.contains(path.sep + 'cache' + path.sep + 'css');
+            const promise = co(function*()
+            {
+                const testee = new PathesConfiguration({ root: '/' });
+                const result = yield testee.resolve('${cache}/css');
+                expect(result).to.be.equal(path.sep + 'cache' + path.sep + 'css');
+            });
             return promise;
         });
 
         it('should allow to add a custom path', function()
         {
-            const testee = new PathesConfiguration({ root: '/', entityIdTemplate: '${sites}/${site.name}/${entityCategory.shortName}/${entityId.name}' });
-            const promise = expect(testee.resolve(global.fixtures.entityTeaser, '-${entityId.number.format(3)}'))
-                .to.eventually.contains(path.sep + 'sites' + path.sep + 'Base' + path.sep + 'm' + path.sep + 'teaser-000');
+            const promise = co(function*()
+            {
+                const testee = new PathesConfiguration({ root: '/', entityIdTemplate: '${sites}/${site.name}/${entityCategory.shortName}/${entityId.name}' });
+                const result = yield testee.resolve(global.fixtures.entityTeaser, '-${entityId.number.format(3)}');
+                expect(result).to.be.equal(path.sep + 'sites' + path.sep + 'Base' + path.sep + 'm' + path.sep + 'teaser-000');
+            });
             return promise;
         });
     });
@@ -283,17 +347,23 @@ describe(PathesConfiguration.className, function()
     {
         it('should return a path without the configured root path', function()
         {
-            const testee = new PathesConfiguration({ root: '/path/to' });
-            const promise = expect(testee.shorten('/path/to/something/that/is/quite/long'))
-                .to.eventually.be.equal('/something/that/is/quite/long');
+            const promise = co(function*()
+            {
+                const testee = new PathesConfiguration({ root: '/path/to' });
+                const result = yield testee.shorten('/path/to/something/that/is/quite/long');
+                expect(result).to.be.equal('/something/that/is/quite/long');
+            });
             return promise;
         });
 
         it('should return a path with a maximum length', function()
         {
-            const testee = new PathesConfiguration({ root: '/path/to' });
-            const promise = expect(testee.shorten('/path/to/something/that/is/quite/long', 15))
-                .to.eventually.be.equal('/someth…te/long');
+            const promise = co(function*()
+            {
+                const testee = new PathesConfiguration({ root: '/path/to' });
+                const result = yield testee.shorten('/path/to/something/that/is/quite/long', 15);
+                expect(result).to.be.equal('/someth…te/long');
+            });
             return promise;
         });
     });
