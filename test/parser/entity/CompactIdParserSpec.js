@@ -6,6 +6,7 @@
 const CompactIdParser = require(ES_SOURCE + '/parser/entity/CompactIdParser.js').CompactIdParser;
 const projectFixture = require(ES_FIXTURES + '/project/index.js');
 const baseSpec = require(ES_TEST + '/BaseShared.js').spec;
+const co = require('co');
 
 
 /**
@@ -123,8 +124,13 @@ describe(CompactIdParser.className, function()
 
             it('should resolve to false when a unconfigured category is used like in x-gallery', function()
             {
-                const testee = new CompactIdParser(global.fixtures.sitesRepository, global.fixtures.categoriesRepository, { useNumbers: false });
-                return expect(testee.parse('x-gallery')).to.eventually.be.equal(false);
+                const promise = co(function*()
+                {
+                    const testee = new CompactIdParser(global.fixtures.sitesRepository, global.fixtures.categoriesRepository, { useNumbers: false });
+                    const result = yield testee.parse('x-gallery');
+                    expect(result).to.be.not.ok;
+                });
+                return promise;
             });
         });
 
@@ -199,8 +205,13 @@ describe(CompactIdParser.className, function()
 
             it('should resolve to false when a unconfigured category is used like in x001-teaser', function()
             {
-                const testee = new CompactIdParser(global.fixtures.sitesRepository, global.fixtures.categoriesRepository, { useNumbers: true });
-                return expect(testee.parse('x001-teaser')).to.eventually.be.equal(false);
+                const promise = co(function*()
+                {
+                    const testee = new CompactIdParser(global.fixtures.sitesRepository, global.fixtures.categoriesRepository, { useNumbers: true });
+                    const result = yield testee.parse('x001-teaser');
+                    expect(result).to.be.not.ok;
+                });
+                return promise;
             });
         });
     });
