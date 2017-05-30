@@ -5,7 +5,7 @@
  */
 const Task = require(ES_SOURCE + '/task/Task.js').Task;
 const CliLogger = require(ES_SOURCE + '/cli/CliLogger.js').CliLogger;
-const taskSpec = require(ES_TEST + '/task/taskShared.js').spec;
+const taskSpec = require(ES_TEST + '/task/TaskShared.js').spec;
 
 
 /**
