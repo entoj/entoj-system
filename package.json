@@ -7,7 +7,7 @@
   },
   "main": "source/index.js",
   "scripts": {
-    "coverage": "bash scripts/tests --coverage",
+    "coverage": "bash scripts/test --coverage",
     "coveralls": "bash scripts/coveralls",
     "lint": "bash scripts/lint",
     "test": "bash scripts/test"
