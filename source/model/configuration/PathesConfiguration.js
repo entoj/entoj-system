@@ -237,13 +237,13 @@ class PathesConfiguration extends Base
     /**
      * Shortens a path for display usage
      *
-     * @param {string} path
+     * @param {string} pth
      * @param {number} maxLength
      * @returns {Promise.<string>}
      */
-    shorten(path, maxLength)
+    shorten(pth, maxLength)
     {
-        let result = path.replace('file://', '').replace(this.root, '');
+        let result = path.resolve(pth.replace('file://', '')).replace(this.root, '');
         if (maxLength)
         {
             result = shortenMiddle(result, maxLength);

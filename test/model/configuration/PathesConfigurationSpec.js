@@ -87,7 +87,7 @@ describe(PathesConfiguration.className, function()
             {
                 const testee = new PathesConfiguration({ root: '/', cacheTemplate: '${root}/yes' });
                 const result = yield testee.resolveCache('css');
-                expect(result).to.be.equal(path.sep + 'yes' + path.sep + 'css');
+                expect(result).to.be.equal(testee.root + 'yes' + path.sep + 'css');
             });
             return promise;
         });
@@ -102,7 +102,7 @@ describe(PathesConfiguration.className, function()
             {
                 const testee = new PathesConfiguration({ root: '/', siteTemplate: '${sites}/yes/${site.name}' });
                 const result = yield testee.resolveSite(global.fixtures.siteBase);
-                expect(result).to.be.equal(path.sep + 'sites' + path.sep + 'yes' + path.sep + 'Base');
+                expect(result).to.be.equal(testee.root + 'sites' + path.sep + 'yes' + path.sep + 'Base');
             });
             return promise;
         });
@@ -113,7 +113,7 @@ describe(PathesConfiguration.className, function()
             {
                 const testee = new PathesConfiguration({ root: '/', siteTemplate: '${sites}/yes/${site.name}' });
                 const result = yield testee.resolveSite(global.fixtures.siteBase, '/${site.name}');
-                expect(result).to.be.equal(path.sep + 'sites' + path.sep + 'yes' + path.sep + 'Base' + path.sep + 'Base');
+                expect(result).to.be.equal(testee.root + 'sites' + path.sep + 'yes' + path.sep + 'Base' + path.sep + 'Base');
             });
             return promise;
         });
@@ -128,7 +128,7 @@ describe(PathesConfiguration.className, function()
             {
                 const testee = new PathesConfiguration({ root: '/', entityCategoryTemplate: '${sites}/${site.name}/${entityCategory.shortName}' });
                 const result = yield testee.resolveEntityCategory(global.fixtures.siteBase, global.fixtures.categoryElement);
-                expect(result).to.be.equal(path.sep + 'sites' + path.sep + 'Base' + path.sep + 'e');
+                expect(result).to.be.equal(testee.root + 'sites' + path.sep + 'Base' + path.sep + 'e');
             });
             return promise;
         });
@@ -139,7 +139,7 @@ describe(PathesConfiguration.className, function()
             {
                 const testee = new PathesConfiguration({ root: '/', entityCategoryTemplate: '${sites}/${site.name}/${entityCategory.shortName}' });
                 const result = yield testee.resolveEntityCategory(global.fixtures.siteBase, global.fixtures.categoryElement, '/${entityCategory.longName}');
-                expect(result).to.be.equal(path.sep + 'sites' + path.sep + 'Base' + path.sep + 'e' + path.sep + 'Element');
+                expect(result).to.be.equal(testee.root + 'sites' + path.sep + 'Base' + path.sep + 'e' + path.sep + 'Element');
             });
             return promise;
         });
@@ -150,7 +150,7 @@ describe(PathesConfiguration.className, function()
             {
                 const testee = new PathesConfiguration({ root: '/', entityCategoryTemplate: '${sites}/${site.name}/${entityCategory.pluralName.urlify()}' });
                 const result = yield testee.resolveEntityCategory(global.fixtures.siteBase, global.fixtures.categoryModuleGroup);
-                expect(result).to.be.equal(path.sep + 'sites' + path.sep + 'Base' + path.sep + 'module-groups');
+                expect(result).to.be.equal(testee.root + 'sites' + path.sep + 'Base' + path.sep + 'module-groups');
             });
             return promise;
         });
@@ -165,7 +165,7 @@ describe(PathesConfiguration.className, function()
             {
                 const testee = new PathesConfiguration({ root: '/', entityIdTemplate: '${sites}/${site.name}/${entityCategory.shortName}/${entityId.name}' });
                 const result = yield testee.resolveEntityId(global.fixtures.entityTeaser.id);
-                expect(result).to.be.equal(path.sep + 'sites' + path.sep + 'Base' + path.sep + 'm' + path.sep + 'teaser');
+                expect(result).to.be.equal(testee.root + 'sites' + path.sep + 'Base' + path.sep + 'm' + path.sep + 'teaser');
             });
             return promise;
         });
@@ -176,7 +176,7 @@ describe(PathesConfiguration.className, function()
             {
                 const testee = new PathesConfiguration({ root: '/', entityIdGlobalTemplate: '${sites}/${site.name}/${entityCategory.shortName}' });
                 const result = yield testee.resolveEntityId(global.fixtures.entityGlobal.id);
-                expect(result).to.be.equal(path.sep + 'sites' + path.sep + 'Base' + path.sep + 'l');
+                expect(result).to.be.equal(testee.root + 'sites' + path.sep + 'Base' + path.sep + 'l');
             });
             return promise;
         });
@@ -187,7 +187,7 @@ describe(PathesConfiguration.className, function()
             {
                 const testee = new PathesConfiguration({ root: '/', entityIdTemplate: '${sites}/${site.name}/${entityCategory.shortName}/${entityId.name}' });
                 const result = yield testee.resolveEntityId(global.fixtures.entityTeaser.id, '-${entityId.number.format(3)}');
-                expect(result).to.be.equal(path.sep + 'sites' + path.sep + 'Base' + path.sep + 'm' + path.sep + 'teaser-000');
+                expect(result).to.be.equal(testee.root + 'sites' + path.sep + 'Base' + path.sep + 'm' + path.sep + 'teaser-000');
             });
             return promise;
         });
@@ -202,7 +202,7 @@ describe(PathesConfiguration.className, function()
             {
                 const testee = new PathesConfiguration({ root: '/', entityIdTemplate: '${sites}/${site.name}/${entityCategory.shortName}/${entityId.name}' });
                 const result = yield testee.resolveEntityIdForSite(global.fixtures.entityTeaser.id, global.fixtures.siteExtended);
-                expect(result).to.be.equal(path.sep + 'sites' + path.sep + 'Extended' + path.sep + 'm' + path.sep + 'teaser');
+                expect(result).to.be.equal(testee.root + 'sites' + path.sep + 'Extended' + path.sep + 'm' + path.sep + 'teaser');
             });
             return promise;
         });
@@ -217,7 +217,7 @@ describe(PathesConfiguration.className, function()
             {
                 const testee = new PathesConfiguration({ root: '/', entityIdTemplate: '${sites}/${site.name}/${entityCategory.shortName}/${entityId.name}' });
                 const result = yield testee.resolveEntity(global.fixtures.entityTeaser);
-                expect(result).to.be.equal(path.sep + 'sites' + path.sep + 'Base' + path.sep + 'm' + path.sep + 'teaser');
+                expect(result).to.be.equal(testee.root + 'sites' + path.sep + 'Base' + path.sep + 'm' + path.sep + 'teaser');
             });
             return promise;
         });
@@ -228,7 +228,7 @@ describe(PathesConfiguration.className, function()
             {
                 const testee = new PathesConfiguration({ root: '/', entityIdGlobalTemplate: '${sites}/${site.name}/${entityCategory.shortName}' });
                 const result = yield testee.resolveEntity(global.fixtures.entityGlobal);
-                expect(result).to.be.equal(path.sep + 'sites' + path.sep + 'Base' + path.sep + 'l');
+                expect(result).to.be.equal(testee.root + 'sites' + path.sep + 'Base' + path.sep + 'l');
             });
             return promise;
         });
@@ -239,7 +239,7 @@ describe(PathesConfiguration.className, function()
             {
                 const testee = new PathesConfiguration({ root: '/', entityIdTemplate: '${sites}/${site.name}/${entityCategory.shortName}/${entityId.name}' });
                 const result = yield testee.resolveEntity(global.fixtures.entityTeaser, '-${entityId.number.format(3)}');
-                expect(result).to.be.equal(path.sep + 'sites' + path.sep + 'Base' + path.sep + 'm' + path.sep + 'teaser-000');
+                expect(result).to.be.equal(testee.root + 'sites' + path.sep + 'Base' + path.sep + 'm' + path.sep + 'teaser-000');
             });
             return promise;
         });
@@ -254,7 +254,7 @@ describe(PathesConfiguration.className, function()
             {
                 const testee = new PathesConfiguration({ root: '/', entityIdTemplate: '${sites}/${site.name}/${entityCategory.shortName}/${entityId.name}' });
                 const result = yield testee.resolveEntityForSite(global.fixtures.entityTeaser, global.fixtures.siteExtended);
-                expect(result).to.be.equal(path.sep + 'sites' + path.sep + 'Extended' + path.sep + 'm' + path.sep + 'teaser');
+                expect(result).to.be.equal(testee.root + 'sites' + path.sep + 'Extended' + path.sep + 'm' + path.sep + 'teaser');
             });
             return promise;
         });
@@ -292,7 +292,7 @@ describe(PathesConfiguration.className, function()
             {
                 const testee = new PathesConfiguration({ root: '/', siteTemplate: '${sites}/yes/${site.name}' });
                 const result = yield testee.resolve(global.fixtures.siteBase);
-                expect(result).to.be.equal(path.sep + 'sites' + path.sep + 'yes' + path.sep + 'Base');
+                expect(result).to.be.equal(testee.root + 'sites' + path.sep + 'yes' + path.sep + 'Base');
             });
             return promise;
         });
@@ -303,7 +303,7 @@ describe(PathesConfiguration.className, function()
             {
                 const testee = new PathesConfiguration({ root: '/', entityIdTemplate: '${sites}/${site.name}/${entityCategory.shortName}/${entityId.name}' });
                 const result = yield testee.resolve(global.fixtures.entityTeaser);
-                expect(result).to.be.equal(path.sep + 'sites' + path.sep + 'Base' + path.sep + 'm' + path.sep + 'teaser');
+                expect(result).to.be.equal(testee.root + 'sites' + path.sep + 'Base' + path.sep + 'm' + path.sep + 'teaser');
             });
             return promise;
         });
@@ -314,7 +314,7 @@ describe(PathesConfiguration.className, function()
             {
                 const testee = new PathesConfiguration({ root: '/', entityIdTemplate: '${sites}/${site.name}/${entityCategory.shortName}/${entityId.name}' });
                 const result = yield testee.resolve(global.fixtures.entityTeaser.id);
-                expect(result).to.be.equal(path.sep + 'sites' + path.sep + 'Base' + path.sep + 'm' + path.sep + 'teaser');
+                expect(result).to.be.equal(testee.root + 'sites' + path.sep + 'Base' + path.sep + 'm' + path.sep + 'teaser');
             });
             return promise;
         });
@@ -325,7 +325,7 @@ describe(PathesConfiguration.className, function()
             {
                 const testee = new PathesConfiguration({ root: '/' });
                 const result = yield testee.resolve('${cache}/css');
-                expect(result).to.be.equal(path.sep + 'cache' + path.sep + 'css');
+                expect(result).to.be.equal(testee.root + 'cache' + path.sep + 'css');
             });
             return promise;
         });
@@ -336,7 +336,7 @@ describe(PathesConfiguration.className, function()
             {
                 const testee = new PathesConfiguration({ root: '/', entityIdTemplate: '${sites}/${site.name}/${entityCategory.shortName}/${entityId.name}' });
                 const result = yield testee.resolve(global.fixtures.entityTeaser, '-${entityId.number.format(3)}');
-                expect(result).to.be.equal(path.sep + 'sites' + path.sep + 'Base' + path.sep + 'm' + path.sep + 'teaser-000');
+                expect(result).to.be.equal(testee.root + 'sites' + path.sep + 'Base' + path.sep + 'm' + path.sep + 'teaser-000');
             });
             return promise;
         });
@@ -351,7 +351,7 @@ describe(PathesConfiguration.className, function()
             {
                 const testee = new PathesConfiguration({ root: '/path/to' });
                 const result = yield testee.shorten('/path/to/something/that/is/quite/long');
-                expect(result).to.be.equal('/something/that/is/quite/long');
+                expect(result).to.be.equal(path.sep + 'something' + path.sep + 'that' + path.sep + 'is' + path.sep + 'quite' + path.sep + 'long');
             });
             return promise;
         });
@@ -362,7 +362,7 @@ describe(PathesConfiguration.className, function()
             {
                 const testee = new PathesConfiguration({ root: '/path/to' });
                 const result = yield testee.shorten('/path/to/something/that/is/quite/long', 15);
-                expect(result).to.be.equal('/someth…te/long');
+                expect(result).to.be.equal(path.sep + 'someth…te' + path.sep + 'long');
             });
             return promise;
         });
