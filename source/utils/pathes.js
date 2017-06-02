@@ -9,6 +9,7 @@ const WIN32 = (process.platform == 'win32');
  * Replaces any path seperator with the platfform specific one
  *
  * @memberof utils
+ * @deprecated
  */
 function normalizePathSeparators(path)
 {
@@ -24,6 +25,7 @@ function normalizePathSeparators(path)
  * Adds all given strings to a full path
  *
  * @memberof utils
+ * @deprecated
  */
 function concat(root, ...pathes)
 {
@@ -44,6 +46,7 @@ function concat(root, ...pathes)
  * Removes strip from path
  *
  * @memberof utils
+ * @deprecated
  */
 function strip(path, strip)
 {
@@ -55,6 +58,7 @@ function strip(path, strip)
  * Removes a leading slash
  *
  * @memberof utils
+ * @deprecated
  */
 function trimLeadingSlash(path)
 {
@@ -71,6 +75,7 @@ function trimLeadingSlash(path)
  * Removes a trailing slash
  *
  * @memberof utils
+ * @deprecated
  */
 function trimTrailingSlash(path)
 {
@@ -87,6 +92,7 @@ function trimTrailingSlash(path)
  * Ensures a leading slash and removes any trailing slashes
  *
  * @memberof utils
+ * @deprecated
  */
 function normalize(path)
 {
@@ -137,6 +143,7 @@ function normalize(path)
  * Removes the first part of a path
  *
  * @memberof utils
+ * @deprecated
  */
 function shift(path)
 {
