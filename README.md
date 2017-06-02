@@ -3,7 +3,7 @@
 [![Windows Build][appveyor-image]][appveyor-url]
 [![Test Coverage][coveralls-image]][coveralls-url]
 
-#Entoj System Library
+# Entoj System Library
 
 ## Running tests
 
@@ -37,9 +37,9 @@ npm run lint
 ### Licence
 [Apache License 2.0](LICENCE)
 
-[travis-image]: https://img.shields.io/travis/entoj/entoj-core/master.svg?label=linux
-[travis-url]: https://travis-ci.org/entoj/entoj-core
-[appveyor-image]: https://img.shields.io/appveyor/ci/ChristianAuth/entoj-core/master.svg?label=windows
-[appveyor-url]: https://ci.appveyor.com/project/ChristianAuth/entoj-core
-[coveralls-image]: https://img.shields.io/coveralls/entoj/entoj-core/master.svg
-[coveralls-url]: https://coveralls.io/r/entoj/entoj-core?branch=master
+[travis-image]: https://img.shields.io/travis/entoj/entoj-system/master.svg?label=linux
+[travis-url]: https://travis-ci.org/entoj/entoj-system
+[appveyor-image]: https://img.shields.io/appveyor/ci/ChristianAuth/entoj-system/master.svg?label=windows
+[appveyor-url]: https://ci.appveyor.com/project/ChristianAuth/entoj-system
+[coveralls-image]: https://img.shields.io/coveralls/entoj/entoj-system/master.svg
+[coveralls-url]: https://coveralls.io/r/entoj/entoj-system?branch=master
