@@ -10,9 +10,11 @@ const Base = require('../../Base.js').Base;
 /**
  * Base class for nunjucks filters.
  *
+ * @class
  * @memberOf nunjucks.filter
+ * @extends Base
  */
-class BaseFilter extends Base
+class Filter extends Base
 {
     /**
      */
@@ -29,18 +31,30 @@ class BaseFilter extends Base
      */
     static get className()
     {
-        return 'nunjucks.filter/BaseFilter';
+        return 'nunjucks.filter/Filter';
     }
 
 
     /**
-     * Name of the filter within templates
+     * Name of the filter within templates.
+     * This may also be a list of names.
      *
-     * @property {String}
+     * @property {String|Array<String>}
      */
     get name()
     {
-        return this._name;
+        return Array.isArray(this._name) ? this._name : [this._name];
+    }
+
+
+    /**
+     * The environment this filter is register on
+     *
+     * @property {nunjucks.Environment}
+     */
+    get environment()
+    {
+        return this._environment;
     }
 
 
@@ -52,13 +66,17 @@ class BaseFilter extends Base
      */
     register(environment)
     {
-        if (environment && environment.addFilter)
+        if (!environment)
         {
-            environment.addFilter(this.name, this.filter());
-            this._environment = environment;
-            return true;
+            return false;
         }
-        return false;
+
+        for (const name of this.name)
+        {
+            environment.addFilter(name, this.filter());
+        }
+        this._environment = environment;
+        return true;
     }
 
 
@@ -80,4 +98,4 @@ class BaseFilter extends Base
  * Exports
  * @ignore
  */
-module.exports.BaseFilter = BaseFilter;
+module.exports.Filter = Filter;

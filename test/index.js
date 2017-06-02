@@ -18,6 +18,10 @@ module.exports =
         LinterShared: require('./linter/LinterShared.js').spec,
         FileLinterShared: require('./linter/FileLinterShared.js').spec
     },
+    nunjucks:
+    {
+        FilterShared: require('./nunjucks/filter/FilterShared.js').spec
+    },
     parser:
     {
         ParserShared: require('./parser/ParserShared.js').spec,

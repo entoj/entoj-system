@@ -4,5 +4,5 @@
  */
  module.exports =
  {
-     BaseFilter: require('./BaseFilter.js').BaseFilter
+     Filter: require('./Filter.js').Filter
  };
