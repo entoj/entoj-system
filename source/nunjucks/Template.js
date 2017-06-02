@@ -62,6 +62,26 @@ class Template extends Base
 
 
     /**
+     * Returns the templates base path used for resolving macro include pathes.
+     *
+     * @type {string}
+     */
+    get basePath()
+    {
+        return this._basePath;
+    }
+
+
+    /**
+     * @type {string}
+     */
+    set basePath(value)
+    {
+        this._basePath = value;
+    }
+
+
+    /**
      * @returns {Boolean|String}
      */
     getInclude(name)
@@ -74,7 +94,7 @@ class Template extends Base
             {
                 if (macro.name === name)
                 {
-                    return '{% from "' + urls.normalize(macro.file.filename.replace(this._basePath, '')) + '" import ' + macro.name + ' %}';
+                    return '{% from "' + urls.normalize(macro.file.filename.replace(this.basePath, '')) + '" import ' + macro.name + ' %}';
                 }
             }
         }
