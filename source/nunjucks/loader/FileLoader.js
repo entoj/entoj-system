@@ -6,6 +6,7 @@
  */
 const fs = require('fs');
 const path = require('path');
+const BaseMixin = require('../../Base.js').BaseMixin;
 const Loader = require('nunjucks').Loader;
 const EntitiesRepository = require('../../model/entity/EntitiesRepository.js').EntitiesRepository;
 const BuildConfiguration = require('../../model/configuration/BuildConfiguration.js').BuildConfiguration;
@@ -20,117 +21,143 @@ const PATH_SEPERATOR = require('path').sep;
  * @class
  * @memberOf nunjucks.loader
  */
-const FileLoader = Loader.extend(
+class FileLoader extends BaseMixin(Loader)
+{
+    /**
+     * @inheritDocs
+     */
+    constructor(searchPaths, entitiesRepository, buildConfiguration)
     {
-        /**
-         * @inheritDocs
-         */
-        init: function(searchPaths, entitiesRepository, buildConfiguration)
+        super();
+
+        // Check params
+        assertParameter(this, 'entitiesRepository', entitiesRepository, true, EntitiesRepository);
+        assertParameter(this, 'buildConfiguration', buildConfiguration, true, BuildConfiguration);
+
+        // Assign
+        this.noCache = true;
+        this.cache = {};
+        this.pathsToNames = {};
+        this._entitiesRepository = entitiesRepository;
+        this._buildConfiguration = buildConfiguration;
+        this._template = new Template(this._entitiesRepository, undefined, this._buildConfiguration.environment);
+
+        // Set pathes
+        this.setSearchPaths(searchPaths || '.');
+    }
+
+
+    /**
+     * The namespaced class name
+     *
+     * @type {string}
+     * @static
+     */
+    static get className()
+    {
+        return 'nunjucks.loader/FileLoader';
+    }
+
+
+    /**
+     * Updates search pathes
+     *
+     * @param {String} value
+     */
+    setSearchPaths(value)
+    {
+        const searchPaths = Array.isArray(value) ? value : [value];
+        this.searchPaths = searchPaths.map((pth) =>
         {
-            // Check params
-            assertParameter(this, 'entitiesRepository', entitiesRepository, true, EntitiesRepository);
-            assertParameter(this, 'buildConfiguration', buildConfiguration, true, BuildConfiguration);
-
-            // Assign
-            this.noCache = true;
-            this.pathsToNames = {};
-            if (searchPaths)
-            {
-                searchPaths = Array.isArray(searchPaths) ? searchPaths : [searchPaths];
-                this.searchPaths = searchPaths.map(path.normalize);
-            }
-            else
-            {
-                this.searchPaths = ['.'];
-            }
-            this._entitiesRepository = entitiesRepository;
-            this._buildConfiguration = buildConfiguration;
-            this._template = new Template(this._entitiesRepository, this.searchPaths[0], this._buildConfiguration.environment);
-        },
+            return path.resolve(pth);
+        });
+        this._template.basePath = this.searchPaths[0];
+    }
 
 
-        /**
-         * Updates search pathes
-         */
-        setSearchPaths: function(searchPathes)
+    /**
+     * Resolves a template file
+     *
+     * @protected
+     * @param {String} filename
+     * @retuns {String|Boolean}
+     */
+    resolveFile(filename)
+    {
+        let result = false;
+
+        //Direct file?
+        this.searchPaths.forEach(function(pth)
         {
-            searchPathes = Array.isArray(searchPathes) ? searchPathes : [searchPathes];
-            this.searchPaths = searchPathes.map(path.normalize);
-            this._template._basePath = this.searchPaths[0];
-        },
-
-
-        /**
-         * Resolves a template file
-         */
-        checkAllPathes: function(filename)
-        {
-            let result = false;
-
-            //Direct file?
-            this.searchPaths.forEach(function(path)
+            try
             {
-                try
+                const file = path.join(pth, filename);
+                const stat = fs.statSync(file);
+                if (stat.isFile())
                 {
-                    const file = path.join(path, filename);
-                    const stat = fs.statSync(file);
-                    if (stat.isFile())
-                    {
-                        result = file;
-                    }
+                    result = file;
                 }
-                catch (e)
-                {
-                    //console.log('Exception :', e);
-                }
-            });
-
-            return result;
-        },
-
-
-        /**
-         * Resolves a template file
-         */
-        resolve: function(filename)
-        {
-            const file = path.normalize(filename);
-            let result = this.checkAllPathes(file);
-
-            //Check for simple shortcut to entity
-            if (!result)
-            {
-                const parts = file.split(PATH_SEPERATOR);
-                const aliased = file + PATH_SEPERATOR + parts.pop() + '.j2';
-                result = this.checkAllPathes(aliased);
             }
-
-            return result;
-        },
-
-
-        /**
-         * @inheritDocs
-         */
-        getSource: function(name)
-        {
-            // Get filepath
-            const fullPath = this.resolve(name);
-            if (!fullPath)
+            catch (e)
             {
-                //console.log('Could not resolve ' + name + '@' + fullPath);
-                return null;
+                // No file
             }
+        });
 
-            // Fetch template
-            const template = { src: fs.readFileSync(fullPath, { encoding: 'utf-8' }), path: fullPath, noCache: this.noCache };
+        return result;
+    }
 
-            // Prepare it
-            template.src = this._template.prepare(template.src);
 
-            return template;
+    /**
+     * @inheritDocs
+     * @see https://mozilla.github.io/nunjucks/api.html#loader
+     */
+    resolve(filename)
+    {
+        const file = path.normalize(filename);
+        let result = this.resolveFile(file);
+
+        //Check for simple shortcut to entity like /base/elements/e-cta
+        if (!result)
+        {
+            const parts = file.split(PATH_SEPERATOR);
+            const aliased = path.join(file, parts.pop() + '.j2');
+            result = this.resolveFile(aliased);
         }
-    });
+
+        return result;
+    }
+
+
+    /**
+     * @inheritDocs
+     * @see https://mozilla.github.io/nunjucks/api.html#loader
+     */
+    getSource(name)
+    {
+        // Get filepath
+        const fullPath = this.resolve(name);
+        if (!fullPath)
+        {
+            this.logger.warn('Could not resolve ' + name + ' on path ' + fullPath);
+            return null;
+        }
+
+        // Fetch template
+        const template =
+        {
+            src: fs.readFileSync(fullPath, { encoding: 'utf-8' }),
+            path: fullPath,
+            noCache: this.noCache
+        };
+
+        // Prepare the source
+        template.src = this._template.prepare(template.src);
+
+        return template;
+    }
+}
+
 
 /**
  * Exports
