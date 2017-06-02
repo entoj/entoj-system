@@ -222,6 +222,7 @@ function createDynamic(configuration)
     result.context = new Context(config);
 
     // create global instances
+    result.pathesConfiguration = result.context.di.create(PathesConfiguration);
     result.sitesRepository = result.context.di.create(SitesRepository);
     result.entitiesRepository = result.context.di.create(EntitiesRepository);
     result.globalRepository = result.context.di.create(GlobalRepository);
