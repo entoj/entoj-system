@@ -5,12 +5,11 @@ environment:
 
 install:
   - ps: Install-Product node $env:nodejs_version
-  - npm install -g npm
-  - appveyor-retry npm install
+  - npm install
 
 # Post-install test scripts.
 test_script:
-  - bash -lc "/c/projects/entoj-system/scripts/test"
+  - npm test
 
 # Don't actually build.
 build: off
