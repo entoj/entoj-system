@@ -20,8 +20,6 @@ const difference = require('lodash.difference');
 const clone = require('lodash.clone');
 const signals = require('signals');
 const path = require('path');
-const pathes = require('../utils/pathes');
-const PATH_SEPERATOR = require('path').sep;
 
 
 /**
@@ -127,7 +125,7 @@ class FileWatcher extends Base
 
                 // Prepare
                 let eventName = event.name;
-                const parts = pathes.normalizePathSeparators(event.path).split(PATH_SEPERATOR);
+                const parts = event.path.split(/\/|\\/);
                 const siteName = parts[1] || false;
                 const entityCategoryName = parts[2] || false;
                 const entityName = parts[3] || false;
