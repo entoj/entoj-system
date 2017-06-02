@@ -8,6 +8,8 @@ const normalizePathSeparators = require(ES_SOURCE + '/utils/urls.js').normalizeP
 const normalize = require(ES_SOURCE + '/utils/urls.js').normalize;
 const trimLeadingSlash = require(ES_SOURCE + '/utils/urls.js').trimLeadingSlash;
 const shift = require(ES_SOURCE + '/utils/urls.js').shift;
+const concat = require(ES_SOURCE + '/utils/urls.js').concat;
+const trimTrailingSlash = require(ES_SOURCE + '/utils/urls.js').trimTrailingSlash;
 
 
 /**
@@ -57,6 +59,15 @@ describe('utils/urls', function()
     });
 
 
+    describe('#trimTrailingSlash', function()
+    {
+        it('should remove trailing slashes', function()
+        {
+            expect(trimTrailingSlash('/start/where/')).to.be.equal('/start/where');
+        });
+    });
+
+
     describe('#normalize', function()
     {
         it('should ensure leading slashes', function()
@@ -72,6 +83,25 @@ describe('utils/urls', function()
         it('should convert all slashes', function()
         {
             expect(normalize('/start\\where')).to.be.equal('/start/where');
+        });
+    });
+
+
+    describe('#concat', function()
+    {
+        it('should ensure leading slashes', function()
+        {
+            expect(concat('start')).to.be.equal('/start');
+        });
+
+        it('should remove trailing slashes', function()
+        {
+            expect(concat('start/', 'to', '/finish')).to.be.equal('/start/to/finish');
+        });
+
+        it('should convert all slashes', function()
+        {
+            expect(concat('/start\\to', 'the', 'finish/')).to.be.equal('/start/to/the/finish');
         });
     });
 

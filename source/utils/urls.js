@@ -4,15 +4,13 @@ const tr = require('transliteration').transliterate;
 
 
 /**
- * Makes a vali ascii only url
+ * Makes a valid ascii only url
  *
  * @memberOf utils
  */
 function urlify(value, whitespace)
 {
-    let result = tr(value).toLowerCase();
-    result = result.replace(/\s/g, whitespace || '-');
-    return result;
+    return tr(value).toLowerCase().replace(/\s/g, whitespace || '-');
 }
 
 
@@ -124,6 +122,7 @@ function concat(root, ...urls)
 module.exports.concat = concat;
 module.exports.shift = shift;
 module.exports.trimLeadingSlash = trimLeadingSlash;
+module.exports.trimTrailingSlash = trimTrailingSlash;
 module.exports.normalizePathSeparators = normalizePathSeparators;
 module.exports.normalize = normalize;
 module.exports.urlify = urlify;
