@@ -187,7 +187,7 @@ function activateEnvironment(content, environment)
 
 
 /**
- * Trims any slahes from the left side of a stirng
+ * Trims any slashes from the left side of a stirng
  *
  * @memberOf utils
  * @param {String} value

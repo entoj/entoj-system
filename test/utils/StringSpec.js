@@ -7,6 +7,7 @@ const trimMultiline = require(ES_SOURCE + '/utils/string.js').trimMultiline;
 const shortenMiddle = require(ES_SOURCE + '/utils/string.js').shortenMiddle;
 const shortenLeft = require(ES_SOURCE + '/utils/string.js').shortenLeft;
 const activateEnvironment = require(ES_SOURCE + '/utils/string.js').activateEnvironment;
+const trimSlashesLeft = require(ES_SOURCE + '/utils/string.js').trimSlashesLeft;
 
 
 /**
@@ -215,6 +216,18 @@ describe('utils/string', function()
                 const expected = 'All-NotDevelopment-Production';
                 expect(activateEnvironment(input, 'production')).to.be.equal(expected);
             });
+        });
+    });
+
+    describe('#trimSlashesLeft()', function()
+    {
+        it('should remove any slashes on the left side', function()
+        {
+            expect(trimSlashesLeft('/hi//')).to.be.equal('hi//');
+            expect(trimSlashesLeft('//hi')).to.be.equal('hi');
+            expect(trimSlashesLeft('/hi/there/')).to.be.equal('hi/there/');
+            expect(trimSlashesLeft('\\/hi//')).to.be.equal('hi//');
+            expect(trimSlashesLeft('hi//')).to.be.equal('hi//');
         });
     });
 });
