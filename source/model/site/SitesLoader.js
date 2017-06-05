@@ -9,7 +9,7 @@ const PathesConfiguration = require('../configuration/PathesConfiguration.js').P
 const Site = require('./Site.js').Site;
 const assertParameter = require('../../utils/assert.js').assertParameter;
 const co = require('co');
-const fs = require('mz/fs');
+const fs = require('fs-extra');
 const path = require('path');
 const upperFirst = require('lodash.upperfirst');
 

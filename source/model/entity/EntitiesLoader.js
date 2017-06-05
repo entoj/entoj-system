@@ -12,7 +12,7 @@ const EntityCategoriesRepository = require('./EntityCategoriesRepository.js').En
 const SitesRepository = require('../site/SitesRepository.js').SitesRepository;
 const assertParameter = require('../../utils/assert.js').assertParameter;
 const co = require('co');
-const fs = require('co-fs-extra');
+const fs = require('fs-extra');
 
 
 /**
