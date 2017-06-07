@@ -10,7 +10,7 @@ const EntitiesRepository = require('../entity/EntitiesRepository.js').EntitiesRe
 const PathesConfiguration = require('../configuration/PathesConfiguration.js').PathesConfiguration;
 const assertParameter = require('../../utils/assert.js').assertParameter;
 const co = require('co');
-const fs = require('fs');
+const fs = require('fs-extra');
 const path = require('path');
 const isObject = require('lodash.isobject');
 const isString = require('lodash.isstring');
@@ -156,7 +156,8 @@ class ViewModelRepository extends Base
         const scope = this;
         const promise = co(function*()
         {
-            const rawData = JSON.parse(fs.readFileSync(filename, { encoding: 'utf8' }));
+            const fileContents = yield fs.readFile(filename, { encoding: 'utf8' });
+            const rawData = JSON.parse(fileContents);
             const data = yield scope.process(rawData, site, useStaticContent);
             return data;
         });
@@ -184,7 +185,8 @@ class ViewModelRepository extends Base
             {
                 filename+= '.json';
             }
-            if (fs.existsSync(filename))
+            const fileExists = yield fs.exists(filename);
+            if (fileExists)
             {
                 const model = yield scope.loadFile(filename, site, useStaticContent);
                 return model;
@@ -204,7 +206,8 @@ class ViewModelRepository extends Base
                     modelPath+= '.json';
                 }
                 filename = yield scope._pathesConfiguration.resolveEntity(entity, modelPath);
-                if (fs.existsSync(filename))
+                const fileExists = yield fs.exists(filename);
+                if (fileExists)
                 {
                     const model = yield scope.loadFile(filename, site, useStaticContent);
                     return model;
@@ -215,7 +218,8 @@ class ViewModelRepository extends Base
                 {
                     const parentEntity = yield scope._entitiesRepository.getById(entityId, entity.site.extends);
                     filename = yield scope._pathesConfiguration.resolveEntity(parentEntity, modelPath);
-                    if (fs.existsSync(filename))
+                    const fileExists = yield fs.exists(filename);
+                    if (fileExists)
                     {
                         const model = yield scope.loadFile(filename, site, useStaticContent);
                         return model;
