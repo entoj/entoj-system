@@ -336,14 +336,12 @@ class UrlsConfiguration extends Base
             {
                 if (result.entity && result.customPath)
                 {
-                    //console.log(scope.className + '::matchEntityFile url', url);
                     for (const file of result.entity.files)
                     {
                         const basePath = (scope._pathesConfiguration ? scope._pathesConfiguration.sites :  '');
                         const fileUrl = urls.shift(file.filename.replace(basePath, ''));
                         if (fileUrl === urls.shift(url))
                         {
-                            //console.log(scope.className + '::matchEntityFile hit', file);
                             result.file = file;
                         }
                     }
