@@ -6,7 +6,6 @@
  */
 const Base = require('../../Base.js').Base;
 const BaseMap = require('../../base/BaseMap.js').BaseMap;
-const breakpointsToMediaQueries = require('../../utils/processors.js').breakpointsToMediaQueries;
 
 
 /**
@@ -27,10 +26,6 @@ class GlobalConfiguration extends Base
         this._values = new BaseMap();
         this._values.load(this.defaults);
         this._values.load(options);
-        if (!this._values.has('mediaQueries'))
-        {
-            this._values.set('mediaQueries', breakpointsToMediaQueries(this._values.get('breakpoints')));
-        }
     }
 
 
@@ -65,6 +60,30 @@ class GlobalConfiguration extends Base
             },
             breakpoints:
             {
+                desktop:
+                {
+                    minWidth: '1025px',
+                    maxWidth: '1279px'
+                },
+                tablet:
+                {
+                    minWidth: '1024px',
+                    maxWidth: '1024px'
+                },
+                miniTablet:
+                {
+                    minWidth: '768px',
+                    maxWidth: '1023px'
+                },
+                phablet:
+                {
+                    minWidth: '376px',
+                    maxWidth: '767px'
+                },
+                mobile:
+                {
+                    maxWidth: '375px'
+                }
             },
             tests:
             [
