@@ -64,7 +64,7 @@ describe(FilesRepository.className, function()
                 const testee = new FilesRepository(global.fixtures.entitiesRepository);
                 const files = yield testee.getBySite(global.fixtures.siteBase);
                 expect(files).to.be.instanceof(Array);
-                expect(files.length).to.be.equal(19);
+                expect(files.length).to.be.equal(24);
             });
             return promise;
         });
@@ -76,7 +76,7 @@ describe(FilesRepository.className, function()
                 const testee = new FilesRepository(global.fixtures.entitiesRepository);
                 const files = yield testee.getBySite(global.fixtures.siteBase, (file) => file.contentType == ContentType.JINJA);
                 expect(files).to.be.instanceof(Array);
-                expect(files.length).to.be.equal(7);
+                expect(files.length).to.be.equal(12);
             });
             return promise;
         });
@@ -111,9 +111,9 @@ describe(FilesRepository.className, function()
                 const testee = new FilesRepository(global.fixtures.entitiesRepository);
                 const files = yield testee.getBySiteGrouped(global.fixtures.siteBase, false, 'groups.css', 'common');
                 expect(files.common).to.be.instanceof(Array);
-                expect(files.common).to.have.length(12);
+                expect(files.common).to.have.length(15);
                 expect(files.core).to.be.instanceof(Array);
-                expect(files.core).to.have.length(7);
+                expect(files.core).to.have.length(9);
             });
             return promise;
         });
@@ -125,9 +125,9 @@ describe(FilesRepository.className, function()
                 const testee = new FilesRepository(global.fixtures.entitiesRepository);
                 const files = yield testee.getBySiteGrouped(global.fixtures.siteBase, (file) => file.contentType == ContentType.JINJA, 'groups.css', 'common');
                 expect(files.common).to.be.instanceof(Array);
-                expect(files.common).to.have.length(5);
+                expect(files.common).to.have.length(8);
                 expect(files.core).to.be.instanceof(Array);
-                expect(files.core).to.have.length(2);
+                expect(files.core).to.have.length(4);
             });
             return promise;
         });
