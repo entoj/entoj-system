@@ -12,7 +12,9 @@ const Entity = require(ES_SOURCE + '/model/entity/Entity.js').Entity;
 const EntityIdTemplate = require(ES_SOURCE + '/model/entity/EntityIdTemplate.js').EntityIdTemplate;
 const EntitiesRepository = require(ES_SOURCE + '/model/entity/EntitiesRepository.js').EntitiesRepository;
 const EntityCategoriesRepository = require(ES_SOURCE + '/model/entity/EntityCategoriesRepository.js').EntityCategoriesRepository;
+const ViewModelRepository = require(ES_SOURCE + '/model/viewmodel/ViewModelRepository.js').ViewModelRepository;
 const PathesConfiguration = require(ES_SOURCE + '/model/configuration/PathesConfiguration.js').PathesConfiguration;
+const UrlsConfiguration = require(ES_SOURCE + '/model/configuration/UrlsConfiguration.js').UrlsConfiguration;
 const GlobalConfiguration = require(ES_SOURCE + '/model/configuration/GlobalConfiguration.js').GlobalConfiguration;
 const BuildConfiguration = require(ES_SOURCE + '/model/configuration/BuildConfiguration.js').BuildConfiguration;
 const GlobalRepository = require(ES_SOURCE + '/model/GlobalRepository.js').GlobalRepository;
@@ -24,6 +26,7 @@ const glob = require(ES_SOURCE + '/utils/glob.js');
 const synchronize = require(ES_SOURCE + '/utils/synchronize.js');
 const clone = require('lodash.clone');
 const merge = require('lodash.merge');
+const path = require('path');
 
 
 /**
@@ -72,6 +75,9 @@ function createStatic(skipEntities)
     result.entitiesRepository = new EntitiesRepository(result.entityIdParser);
 
     result.globalRepository = new GlobalRepository(result.sitesRepository, result.categoriesRepository, result.entitiesRepository);
+    result.urlsConfiguration = new UrlsConfiguration(result.sitesRepository, result.categoriesRepository, result.entitiesRepository,
+        result.entityIdParser, result.pathesConfiguration);
+    result.viewModelRepository = new ViewModelRepository(result.entitiesRepository, result.pathesConfiguration);
 
     result.createEntity = function(idPath)
     {
@@ -86,8 +92,8 @@ function createStatic(skipEntities)
         const addFiles = function(entity, site, globs, contentType, contentKind)
         {
             const basePath = synchronize.execute(result.pathesConfiguration, 'resolveEntityIdForSite', [entity.id, site]);
-            const globPathes = globs.map((item) => basePath + '/' + item);
-            const files = synchronize.execute(undefined, glob, globPathes);
+            const globPathes = globs.map((item) => path.join(basePath, item));
+            const files = synchronize.execute(undefined, glob, [globPathes]);
             for (const filename of files)
             {
                 const file = new File(
@@ -106,11 +112,11 @@ function createStatic(skipEntities)
         {
             const entityId = synchronize.execute(result.entityIdParser, 'parse', [idPath]);
             const entity = new Entity({ id: entityId.entityId });
-            addFiles(entity, result.siteBase, ['*.j2'], ContentType.JINJA);
+            addFiles(entity, result.siteBase, ['*.j2', 'examples/*.j2'], ContentType.JINJA);
             addFiles(entity, result.siteBase, ['*.md'], ContentType.MARKDOWN);
             addFiles(entity, result.siteBase, ['js/*.js'], ContentType.JS);
             addFiles(entity, result.siteBase, ['models/*.json'], ContentType.JSON);
-            addFiles(entity, result.siteExtended, ['*.j2'], ContentType.JINJA);
+            addFiles(entity, result.siteExtended, ['*.j2', 'examples/*.j2'], ContentType.JINJA);
             addFiles(entity, result.siteExtended, ['*.md'], ContentType.MARKDOWN);
             addFiles(entity, result.siteExtended, ['js/*.js'], ContentType.JS);
             addFiles(entity, result.siteExtended, ['models/*.json'], ContentType.JSON);
@@ -227,6 +233,7 @@ function createDynamic(configuration)
     result.entitiesRepository = result.context.di.create(EntitiesRepository);
     result.globalRepository = result.context.di.create(GlobalRepository);
     result.buildConfiguration = result.context.di.create(BuildConfiguration);
+    result.urlsConfiguration = result.context.di.create(UrlsConfiguration);
 
     // create shortcuts
     result.siteBase = synchronize.execute(result.sitesRepository, 'findBy', ['name', 'Base']);
