@@ -8,6 +8,8 @@ const shortenMiddle = require(ES_SOURCE + '/utils/string.js').shortenMiddle;
 const shortenLeft = require(ES_SOURCE + '/utils/string.js').shortenLeft;
 const activateEnvironment = require(ES_SOURCE + '/utils/string.js').activateEnvironment;
 const trimSlashesLeft = require(ES_SOURCE + '/utils/string.js').trimSlashesLeft;
+const htmlify = require(ES_SOURCE + '/utils/string.js').htmlify;
+const lorem = require('lorem-ipsum');
 
 
 /**
@@ -228,6 +230,59 @@ describe('utils/string', function()
             expect(trimSlashesLeft('/hi/there/')).to.be.equal('hi/there/');
             expect(trimSlashesLeft('\\/hi//')).to.be.equal('hi//');
             expect(trimSlashesLeft('hi//')).to.be.equal('hi//');
+        });
+    });
+
+
+    describe('#htmlify()', function()
+    {
+        it('should return a empty string when no or empty string given', function()
+        {
+            expect(htmlify()).to.be.equal('');
+            expect(htmlify(null)).to.be.equal('');
+            expect(htmlify(false)).to.be.equal('');
+            expect(htmlify(1)).to.be.equal('');
+            expect(htmlify('')).to.be.equal('');
+        });
+
+        it('should make paragraphs out of newlines', function()
+        {
+            expect(htmlify('one\ntwo\n\nthree')).to.be.equal('<p>one</p>\n<p>two</p>\n<p>three</p>\n');
+        });
+
+        it('should contain markup', function()
+        {
+            const lipsum = lorem(
+                {
+                    units: 'paragraphs',
+                    count: 1
+                });
+            expect(htmlify(lipsum)).to.match(/<[^p]+>.*<\/[^p]+>/);
+        });
+
+        it('should allow to customize tag generation', function()
+        {
+            const lipsum = 'Dolorem lipsum sum at ebit nor debitel omnese';
+            const options =
+            {
+                wordsPerTag: 2,
+                maxTagOffset: 0,
+                minWordsBetweenTags: 1,
+                minWordsInTag: 1,
+                maxWordsInTag: 1,
+                tags:
+                [
+                    {
+                        name: 'a',
+                        probability: 1,
+                        attributes:
+                        {
+                            href: ''
+                        }
+                    }
+                ]
+            };
+            expect(htmlify(lipsum, options)).to.be.equal('<p><a href="">Dolorem</a> lipsum sum <a href="">at</a> ebit nor <a href="">debitel</a> omnese</p>\n');
         });
     });
 });

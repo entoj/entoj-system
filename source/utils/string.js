@@ -1,6 +1,13 @@
 'use strict';
 
 /**
+ * Requirements
+ * @ignore
+ */
+const merge = require('lodash.merge');
+
+
+/**
  * Trims a multiline string
  *
  * @memberOf utils
@@ -206,6 +213,119 @@ function trimSlashesLeft(value)
     return result;
 }
 
+/**
+ */
+function htmlify(value, options)
+{
+    if (!value || typeof value !== 'string')
+    {
+        return '';
+    }
+
+    // Default config
+    const defaults =
+    {
+        wordsPerTag: 10,
+        maxTagOffset: 3,
+        minWordsBetweenTags: 1,
+        minWordsInTag: 1,
+        maxWordsInTag: 3
+    };
+
+    // Merge custom options with default
+    const opts = merge({}, defaults, options || {});
+    if (!opts.tags)
+    {
+        opts.tags =
+        [
+            {
+                name: 'a',
+                probability: 0.2,
+                attributes:
+                {
+                    href: 'JavaScript:;'
+                }
+            },
+            {
+                name: ['sub', 'sup'],
+                probability: 0.2
+            },
+            {
+                name: 'h1',
+                probability: 0.3
+            },
+            {
+                name: ['h2', 'h3', 'h4', 'h5', 'em'],
+                probability: 0.4
+            }
+        ];
+    }
+
+    // Get paragraphs
+    const paragraphs = value.split(/\n+/);
+
+    // Generate tags
+    let result = '';
+    for (const paragraph of paragraphs)
+    {
+        // Count words an get a max tag count
+        const words = paragraph.split(/\s+/);
+        const tagCount = Math.floor((words.length + opts.minWordsBetweenTags) / (opts.wordsPerTag + opts.minWordsBetweenTags));
+
+        // Add tags
+        let addedTags = 0;
+        for (let tagId = 0; tagId < tagCount; tagId++)
+        {
+            // Determine which tag is used in a somewhat randomn fashion
+            let tagValue = Math.random();
+            // Make sure we always have at least one tag
+            if (addedTags < 1 && tagId == tagCount - 1)
+            {
+                tagValue = 1;
+            }
+            const tags = opts.tags.filter((tag) => tag.probability + tagValue >= 1);
+            const tagIndex = Math.round((tags.length - 1) * Math.random());
+            const tag = tags[tagIndex];
+
+            // Add a tag if necessary
+            if (tag)
+            {
+                // Get start and end index so that they don't overlap
+                const startIndex = Math.round(tagId * opts.wordsPerTag
+                    + (Math.random() * opts.maxTagOffset)
+                    + (tagId * opts.minWordsBetweenTags));
+                const endIndex = Math.round(startIndex
+                    + opts.minWordsInTag
+                    + ((opts.maxWordsInTag - opts.minWordsInTag) * Math.random()))
+                    - 1;
+
+                // Prepare attributes
+                let attributes = '';
+                if (tag.attributes)
+                {
+                    for (const attributeName in tag.attributes)
+                    {
+                        attributes += ' ' + attributeName + '="' + tag.attributes[attributeName] + '"';
+                    }
+                }
+
+                // Add to words
+                const tagName = Array.isArray(tag.name)
+                    ? tag.name[Math.round((tag.name.length - 1) * Math.random())]
+                    : tag.name;
+                words[startIndex] = '<' + tagName + attributes + '>' + words[startIndex];
+                words[endIndex] = words[endIndex] + '</' + tagName + '>';
+
+                // We got one, coach
+                addedTags++;
+            }
+        }
+        result += '<p>' + words.join(' ').trim() + '</p>\n';
+    }
+
+    return result;
+}
+
 
 /**
  * Exports
@@ -217,3 +337,4 @@ module.exports.shortenLeft = shortenLeft;
 module.exports.uppercaseFirst = uppercaseFirst;
 module.exports.activateEnvironment = activateEnvironment;
 module.exports.trimSlashesLeft = trimSlashesLeft;
+module.exports.htmlify = htmlify;
