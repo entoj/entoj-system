@@ -30,7 +30,7 @@ describe(AssetUrlFilter.className, function()
             expect(testee('/base/assets/boo.svg')).to.be.equal('/base/assets/boo.svg');
         });
 
-        it('should allow to cunfigure the base url', function()
+        it('should allow to configure the base url', function()
         {
             const testee = new AssetUrlFilter('/base/assets').filter();
             expect(testee('boo.svg')).to.be.equal('/base/assets/boo.svg');

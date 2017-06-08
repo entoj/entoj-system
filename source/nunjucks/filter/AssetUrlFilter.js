@@ -5,7 +5,7 @@
  * @ignore
  */
 const Filter = require('./Filter.js').Filter;
-const pathes = require('../../utils/pathes.js');
+const urls = require('../../utils/urls.js');
 
 
 /**
@@ -42,7 +42,7 @@ class AssetUrlFilter extends Filter
      */
     static get className()
     {
-        return 'local.nunjucks/AssetUrlFilter';
+        return 'nunjucks.filter/AssetUrlFilter';
     }
 
 
@@ -54,7 +54,7 @@ class AssetUrlFilter extends Filter
         const scope = this;
         return function(value)
         {
-            return pathes.concat(scope.baseUrl, value);
+            return urls.concat(scope.baseUrl, value);
         };
     }
 }
