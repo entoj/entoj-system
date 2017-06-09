@@ -4,6 +4,7 @@
  * Requirements
  */
 const Environment = require(ES_SOURCE + '/nunjucks/Environment.js').Environment;
+const Filters = require(ES_SOURCE + '/nunjucks/filter/index.js');
 const baseSpec = require(ES_TEST + '/BaseShared.js').spec;
 const projectFixture = require(ES_FIXTURES + '/project/index.js');
 
@@ -36,7 +37,9 @@ describe(Environment.className, function()
     {
         return new Environment(global.fixtures.entitiesRepository,
             global.fixtures.buildConfiguration,
-            undefined,
+            [
+                new Filters.ModuleClassesFilter()
+            ],
             { basePath: basePath });
     }
 
