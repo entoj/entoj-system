@@ -5,6 +5,7 @@
  * @ignore
  */
 const Filter = require('./Filter.js').Filter;
+const isPlainObject = require('lodash.isplainobject');
 
 
 /**
@@ -22,10 +23,21 @@ class ImageUrlFilter extends Filter
     /**
      * @inheritDocs
      */
-    constructor()
+    constructor(dataProperties)
     {
         super();
         this._name = 'imageUrl';
+
+        // Assign options
+        this.dataProperties = dataProperties || [];
+    }
+
+    /**
+     * @inheritDocs
+     */
+    static get injections()
+    {
+        return { 'parameters': ['nunjucks.filter/ImageUrlFilter.dataProperties'] };
     }
 
 
@@ -43,10 +55,25 @@ class ImageUrlFilter extends Filter
      */
     filter()
     {
+        const scope = this;
         return function(value, width, height, force)
         {
             // Get image name
-            const id = value ? value : '*.png';
+            let id = '*.png';
+            if (typeof value === 'string')
+            {
+                id=value;
+            }
+            if (isPlainObject(value))
+            {
+                for (const dataProperty of scope.dataProperties)
+                {
+                    if (typeof value[dataProperty] === 'string')
+                    {
+                        id=value[dataProperty];
+                    }
+                }
+            }
 
             // Just serve if no valid sizing
             if ((!width && !height) ||

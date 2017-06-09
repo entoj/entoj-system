@@ -17,7 +17,7 @@ const isPlainObject = require('lodash.isplainobject');
 class LinkUrlFilter extends Filter
 {
     /**
-     * @inheritDoc
+     * @inheritDocs
      */
     constructor(dataProperties)
     {
@@ -30,7 +30,7 @@ class LinkUrlFilter extends Filter
 
 
     /**
-     * @inheritDoc
+     * @inheritDocs
      */
     static get injections()
     {
@@ -39,7 +39,7 @@ class LinkUrlFilter extends Filter
 
 
     /**
-     * @inheritDoc
+     * @inheritDocs
      */
     static get className()
     {

@@ -231,9 +231,11 @@ function createDynamic(configuration)
     result.pathesConfiguration = result.context.di.create(PathesConfiguration);
     result.sitesRepository = result.context.di.create(SitesRepository);
     result.entitiesRepository = result.context.di.create(EntitiesRepository);
+    result.viewModelRepository = result.context.di.create(ViewModelRepository);
     result.globalRepository = result.context.di.create(GlobalRepository);
     result.buildConfiguration = result.context.di.create(BuildConfiguration);
     result.urlsConfiguration = result.context.di.create(UrlsConfiguration);
+    result.globalConfiguration = result.context.di.create(GlobalConfiguration);
 
     // create shortcuts
     result.siteBase = synchronize.execute(result.sitesRepository, 'findBy', ['name', 'Base']);

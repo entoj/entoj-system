@@ -10,7 +10,7 @@ const merge = require('lodash.merge');
 /**
  * Trims a multiline string
  *
- * @memberOf utils
+ * @memberOf utils.string
  * @param {String} content
  */
 function trimMultiline(content, skipSections)
@@ -60,7 +60,7 @@ function trimMultiline(content, skipSections)
 /**
  * Shortens a string
  *
- * @memberOf utils
+ * @memberOf utils.string
  * @param {String} content
  */
 function shortenMiddle(content, length)
@@ -90,7 +90,7 @@ function shortenMiddle(content, length)
 /**
  * Shortens a string
  *
- * @memberOf utils
+ * @memberOf utils.string
  * @param {String} content
  */
 function shortenLeft(content, length)
@@ -115,7 +115,7 @@ function shortenLeft(content, length)
 /**
  * Uppercases the frist character of a string
  *
- * @memberOf utils
+ * @memberOf utils.string
  * @param {String} content
  */
 function uppercaseFirst(content)
@@ -127,7 +127,7 @@ function uppercaseFirst(content)
 /**
  * Uppercases the frist character of a string
  *
- * @memberOf utils
+ * @memberOf utils.string
  * @param {String} content
  * @param {String} environment
  */
@@ -196,7 +196,7 @@ function activateEnvironment(content, environment)
 /**
  * Trims any slashes from the left side of a stirng
  *
- * @memberOf utils
+ * @memberOf utils.string
  * @param {String} value
  */
 function trimSlashesLeft(value)
@@ -213,7 +213,14 @@ function trimSlashesLeft(value)
     return result;
 }
 
+
 /**
+ * Adds <p> around paragraphs and add some inline
+ * tags to that paragraphs.
+ *
+ * @memberOf utils.string
+ * @param {String} value
+ * @param {Object} [options]
  */
 function htmlify(value, options)
 {

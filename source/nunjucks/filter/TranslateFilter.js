@@ -51,11 +51,6 @@ class TranslateFilter extends Filter
         return this._translations;
     }
 
-    set translations(value)
-    {
-        this._translations = value || {};
-    }
-
 
     /**
      * @inheritDoc

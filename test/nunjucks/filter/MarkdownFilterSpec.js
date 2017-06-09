@@ -29,5 +29,11 @@ describe(MarkdownFilter.className, function()
             expect(testee()).to.be.equal('');
             expect(testee('')).to.be.equal('');
         });
+
+        it('should return html when given a string', function()
+        {
+            const testee = new MarkdownFilter().filter();
+            expect(testee('# Headline')).to.be.equal('<h1>Headline</h1>');
+        });
     });
 });

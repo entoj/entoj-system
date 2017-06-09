@@ -4,13 +4,15 @@
  * Requirements
  * @ignore
  */
-const BaseFilter = require('./BaseFilter.js').BaseFilter;
+const Filter = require('./Filter.js').Filter;
+const striptags = require('striptags');
+const htmlify = require('../../utils/string.js').htmlify;
 
 
 /**
  * @memberOf nunjucks.filter
  */
-class MarkupFilter extends BaseFilter
+class MarkupFilter extends Filter
 {
     /**
      * @inheritDoc
@@ -32,21 +34,22 @@ class MarkupFilter extends BaseFilter
 
 
     /**
-     * @inheritDoc
+     * @inheritDocs
      */
     filter()
     {
         return function (value, style)
         {
-            if (style == 'plain' || style == 'tkPlain')
+            const result = value || '';
+            if (style == 'plain')
             {
-                return value;
+                return striptags(result);
             }
-            if (value && value.indexOf('<') > -1)
+            if (result.indexOf('<') > -1)
             {
-                return value;
+                return result;
             }
-            return '<p>' + (value || '') + '</p>';
+            return htmlify(result);
         };
     }
 }
