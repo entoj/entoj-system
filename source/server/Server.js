@@ -5,8 +5,7 @@
  * @ignore
  */
 const Base = require('../Base.js').Base;
-const BaseRoute = require('./routes/BaseRoute.js').BaseRoute;
-const ModelSynchronizer = require('../watch/ModelSynchronizer.js').ModelSynchronizer;
+const Route = require('./route/Route.js').Route;
 const CliLogger = require('../cli/CliLogger.js').CliLogger;
 const assertParameter = require('../utils/assert.js').assertParameter;
 const express = require('express');
@@ -19,17 +18,20 @@ const bodyParser = require('body-parser');
 
 
 /**
+ * Provides a express based server with support for http2
+ *
+ * @class
  * @memberOf server
+ * @extends Base
  */
 class Server extends Base
 {
     /**
      * @param {CliLogger} cliLogger
-     * @param {ModelSynchronizer} modelSynchronizer
      * @param {object} [routes]
      * @param {object} [options]
      */
-    constructor(cliLogger, modelSynchronizer, routes, options)
+    constructor(cliLogger, routes, options)
     {
         super();
 
@@ -39,7 +41,6 @@ class Server extends Base
         // Add initial values
         const opts = options || {};
         this._cliLogger = cliLogger;
-        this._modelSynchronizer = modelSynchronizer;
         this._http2 = opts.http2 || false;
         this._port = opts.port || 3000;
         this._express = express();
@@ -48,14 +49,14 @@ class Server extends Base
         this._sslCert = opts.sslCert || (__dirname + '/localhost.crt');
 
         // Add settings
-        this._express.use(compression());
-        this._express.use(bodyParser.json());
+        this.express.use(compression());
+        this.express.use(bodyParser.json());
 
         // Add basic auth
         if (opts.authentication === true)
         {
             const credentials = opts.credentials || { username: 'entoj', password: 'entoj' };
-            this._express.use(basicAuth(credentials.username, credentials.password));
+            this.express.use(basicAuth(credentials.username, credentials.password));
         }
 
         // Add routes
@@ -74,7 +75,7 @@ class Server extends Base
      */
     static get injections()
     {
-        return { 'parameters': [CliLogger, ModelSynchronizer, 'server/Server.routes', 'server/Server.options'] };
+        return { 'parameters': [CliLogger, 'server/Server.routes', 'server/Server.options'] };
     }
 
 
@@ -88,11 +89,29 @@ class Server extends Base
 
 
     /**
+     * @let {cli.CliLogger}
+     */
+    get cliLogger()
+    {
+        return this._cliLogger;
+    }
+
+
+    /**
      * @let {String}
      */
     get port()
     {
         return this._port;
+    }
+
+
+    /**
+     * @let {String}
+     */
+    get http2()
+    {
+        return this._http2;
     }
 
 
@@ -120,10 +139,10 @@ class Server extends Base
     addRoute(route)
     {
         // Check params
-        assertParameter(this, 'route', route, true, BaseRoute);
+        assertParameter(this, 'route', route, true, Route);
 
         // Register
-        this._routes.push(route);
+        this.routes.push(route);
         route.register(this.express);
     }
 
@@ -136,7 +155,7 @@ class Server extends Base
         const scope = this;
         return new Promise(function(resolve, reject)
         {
-            if (scope._http2)
+            if (scope.http2)
             {
                 const options =
                 {
@@ -145,29 +164,15 @@ class Server extends Base
                 };
                 const work = scope._cliLogger.work('Starting <http/2> server at <https://localhost:' + scope.port + '>');
                 scope._server = spdy.createServer(options, scope.express).listen(scope.port);
-                scope._cliLogger.end(work);
+                scope.cliLogger.end(work);
             }
             else
             {
                 const work = scope._cliLogger.info('Starting <http> server at <http://localhost:' + scope.port + '>');
                 scope._server = http.createServer(scope.express).listen(scope.port);
-                scope._cliLogger.end(work);
+                scope.cliLogger.end(work);
             }
-
-            if (scope._modelSynchronizer)
-            {
-                const startSyncer = scope._cliLogger.info('Starting <Synchronizer>');
-                scope._modelSynchronizer.start()
-                    .then(function()
-                    {
-                        scope._cliLogger.end(startSyncer);
-                        resolve(scope._server);
-                    });
-            }
-            else
-            {
-                resolve(scope._server);
-            }
+            resolve(scope._server);
         });
     }
 
@@ -190,6 +195,7 @@ class Server extends Base
             }
             else
             {
+                /* istanbul ignore next */
                 resolve(false);
             }
         });
