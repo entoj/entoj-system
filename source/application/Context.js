@@ -319,7 +319,7 @@ class Context extends Base
             for (const command of this._configuration.commands)
             {
                 const commandType = (typeof command === 'function') ? command : command.type;
-                this.mapType(commandType, false, command, { linters: this.createInstances.bind(this) });
+                this.mapType(commandType, false, command);
                 commands.push(commandType);
             }
             this._di.map('application/Runner.commands', commands);
