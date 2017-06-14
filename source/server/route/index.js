@@ -1,10 +1,10 @@
 
 /**
- * @namespace server.routes
+ * @namespace server.route
  */
  module.exports =
  {
-     BaseRoute: require('./BaseRoute.js').BaseRoute,
-     PagesRoute: require('./PagesRoute.js').PagesRoute,
-     SitesRoute: require('./SitesRoute.js').SitesRoute
+     Route: require('./Route.js').Route,
+     EntityTemplateRoute: require('./EntityTemplateRoute.js').EntityTemplateRoute,
+     StaticFileRoute: require('./StaticFileRoute.js').StaticFileRoute
  };
