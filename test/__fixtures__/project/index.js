@@ -12,6 +12,7 @@ const Entity = require(ES_SOURCE + '/model/entity/Entity.js').Entity;
 const EntityIdTemplate = require(ES_SOURCE + '/model/entity/EntityIdTemplate.js').EntityIdTemplate;
 const EntitiesRepository = require(ES_SOURCE + '/model/entity/EntitiesRepository.js').EntitiesRepository;
 const EntityCategoriesRepository = require(ES_SOURCE + '/model/entity/EntityCategoriesRepository.js').EntityCategoriesRepository;
+const FilesRepository = require(ES_SOURCE + '/model/file/FilesRepository.js').FilesRepository;
 const ViewModelRepository = require(ES_SOURCE + '/model/viewmodel/ViewModelRepository.js').ViewModelRepository;
 const PathesConfiguration = require(ES_SOURCE + '/model/configuration/PathesConfiguration.js').PathesConfiguration;
 const UrlsConfiguration = require(ES_SOURCE + '/model/configuration/UrlsConfiguration.js').UrlsConfiguration;
@@ -36,6 +37,7 @@ function createStatic(skipEntities)
 {
     const result = {};
 
+    result.pathToLibraries = testFixture.pathToLibraries;
     result.globalConfiguration = new GlobalConfiguration();
     result.buildConfiguration = new BuildConfiguration();
     result.pathesConfiguration = new PathesConfiguration(
@@ -228,11 +230,13 @@ function createDynamic(configuration)
     result.context = new Context(config);
 
     // create global instances
+    result.pathToLibraries = testFixture.pathToLibraries;
     result.pathesConfiguration = result.context.di.create(PathesConfiguration);
     result.sitesRepository = result.context.di.create(SitesRepository);
     result.entitiesRepository = result.context.di.create(EntitiesRepository);
     result.viewModelRepository = result.context.di.create(ViewModelRepository);
     result.globalRepository = result.context.di.create(GlobalRepository);
+    result.filesRepository = result.context.di.create(FilesRepository);
     result.buildConfiguration = result.context.di.create(BuildConfiguration);
     result.urlsConfiguration = result.context.di.create(UrlsConfiguration);
     result.globalConfiguration = result.context.di.create(GlobalConfiguration);
