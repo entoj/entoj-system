@@ -79,6 +79,15 @@ class Task extends Base
 
 
     /**
+     * @type cli.CliLogger
+     */
+    get cliLogger()
+    {
+        return this._cliLogger;
+    }
+
+
+    /**
      * The task type - can be one of
      * - Task.TRANSFORM
      * - Task.GENERATE
