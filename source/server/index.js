@@ -5,5 +5,5 @@
  module.exports =
  {
      Server: require('./Server.js').Server,
-     routes: require('./routes/index.js')
+     route: require('./route/index.js')
  };
