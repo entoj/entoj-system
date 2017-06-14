@@ -46,7 +46,7 @@ class EntityTemplateRoute extends Route
      */
     static get injections()
     {
-        return { 'parameters': [CliLogger, 'server.route/EntityTemplateRoute.options'] };
+        return { 'parameters': [CliLogger, UrlsConfiguration, Environment, 'server.route/EntityTemplateRoute.options'] };
     }
 
 
