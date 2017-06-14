@@ -22,7 +22,7 @@ class LinkUrlFilter extends Filter
     constructor(dataProperties)
     {
         super();
-        this._name = 'linkUrl';
+        this._name = ['linkUrl', 'link'];
 
         // Assign options
         this.dataProperties = dataProperties || [];
