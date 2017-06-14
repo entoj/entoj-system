@@ -16,6 +16,10 @@
     "async": "*",
     "basic-auth-connect": "*",
     "body-parser": "*",
+    "chai": "*",
+    "chai-string": "*",
+    "chai-subset": "*",
+    "chai-things": "*",
     "chalk": "*",
     "chokidar": "*",
     "co": "*",
@@ -56,28 +60,23 @@
     "through2": "*",
     "transliteration": "*",
     "vinyl": "*",
-    "xregexp": "*"
+    "xregexp": "*",
+    "sinon": "*",
+    "supertest": "*",
+    "entoj-test-fixture": "*"
   },
   "devDependencies": {
     "babel-core": "*",
     "babel-plugin-transform-runtime": "*",
     "babel-preset-es2015": "*",
     "babel-runtime": "*",
-    "chai": "*",
-    "chai-string": "*",
-    "chai-subset": "*",
-    "chai-things": "*",
     "coveralls": "*",
-    "fs-extra": "*",
     "git-changelog": "*",
     "ink-docstrap": "*",
     "istanbul": "*",
     "jsdoc": "*",
     "jspm": "*",
     "mocha": "*",
-    "sinon": "*",
-    "supertest": "*",
-    "eslint": "*",
-    "entoj-test-fixture": "*"
+    "eslint": "*"
   }
 }
