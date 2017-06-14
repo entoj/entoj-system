@@ -86,6 +86,7 @@ class Route extends Base
                 const extension = path.extname(request.path);
                 if (allowedExtensions.indexOf(extension) === -1)
                 {
+                    this.logger.debug('Extension not matching', request.path);
                     next();
                     return;
                 }
@@ -97,6 +98,7 @@ class Route extends Base
                 : basePath(request.path);
             if (!filename || !fs.existsSync(filename))
             {
+                this.logger.debug('File not found', request.path);
                 next();
                 return;
             }
