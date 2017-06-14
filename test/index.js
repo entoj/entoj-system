@@ -1,9 +1,20 @@
+/**
+ * Requirements
+ * @ignore
+ */
+const path = require('path');
 require('./configuration.js');
+
+/**
+ * Public API
+ * @ignore
+ */
 module.exports =
 {
     BaseShared: require('./BaseShared.js').spec,
     fixture:
     {
+        files: path.resolve('./__fixtures__/files'),
         project: require('./__fixtures__/project/index.js')
     },
     export:
@@ -18,6 +29,13 @@ module.exports =
         LinterShared: require('./linter/LinterShared.js').spec,
         FileLinterShared: require('./linter/FileLinterShared.js').spec
     },
+    model:
+    {
+        loader:
+        {
+            LoaderPluginShared: require('./model/loader/LoaderPluginShared.js').spec
+        }
+    },
     nunjucks:
     {
         FilterShared: require('./nunjucks/filter/FilterShared.js').spec
@@ -26,6 +44,10 @@ module.exports =
     {
         ParserShared: require('./parser/ParserShared.js').spec,
         FileParserShared: require('./parser/FileParserShared.js').spec
+    },
+    server:
+    {
+        RouteShared: require('./server/route/RouteShared.js').spec
     },
     task:
     {
