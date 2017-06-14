@@ -84,7 +84,6 @@ function spec(type, className, fixture, prepareParameters)
                 return promise;
             });
 
-
             it('should allow to specify a filename via options', function()
             {
                 const testee = createTestee(fixture.warningRules);
@@ -95,7 +94,6 @@ function spec(type, className, fixture, prepareParameters)
                 });
                 return promise;
             });
-
 
             it('should add the linter type to each message', function()
             {
