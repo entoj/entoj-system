@@ -147,8 +147,12 @@ class EntityTemplateRoute extends Route
      */
     register(express)
     {
-        super.register(express);
-        express.all('/:site/*', this.handleEntityTemplate.bind(this));
+        const promise = super.register(express);
+        promise.then(() =>
+        {
+            express.all('/:site/*', this.handleEntityTemplate.bind(this));
+        });
+        return promise;
     }
 }
 
