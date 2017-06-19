@@ -74,8 +74,12 @@ class StaticFileRoute extends Route
      */
     register(express)
     {
-        super.register(express);
-        this.addStaticFileHandler('*', this.basePath, this.allowedExtensions);
+        const promise = super.register(express);
+        promise.then(() =>
+        {
+            this.addStaticFileHandler('*', this.basePath, this.allowedExtensions);
+        });
+        return promise;
     }
 }
 
