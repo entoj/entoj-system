@@ -33,23 +33,28 @@ const path = require('path');
 /**
  * Creates a complete static project fixture
  */
-function createStatic(skipEntities)
+function createStatic(options)
 {
+    const opts = options || {};
     const result = {};
 
     result.pathToLibraries = testFixture.pathToLibraries;
     result.globalConfiguration = new GlobalConfiguration();
     result.buildConfiguration = new BuildConfiguration();
     result.pathesConfiguration = new PathesConfiguration(
-        {
-            root: testFixture.pathToSites,
-            dataTemplate: testFixture.pathToData,
-            sitesTemplate: '${root}',
-            siteTemplate: '${sites}/${site.name.toLowerCase()}',
-            entityCategoryTemplate: '${sites}/${site.name.toLowerCase()}/${entityCategory.pluralName.toLowerCase()}',
-            entityIdTemplate: '${sites}/${site.name.toLowerCase()}/${entityCategory.pluralName.toLowerCase()}/${entityCategory.shortName}-${entityId.name}',
-            entityIdGlobalTemplate: '${sites}/${site.name.toLowerCase()}/${entityCategory.pluralName.toLowerCase()}'
-        });
+        merge(
+            {
+                root: testFixture.pathToSites,
+                dataTemplate: testFixture.pathToData,
+                sitesTemplate: '${root}',
+                siteTemplate: '${sites}/${site.name.toLowerCase()}',
+                entityCategoryTemplate: '${sites}/${site.name.toLowerCase()}/${entityCategory.pluralName.toLowerCase()}',
+                entityIdTemplate: '${sites}/${site.name.toLowerCase()}/${entityCategory.pluralName.toLowerCase()}/${entityCategory.shortName}-${entityId.name}',
+                entityIdGlobalTemplate: '${sites}/${site.name.toLowerCase()}/${entityCategory.pluralName.toLowerCase()}'
+            },
+            opts.pathesConfiguration
+        )
+    );
 
     result.categoryGlobal = new EntityCategory({ longName: 'Global', pluralName: 'Global', shortName: 'l', isGlobal: true });
     result.categoryElement = new EntityCategory({ longName: 'Element' });
@@ -80,6 +85,7 @@ function createStatic(skipEntities)
     result.urlsConfiguration = new UrlsConfiguration(result.sitesRepository, result.categoriesRepository, result.entitiesRepository,
         result.entityIdParser, result.pathesConfiguration);
     result.viewModelRepository = new ViewModelRepository(result.entitiesRepository, result.pathesConfiguration);
+    result.filesRepository = new FilesRepository(result.entitiesRepository);
 
     result.createEntity = function(idPath)
     {
@@ -89,7 +95,7 @@ function createStatic(skipEntities)
         return entity;
     };
 
-    if (!skipEntities)
+    if (opts.skipEntities !== true)
     {
         const addFiles = function(entity, site, globs, contentType, contentKind)
         {
