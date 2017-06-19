@@ -78,6 +78,7 @@ class Route extends Base
      */
     addStaticFileHandler(route, basePath, allowedExtensions)
     {
+        this.cliLogger.info('Adding static file route <' + route + '> searching files in <' + basePath + '>');
         const handler = (request, response, next) =>
         {
             // Check extension
@@ -116,10 +117,12 @@ class Route extends Base
      * Register the route on teh given espress instance
      *
      * @param {Express}
+     * @return {Promise}
      */
     register(express)
     {
         this._express = express;
+        return Promise.resolve();
     }
 }
 
