@@ -257,7 +257,7 @@ describe('utils/string', function()
                     units: 'paragraphs',
                     count: 1
                 });
-            expect(htmlify(lipsum)).to.match(/<[^p]+>.*<\/[^p]+>/);
+            expect(htmlify(lipsum)).to.match(/<[^p]{1}[^>]*>.*<\/[^p]+>/);
         });
 
         it('should allow to customize tag generation', function()
