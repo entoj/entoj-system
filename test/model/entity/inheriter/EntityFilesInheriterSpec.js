@@ -37,7 +37,7 @@ describe(EntityFilesInheriter.className, function()
             const aspect = new EntityAspect(global.fixtures.entityImage, global.fixtures.siteBase);
             const sites = [global.fixtures.siteBase];
             testee.inherit(sites, entity, aspect);
-            expect(aspect.files).to.have.length(10);
+            expect(aspect.files).to.have.length(12);
         });
     });
 });
