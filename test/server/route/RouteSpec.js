@@ -54,8 +54,8 @@ describe(Route.className, function()
             global.fixtures.server.start().then(function(server)
             {
                 request(server)
-                      .get('/base/global/js/base.js')
-                      .expect(200, done);
+                    .get('/base/global/js/base.js')
+                    .expect(200, done);
             });
         });
 
@@ -68,8 +68,8 @@ describe(Route.className, function()
             global.fixtures.server.start().then(function(server)
             {
                 request(server)
-                      .get('/base/global/js/base.js')
-                      .expect(404, done);
+                    .get('/base/global/js/base.js')
+                    .expect(404, done);
             });
         });
     });
