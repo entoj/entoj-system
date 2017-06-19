@@ -14,7 +14,7 @@ module.exports =
     BaseShared: require('./BaseShared.js').spec,
     fixture:
     {
-        files: path.resolve('./__fixtures__/files'),
+        files: path.join(__dirname, '/__fixtures__/files'),
         project: require('./__fixtures__/project/index.js')
     },
     export:
