@@ -33,7 +33,7 @@ function spec(type, className, prepareParameters, options)
     {
         global.fixtures = (options && options.createFixture)
             ? options.createFixture()
-            : projectFixture.createStatic(true);
+            : projectFixture.createStatic({ skipEntities: true });
     });
 
     // Create testee

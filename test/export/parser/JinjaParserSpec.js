@@ -24,7 +24,7 @@ describe(JinjaParser.className, function()
      */
     beforeEach(function()
     {
-        global.fixtures = projectFixture.createStatic(true);
+        global.fixtures = projectFixture.createStatic({ skipEntities: true });
     });
 
     parserSpec(JinjaParser, 'export.parser/JinjaParser', function(parameters)

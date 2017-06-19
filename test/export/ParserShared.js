@@ -24,7 +24,7 @@ function spec(type, className, prepareParameters)
      */
     beforeEach(function()
     {
-        global.fixtures = projectFixture.createStatic(true);
+        global.fixtures = projectFixture.createStatic({ skipEntities: true });
     });
 
     const createTestee = function()
