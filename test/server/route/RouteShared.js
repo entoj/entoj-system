@@ -7,6 +7,7 @@
 const Server = require(ES_SOURCE + '/server/Server.js').Server;
 const CliLogger = require(ES_SOURCE + '/cli/CliLogger.js').CliLogger;
 const baseSpec = require(ES_TEST + '/BaseShared.js').spec;
+const express = require('express');
 
 
 /**
@@ -43,6 +44,29 @@ function spec(type, className, prepareParameters)
         const cliLogger = new CliLogger('', { muted: true });
         global.fixtures.server = new Server(cliLogger, routes);
     };
+
+    // create a testee
+    const createTestee = function()
+    {
+        let parameters = Array.from(arguments);
+        if (prepareParameters)
+        {
+            parameters = prepareParameters(parameters);
+        }
+        return new type(...parameters);
+    };
+
+    /**
+     * Route Tests
+     */
+    describe('#register', function()
+    {
+        it('should return a promise', function()
+        {
+            const testee = createTestee();
+            expect(testee.register(express())).to.be.instanceof(Promise);
+        });
+    });
 }
 
 /**
