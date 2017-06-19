@@ -134,7 +134,8 @@ class Server extends Base
 
 
     /**
-     * @param {server.routes.BaseRoute}
+     * @param {server.route.Route}
+     * @return {Promise}
      */
     addRoute(route)
     {
@@ -143,7 +144,7 @@ class Server extends Base
 
         // Register
         this.routes.push(route);
-        route.register(this.express);
+        return route.register(this.express);
     }
 
 
