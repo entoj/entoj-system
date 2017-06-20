@@ -10,7 +10,7 @@ const Entity = require('../../entity/Entity.js').Entity;
 const Site = require('../../site/Site.js').Site;
 const assertParameter = require('../../../utils/assert.js').assertParameter;
 const co = require('co');
-const fs = require('fs-extra');
+const fs = require('co-fs-extra');
 
 /**
  * Reads the entity specific configuration file

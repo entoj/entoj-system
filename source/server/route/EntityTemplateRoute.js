@@ -10,7 +10,7 @@ const UrlsConfiguration = require('../../model/configuration/UrlsConfiguration.j
 const Environment = require('../../nunjucks/Environment.js').Environment;
 const assertParameter = require('../../utils/assert.js').assertParameter;
 const co = require('co');
-const fs = require('fs-extra');
+const fs = require('co-fs-extra');
 
 
 /**

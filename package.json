@@ -30,7 +30,7 @@
     "docblock-parser": "*",
     "es6-template-strings": "*",
     "express": "*",
-    "fs-extra": "*",
+    "co-fs-extra": "*",
     "glob": "*",
     "gulp": "gulpjs/gulp.git#4.0",
     "gulp-zip": "*",
