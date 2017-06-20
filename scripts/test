@@ -32,4 +32,4 @@ if [ "$CODE_COVERAGE" == "true" ]
 fi
 
 # Doit
-$RUNNER $(find test -name '*Spec.js') "$@"
+$RUNNER "$@" "./test/**/nunjucks/TemplateSpec.js"

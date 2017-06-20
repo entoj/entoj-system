@@ -24,7 +24,6 @@ const File = require(ES_SOURCE + '/model/file/File.js').File;
 const ContentType = require(ES_SOURCE + '/model/ContentType.js').ContentType;
 const Context = require(ES_SOURCE + '/application/Context.js').Context;
 const glob = require(ES_SOURCE + '/utils/glob.js');
-const waitForResolved = require(ES_SOURCE + '/utils/synchronize.js').waitForResolved;
 const clone = require('lodash.clone');
 const merge = require('lodash.merge');
 const path = require('path');
@@ -168,8 +167,7 @@ function createStatic(options)
         return result;
     });
 
-    const result = waitForResolved(promise);
-    return result;
+    return promise;
 }
 
 
@@ -275,8 +273,7 @@ function createDynamic(configuration)
         return result;
     });
 
-    const result = waitForResolved(promise);
-    return result;
+    return promise;
 }
 
 

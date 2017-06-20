@@ -5,7 +5,6 @@
  */
 const EntityAspect = require(ES_SOURCE + '/model/entity/EntityAspect.js').EntityAspect;
 const Site = require(ES_SOURCE + '/model/site/Site.js').Site;
-const execute = require(ES_SOURCE + '/utils/synchronize.js').execute;
 const valueObjectSpec = require('../ValueObjectShared.js').spec;
 const projectFixture = require(ES_FIXTURES + '/project/index.js');
 const baseSpec = require('../../BaseShared.js').spec;

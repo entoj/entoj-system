@@ -60,3 +60,9 @@ logger.setLevel(level);
  * Configure fixtures
  */
 global.fixtures = {};
+
+
+/**
+ * Show unhandled
+ */
+process.on('unhandledRejection', r => console.log(r));

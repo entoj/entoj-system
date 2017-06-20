@@ -5,6 +5,8 @@
  * @ignore
  */
 const Base = require(ES_SOURCE + '/Base.js').Base;
+const waitForResolved = require(ES_SOURCE + '/utils/synchronize.js').waitForResolved;
+const co = require('co');
 
 
 /**
@@ -19,7 +21,7 @@ function spec(type, className, createInstance)
         {
             return createInstance();
         }
-        return new type();
+        return Promise.resolve(new type());
     };
 
 
@@ -30,7 +32,7 @@ function spec(type, className, createInstance)
     spec.defaultValue = function(value, defaulValue)
     {
         return (typeof value === 'undefined') ? defaulValue : value;
-    }
+    };
 
 
     /**
@@ -42,9 +44,9 @@ function spec(type, className, createInstance)
      */
     spec.assertProperty = function(testee, name, value, defaulValue)
     {
-        const prefix = testee instanceof Base ? '.' : '#';
+        const instance = waitForResolved(testee);
+        const prefix = instance instanceof Base ? '.' : '#';
         const names = Array.isArray(name) ? name : [name];
-
         for (const propertyName of names)
         {
             describe(prefix + propertyName, function()
@@ -54,7 +56,7 @@ function spec(type, className, createInstance)
                 {
                     it('should exist', function()
                     {
-                        expect(testee[propertyName]).to.be.ok;
+                        expect(instance[propertyName]).to.be.ok;
                     });
                 }
 
@@ -62,14 +64,14 @@ function spec(type, className, createInstance)
                 {
                     it('should be of type ' + defaulValue.className, function()
                     {
-                        expect(testee[propertyName]).to.be.instanceof(defaulValue);
+                        expect(instance[propertyName]).to.be.instanceof(defaulValue);
                     });
                 }
                 else if (typeof defaulValue !== 'undefined')
                 {
                     it('should have a default value', function()
                     {
-                        expect(testee[propertyName]).to.be.deep.equal(defaulValue);
+                        expect(instance[propertyName]).to.be.deep.equal(defaulValue);
                     });
                 }
 
@@ -77,16 +79,15 @@ function spec(type, className, createInstance)
                 {
                     it('should allow to read & write a value', function()
                     {
-                        testee[propertyName] = value;
-                        expect(testee[propertyName]).to.be.deep.equal(value);
+                        instance[propertyName] = value;
+                        expect(instance[propertyName]).to.be.deep.equal(value);
                     });
                 }
                 else
                 {
                     it('should be readonly', function()
                     {
-                        expect(() => testee[propertyName] = value).to.throw();
-
+                        expect(() => instance[propertyName] = value).to.throw();
                     });
                 }
             });
@@ -118,8 +119,12 @@ function spec(type, className, createInstance)
     {
         it('should return the namespaced class name', function()
         {
-            const testee = createTestee();
-            expect(testee.className).to.be.equal(className);
+            const promise = co(function *()
+            {
+                const testee = yield createTestee();
+                expect(testee.className).to.be.equal(className);
+            });
+            return promise;
         });
     });
 
@@ -128,11 +133,15 @@ function spec(type, className, createInstance)
     {
         it('should return a unique instance id', function()
         {
-            const testee = createTestee();
-            const other = createTestee();
-            expect(testee.instanceId).to.be.ok;
-            expect(other.instanceId).to.be.ok;
-            expect(testee.instanceId).to.be.not.equal(other.instanceId);
+            const promise = co(function *()
+            {
+                const testee = yield createTestee();
+                const other = yield createTestee();
+                expect(testee.instanceId).to.be.ok;
+                expect(other.instanceId).to.be.ok;
+                expect(testee.instanceId).to.be.not.equal(other.instanceId);
+            });
+            return promise;
         });
     });
 
@@ -141,8 +150,12 @@ function spec(type, className, createInstance)
     {
         it('should return a intel logger instance', function()
         {
-            const testee = createTestee();
-            expect(testee.logger).to.be.ok;
+            const promise = co(function *()
+            {
+                const testee = yield createTestee();
+                expect(testee.logger).to.be.ok;
+            });
+            return promise;
         });
     });
 
@@ -151,8 +164,12 @@ function spec(type, className, createInstance)
     {
         it('should return a string representation that contains the class name', function()
         {
-            const testee = createTestee();
-            expect(testee.toString()).to.contain(className);
+            const promise = co(function *()
+            {
+                const testee = yield createTestee();
+                expect(testee.toString()).to.contain(className);
+            });
+            return promise;
         });
     });
 }
