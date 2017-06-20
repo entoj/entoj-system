@@ -3,6 +3,7 @@
  */
 const EntityId = require(ES_SOURCE + '/model/entity/EntityId.js').EntityId;
 const MissingArgumentError = require(ES_SOURCE + '/error/MissingArgumentError.js').MissingArgumentError;
+const execute = require(ES_SOURCE + '/utils/synchronize.js').execute;
 const baseSpec = require(ES_TEST + '/BaseShared.js').spec;
 const projectFixture = require(ES_FIXTURES + '/project/index.js');
 
@@ -16,6 +17,7 @@ describe(EntityId.className, function()
      */
     baseSpec(EntityId, 'model.entity/EntityId', function(parameters)
     {
+        global.fixtures = projectFixture.createStatic();
         parameters.unshift(global.fixtures.entityIdTemplate);
         parameters.unshift(undefined);
         parameters.unshift(undefined);
@@ -28,16 +30,20 @@ describe(EntityId.className, function()
     /**
      * EntityId Test
      */
-    beforeEach(function()
+    beforeEach(function(done)
     {
-        global.fixtures = projectFixture.createStatic();
+        projectFixture.createStatic()
+            .then((fixture) =>
+            {
+                global.fixtures = fixture;
+                done();
+            });
     });
 
 
     // Simple properties
     const createTestee = function()
     {
-        /** @fix this is ugly af */
         global.fixtures = projectFixture.createStatic();
         return new EntityId(global.fixtures.categoryElement, 'Button', 1, global.fixtures.siteBase, global.fixtures.entityIdTemplate);
     };
@@ -47,6 +53,7 @@ describe(EntityId.className, function()
     baseSpec.assertProperty(createTestee(), ['name'], 'Knopf', 'Button');
     baseSpec.assertProperty(createTestee(), ['idString'], undefined, 'e-button');
     baseSpec.assertProperty(createTestee(), ['pathString'], undefined, '/base/elements/e-button');
+
 
     describe('#constructor', function()
     {
@@ -110,16 +117,6 @@ describe(EntityId.className, function()
             const testee = new EntityId(global.fixtures.categoryGlobal, undefined, undefined, global.fixtures.siteBase, global.fixtures.entityIdTemplate);
             expect(testee.asString(EntityId.ID)).to.be.equal('global');
             expect(testee.asString(EntityId.PATH)).to.be.equal('/base/global');
-        });
-    });
-
-
-    describe('#toString', function()
-    {
-        it('should return a string representation that reflects its state', function()
-        {
-            const testee = new EntityId(global.fixtures.categoryElement, 'Button', 1, global.fixtures.siteBase, global.fixtures.entityIdTemplate);
-            expect(testee.toString()).to.be.equal('[model.entity/EntityId Element Button]');
         });
     });
 });

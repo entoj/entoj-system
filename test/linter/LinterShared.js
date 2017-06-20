@@ -10,26 +10,33 @@ const baseSpec = require(ES_TEST + '/BaseShared.js').spec;
 /**
  * Shared Linter spec
  */
-function spec(type, className, fixture, prepareParameters)
+function spec(type, className, fixture, createInstance)
 {
+    const createTestee = function(args)
+    {
+        // Defer?
+        if (createInstance)
+        {
+            return createInstance(args);
+        }
+
+        // Instanciate
+        args = args || {};
+        const params = [];
+        params.push(args.rules || {});
+        return new type(...params);
+    };
+
+
     /**
      * Base Test
      */
-    baseSpec(type, className);
+    baseSpec(type, className, createTestee);
+
 
     /**
      * Linter Test
      */
-    const createTestee = function()
-    {
-        let parameters = Array.from(arguments);
-        if (prepareParameters)
-        {
-            parameters = prepareParameters(parameters);
-        }
-        return new type(...parameters);
-    };
-
     describe('#lint()', function()
     {
         it('should return a promise', function()
@@ -73,7 +80,7 @@ function spec(type, className, fixture, prepareParameters)
         {
             it('should apply the rules configured via the constructor', function()
             {
-                const testee = createTestee(fixture.warningRules);
+                const testee = createTestee({ rules: fixture.warningRules });
                 const promise = testee.lint(fixture.source).then(function(result)
                 {
                     expect(result.success).to.be.false;
@@ -86,7 +93,7 @@ function spec(type, className, fixture, prepareParameters)
 
             it('should allow to specify a filename via options', function()
             {
-                const testee = createTestee(fixture.warningRules);
+                const testee = createTestee({ rules: fixture.warningRules });
                 const promise = testee.lint(fixture.source, { filename: 'filename.ext' }).then(function(result)
                 {
                     expect(result.messages.length).to.be.above(0);
@@ -97,7 +104,7 @@ function spec(type, className, fixture, prepareParameters)
 
             it('should add the linter type to each message', function()
             {
-                const testee = createTestee(fixture.warningRules);
+                const testee = createTestee({ rules: fixture.warningRules });
                 const promise = testee.lint(fixture.source).then(function(result)
                 {
                     expect(result.messages.length).to.be.above(0);

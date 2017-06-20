@@ -28,9 +28,14 @@ function spec(type, className, prepareParameters)
     /**
      * Configuration Test
      */
-    beforeEach(function()
+    beforeEach(function(done)
     {
-        global.fixtures = projectFixture.createStatic({ skipEntities: true });
+        projectFixture.createStatic({ skipEntities: true })
+            .then((fixture) =>
+            {
+                global.fixtures = fixture;
+                done();
+            });
     });
 
 

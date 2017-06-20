@@ -12,7 +12,7 @@ const assertParameter = require('../../utils/assert.js').assertParameter;
 
 
 /**
- *
+ * @memberOf model.entity
  */
 class EntityId extends Base
 {

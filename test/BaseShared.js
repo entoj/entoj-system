@@ -10,17 +10,27 @@ const Base = require(ES_SOURCE + '/Base.js').Base;
 /**
  * Spec
  */
-function spec(type, className, prepareParameters)
+function spec(type, className, createInstance)
 {
+    // Creates a fully initialized test subject
     const createTestee = function()
     {
-        let parameters = Array.from(arguments);
-        if (prepareParameters)
+        if (createInstance)
         {
-            parameters = prepareParameters(parameters);
+            return createInstance();
         }
-        return new type(...parameters);
+        return new type();
     };
+
+
+    /**
+     * @param  {Mixed} value
+     * @param  {Mixed} defaulValue
+     */
+    spec.defaultValue = function(value, defaulValue)
+    {
+        return (typeof value === 'undefined') ? defaulValue : value;
+    }
 
 
     /**

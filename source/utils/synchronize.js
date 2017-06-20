@@ -10,6 +10,25 @@ const Base = require('../Base.js').Base;
 
 /**
  * @memberOf utils
+ * @param {Promise} promise
+ * @returns {*}
+ */
+function waitForResolved(promise)
+{
+    let done = false;
+    let result = undefined;
+    promise.then(function(data)
+    {
+        result = data;
+        done = true;
+    });
+    deasync.loopWhile(() => !done);
+    return result;
+}
+
+
+/**
+ * @memberOf utils
  * @param {Object} scope
  * @param {String} method
  * @param {Array} parameters
@@ -109,5 +128,6 @@ function synchronize(target)
  * Exports
  * @ignore
  */
+module.exports.waitForResolved = waitForResolved;
 module.exports.execute = execute;
 module.exports.synchronize = synchronize;
