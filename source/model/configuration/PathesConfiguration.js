@@ -14,6 +14,7 @@ const EntityAspect = require('../entity/EntityAspect.js').EntityAspect;
 const Site = require('../site/Site.js').Site;
 const assertParameter = require('../../utils/assert.js').assertParameter;
 const shortenMiddle = require('../../utils/string.js').shortenMiddle;
+const trimSlashesLeft = require('../../utils/string.js').trimSlashesLeft;
 require('../../utils/prototypes.js');
 
 
@@ -231,6 +232,19 @@ class PathesConfiguration extends Base
         }
 
         return Promise.resolve(false);
+    }
+
+
+    /**
+     * Makes the path relative to sites
+     *
+     * @param {string} pth
+     * @returns {Promise.<string>}
+     */
+    relativeToSites(pth)
+    {
+        const result = trimSlashesLeft(path.resolve(pth.replace('file://', '')).replace(this.root, ''));
+        return Promise.resolve(result);
     }
 
 
