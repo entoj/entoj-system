@@ -32,6 +32,14 @@ Lints all source files
 npm run lint
 ```
 
+
+# Todos
+
+## Rename BuildConfiguration to EnvironmentConfiguration
+## Centralize error handling
+
+
+
 ---
 
 ### Licence
