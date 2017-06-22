@@ -5,6 +5,7 @@
  * @ignore
  */
 const testFixture = require('entoj-test-fixture');
+const CliLogger = require(ES_SOURCE + '/cli/CliLogger.js').CliLogger;
 const EntityCategory = require(ES_SOURCE + '/model/entity/EntityCategory.js').EntityCategory;
 const Site = require(ES_SOURCE + '/model/site/Site.js').Site;
 const SitesRepository = require(ES_SOURCE + '/model/site/SitesRepository.js').SitesRepository;
@@ -235,6 +236,7 @@ function createDynamic(configuration)
     // create context
     const result = {};
     result.context = new Context(config);
+    result.context.di.map('cli/CliLogger.options', { muted: true });
 
     // create global instances
     result.pathToLibraries = testFixture.pathToLibraries;
@@ -247,6 +249,7 @@ function createDynamic(configuration)
     result.buildConfiguration = result.context.di.create(BuildConfiguration);
     result.urlsConfiguration = result.context.di.create(UrlsConfiguration);
     result.globalConfiguration = result.context.di.create(GlobalConfiguration);
+    result.cliLogger = result.context.di.create(CliLogger);
 
     // create shortcuts
     result.siteBase = synchronize.execute(result.sitesRepository, 'findBy', ['name', 'Base']);
