@@ -17,6 +17,10 @@ module.exports =
         files: path.join(__dirname, '/__fixtures__/files'),
         project: require('./__fixtures__/project/index.js')
     },
+    command:
+    {
+        CommandShared: require('./command/CommandShared.js').spec
+    },
     export:
     {
         ConfigurationShared: require('./export/ConfigurationShared.js').spec,
