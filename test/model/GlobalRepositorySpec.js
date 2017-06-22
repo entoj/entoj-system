@@ -136,7 +136,7 @@ describe(GlobalRepository.className, function()
             const promise = testee.resolveEntities('*').then(function(result)
             {
                 expect(result).to.be.ok;
-                expect(result).to.have.length(8);
+                expect(result).to.have.length(9);
                 expect(result[0]).to.be.instanceof(EntityAspect);
             });
             return promise;
@@ -148,7 +148,7 @@ describe(GlobalRepository.className, function()
             const promise = testee.resolveEntities('base').then(function(result)
             {
                 expect(result).to.be.ok;
-                expect(result).to.have.length(7);
+                expect(result).to.have.length(8);
                 expect(result[0]).to.be.instanceof(EntityAspect);
             });
             return promise;

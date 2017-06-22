@@ -64,7 +64,7 @@ describe(FilesRepository.className, function()
                 const testee = new FilesRepository(global.fixtures.entitiesRepository);
                 const files = yield testee.getBySite(global.fixtures.siteBase);
                 expect(files).to.be.instanceof(Array);
-                expect(files.length).to.be.equal(26);
+                expect(files.length).to.be.equal(36);
             });
             return promise;
         });
@@ -111,7 +111,7 @@ describe(FilesRepository.className, function()
                 const testee = new FilesRepository(global.fixtures.entitiesRepository);
                 const files = yield testee.getBySiteGrouped(global.fixtures.siteBase, false, 'groups.css', 'common');
                 expect(files.common).to.be.instanceof(Array);
-                expect(files.common).to.have.length(16);
+                expect(files.common).to.have.length(26);
                 expect(files.core).to.be.instanceof(Array);
                 expect(files.core).to.have.length(10);
             });

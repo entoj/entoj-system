@@ -52,18 +52,17 @@ describe(GlobalConfiguration.className, function()
 
     describe('#get()', function()
     {
-        it('should have default values for all settings', function()
+        it('should return configured values', function()
+        {
+            const testee = new GlobalConfiguration({ some: { path: 'common' }});
+            expect(testee.get('some.path')).to.be.equal('common');
+        });
+
+        it('should allow to specify a default value', function()
         {
             const testee = new GlobalConfiguration();
-            expect(testee.get('groups.default')).to.be.equal('common');
+            expect(testee.get('some.path', 'global')).to.be.equal('global');
         });
-
-        it('should allow to configure settings', function()
-        {
-            const testee = new GlobalConfiguration(global.fixtures.global);
-            expect(testee.get('groups.default')).to.be.equal('core');
-        });
-
 
         it('should throw an error for unknown settings', function()
         {

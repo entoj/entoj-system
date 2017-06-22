@@ -37,7 +37,7 @@ describe(EntitiesRepository.className, function()
             const promise = co(function *()
             {
                 const entities = yield testee.getBySite(global.fixtures.project.siteBase);
-                expect(entities).to.have.length(7);
+                expect(entities).to.have.length(8);
                 expect(entities.find(item => item.id.name == 'cta')).to.be.ok;
                 expect(entities.find(item => item.id.name == 'teaser')).to.be.ok;
             });
