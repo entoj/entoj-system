@@ -105,14 +105,9 @@ class GlobalConfiguration extends Base
     /**
      * @inheritDoc
      */
-    get(name)
+    get(name, defaultValue)
     {
-        const result = this._values.getByPath(name);
-        if (typeof result === 'undefined')
-        {
-            throw new Error('Could not find settings for ' + name);
-        }
-        return result;
+        return this._values.getByPath(name, defaultValue);
     }
 }
 
