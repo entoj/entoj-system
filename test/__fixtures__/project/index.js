@@ -141,6 +141,7 @@ function createStatic(options)
         result.entityStart = createEntityWithFiles('base/pages/p-start');
         result.entityBare = createEntityWithFiles('base/templates/t-bare');
 
+        result.entitiesRepository.add(result.entityGlobal);
         result.entitiesRepository.add(result.entityCta);
         result.entitiesRepository.add(result.entityHeadline);
         result.entitiesRepository.add(result.entityImage);
