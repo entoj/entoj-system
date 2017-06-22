@@ -107,7 +107,12 @@ class GlobalConfiguration extends Base
      */
     get(name, defaultValue)
     {
-        return this._values.getByPath(name, defaultValue);
+        const result = this._values.getByPath(name, defaultValue);
+        if (typeof result === 'undefined')
+        {
+            throw new Error('Could not find settings for ' + name);
+        }
+        return result;
     }
 }
 
