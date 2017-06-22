@@ -243,7 +243,7 @@ class PathesConfiguration extends Base
      */
     relativeToSites(pth)
     {
-        const result = trimSlashesLeft(path.resolve(pth.replace('file://', '')).replace(this.root, ''));
+        const result = trimSlashesLeft(path.resolve(pth.replace('file://', '')).replace(this.sites, ''));
         return Promise.resolve(result);
     }
 
