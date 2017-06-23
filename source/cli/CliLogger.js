@@ -147,7 +147,7 @@ class CliLogger extends Base
      */
     formatSection(message, isDone, hasError)
     {
-        const dashes = '-'.repeat(Math.max(0, 80 - strip(message).replace(/\<|\>/g, '').length));
+        const dashes = '-'.repeat(Math.max(0, 80 - strip(message).replace(/<|>/g, '').length));
         let prefix = '○ ';
         if (isDone)
         {
