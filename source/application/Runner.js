@@ -136,13 +136,12 @@ class Runner extends Base
                     }
                     isFirstAction = false;
 
-                    /*
                     let parameters = '';
                     if (action.options)
                     {
                         for (const option of action.options)
                         {
-                            if (option.type == 'optional' || option.type == 'named')
+                            if (option.optional)
                             {
                                 parameters+= chalk.dim('[');
                             }
@@ -151,22 +150,21 @@ class Runner extends Base
                                 parameters+= chalk.yellow('--');
                             }
                             parameters+= chalk.yellow(option.name);
-                            if (option.type == 'named')
+                            if (option.defaultValue || option.value)
                             {
-                                parameters+= chalk.yellow('=' + (option.value || option.name));
+                                parameters+= chalk.yellow('=' + (option.defaultValue || option.value));
                             }
-                            if (option.type == 'optional' || option.type == 'named')
+                            if (option.optional)
                             {
                                 parameters+= chalk.dim(']');
                             }
                             parameters+= ' ';
                         }
                     }
-                    */
 
                     data.push(
                         {
-                            command: String.fromCharCode(6) + '      ' + action.name,
+                            command: String.fromCharCode(6) + '      ' + action.name + ' ' + parameters,
                             description: chalk.white(action.description)
                         });
 
