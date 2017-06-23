@@ -120,7 +120,7 @@ class ValueObject extends Base
                 // is BaseArray or BaseMap?
                 if (this[name] instanceof BaseArray || this[name] instanceof BaseMap)
                 {
-                    this[name].load(importValue);
+                    this[name].load(importValue, true);
                 }
                 else
                 {

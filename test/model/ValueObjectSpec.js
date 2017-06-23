@@ -103,6 +103,32 @@ describe(ValueObject.className, function()
             expect(testee.properties[0]).to.be.equal('king');
         });
 
+        it('should clear BaseArray fields before importing', function()
+        {
+            const fields =
+            {
+                name: '',
+                properties: BaseArray
+            };
+            const values1 =
+            {
+                name: 'jon',
+                properties: ['king']
+            };
+            const values2 =
+            {
+                properties: ['karl']
+            };
+            const testee = new TestValueObject();
+            testee.fields = fields;
+            testee.dehydrate(values1);
+            testee.dehydrate(values2);
+            expect(testee.name).to.be.equal('jon');
+            expect(testee.properties).to.be.instanceof(BaseArray);
+            expect(testee.properties).to.have.length(1);
+            expect(testee.properties[0]).to.be.equal('karl');
+        });
+
 
         it('should allow to import BaseMap fields', function()
         {
