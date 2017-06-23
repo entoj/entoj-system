@@ -13,6 +13,7 @@ const Site = require('./site/Site.js').Site;
 const DocumentationCallable = require('./documentation/DocumentationCallable.js').DocumentationCallable;
 const ContentType = require('./ContentType.js').ContentType;
 const assertParameter = require('../utils/assert.js').assertParameter;
+const trimSlashesLeft = require('../utils/string.js').trimSlashesLeft;
 const co = require('co');
 
 
@@ -71,7 +72,7 @@ class GlobalRepository extends Base
             let site;
             let entityCategory;
             let entity;
-            const parts = query && query.length ? query.split('/') : ['*'];
+            const parts = query && query.length ? trimSlashesLeft(query).split('/') : ['*'];
 
             if (parts.length == 1)
             {

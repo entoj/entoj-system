@@ -126,6 +126,20 @@ describe(GlobalRepository.className, function()
             });
             return promise;
         });
+
+        it('should ignore trailing slahes like in "/base/global"', function()
+        {
+            const testee = new GlobalRepository(global.fixtures.sitesRepository, global.fixtures.categoriesRepository, global.fixtures.entitiesRepository);
+            const promise = testee.resolve('/base/global').then(function(result)
+            {
+                expect(result).to.be.ok;
+                expect(result.site).to.be.instanceof(Site);
+                expect(result.site.name).to.be.equal('Base');
+                expect(result.entityCategory).to.be.instanceof(EntityCategory);
+                expect(result.entityCategory.longName).to.be.equal('Global');
+            });
+            return promise;
+        });
     });
 
     describe('#resolveEntities', function()
@@ -194,6 +208,18 @@ describe(GlobalRepository.className, function()
         {
             const testee = new GlobalRepository(global.fixtures.sitesRepository, global.fixtures.categoriesRepository, global.fixtures.entitiesRepository);
             const promise = testee.resolveEntities('base/modules').then(function(result)
+            {
+                expect(result).to.be.ok;
+                expect(result).to.have.length(1);
+                expect(result[0]).to.be.instanceof(EntityAspect);
+            });
+            return promise;
+        });
+
+        it('should ignore trailing slashes like in  "/base/modules"', function()
+        {
+            const testee = new GlobalRepository(global.fixtures.sitesRepository, global.fixtures.categoriesRepository, global.fixtures.entitiesRepository);
+            const promise = testee.resolveEntities('/base/modules').then(function(result)
             {
                 expect(result).to.be.ok;
                 expect(result).to.have.length(1);
