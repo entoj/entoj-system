@@ -53,8 +53,8 @@ describe(StaticFileRoute.className, function()
             global.fixtures.server.start().then(function(server)
             {
                 request(server)
-                      .get('/base/global/js/base.js')
-                      .expect(200, done);
+                    .get('/base/global/assets/css/examples.css')
+                    .expect(200, done);
             });
         });
 
@@ -65,8 +65,8 @@ describe(StaticFileRoute.className, function()
             global.fixtures.server.start().then(function(server)
             {
                 request(server)
-                      .get('/base/elements/e-cta/e-cta.md')
-                      .expect(404, done);
+                    .get('/base/elements/e-cta/e-cta.md')
+                    .expect(404, done);
             });
         });
 
@@ -77,8 +77,8 @@ describe(StaticFileRoute.className, function()
             global.fixtures.server.start().then(function(server)
             {
                 request(server)
-                      .get('/base/elements/e-cta/e-cta.md')
-                      .expect(200, done);
+                    .get('/base/elements/e-cta/e-cta.md')
+                    .expect(200, done);
             });
         });
 
@@ -90,8 +90,8 @@ describe(StaticFileRoute.className, function()
             global.fixtures.server.start().then(function(server)
             {
                 request(server)
-                      .get('/base/global/js/unknown.js')
-                      .expect(404, done);
+                    .get('/base/global/assets/css/exampl.css')
+                    .expect(404, done);
             });
         });
     });
