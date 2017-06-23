@@ -36,54 +36,6 @@ function spec(type, className, prepareParameters, options)
     };
 
 
-    /**
-     * Reads the given stream and resolves to an array of all chunks
-     */
-    function readStream(stream)
-    {
-        const promise = new Promise((resolve) =>
-        {
-            const data = [];
-            stream.on('data', (item) =>
-            {
-                process.nextTick(() =>
-                {
-                    data.push(item);
-                });
-            })
-            .on('finish', () =>
-            {
-                process.nextTick(() =>
-                {
-                    resolve(data);
-                });
-            });
-        });
-        return promise;
-    }
-    spec.readStream = readStream;
-
-
-    /**
-     * Creates a stream of files
-     */
-    function filesStream(glob)
-    {
-        return gulp.src(glob);
-    }
-    spec.filesStream = filesStream;
-
-
-    /**
-     * Creates a stream of files and waits until they ran through the task
-     */
-    function feedFiles(task, glob)
-    {
-        return readStream(task.stream(filesStream(glob)));
-    }
-    spec.feedFiles = feedFiles;
-
-
     describe('#pipe()', function()
     {
         it('should return the piped Task', function()
@@ -124,7 +76,7 @@ function spec(type, className, prepareParameters, options)
                 const testee = createTestee();
                 const result = testee.stream();
                 expect(result.pipe).to.be.instanceof(Function); // We want to support through2 here....
-                yield readStream(result);
+                yield spec.readStream(result);
             });
             return promise;
         });
@@ -160,8 +112,53 @@ function spec(type, className, prepareParameters, options)
             });
         }
     });
-
 }
+
+
+/**
+ * Reads the given stream and resolves to an array of all chunks
+ */
+spec.readStream = function(stream)
+{
+    const promise = new Promise((resolve) =>
+    {
+        const data = [];
+        stream.on('data', (item) =>
+        {
+            process.nextTick(() =>
+            {
+                data.push(item);
+            });
+        })
+        .on('finish', () =>
+        {
+            process.nextTick(() =>
+            {
+                resolve(data);
+            });
+        });
+    });
+    return promise;
+};
+
+
+/**
+ * Creates a stream of files
+ */
+spec.filesStream = function(glob)
+{
+    return gulp.src(glob);
+};
+
+
+/**
+ * Creates a stream of files and waits until they ran through the task
+ */
+spec.feedFiles = function(task, glob)
+{
+    return spec.readStream(task.stream(spec.filesStream(glob)));
+};
+
 
 /**
  * Exports
