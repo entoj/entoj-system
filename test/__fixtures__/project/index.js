@@ -87,6 +87,7 @@ function createStatic(options)
         result.entityIdParser, result.pathesConfiguration);
     result.viewModelRepository = new ViewModelRepository(result.entitiesRepository, result.pathesConfiguration);
     result.filesRepository = new FilesRepository(result.entitiesRepository);
+    result.cliLogger = new CliLogger('', { muted: true });
 
     result.createEntity = function(idPath)
     {
