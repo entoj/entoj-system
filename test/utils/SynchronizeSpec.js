@@ -4,6 +4,9 @@
  * Requirements
  */
 const synchronize = require(ES_SOURCE + '/utils/synchronize.js').synchronize;
+const execute = require(ES_SOURCE + '/utils/synchronize.js').execute;
+const waitForPromise = require(ES_SOURCE + '/utils/synchronize.js').waitForPromise;
+
 
 /**
  * Spec
@@ -37,6 +40,44 @@ describe('utils/synchronize', function()
             return 'Sync';
         }
     }
+
+
+    describe('#waitForPromise', function()
+    {
+        it('should return the goven value if not a promise', function()
+        {
+            const testee = waitForPromise('foo-bar');
+            expect(testee).to.be.equal('foo-bar');
+        });
+
+        it('should wait for a Promise and return its resolved value', function()
+        {
+            const testee = waitForPromise(Promise.resolve('foo'));
+            expect(testee).to.be.equal('foo');
+        });
+
+        it('should wait for a Promise and return undefined if it was rejected', function()
+        {
+            const testee = waitForPromise(Promise.reject('foo'));
+            expect(testee).to.be.undefined;
+        });
+    });
+
+
+    describe('#execute', function()
+    {
+        it('should execute a method and wait for the returned promise', function()
+        {
+            const testee = new Testee();
+            expect(execute(testee, 'async')).to.be.equal('Async');
+        });
+
+        it('should execute a method and return result', function()
+        {
+            const testee = new Testee();
+            expect(execute(testee, 'sync')).to.be.equal('Sync');
+        });
+    });
 
 
     describe('#synchronize', function()

@@ -10,6 +10,33 @@ const Base = require('../Base.js').Base;
 
 /**
  * @memberOf utils
+ * @param {Promise} promise
+ * @returns {*}
+ */
+function waitForPromise(promise)
+{
+    if (!(promise instanceof Promise))
+    {
+        return promise;
+    }
+    let done = false;
+    let result = undefined;
+    promise.then(function(data)
+    {
+        result = data;
+        done = true;
+    })
+        .catch(function(error)
+        {
+            done = true;
+        });
+    deasync.loopWhile(() => !done);
+    return result;
+}
+
+
+/**
+ * @memberOf utils
  * @param {Object} scope
  * @param {String} method
  * @param {Array} parameters
@@ -17,8 +44,6 @@ const Base = require('../Base.js').Base;
  */
 function execute(scope, method, parameters)
 {
-    let result = false;
-    let done = false;
     let promise;
     if (scope)
     {
@@ -28,13 +53,7 @@ function execute(scope, method, parameters)
     {
         promise = method.apply(scope, parameters);
     }
-    promise.then(function(data)
-    {
-        result = data;
-        done = true;
-    });
-    deasync.loopWhile(() => !done);
-    return result;
+    return waitForPromise(promise);
 }
 
 
@@ -109,5 +128,6 @@ function synchronize(target)
  * Exports
  * @ignore
  */
+module.exports.waitForPromise = waitForPromise;
 module.exports.execute = execute;
 module.exports.synchronize = synchronize;
