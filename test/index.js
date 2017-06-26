@@ -15,7 +15,8 @@ module.exports =
     fixture:
     {
         files: path.join(__dirname, '/__fixtures__/files'),
-        project: require('./__fixtures__/project/index.js')
+        project: require('./__fixtures__/project/index.js'),
+        test: require('entoj-test-fixture')
     },
     command:
     {

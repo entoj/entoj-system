@@ -165,6 +165,10 @@ function createDynamic(configuration)
     // Get fixture config
     let config = clone(testFixture.configuration);
 
+    // Add logger
+    config.logger = {};
+    config.logger.muted = true;
+
     // Add sites
     config.sites = {};
     config.sites.loader =
@@ -224,6 +228,12 @@ function createDynamic(configuration)
         ]
     };
 
+    // Add environments
+    config.environments =
+    {
+        development: {}
+    };
+
     // apply custom configuration
     if (typeof configuration == 'function')
     {
@@ -237,7 +247,10 @@ function createDynamic(configuration)
     // create context
     const result = {};
     result.context = new Context(config);
-    result.context.di.map('cli/CliLogger.options', { muted: true });
+
+    // map defaults
+    result.context.di.map('cli/CliLogger.options', { muted: config.logger.muted || false });
+    result.context.di.map('model.configuration/BuildConfiguration.options', { environments: config.environments });
 
     // create global instances
     result.pathToLibraries = testFixture.pathToLibraries;
