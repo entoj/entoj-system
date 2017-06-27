@@ -8,6 +8,7 @@ class ErrorHandler
     static error(instance, error)
     {
         instance.logger.error(error.stack);
+        throw error;
     }
 
 
