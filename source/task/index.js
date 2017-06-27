@@ -4,14 +4,15 @@
  */
 module.exports =
 {
-    Task: require('./Task.js').Task,
-    TransformingTask: require('./TransformingTask.js').TransformingTask,
     DecorateTask: require('./DecorateTask.js').DecorateTask,
+    EntitiesTask: require('./EntitiesTask.js').EntitiesTask,
     EnvironmentTask: require('./EnvironmentTask.js').EnvironmentTask,
     ReadFilesTask: require('./ReadFilesTask.js').ReadFilesTask,
     RemoveFilesTask: require('./RemoveFilesTask.js').RemoveFilesTask,
     RenameFilesTask: require('./RenameFilesTask.js').RenameFilesTask,
+    Task: require('./Task.js').Task,
     TemplateTask: require('./TemplateTask.js').TemplateTask,
+    TransformingTask: require('./TransformingTask.js').TransformingTask,
     WriteFilesTask: require('./WriteFilesTask.js').WriteFilesTask,
     ZipFilesTask: require('./ZipFilesTask.js').ZipFilesTask
 };

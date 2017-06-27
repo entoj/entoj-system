@@ -129,8 +129,7 @@ spec.readStream = function(stream)
             {
                 data.push(item);
             });
-        })
-        .on('finish', () =>
+        }).on('finish', () =>
         {
             process.nextTick(() =>
             {

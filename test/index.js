@@ -29,6 +29,10 @@ module.exports =
         NodeRendererShared: require('./export/renderer/NodeRendererShared.js').spec,
         RendererShared: require('./export/RendererShared.js').spec
     },
+    formatter:
+    {
+        FormatterShared: require('./formatter/FormatterShared.js').spec
+    },
     linter:
     {
         LinterShared: require('./linter/LinterShared.js').spec,
