@@ -39,8 +39,6 @@ class PathesConfiguration extends Base
         this._cache = this.renderTemplate(opts.cacheTemplate || '${root}/cache', {}, true);
         this._data = this.renderTemplate(opts.dataTemplate || '${root}/data', {}, true);
         this._entoj = this.renderTemplate(opts.entojTemplate || '${root}/entoj', {}, true);
-        this._bower = this.renderTemplate(opts.bowerTemplate || '${entoj}/bower_components', {}, true);
-        this._jspm = this.renderTemplate(opts.jspmTemplate || '${entoj}/jspm_packages', {}, true);
         this._sites = this.renderTemplate(opts.sitesTemplate || '${root}/sites', {}, true);
         this._siteTemplate = opts.siteTemplate || '${sites}/${site.name.toLowerCase()}';
         this._entityCategoryTemplate = opts.entityCategoryTemplate || '${sites}/${site.name.toLowerCase()}/${entityCategory.pluralName.toLowerCase()}';
@@ -142,30 +140,6 @@ class PathesConfiguration extends Base
     get data()
     {
         return this._data;
-    }
-
-
-    /**
-     * The path to bower components.
-     * May be undefined.
-     *
-     * @type {String}
-     */
-    get bower()
-    {
-        return this._bower;
-    }
-
-
-    /**
-     * The path to jspm packages.
-     * May be undefined.
-     *
-     * @type {String}
-     */
-    get jspm()
-    {
-        return this._jspm;
     }
 
 

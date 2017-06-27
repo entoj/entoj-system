@@ -30,7 +30,7 @@ describe(PathesConfiguration.className, function()
     });
 
     // Readonly props
-    baseSpec.assertProperty(new PathesConfiguration({ root: '/' }), ['root', 'entoj', 'cache', 'data', 'bower', 'jspm', 'sites']);
+    baseSpec.assertProperty(new PathesConfiguration({ root: '/' }), ['root', 'entoj', 'cache', 'data', 'sites']);
 
 
     describe('#constructor()', function()
