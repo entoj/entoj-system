@@ -30,7 +30,7 @@ class MediaQueryFilter extends Filter
         assertParameter(this, 'globalConfiguration', globalConfiguration, true, GlobalConfiguration);
 
         // Assign options
-        this._mediaQueries = this.generateMediaQueries(globalConfiguration);
+        this._mediaQueries = globalConfiguration.get('mediaQueries');
     }
 
 
@@ -49,41 +49,6 @@ class MediaQueryFilter extends Filter
     static get className()
     {
         return 'nunjucks.filter/MediaQueryFilter';
-    }
-
-
-    /**
-     * Generates a list of media queries based on the configured breakpoints
-     *
-     * @protected
-     * @todo make this a plugin?
-     */
-    generateMediaQueries(globalConfiguration)
-    {
-        const mediaQueries = {};
-        const breakpoints = globalConfiguration.get('breakpoints');
-        for (const breakpointName in breakpoints)
-        {
-            const breakpoint = breakpoints[breakpointName];
-            if (breakpoint.maxWidth)
-            {
-                mediaQueries[breakpointName + 'AndBelow'] = '(max-width: ' + breakpoint.maxWidth + ')';
-            }
-            if (breakpoint.minWidth)
-            {
-                mediaQueries[breakpointName + 'AndAbove'] = '(min-width: ' + breakpoint.minWidth + ')';
-            }
-            mediaQueries[breakpointName] = '';
-            if (breakpoint.minWidth)
-            {
-                mediaQueries[breakpointName]+= '(min-width: ' + breakpoint.minWidth + ')';
-            }
-            if (breakpoint.maxWidth)
-            {
-                mediaQueries[breakpointName]+= (mediaQueries[breakpointName].length ? ' and ' : '') + '(max-width: ' + breakpoint.maxWidth + ')';
-            }
-        }
-        return mediaQueries;
     }
 
 
