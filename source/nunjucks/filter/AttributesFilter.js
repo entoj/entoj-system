@@ -20,7 +20,7 @@ class AttributesFilter extends Filter
     constructor()
     {
         super();
-        this._name = 'attributes';
+        this._name = ['customAttributes', 'attributes'];
     }
 
 
