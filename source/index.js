@@ -7,6 +7,7 @@ module.exports =
     command: require('./command/index.js'),
     error: require('./error/index.js'),
     export: require('./export/index.js'),
+    formatter: require('./formatter/index.js'),
     linter: require('./linter/index.js'),
     model: require('./model/index.js'),
     nunjucks: require('./nunjucks/index.js'),
