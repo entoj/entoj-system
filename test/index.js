@@ -61,6 +61,7 @@ module.exports =
     task:
     {
         TaskShared: require('./task/TaskShared.js').spec,
-        TransformingTaskShared: require('./task/TransformingTaskShared.js').spec
+        TransformingTaskShared: require('./task/TransformingTaskShared.js').spec,
+        EntitiesTaskShared: require('./task/EntitiesTaskShared.js').spec
     }
 };
