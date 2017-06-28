@@ -58,7 +58,7 @@ function spec(type, className, prepareParameters, options)
                 const testee = createTestee();
                 sinon.spy(testee, 'processEntity');
                 yield taskSpec.readStream(testee.stream());
-                expect(testee.processEntity.callCount).to.be.equal(9);
+                expect(testee.processEntity.callCount).to.be.above(8); // 9 Entities per Site
             });
             return promise;
         });
