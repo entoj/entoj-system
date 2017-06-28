@@ -5,6 +5,7 @@
  * @ignore
  */
 const Base = require('../Base.js').Base;
+const BaseArray = require('../base/BaseArray.js').BaseArray;
 const Route = require('./route/Route.js').Route;
 const CliLogger = require('../cli/CliLogger.js').CliLogger;
 const assertParameter = require('../utils/assert.js').assertParameter;
@@ -15,6 +16,13 @@ const spdy = require('spdy');
 const basicAuth = require('basic-auth-connect');
 const compression = require('compression');
 const bodyParser = require('body-parser');
+
+
+/**
+ * List of all currently running instances
+ * @type {Array}
+ */
+const instances = new BaseArray();
 
 
 /**
@@ -89,6 +97,16 @@ class Server extends Base
 
 
     /**
+     * List of all currently running instances
+     * @type {Array}
+     */
+    static get instances()
+    {
+        return instances;
+    }
+
+
+    /**
      * @let {cli.CliLogger}
      */
     get cliLogger()
@@ -134,6 +152,15 @@ class Server extends Base
 
 
     /**
+     * @let {Express}
+     */
+    get server()
+    {
+        return this._server;
+    }
+
+
+    /**
      * @param {server.route.Route}
      * @return {Promise}
      */
@@ -153,6 +180,11 @@ class Server extends Base
      */
     start()
     {
+        if (this.server)
+        {
+            return Promise.resolve(this.server);
+        }
+
         const scope = this;
         return new Promise(function(resolve, reject)
         {
@@ -163,17 +195,18 @@ class Server extends Base
                     key: fs.readFileSync(scope._sslKey),
                     cert: fs.readFileSync(scope._sslCert)
                 };
-                const work = scope._cliLogger.work('Starting <http/2> server at <https://localhost:' + scope.port + '>');
+                const work = scope.cliLogger.work('Starting <http/2> server at <https://localhost:' + scope.port + '>');
                 scope._server = spdy.createServer(options, scope.express).listen(scope.port);
                 scope.cliLogger.end(work);
             }
             else
             {
-                const work = scope._cliLogger.info('Starting <http> server at <http://localhost:' + scope.port + '>');
+                const work = scope.cliLogger.info('Starting <http> server at <http://localhost:' + scope.port + '>');
                 scope._server = http.createServer(scope.express).listen(scope.port);
                 scope.cliLogger.end(work);
             }
-            resolve(scope._server);
+            Server.instances.push(scope);
+            resolve(scope.server);
         });
     }
 
@@ -186,12 +219,14 @@ class Server extends Base
         const scope = this;
         return new Promise(function(resolve, reject)
         {
-            if (scope._server)
+            if (scope.server)
             {
-                scope._cliLogger.info('Server: Stopping');
-                scope._server.close(function()
+                scope.cliLogger.info('Server: Stopping');
+                scope.server.close(function()
                 {
-                    resolve(scope._server);
+                    scope._server = false;
+                    Server.instances.remove(scope);
+                    resolve();
                 });
             }
             else
