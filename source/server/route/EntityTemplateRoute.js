@@ -6,6 +6,7 @@
  */
 const Route = require('./Route.js').Route;
 const CliLogger = require('../../cli/CliLogger.js').CliLogger;
+const ErrorHandler = require('../../error/ErrorHandler.js').ErrorHandler;
 const UrlsConfiguration = require('../../model/configuration/UrlsConfiguration.js').UrlsConfiguration;
 const Environment = require('../../nunjucks/Environment.js').Environment;
 const assertParameter = require('../../utils/assert.js').assertParameter;
@@ -130,14 +131,7 @@ class EntityTemplateRoute extends Route
             // Send
             response.send(html);
             scope.cliLogger.end(work);
-        })
-        .catch(function(error)
-        {
-            /* istanbul ignore next */
-            scope.logger.error('handleEntityTemplate', error);
-            /* istanbul ignore next */
-            scope.cliLogger.error(scope.className + '::handleTemplate', error.stack);
-        });
+        }).catch(ErrorHandler.handler(scope));
         return promise;
     }
 
