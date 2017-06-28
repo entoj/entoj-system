@@ -8,8 +8,10 @@ const BaseMixin = require('../Base.js').BaseMixin;
 const FileLoader = require('./loader/FileLoader.js').FileLoader;
 const BuildConfiguration = require('../model/configuration/BuildConfiguration.js').BuildConfiguration;
 const EntitiesRepository = require('../model/entity/EntitiesRepository.js').EntitiesRepository;
+const PathesConfiguration = require('../model/configuration/PathesConfiguration.js').PathesConfiguration;
 const Template = require('./Template.js').Template;
 const assertParameter = require('../utils/assert.js').assertParameter;
+const waitForPromise = require('../utils/synchronize.js').waitForPromise;
 const nunjucks = require('nunjucks');
 
 
@@ -24,7 +26,7 @@ class Environment extends BaseMixin(nunjucks.Environment)
      * @param {Array} filters
      * @param {Object} options
      */
-    constructor(entitiesRepository, buildConfiguration, filters, options)
+    constructor(entitiesRepository, pathesConfiguration, buildConfiguration, filters, options)
     {
         const opts = options || {};
         opts.autoescape = false;
@@ -32,15 +34,16 @@ class Environment extends BaseMixin(nunjucks.Environment)
 
         // Check params
         assertParameter(this, 'entitiesRepository', entitiesRepository, true, EntitiesRepository);
+        assertParameter(this, 'pathesConfiguration', pathesConfiguration, true, PathesConfiguration);
         assertParameter(this, 'buildConfiguration', buildConfiguration, true, BuildConfiguration);
 
         // Add options
-        this._entitiesRepository = entitiesRepository;
         this._buildConfiguration = buildConfiguration;
+        this._pathesConfiguration = pathesConfiguration;
         this._filters = filters || [];
-        this._basePath = opts.path || opts.basePath || '';
+        this._basePath = waitForPromise(pathesConfiguration.resolve(opts.path || opts.basePath || ''));
         this._loader = new FileLoader(this._basePath, entitiesRepository, buildConfiguration);
-        this._template = new Template(this._entitiesRepository, this.basePath, this._buildConfiguration.environment);
+        this._template = new Template(entitiesRepository, this.basePath, this._buildConfiguration.environment);
 
         // Add loader
         this.loaders.push(this._loader);
@@ -61,7 +64,7 @@ class Environment extends BaseMixin(nunjucks.Environment)
      */
     static get injections()
     {
-        return { 'parameters': [EntitiesRepository, BuildConfiguration,
+        return { 'parameters': [EntitiesRepository, PathesConfiguration, BuildConfiguration,
             'nunjucks/Environment.filters', 'nunjucks/Environment.options'] };
     }
 
@@ -94,9 +97,27 @@ class Environment extends BaseMixin(nunjucks.Environment)
      */
     set basePath(value)
     {
-        this._basePath = value;
+        this._basePath = waitForPromise(this.pathesConfiguration.resolve(value));
         this._loader.setSearchPaths(value);
         this._template._basePath = value;
+    }
+
+
+    /**
+     * @type {model.configuration.PathesConfiguration}
+     */
+    get pathesConfiguration()
+    {
+        return this._pathesConfiguration;
+    }
+
+
+    /**
+     * @type {model.configuration.BuildConfiguration}
+     */
+    get buildConfiguration()
+    {
+        return this._buildConfiguration;
     }
 
 
@@ -105,7 +126,7 @@ class Environment extends BaseMixin(nunjucks.Environment)
      */
     renderString(content, context, callback)
     {
-        const template = this._template.prepare(content, this._buildConfiguration.environment);
+        const template = this._template.prepare(content, this.buildConfiguration.environment);
         const result = super.renderString(template, context, callback);
         this.logger.verbose('renderString\n', result);
         return result;
