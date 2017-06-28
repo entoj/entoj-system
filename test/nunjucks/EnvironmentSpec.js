@@ -20,7 +20,7 @@ describe(Environment.className, function()
     baseSpec(Environment, 'nunjucks/Environment', function(parameters)
     {
         const fixture = projectFixture.createStatic();
-        return [fixture.entitiesRepository, fixture.buildConfiguration];
+        return [fixture.entitiesRepository, fixture.pathesConfiguration, fixture.buildConfiguration];
     });
 
 
@@ -36,16 +36,13 @@ describe(Environment.className, function()
     function createTestee(basePath)
     {
         return new Environment(global.fixtures.entitiesRepository,
+            global.fixtures.pathesConfiguration,
             global.fixtures.buildConfiguration,
             [
                 new Filters.ModuleClassesFilter()
             ],
             { basePath: basePath });
     }
-
-
-    // Properties
-    baseSpec.assertProperty(createTestee(), ['basePath'], 'foo', '');
 
 
     describe('#renderString', function()
