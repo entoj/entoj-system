@@ -168,7 +168,7 @@ class Task extends Base
                 {
                     objectMode: true
                 });
-             // this helps testing when stream is not implemented
+            // this helps testing when stream is not implemented
             resultStream.write(new VinylFile(
                 {
                     path:'test',
