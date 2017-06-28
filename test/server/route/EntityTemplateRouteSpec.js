@@ -39,6 +39,7 @@ describe(EntityTemplateRoute.className, function()
         global.fixtures.viewModelRepository.plugins.push(new Plugins.ViewModelImagePlugin());
         global.fixtures.viewModelRepository.plugins.push(new Plugins.ViewModelImportPlugin());
         global.fixtures.nunjucks = new Environment(global.fixtures.entitiesRepository,
+            global.fixtures.pathesConfiguration,
             global.fixtures.buildConfiguration,
             [
                 new Filters.LoadFilter(global.fixtures.viewModelRepository),
@@ -73,11 +74,11 @@ describe(EntityTemplateRoute.className, function()
             global.fixtures.server.start().then(function(server)
             {
                 request(server)
-                      .get('/base/pages/p-start/p-start.j2')
-                      .expect(200)
-                      .expect(/m-teaser/m)
-                      .expect(/e-headline/m)
-                      .expect(/g-teaserlist/m, done);
+                    .get('/base/pages/p-start/p-start.j2')
+                    .expect(200)
+                    .expect(/m-teaser/m)
+                    .expect(/e-headline/m)
+                    .expect(/g-teaserlist/m, done);
             });
         });
 
@@ -89,8 +90,8 @@ describe(EntityTemplateRoute.className, function()
             global.fixtures.server.start().then(function(server)
             {
                 request(server)
-                      .get('/base/pages/p-start/p-start.md')
-                      .expect(404, done);
+                    .get('/base/pages/p-start/p-start.md')
+                    .expect(404, done);
             });
         });
 
@@ -102,8 +103,8 @@ describe(EntityTemplateRoute.className, function()
             global.fixtures.server.start().then(function(server)
             {
                 request(server)
-                      .get('/base/pages/p-start/p-start-msiing.j2')
-                      .expect(404, done);
+                    .get('/base/pages/p-start/p-start-msiing.j2')
+                    .expect(404, done);
             });
         });
     });
