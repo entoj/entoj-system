@@ -148,7 +148,7 @@ class ServerCommand extends Command
 
                 // start synchronizer
                 const modelSynchronizer = scope.context.di.create(ModelSynchronizer);
-                yield modelSynchronizer.start()
+                yield modelSynchronizer.start();
 
                 // Done
                 logger.end(start);

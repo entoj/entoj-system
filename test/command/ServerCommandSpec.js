@@ -8,7 +8,6 @@ const Server = require(ES_SOURCE + '/server/Server.js').Server;
 const commandSpec = require(ES_TEST + '/command/CommandShared.js').spec;
 const projectFixture = require(ES_FIXTURES + '/project/index.js');
 const Route = require(ES_SOURCE + '/server/route/Route.js').Route;
-const Context = require(ES_SOURCE + '/application/Context.js').Context;
 const request = require('supertest');
 const co = require('co');
 
@@ -76,7 +75,7 @@ describe(ServerCommand.className, function()
                     port: 3200
                 };
                 const testee = new ServerCommand(global.fixtures.context, options);
-                const server = yield testee.execute({ command: 'server' })
+                const server = yield testee.execute({ command: 'server' });
                 expect(server.port).to.be.equal(options.port);
             });
             return promise;
@@ -96,7 +95,7 @@ describe(ServerCommand.className, function()
                     ]
                 };
                 const testee = new ServerCommand(global.fixtures.context, options);
-                const server = yield testee.execute({ command: 'server' })
+                const server = yield testee.execute({ command: 'server' });
                 expect(server.routes).to.have.length(1);
                 expect(server.routes[0]).to.be.instanceof(Route);
             });
