@@ -56,6 +56,14 @@ if (parameters.vvvv)
 }
 logger.setLevel(level);
 
+
+/**
+ * Show unhandled
+ */
+/* eslint no-console: 0 */
+process.on('unhandledRejection', r => console.log(r));
+
+
 /**
  * Configure fixtures
  */
