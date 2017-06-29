@@ -4,5 +4,7 @@
  */
 module.exports =
 {
-    Command: require('./Command.js').Command
+    Command: require('./Command.js').Command,
+    LintCommand: require('./LintCommand.js').LintCommand,
+    ServerCommand: require('./ServerCommand.js').ServerCommand
 };
