@@ -75,10 +75,11 @@ class Route extends Base
      * @param {String} route
      * @param {String|Function} basePath
      * @param {Array} allowedExtensions
+     * @param {Function} pathTransformer
      */
-    addStaticFileHandler(route, basePath, allowedExtensions)
+    addStaticFileHandler(route, basePath, allowedExtensions, pathTransformer)
     {
-        this.cliLogger.info('Adding static file route <' + route + '> searching files in <' + basePath + '>');
+        this.cliLogger.info('Adding static file route <' + route + '> searching files in <' + (typeof basePath === 'string' ? basePath : 'function') + '>');
         const handler = (request, response, next) =>
         {
             // Check extension
@@ -105,7 +106,7 @@ class Route extends Base
             }
 
             // Serve it
-            const work = this.cliLogger.work('Serving <' + request.path + '> from <' + basePath + '>');
+            const work = this.cliLogger.work('Serving <' + request.path + '> from <' + filename + '>');
             response.sendFile(filename);
             this.cliLogger.end(work);
         };

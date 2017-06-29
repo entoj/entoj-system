@@ -6,6 +6,7 @@
 const StaticFileRoute = require(ES_SOURCE + '/server/route/StaticFileRoute.js').StaticFileRoute;
 const CliLogger = require(ES_SOURCE + '/cli/CliLogger.js').CliLogger;
 const routeSpec = require('./RouteShared.js').spec;
+const projectFixture = require(ES_FIXTURES + '/project/index.js');
 const testFixture = require('entoj-test-fixture');
 const request = require('supertest');
 
@@ -20,8 +21,7 @@ describe(StaticFileRoute.className, function()
      */
     routeSpec(StaticFileRoute, 'server.route/StaticFileRoute', function(parameters)
     {
-        const cliLogger = new CliLogger('', { muted: true });
-        return [cliLogger];
+        return [global.fixtures.cliLogger, global.fixtures.pathesConfiguration];
     });
 
 
@@ -30,8 +30,7 @@ describe(StaticFileRoute.className, function()
      */
     beforeEach(function()
     {
-        global.fixtures = {};
-        global.fixtures.cliLogger = new CliLogger('', { muted: true });
+        global.fixtures = projectFixture.createStatic();
     });
 
 
@@ -39,7 +38,7 @@ describe(StaticFileRoute.className, function()
     const createTestee = function(allowedExtensions)
     {
         const cliLogger = new CliLogger('', { muted: true });
-        return new StaticFileRoute(cliLogger, { basePath: testFixture.pathToSites, allowedExtensions: allowedExtensions });
+        return new StaticFileRoute(cliLogger, global.fixtures.pathesConfiguration, { basePath: testFixture.pathToSites, allowedExtensions: allowedExtensions });
     };
 
 

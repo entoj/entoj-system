@@ -4,7 +4,7 @@
  * Requirements
  * @ignore
  */
-const BaseRoute = require('./BaseRoute.js').BaseRoute;
+const Route = require('./Route.js').Route;
 const UrlsConfiguration = require('../../model/configuration/UrlsConfiguration.js').UrlsConfiguration;
 const GlobalConfiguration = require('../../model/configuration/GlobalConfiguration.js').GlobalConfiguration;
 const PathesConfiguration = require('../../model/configuration/PathesConfiguration.js').PathesConfiguration;
@@ -20,9 +20,9 @@ const fs = require('fs');
 
 
 /**
- * @memberOf server.routes
+ * @memberOf server.route
  */
-class PagesRoute extends BaseRoute
+class GuiTemplateRoute extends Route
 {
     /**
      * @param {cli.CliLogger} cliLogger
@@ -38,7 +38,7 @@ class PagesRoute extends BaseRoute
      * @param {object} [options]
      */
     constructor(cliLogger, sitesRepository, entityCategoriesRepository, entitiesRepository, globalConfiguration,
-                urlsConfiguration, pathesConfiguration, buildConfiguration, nunjucks, routes, options)
+        urlsConfiguration, pathesConfiguration, buildConfiguration, nunjucks, routes, options)
     {
         super(cliLogger.createPrefixed('routes.pagesroute'));
 
@@ -82,7 +82,7 @@ class PagesRoute extends BaseRoute
         this._staticRoute = opts.staticRoute || '/internal';
 
         // Configure nunjucks
-        this._nunjucks.path = this._templateRoot;
+        this._nunjucks.basePath = this._templateRoot;
     }
 
 
@@ -92,7 +92,7 @@ class PagesRoute extends BaseRoute
     static get injections()
     {
         return { 'parameters': [CliLogger, SitesRepository, EntityCategoriesRepository, EntitiesRepository,
-            GlobalConfiguration, UrlsConfiguration, PathesConfiguration, BuildConfiguration, Environment, 'server.routes/PagesRoute.routes', 'server.routes/PagesRoute.options'] };
+            GlobalConfiguration, UrlsConfiguration, PathesConfiguration, BuildConfiguration, Environment, 'server.route/PagesRoute.routes', 'server.route/PagesRoute.options'] };
     }
 
 
@@ -101,12 +101,12 @@ class PagesRoute extends BaseRoute
      */
     static get className()
     {
-        return 'server.routes/PagesRoute';
+        return 'server.route/PagesRoute';
     }
 
 
     /**
-     * @inheritDocs
+     * @type {nunjucks.Environment}
      */
     get nunjucks()
     {
@@ -115,130 +115,100 @@ class PagesRoute extends BaseRoute
 
 
     /**
-     * @inheritDocs
+     * @type {model.site.SitesRepository}
      */
-    handle404(request, response, next)
+    get sitesRepository()
     {
-        //this._cliLogger.info('Could not find url ' + request.url);
-        next();
+        return this._sitesRepository;
     }
 
 
     /**
      * @inheritDocs
      */
-    handleStatic(request, response, next)
+    addTemplateHandler(route, template)
     {
-        const filename = this._templateRoot + '/' + request.path.replace(this._staticRoute + '/', '');
-        if (!fs.existsSync(filename))
+        this.cliLogger.info('Adding template route <' + route + '> for template <' + template + '>');
+        const handler = (request, response, next) =>
         {
-            next();
-            return;
-        }
-        response.sendFile(filename);
-    }
+            const model =
+            {
+                sites: this.sitesRepository,
+                entityCategories: this._entityCategoriesRepository,
+                entities: this._entitiesRepository,
+                urls: this._urlsConfiguration,
+                type:
+                {
+                    DocumentationText: 'DocumentationText',
+                    DocumentationExample: 'DocumentationExample',
+                    DocumentationDatamodel: 'DocumnentationDatamodel'
+                },
+                kind:
+                {
+                    MACRO: 'macro',
+                    EXAMPLE: 'example',
+                    DATAMODEL: 'datamodel'
+                },
+                location:
+                {
+                    url: request.url
+                }
+            };
 
+            // Create a short url for simple model matches
+            const url = request.url.split('/').slice(0, 4).join('/');
 
-    /**
-     * @inheritDocs
-     */
-    handlePage(route, request, response, next)
-    {
-        const model =
-        {
-            sites: this._sitesRepository,
-            entityCategories: this._entityCategoriesRepository,
-            entities: this._entitiesRepository,
-            urls: this._urlsConfiguration,
-            type:
+            // Get site
+            const site = this._urlsConfiguration.matchSite(url, true);
+            if (site)
             {
-                DocumentationText: 'DocumentationText',
-                DocumentationExample: 'DocumentationExample',
-                DocumentationDatamodel: 'DocumnentationDatamodel'
-            },
-            kind:
-            {
-                MACRO: 'macro',
-                EXAMPLE: 'example',
-                DATAMODEL: 'datamodel'
-            },
-            location:
-            {
-                url: request.url
+                model.location.site = site.site;
             }
+
+            // Get entityCategory
+            const entityCategory = this._urlsConfiguration.matchEntityCategory(url, true);
+            if (entityCategory)
+            {
+                model.location.entityCategory = entityCategory.entityCategory;
+            }
+
+            // Get entity
+            const entity = this._urlsConfiguration.matchEntityId(url);
+            if (entity)
+            {
+                model.location.entity = entity.entity;
+            }
+
+            // Check if valid page
+            if (request.params.entityId === 'examples')
+            {
+                next();
+                return;
+            }
+            if (request.params.site && !model.location.site)
+            {
+                next();
+                return;
+            }
+            if (!request.params.entityId && request.params.entityCategory && !model.location.entityCategory)
+            {
+                next();
+                return;
+            }
+            if (request.params.entityId && !model.location.entity)
+            {
+                next();
+                return;
+            }
+
+            const work = this._cliLogger.work('Serving template <' + template + '> for <' + request.url + '>');
+            const tpl = fs.readFileSync(this._templateRoot + '/' + template, { encoding: 'utf8' });
+            this._nunjucks.addGlobal('request', request);
+            const html = this._nunjucks.renderString(tpl, { global: model });
+            response.send(html);
+            this._cliLogger.end(work);
         };
-
-        // Create a short url for simple model matches
-        const url = request.url.split('/').slice(0, 4).join('/');
-
-        // Get site
-        const site = this._urlsConfiguration.matchSite(url, true);
-        if (site)
-        {
-            model.location.site = site.site;
-        }
-
-        // Get entityCategory
-        const entityCategory = this._urlsConfiguration.matchEntityCategory(url, true);
-        if (entityCategory)
-        {
-            model.location.entityCategory = entityCategory.entityCategory;
-        }
-
-        // Get entity
-        const entity = this._urlsConfiguration.matchEntityId(url);
-        if (entity)
-        {
-            model.location.entity = entity.entity;
-        }
-
-        // Check if valid page
-        if (request.params.entityId === 'examples')
-        {
-            next();
-            return;
-        }
-        if (request.params.site && !model.location.site)
-        {
-            next();
-            return;
-        }
-        if (!request.params.entityId && request.params.entityCategory && !model.location.entityCategory)
-        {
-            next();
-            return;
-        }
-        if (request.params.entityId && !model.location.entity)
-        {
-            next();
-            return;
-        }
-
-        const work = this._cliLogger.work('Serving template <' + route.template + '> for <' + request.url + '>');
-        const tpl = fs.readFileSync(this._templateRoot + '/' + route.template, { encoding: 'utf8' });
-        this._nunjucks.addGlobal('request', request);
-        const html = this._nunjucks.renderString(tpl, { global: model });
-        response.send(html);
-        this._cliLogger.end(work);
-    }
-
-
-    /**
-     * @param {Express}
-     */
-    register(express)
-    {
-        const work = this._cliLogger.work('Registering <' + this.className + '> as middleware');
-
-        for (const route of this._routes)
-        {
-            this._cliLogger.info('Adding route <' + route.url + '>');
-            express.get(route.url, this.handlePage.bind(this, route));
-        }
-        express.get(this._staticRoute + '/*', this.handleStatic.bind(this));
-        express.all('*', this.handle404.bind(this));
-
-        this._cliLogger.end(work);
+        this.express.all(route, handler);
     }
 }
 
@@ -247,4 +217,4 @@ class PagesRoute extends BaseRoute
  * Exports
  * @ignore
  */
-module.exports.PagesRoute = PagesRoute;
+module.exports.GuiTemplateRoute = GuiTemplateRoute;

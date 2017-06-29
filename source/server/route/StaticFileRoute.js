@@ -6,6 +6,9 @@
  */
 const Route = require('./Route.js').Route;
 const CliLogger = require('../../cli/CliLogger.js').CliLogger;
+const PathesConfiguration = require('../../model/configuration/PathesConfiguration.js').PathesConfiguration;
+const assertParameter = require('../../utils/assert.js').assertParameter;
+const waitForPromise = require('../../utils/synchronize.js').waitForPromise;
 
 
 /**
@@ -18,13 +21,16 @@ class StaticFileRoute extends Route
     /**
      * @param {cli.CliLogger} cliLogger
      */
-    constructor(cliLogger, options)
+    constructor(cliLogger, pathesConfiguration, options)
     {
         super(cliLogger);
 
+        // Check params
+        assertParameter(this, 'pathesConfiguration', pathesConfiguration, true, PathesConfiguration);
+
         // Assign options
         const opts = options || {};
-        this._basePath = opts.basePath || '';
+        this._basePath = waitForPromise(pathesConfiguration.resolve(opts.basePath || ''));
         this._allowedExtensions = opts.allowedExtensions || ['.css', '.png', '.jpg', '.gif', '.svg', '.woff', '.json', '.ico', '.html'];
     }
 
@@ -34,7 +40,7 @@ class StaticFileRoute extends Route
      */
     static get injections()
     {
-        return { 'parameters': [CliLogger, 'server.route/StaticFileRoute.options'] };
+        return { 'parameters': [CliLogger, PathesConfiguration, 'server.route/StaticFileRoute.options'] };
     }
 
 

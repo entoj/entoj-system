@@ -24,7 +24,7 @@ describe(EntityTemplateRoute.className, function()
     routeSpec(EntityTemplateRoute, 'server.route/EntityTemplateRoute', function(parameters)
     {
         const cliLogger = new CliLogger('', { muted: true });
-        return [cliLogger, global.fixtures.urlsConfiguration, global.fixtures.nunjucks];
+        return [cliLogger, global.fixtures.urlsConfiguration, global.fixtures.pathesConfiguration, global.fixtures.nunjucks];
     });
 
 
@@ -59,6 +59,7 @@ describe(EntityTemplateRoute.className, function()
         const cliLogger = new CliLogger('', { muted: true });
         return new EntityTemplateRoute(cliLogger,
             global.fixtures.urlsConfiguration,
+            global.fixtures.pathesConfiguration,
             global.fixtures.nunjucks,
             { basePath: global.fixtures.pathesConfiguration.sites });
     };

@@ -9,6 +9,8 @@ const CliLogger = require('../../cli/CliLogger.js').CliLogger;
 const ErrorHandler = require('../../error/ErrorHandler.js').ErrorHandler;
 const UrlsConfiguration = require('../../model/configuration/UrlsConfiguration.js').UrlsConfiguration;
 const Environment = require('../../nunjucks/Environment.js').Environment;
+const PathesConfiguration = require('../../model/configuration/PathesConfiguration.js').PathesConfiguration;
+const waitForPromise = require('../../utils/synchronize.js').waitForPromise;
 const assertParameter = require('../../utils/assert.js').assertParameter;
 const co = require('co');
 const fs = require('co-fs-extra');
@@ -26,17 +28,18 @@ class EntityTemplateRoute extends Route
      * @param {model.configuration.UrlsConfiguration} urlsConfiguration
      * @param {nunjucks.Environment} nunjucks
      */
-    constructor(cliLogger, urlsConfiguration, nunjucks, options)
+    constructor(cliLogger, urlsConfiguration, pathesConfiguration, nunjucks, options)
     {
         super(cliLogger);
 
         // Check params
         assertParameter(this, 'urlsConfiguration', urlsConfiguration, true, UrlsConfiguration);
+        assertParameter(this, 'pathesConfiguration', pathesConfiguration, true, PathesConfiguration);
         assertParameter(this, 'nunjucks', nunjucks, true, Environment);
 
         // Assign options
         const opts = options || {};
-        this._basePath = opts.basePath || '';
+        this._basePath = waitForPromise(pathesConfiguration.resolve(opts.basePath || ''));
         this._urlsConfiguration = urlsConfiguration;
         this._nunjucks = nunjucks;
     }
@@ -47,7 +50,7 @@ class EntityTemplateRoute extends Route
      */
     static get injections()
     {
-        return { 'parameters': [CliLogger, UrlsConfiguration, Environment, 'server.route/EntityTemplateRoute.options'] };
+        return { 'parameters': [CliLogger, UrlsConfiguration, PathesConfiguration, Environment, 'server.route/EntityTemplateRoute.options'] };
     }
 
 
