@@ -11,5 +11,6 @@ LCOV=$SELF/../coverage/lcov.info
 
 # Go
 $SELF/test --coverage
+
 echo "Uploading coverage datato coveralls.io"
 $COVERALL < $LCOV
