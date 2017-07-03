@@ -6,6 +6,7 @@
  */
 const Base = require('../../Base.js').Base;
 const ViewModel = require('./ViewModel.js').ViewModel;
+const ErrorHandler = require('../../error/ErrorHandler.js').ErrorHandler;
 const EntitiesRepository = require('../entity/EntitiesRepository.js').EntitiesRepository;
 const PathesConfiguration = require('../configuration/PathesConfiguration.js').PathesConfiguration;
 const assertParameter = require('../../utils/assert.js').assertParameter;
@@ -120,7 +121,7 @@ class ViewModelRepository extends Base
             if (isString(data))
             {
                 //Is it a plugin call?
-                const macro = data.match(/^@([\w\-]+):(.*)$/i);
+                const macro = data.match(/^@([\w-]+):(.*)$/i);
                 if (macro)
                 {
                     const name = macro[1].toLowerCase();
@@ -138,7 +139,7 @@ class ViewModelRepository extends Base
 
             // Everything else
             return data;
-        });
+        }).catch(ErrorHandler.handler(scope));
         return promise;
     }
 
@@ -160,7 +161,7 @@ class ViewModelRepository extends Base
             const rawData = JSON.parse(fileContents);
             const data = yield scope.process(rawData, site, useStaticContent);
             return data;
-        });
+        }).catch(ErrorHandler.handler(scope));
         return promise;
     }
 
@@ -232,12 +233,7 @@ class ViewModelRepository extends Base
             }
 
             return false;
-        })
-        .catch((e) =>
-        {
-            /* istanbul ignore next */
-            this.logger.error('load(' + pth + ') : ', e);
-        });
+        }).catch(ErrorHandler.handler(scope));
         return promise;
     }
 
@@ -261,12 +257,7 @@ class ViewModelRepository extends Base
         {
             const data = yield scope.load(path, site, useStaticContent);
             return new ViewModel({ data: data });
-        })
-        .catch((e) =>
-        {
-            /* istanbul ignore next */
-            this.logger.error('getByPath(' + path + ') : ', e);
-        });
+        }).catch(ErrorHandler.handler(scope));
         return promise;
     }
 }

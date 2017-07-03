@@ -68,8 +68,8 @@ describe(RenameFilesTask.className, function()
                 {
                     renameFiles:
                     {
-                        '(.*)\.html$': '$1.txt',
-                        '(.*)test\.(.*)': '$1example.$2'
+                        '(.*).html$': '$1.txt',
+                        '(.*)test.(.*)': '$1example.$2'
                     }
                 };
                 const file1 = new VinylFile(

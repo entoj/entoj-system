@@ -136,7 +136,7 @@ class DocBlockParser extends Parser
         {
             result.docBlockPattern = /\{#+((.|[\n\t\s])*?)#+\}/ig;
             result.startPattern = /^\s*\{#+\s?/;
-            result.linePattern = //;
+            result.linePattern = new RegExp('');
             result.endPattern = /#+\}\s*$/;
         }
 
@@ -225,7 +225,7 @@ class DocBlockParser extends Parser
         let parameter;
         const lines = data.split('\n');
         let line = lines.shift();
-        let matches = line.match(/((\{.*\})\s+)?([\$\w\.\-_]+|\[[\$\w\.\-_\=\s]+\])(\s+-\s+(.*))?/);
+        let matches = line.match(/((\{.*\})\s+)?([$\w.\-_]+|\[[$\w.\-_=\s]+\])(\s+-\s+(.*))?/);
         let name = matches[3] ? matches[3].trim() : undefined;
         let defaultValue = undefined;
         const description = matches[5] ? matches[5].trim() : undefined;

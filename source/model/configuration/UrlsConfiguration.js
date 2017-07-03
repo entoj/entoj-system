@@ -6,6 +6,7 @@
  */
 const Base = require('../../Base.js').Base;
 const Site = require('../site/Site.js').Site;
+const ErrorHandler = require('../../error/ErrorHandler.js').ErrorHandler;
 const SitesRepository = require('../site/SitesRepository.js').SitesRepository;
 const EntityCategory = require('../entity/EntityCategory.js').EntityCategory;
 const EntityCategoriesRepository = require('../entity/EntityCategoriesRepository.js').EntityCategoriesRepository;
@@ -161,11 +162,7 @@ class UrlsConfiguration extends Base
                 return result;
             }
             return false;
-        })
-        .catch(function(error)
-        {
-            scope.logger.error(scope.className + '::match', error.stack);
-        });
+        }).catch(ErrorHandler.handler(scope));
         return promise;
     }
 

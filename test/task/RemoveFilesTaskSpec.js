@@ -68,7 +68,7 @@ describe(RemoveFilesTask.className, function()
                 {
                     removeFiles:
                     [
-                        '(.*)\.html$'
+                        '(.*).html$'
                     ]
                 };
                 const file1 = new VinylFile(

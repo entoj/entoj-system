@@ -5,6 +5,7 @@
  * @ignore
  */
 const Base = require('../Base.js').Base;
+const ErrorHandler = require('../error/ErrorHandler.js').ErrorHandler;
 const CliLogger = require('../cli/CliLogger.js').CliLogger;
 const FileWatcher = require('./FileWatcher.js').FileWatcher;
 const SitesRepository = require('../model/site/SitesRepository.js').SitesRepository;
@@ -116,12 +117,7 @@ class ModelSynchronizer extends Base
             scope.signals.invalidated.dispatch(scope, result);
 
             return result;
-        })
-        .catch(function(e)
-        {
-            scope._cliLogger.error(e);
-            throw new Error('ModelSynchronizer.processChanges - ' + e);
-        });
+        }).catch(ErrorHandler.handler(scope));
         return promise;
     }
 

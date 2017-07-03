@@ -5,6 +5,7 @@
  * @ignore
  */
 const Parser = require('../Parser.js').Parser;
+const ErrorHandler = require('../../error/ErrorHandler.js').ErrorHandler;
 const co = require('co');
 const nunjucks = require('nunjucks');
 const unique = require('lodash.uniq');
@@ -181,12 +182,7 @@ class CallParser extends Parser
             result.calls = unique(result.calls);
             result.externals = difference(result.calls, result.definitions);
             return result;
-        })
-        .catch(function(error)
-        {
-            /* istanbul ignore next */
-            throw new Error('CallParser - ' + error);
-        });
+        }).catch(ErrorHandler.handler(scope));
 
         return promise;
     }

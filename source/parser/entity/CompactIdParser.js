@@ -46,8 +46,9 @@ class CompactIdParser extends IdParser
         this._templates = {};
         this._templates[IdParser.TEMPLATE_SITE] = opts.TEMPLATE_SITE || '${site.name.urlify()}';
         this._templates[IdParser.TEMPLATE_CATEGORY] = opts.TEMPLATE_CATEGORY || '${entityCategory.pluralName.urlify()}';
-        const id = this._useNumbers ? '${entityCategory.shortName.urlify()}${entityId.number.format(3)}-${entityId.name.urlify()}'
-                                    : '${entityCategory.shortName.urlify()}-${entityId.name.urlify()}';
+        const id = this._useNumbers
+            ? '${entityCategory.shortName.urlify()}${entityId.number.format(3)}-${entityId.name.urlify()}'
+            : '${entityCategory.shortName.urlify()}-${entityId.name.urlify()}';
         this._templates[IdParser.TEMPLATE_ID] = opts.TEMPLATE_ID || id;
         this._templates[IdParser.TEMPLATE_SITE_PATH] = '/' + this._templates[IdParser.TEMPLATE_SITE];
         this._templates[IdParser.TEMPLATE_CATEGORY_PATH] = this._templates[IdParser.TEMPLATE_SITE_PATH] + '/' + this._templates[IdParser.TEMPLATE_CATEGORY];

@@ -5,6 +5,7 @@
  * @ignore
  */
 const Parser = require('./Parser.js').Parser;
+const ErrorHandler = require('../error/ErrorHandler.js').ErrorHandler;
 const File = require('../model/file/File.js').File;
 const ContentType = require('../model/ContentType.js').ContentType;
 const ContentKind = require('../model/ContentKind.js').ContentKind;
@@ -184,12 +185,7 @@ class FileParser extends Parser
             }
 
             return result;
-        })
-        .catch(function(error)
-        {
-            /* istanbul ignore next */
-            throw new Error('FileParser (filename: ' + content + ') - ' + error);
-        });
+        }).catch(ErrorHandler.handler(scope));
         return promise;
     }
 }

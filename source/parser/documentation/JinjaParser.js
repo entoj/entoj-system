@@ -6,6 +6,7 @@
  * @ignore
  */
 const Parser = require('../Parser.js').Parser;
+const ErrorHandler = require('../../error/ErrorHandler.js').ErrorHandler;
 const DocBlockParser = require('./DocBlockParser.js').DocBlockParser;
 const DocumentationCallable = require('../../model/documentation/DocumentationCallable.js').DocumentationCallable;
 const DocumentationParameter = require('../../model/documentation/DocumentationParameter.js').DocumentationParameter;
@@ -211,11 +212,7 @@ class JinjaParser extends Parser
             }
 
             return result;
-        })
-        .catch(function(error)
-        {
-            throw new Error('JinjaParser - ' + error);
-        });
+        }).catch(ErrorHandler.handler(scope));
 
         return promise;
     }

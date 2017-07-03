@@ -40,11 +40,7 @@ describe('utils/glob', function()
                 expect(files).to.have.length(1);
                 expect(files).to.contain(path + PATH_SEPERATOR + 'mixed-j2-01.j2');
                 cb();
-            })
-            .catch((e) =>
-            {
-                cb(e);
-            });
+            }).catch((e) => cb(e));
         });
 
         it('should glob all files in multiple directories', function(cb)
@@ -58,11 +54,7 @@ describe('utils/glob', function()
                 expect(files).to.contain(path + PATH_SEPERATOR + 'j2' + PATH_SEPERATOR + 'j2-01.j2');
                 expect(files).to.contain(path + PATH_SEPERATOR + 'mixed' + PATH_SEPERATOR + 'mixed-j2-01.j2');
                 cb();
-            })
-            .catch((e) =>
-            {
-                cb(e);
-            });
+            }).catch((e) => cb(e));
         });
     });
 });

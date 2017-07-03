@@ -5,6 +5,7 @@
  * @ignore
  */
 const Base = require('../Base.js').Base;
+const ErrorHandler = require('../error/ErrorHandler.js').ErrorHandler;
 const CliLogger = require('../cli/CliLogger.js').CliLogger;
 const PathesConfiguration = require('../model/configuration/PathesConfiguration.js').PathesConfiguration;
 const EntityCategoriesRepository = require('../model/entity/EntityCategoriesRepository.js').EntityCategoriesRepository;
@@ -272,12 +273,7 @@ class FileWatcher extends Base
             scope.signals.changed.dispatch(scope, clone(result));
 
             return result;
-        })
-        .catch(function(e)
-        {
-            scope._cliLogger.error(e);
-            throw new Error('FileWatcher.processEvents - ' + e);
-        });
+        }).catch(ErrorHandler.handler(scope));
         return promise;
         /* eslint-enable complexity */
     }
@@ -318,7 +314,7 @@ class FileWatcher extends Base
             scope._cliLogger.info('Watching for file changes in <' + scope._pathesConfiguration.sites + '>');
             scope._watcher = chokidar.watch(scope._pathesConfiguration.sites + '/**',
                 {
-                    ignored: /[\/\\]\./,
+                    ignored: /[/\\]\./,
                     ignoreInitial: true,
                     cwd: scope._pathesConfiguration.sites
                 });

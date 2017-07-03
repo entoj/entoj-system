@@ -5,6 +5,7 @@
  * @ignore
  */
 const Base = require('../../Base.js').Base;
+const ErrorHandler = require('../../error/ErrorHandler.js').ErrorHandler;
 const co = require('co');
 
 
@@ -55,12 +56,7 @@ class LoaderPlugin extends Base
             }
 
             return true;
-        })
-        .catch(function(e)
-        {
-            /* istanbul ignore next */
-            throw new Error('Failed executing plugin : ' + e.message);
-        });
+        }).catch(ErrorHandler.handler(scope));
         return promise;
     }
 }

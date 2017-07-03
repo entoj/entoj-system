@@ -5,6 +5,7 @@
  * @ignore
  */
 const Base = require('../Base.js').Base;
+const ErrorHandler = require('../error/ErrorHandler.js').ErrorHandler;
 const signals = require('signals');
 const co = require('co');
 
@@ -246,11 +247,7 @@ class Repository extends Base
             yield scope.updatedItems();
 
             return result;
-        })
-        .catch(function(e)
-        {
-            throw new Error(e);
-        });
+        }).catch(ErrorHandler.handler(scope));
         return promise;
     }
 

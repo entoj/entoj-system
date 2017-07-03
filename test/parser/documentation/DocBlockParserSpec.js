@@ -472,7 +472,7 @@ describe(DocBlockParser.className, function()
              * @type {bool|String}
              */`;
             const promise = testee.parse(docblock, { contentType: ContentType.SASS }).then(function(documentation)
-                {
+            {
                 expect(documentation).to.be.instanceof(DocumentationVariable);
                 expect(documentation.type).to.contain('Boolean');
                 expect(documentation.type).to.contain('String');

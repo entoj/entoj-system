@@ -90,8 +90,8 @@ describe(Server.className, function()
             global.fixtures.server.start().then(function(server)
             {
                 request(server)
-                      .get('/js/js-01.js')
-                      .expect(200, done);
+                    .get('/js/js-01.js')
+                    .expect(200, done);
             });
         });
 
@@ -112,7 +112,7 @@ describe(Server.className, function()
                       .get('/js/js-01.js')
                       .expect(200, done);
                 */
-               done();
+                done();
             });
         });
 
@@ -128,9 +128,8 @@ describe(Server.className, function()
             global.fixtures.server.start().then(function(server)
             {
                 request(server)
-                      .get('/js/js-01.js')
-                      .expect(401, done);
-                      //.expect(404, done);
+                    .get('/js/js-01.js')
+                    .expect(401, done);
             });
         });
     });

@@ -2,7 +2,7 @@
 /**
  * @namespace nunjucks.loader
  */
- module.exports =
- {
-     FileLoader: require('./FileLoader.js').FileLoader
- };
+module.exports =
+{
+    FileLoader: require('./FileLoader.js').FileLoader
+};
