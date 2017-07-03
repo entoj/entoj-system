@@ -9,7 +9,7 @@ const taskSpec = require(ES_TEST + '/task/TaskShared.js').spec;
 const pathes = require(ES_SOURCE + '/utils/pathes.js');
 const through2 = require('through2');
 const VinylFile = require('vinyl');
-const fs = require('fs-extra');
+const fs = require('co-fs-extra');
 
 
 /**
