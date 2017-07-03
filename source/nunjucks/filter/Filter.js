@@ -38,6 +38,15 @@ class Filter extends Base
 
 
     /**
+     * @inheritDocs
+     */
+    static get injections()
+    {
+        return { 'parameters': ['nunjucks.filter/Filter.options'] };
+    }
+
+
+    /**
      * Name of the filter within templates.
      * This may also be a list of names.
      *
