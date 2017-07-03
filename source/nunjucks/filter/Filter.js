@@ -17,11 +17,13 @@ const Base = require('../../Base.js').Base;
 class Filter extends Base
 {
     /**
+     * @param {Object} options
      */
-    constructor()
+    constructor(options)
     {
         super();
-        this._name = 'filter';
+        const opts = options || {};
+        this._name = opts.name || 'filter';
         this._environment = false;
     }
 

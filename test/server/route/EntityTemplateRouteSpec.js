@@ -43,7 +43,7 @@ describe(EntityTemplateRoute.className, function()
             global.fixtures.buildConfiguration,
             [
                 new Filters.LoadFilter(global.fixtures.viewModelRepository),
-                new Filters.ImageUrlFilter(['image']),
+                new Filters.Filter({ name: 'imageUrl' }), // stub
                 new Filters.ModuleClassesFilter(),
                 new Filters.EmptyFilter(),
                 new Filters.NotEmptyFilter(),
