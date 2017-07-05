@@ -113,10 +113,19 @@ class NodeList extends Node
         {
             result.push(this);
         }
-        for (const node of this.children)
+        for (const iterableField of this.iterableFields)
         {
-            const found = node.filter(type, properties);
-            result.push(...found);
+            if (this[iterableField] instanceof Node)
+            {
+                result.push(...this[iterableField].filter(type, properties));
+            }
+            if (this[iterableField] instanceof BaseArray)
+            {
+                for (const node of this[iterableField])
+                {
+                    result.push(...node.filter(type, properties));
+                }
+            }
         }
         return result;
     }
