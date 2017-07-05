@@ -94,7 +94,7 @@ function configure(options)
                 /* eslint no-console: "off" */
                 console.log('Testee:');
                 console.log(JSON.stringify(testee, null, 4));
-                console.log('Expected:');
+                console.log('Parsed:');
                 console.log(JSON.stringify(expected, null, 4));
                 throw e;
             }
@@ -126,7 +126,7 @@ function configure(options)
                     console.log('Testee:');
                     console.log(result);
                     console.log('Parsed:');
-                    console.log(JSON.stringify(node.serialize(), null, 4));
+                    console.log(JSON.stringify(ast.serialize(), null, 4));
                     throw e;
                 }
             }
