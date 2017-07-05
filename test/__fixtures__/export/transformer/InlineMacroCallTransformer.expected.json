@@ -241,7 +241,24 @@
                             ]
                         },
                         {
-                            "type": "YieldNode"
+                            "type": "IfNode",
+                            "children": [
+                                {
+                                    "type": "YieldNode"
+                                }
+                            ],
+                            "condition": {
+                                "type": "ConditionNode",
+                                "children": [
+                                    {
+                                        "type": "VariableNode",
+                                        "fields": [
+                                            "caller_u1"
+                                        ]
+                                    }
+                                ]
+                            },
+                            "elseChildren": []
                         },
                         {
                             "type": "TextNode",
@@ -498,13 +515,30 @@
                             ]
                         },
                         {
-                            "type": "NodeList",
+                            "type": "IfNode",
                             "children": [
                                 {
-                                    "type": "TextNode",
-                                    "value": "\n        <span>Hi</span>\n    "
+                                    "type": "NodeList",
+                                    "children": [
+                                        {
+                                            "type": "TextNode",
+                                            "value": "\n        <span>Hi</span>\n    "
+                                        }
+                                    ]
                                 }
-                            ]
+                            ],
+                            "condition": {
+                                "type": "ConditionNode",
+                                "children": [
+                                    {
+                                        "type": "VariableNode",
+                                        "fields": [
+                                            "caller_u2"
+                                        ]
+                                    }
+                                ]
+                            },
+                            "elseChildren": []
                         },
                         {
                             "type": "TextNode",
