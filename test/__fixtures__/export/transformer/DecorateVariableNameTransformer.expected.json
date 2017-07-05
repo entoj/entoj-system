@@ -1,0 +1,94 @@
+{
+    "type": "NodeList",
+    "children": [
+        {
+            "type": "SetNode",
+            "variable": {
+                "type": "VariableNode",
+                "fields": [
+                    "pre_variable_suf"
+                ]
+            },
+            "value": {
+                "type": "ExpressionNode",
+                "children": [
+                    {
+                        "type": "VariableNode",
+                        "fields": [
+                            "pre_model_suf",
+                            "headline"
+                        ]
+                    },
+                    {
+                        "type": "OperandNode",
+                        "value": "+"
+                    },
+                    {
+                        "type": "LiteralNode",
+                        "value": "-teaser"
+                    }
+                ]
+            }
+        },
+        {
+            "type": "TextNode",
+            "value": "\n"
+        },
+        {
+            "type": "OutputNode",
+            "children": [
+                {
+                    "type": "VariableNode",
+                    "fields": [
+                        "pre_variable_suf"
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "TextNode",
+            "value": "\n"
+        },
+        {
+            "type": "IfNode",
+            "children": [
+                {
+                    "type": "TextNode",
+                    "value": "COPY"
+                }
+            ],
+            "condition": {
+                "type": "ConditionNode",
+                "children": [
+                    {
+                        "type": "VariableNode",
+                        "fields": [
+                            "pre_model_suf",
+                            "copy"
+                        ]
+                    }
+                ]
+            },
+            "elseChildren": []
+        },
+        {
+            "type": "TextNode",
+            "value": "\n"
+        },
+        {
+            "type": "OutputNode",
+            "children": [
+                {
+                    "type": "VariableNode",
+                    "fields": [
+                        "keep"
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "TextNode",
+            "value": "\n\n"
+        }
+    ]
+}

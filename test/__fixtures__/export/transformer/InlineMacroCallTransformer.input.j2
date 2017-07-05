@@ -1,0 +1,6 @@
+{% macro m_teaser(model=false) %}
+    {{ e_headline(text=model.headline, level=3) }}
+    {% call e_headline() %}
+        <span>Hi</span>
+    {% endcall %}
+{% endmacro %}

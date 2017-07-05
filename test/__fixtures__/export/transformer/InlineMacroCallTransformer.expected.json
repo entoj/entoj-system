@@ -1,0 +1,557 @@
+{
+    "type": "NodeList",
+    "children": [
+        {
+            "type": "MacroNode",
+            "children": [
+                {
+                    "type": "TextNode",
+                    "value": "\n    "
+                },
+                {
+                    "type": "NodeList",
+                    "children": [
+                        {
+                            "type": "SetNode",
+                            "value": {
+                                "type": "ExpressionNode",
+                                "children": [
+                                    {
+                                        "type": "VariableNode",
+                                        "fields": [
+                                            "model",
+                                            "headline"
+                                        ]
+                                    }
+                                ]
+                            },
+                            "variable": {
+                                "type": "VariableNode",
+                                "fields": [
+                                    "text_u1"
+                                ]
+                            }
+                        },
+                        {
+                            "type": "SetNode",
+                            "value": {
+                                "type": "ExpressionNode",
+                                "children": [
+                                    {
+                                        "type": "LiteralNode",
+                                        "value": 3
+                                    }
+                                ]
+                            },
+                            "variable": {
+                                "type": "VariableNode",
+                                "fields": [
+                                    "level_u1"
+                                ]
+                            }
+                        },
+                        {
+                            "type": "SetNode",
+                            "value": {
+                                "type": "ExpressionNode",
+                                "children": [
+                                    {
+                                        "type": "LiteralNode",
+                                        "value": ""
+                                    }
+                                ]
+                            },
+                            "variable": {
+                                "type": "VariableNode",
+                                "fields": [
+                                    "classes_u1"
+                                ]
+                            }
+                        },
+                        {
+                            "type": "TextNode",
+                            "value": "\n\n    "
+                        },
+                        {
+                            "type": "TextNode",
+                            "value": "\n    "
+                        },
+                        {
+                            "type": "SetNode",
+                            "value": {
+                                "type": "ExpressionNode",
+                                "children": [
+                                    {
+                                        "type": "LiteralNode",
+                                        "value": "e-headline"
+                                    }
+                                ]
+                            },
+                            "variable": {
+                                "type": "VariableNode",
+                                "fields": [
+                                    "moduleClass_u1"
+                                ]
+                            }
+                        },
+                        {
+                            "type": "TextNode",
+                            "value": "\n    "
+                        },
+                        {
+                            "type": "SetNode",
+                            "value": {
+                                "type": "ExpressionNode",
+                                "children": [
+                                    {
+                                        "type": "LiteralNode",
+                                        "value": "h"
+                                    },
+                                    {
+                                        "type": "OperandNode",
+                                        "value": "+"
+                                    },
+                                    {
+                                        "type": "VariableNode",
+                                        "fields": [
+                                            "level_u1"
+                                        ]
+                                    }
+                                ]
+                            },
+                            "variable": {
+                                "type": "VariableNode",
+                                "fields": [
+                                    "element_u1"
+                                ]
+                            }
+                        },
+                        {
+                            "type": "TextNode",
+                            "value": "\n    "
+                        },
+                        {
+                            "type": "SetNode",
+                            "value": {
+                                "type": "ExpressionNode",
+                                "children": [
+                                    {
+                                        "type": "FilterNode",
+                                        "children": [],
+                                        "name": "moduleClasses",
+                                        "arguments": [
+                                            {
+                                                "type": "ParameterNode",
+                                                "value": {
+                                                    "type": "ExpressionNode",
+                                                    "children": [
+                                                        {
+                                                            "type": "VariableNode",
+                                                            "fields": [
+                                                                "moduleClass_u1"
+                                                            ]
+                                                        }
+                                                    ]
+                                                }
+                                            }
+                                        ],
+                                        "value": {
+                                            "type": "ArrayNode",
+                                            "children": [
+                                                {
+                                                    "type": "VariableNode",
+                                                    "fields": [
+                                                        "element_u1"
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    }
+                                ]
+                            },
+                            "variable": {
+                                "type": "VariableNode",
+                                "fields": [
+                                    "moduleClasses_u1"
+                                ]
+                            }
+                        },
+                        {
+                            "type": "TextNode",
+                            "value": "\n\n    "
+                        },
+                        {
+                            "type": "TextNode",
+                            "value": "\n    <"
+                        },
+                        {
+                            "type": "OutputNode",
+                            "children": [
+                                {
+                                    "type": "VariableNode",
+                                    "fields": [
+                                        "element_u1"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "type": "TextNode",
+                            "value": " class=\""
+                        },
+                        {
+                            "type": "OutputNode",
+                            "children": [
+                                {
+                                    "type": "VariableNode",
+                                    "fields": [
+                                        "moduleClasses_u1"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "type": "TextNode",
+                            "value": " "
+                        },
+                        {
+                            "type": "OutputNode",
+                            "children": [
+                                {
+                                    "type": "VariableNode",
+                                    "fields": [
+                                        "classes_u1"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "type": "TextNode",
+                            "value": "\">\n        "
+                        },
+                        {
+                            "type": "OutputNode",
+                            "children": [
+                                {
+                                    "type": "VariableNode",
+                                    "fields": [
+                                        "text_u1"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "type": "YieldNode"
+                        },
+                        {
+                            "type": "TextNode",
+                            "value": "\n    </"
+                        },
+                        {
+                            "type": "OutputNode",
+                            "children": [
+                                {
+                                    "type": "VariableNode",
+                                    "fields": [
+                                        "element_u1"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "type": "TextNode",
+                            "value": ">\n\n"
+                        }
+                    ]
+                },
+                {
+                    "type": "TextNode",
+                    "value": "\n    "
+                },
+                {
+                    "type": "NodeList",
+                    "children": [
+                        {
+                            "type": "SetNode",
+                            "value": {
+                                "type": "ExpressionNode",
+                                "children": [
+                                    {
+                                        "type": "LiteralNode",
+                                        "value": ""
+                                    }
+                                ]
+                            },
+                            "variable": {
+                                "type": "VariableNode",
+                                "fields": [
+                                    "text_u2"
+                                ]
+                            }
+                        },
+                        {
+                            "type": "SetNode",
+                            "value": {
+                                "type": "ExpressionNode",
+                                "children": [
+                                    {
+                                        "type": "LiteralNode",
+                                        "value": 1
+                                    }
+                                ]
+                            },
+                            "variable": {
+                                "type": "VariableNode",
+                                "fields": [
+                                    "level_u2"
+                                ]
+                            }
+                        },
+                        {
+                            "type": "SetNode",
+                            "value": {
+                                "type": "ExpressionNode",
+                                "children": [
+                                    {
+                                        "type": "LiteralNode",
+                                        "value": ""
+                                    }
+                                ]
+                            },
+                            "variable": {
+                                "type": "VariableNode",
+                                "fields": [
+                                    "classes_u2"
+                                ]
+                            }
+                        },
+                        {
+                            "type": "TextNode",
+                            "value": "\n\n    "
+                        },
+                        {
+                            "type": "TextNode",
+                            "value": "\n    "
+                        },
+                        {
+                            "type": "SetNode",
+                            "value": {
+                                "type": "ExpressionNode",
+                                "children": [
+                                    {
+                                        "type": "LiteralNode",
+                                        "value": "e-headline"
+                                    }
+                                ]
+                            },
+                            "variable": {
+                                "type": "VariableNode",
+                                "fields": [
+                                    "moduleClass_u2"
+                                ]
+                            }
+                        },
+                        {
+                            "type": "TextNode",
+                            "value": "\n    "
+                        },
+                        {
+                            "type": "SetNode",
+                            "value": {
+                                "type": "ExpressionNode",
+                                "children": [
+                                    {
+                                        "type": "LiteralNode",
+                                        "value": "h"
+                                    },
+                                    {
+                                        "type": "OperandNode",
+                                        "value": "+"
+                                    },
+                                    {
+                                        "type": "VariableNode",
+                                        "fields": [
+                                            "level_u2"
+                                        ]
+                                    }
+                                ]
+                            },
+                            "variable": {
+                                "type": "VariableNode",
+                                "fields": [
+                                    "element_u2"
+                                ]
+                            }
+                        },
+                        {
+                            "type": "TextNode",
+                            "value": "\n    "
+                        },
+                        {
+                            "type": "SetNode",
+                            "value": {
+                                "type": "ExpressionNode",
+                                "children": [
+                                    {
+                                        "type": "FilterNode",
+                                        "children": [],
+                                        "name": "moduleClasses",
+                                        "arguments": [
+                                            {
+                                                "type": "ParameterNode",
+                                                "value": {
+                                                    "type": "ExpressionNode",
+                                                    "children": [
+                                                        {
+                                                            "type": "VariableNode",
+                                                            "fields": [
+                                                                "moduleClass_u2"
+                                                            ]
+                                                        }
+                                                    ]
+                                                }
+                                            }
+                                        ],
+                                        "value": {
+                                            "type": "ArrayNode",
+                                            "children": [
+                                                {
+                                                    "type": "VariableNode",
+                                                    "fields": [
+                                                        "element_u2"
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    }
+                                ]
+                            },
+                            "variable": {
+                                "type": "VariableNode",
+                                "fields": [
+                                    "moduleClasses_u2"
+                                ]
+                            }
+                        },
+                        {
+                            "type": "TextNode",
+                            "value": "\n\n    "
+                        },
+                        {
+                            "type": "TextNode",
+                            "value": "\n    <"
+                        },
+                        {
+                            "type": "OutputNode",
+                            "children": [
+                                {
+                                    "type": "VariableNode",
+                                    "fields": [
+                                        "element_u2"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "type": "TextNode",
+                            "value": " class=\""
+                        },
+                        {
+                            "type": "OutputNode",
+                            "children": [
+                                {
+                                    "type": "VariableNode",
+                                    "fields": [
+                                        "moduleClasses_u2"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "type": "TextNode",
+                            "value": " "
+                        },
+                        {
+                            "type": "OutputNode",
+                            "children": [
+                                {
+                                    "type": "VariableNode",
+                                    "fields": [
+                                        "classes_u2"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "type": "TextNode",
+                            "value": "\">\n        "
+                        },
+                        {
+                            "type": "OutputNode",
+                            "children": [
+                                {
+                                    "type": "VariableNode",
+                                    "fields": [
+                                        "text_u2"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "type": "NodeList",
+                            "children": [
+                                {
+                                    "type": "TextNode",
+                                    "value": "\n        <span>Hi</span>\n    "
+                                }
+                            ]
+                        },
+                        {
+                            "type": "TextNode",
+                            "value": "\n    </"
+                        },
+                        {
+                            "type": "OutputNode",
+                            "children": [
+                                {
+                                    "type": "VariableNode",
+                                    "fields": [
+                                        "element_u2"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "type": "TextNode",
+                            "value": ">\n\n"
+                        }
+                    ]
+                },
+                {
+                    "type": "TextNode",
+                    "value": "\n"
+                }
+            ],
+            "name": "m_teaser",
+            "parameters": [
+                {
+                    "type": "ParameterNode",
+                    "value": {
+                        "type": "ExpressionNode",
+                        "children": [
+                            {
+                                "type": "LiteralNode",
+                                "value": false
+                            }
+                        ]
+                    },
+                    "name": "model"
+                }
+            ]
+        },
+        {
+            "type": "TextNode",
+            "value": "\n"
+        }
+    ]
+}
