@@ -48,6 +48,7 @@ describe(JinjaParser.className, function()
                 {},
                 undefined,
                 undefined,
+                undefined,
                 fixture.globalRepository,
                 fixture.buildConfiguration);
             return config;

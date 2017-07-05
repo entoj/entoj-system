@@ -72,7 +72,7 @@ function spec(type, className, fixture, prepareParameters)
 
     describe('#filter', function()
     {
-        it('should return a matching child nodes', function()
+        it('should return matching child nodes', function()
         {
             const testee = createTestee();
             const node1 = new Node();

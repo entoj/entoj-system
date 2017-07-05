@@ -36,7 +36,7 @@ function spec(type, className, fixture, prepareParameters)
 
     describe('#next', function()
     {
-        it('should return false last node', function()
+        it('should return false when last node', function()
         {
             const testee = createTestee();
             expect(testee.next).to.be.not.ok;
@@ -55,7 +55,7 @@ function spec(type, className, fixture, prepareParameters)
 
     describe('#previous', function()
     {
-        it('should return false last node', function()
+        it('should return false when first node node', function()
         {
             const testee = createTestee();
             expect(testee.previous).to.be.not.ok;
@@ -151,7 +151,7 @@ function spec(type, className, fixture, prepareParameters)
 
     describe('#find', function()
     {
-        it('should return false when node does not match', function()
+        it('should return false when no node matches', function()
         {
             const testee = createTestee();
             expect(testee.find('Foo')).to.be.not.ok;
@@ -167,7 +167,7 @@ function spec(type, className, fixture, prepareParameters)
 
     describe('#filter', function()
     {
-        it('should return a empty array when node does not match', function()
+        it('should return a empty array when no nodes match', function()
         {
             const testee = createTestee();
             expect(testee.filter('Foo')).to.be.deep.equal([]);

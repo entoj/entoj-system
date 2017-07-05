@@ -7,6 +7,7 @@
 const baseSpec = require(ES_TEST + '/BaseShared.js').spec;
 const AnyNodeRenderer = require(ES_SOURCE + '/export/renderer/AnyNodeRenderer.js').AnyNodeRenderer;
 const projectFixture = require(ES_FIXTURES + '/project/index.js');
+const exportHelper = require(ES_TEST + '/export/ExportHelper.js')();
 
 
 /**
@@ -14,11 +15,6 @@ const projectFixture = require(ES_FIXTURES + '/project/index.js');
  */
 function spec(type, className, prepareParameters, options)
 {
-    /**
-     * Initialize export shared
-     */
-    const exportShared = require(ES_TEST + '/export/ExportShared.js')(options);
-
     /**
      * Base Test
      */
@@ -46,17 +42,6 @@ function spec(type, className, prepareParameters, options)
         }
         return new type(...parameters);
     };
-
-    // Runs a simple testfixture
-    function testFixture()
-    {
-        const nodeRenderers = [createTestee(), new AnyNodeRenderer()];
-        const basePath = (options && options.rootPath)
-            ? options.rootPath
-            : ES_FIXTURES + '/export/renderer/';
-        return exportShared.testFixture(typeName, nodeRenderers, basePath);
-    }
-    spec.testFixture = testFixture;
 
 
     describe('#willRender', function()
@@ -91,11 +76,21 @@ function spec(type, className, prepareParameters, options)
         {
             it('should render to a string', function()
             {
-                return testFixture();
+                return spec.testFixture(typeName, createTestee());
             });
         }
     });
 }
+
+
+// Runs a simple testfixture
+function testFixture(name, nodeRenderer)
+{
+    const nodeRenderers = [nodeRenderer, new AnyNodeRenderer()];
+    return exportHelper.testRenderFixture(name, nodeRenderers);
+}
+spec.testFixture = testFixture;
+
 
 /**
  * Exports
