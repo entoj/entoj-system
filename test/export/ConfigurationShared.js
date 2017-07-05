@@ -36,7 +36,7 @@ function spec(type, className, prepareParameters)
 
     function createTestee(entity, macro, settings)
     {
-        return new type(entity, macro, settings, undefined, undefined, global.fixtures.globalRepository, global.fixtures.buildConfiguration);
+        return new type(entity, macro, settings, undefined, undefined, undefined, global.fixtures.globalRepository, global.fixtures.buildConfiguration);
     }
 
     /**

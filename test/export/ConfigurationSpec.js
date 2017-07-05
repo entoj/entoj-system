@@ -19,7 +19,7 @@ describe(Configuration.className, function()
     function prepareParameters(parameters)
     {
         const fixture = projectFixture.createStatic({ skipEntities: true });
-        return [undefined, undefined, {}, undefined, undefined, fixture.globalRepository, fixture.buildConfiguration];
+        return [undefined, undefined, {}, undefined, undefined, undefined, fixture.globalRepository, fixture.buildConfiguration];
     }
 
     configurationSpec(Configuration, 'export/Configuration', prepareParameters);

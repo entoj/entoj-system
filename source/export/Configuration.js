@@ -8,6 +8,7 @@ const DocumentationCallable = require('../model/documentation/DocumentationCalla
 const EntityAspect = require('../model/entity/EntityAspect.js').EntityAspect;
 const Parser = require('./Parser.js').Parser;
 const Renderer = require('./Renderer.js').Renderer;
+const Transformer = require('./Transformer.js').Transformer;
 const assertParameter = require('../utils/assert.js').assertParameter;
 const co = require('co');
 const merge = require('lodash.merge');
@@ -27,7 +28,7 @@ class Configuration extends Base
     /**
      * @ignore
      */
-    constructor(entity, macro, settings, parser, renderer, globalRepository, buildConfiguration)
+    constructor(entity, macro, settings, parser, renderer, transformer, globalRepository, buildConfiguration)
     {
         super();
 
@@ -36,6 +37,7 @@ class Configuration extends Base
         assertParameter(this, 'macro', macro, false, DocumentationCallable);
         assertParameter(this, 'parser', parser, false, Parser);
         assertParameter(this, 'renderer', renderer, false, Renderer);
+        assertParameter(this, 'transformer', transformer, false, Transformer);
         assertParameter(this, 'globalRepository', globalRepository, true, GlobalRepository);
         assertParameter(this, 'buildConfiguration', buildConfiguration, true, BuildConfiguration);
 
@@ -45,6 +47,7 @@ class Configuration extends Base
         this._settings = settings || {};
         this._parser = parser;
         this._renderer = renderer;
+        this._transformer = transformer;
         this._globalRepository = globalRepository;
         this._buildConfiguration = buildConfiguration;
         this._identifier = 'default';
@@ -141,6 +144,17 @@ class Configuration extends Base
 
 
     /**
+     * Access to the transformer instance.
+     *
+     * @type {export.Transformer}
+     */
+    get transformer()
+    {
+        return this._transformer;
+    }
+
+
+    /**
      * The default configurations used as a base
      * for specific macro configurations.
      *
@@ -218,6 +232,8 @@ class Configuration extends Base
             basics.macro = macro;
             basics.entity = entity;
             basics.site = entity.id.site;
+            basics.filename = entity.pathString;
+            basics.mode = 'default';
 
             // Extend
             const configurations = [];
@@ -241,6 +257,7 @@ class Configuration extends Base
             const localMacros = scope.settings.settings && scope.settings.settings.macros
                 ? scope.settings.settings.macros
                 : {};
+
             for (const match in localMacros)
             {
                 if (minimatch(basics.macro.name, match))
