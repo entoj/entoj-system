@@ -34,15 +34,7 @@ class Renderer extends Base
         {
             for (const nodeRenderer of nodeRenderers)
             {
-                // check if instance or constructor
-                if (nodeRenderer instanceof renderers.NodeRenderer)
-                {
-                    this._nodeRenderers.push(nodeRenderer);
-                }
-                else
-                {
-                    this._nodeRenderers.push(new nodeRenderer());
-                }
+                this._nodeRenderers.push(nodeRenderer);
             }
         }
     }
@@ -63,6 +55,15 @@ class Renderer extends Base
     get options()
     {
         return this._options;
+    }
+
+
+    /**
+     * @type {Array}
+     */
+    get nodeRenderers()
+    {
+        return this._nodeRenderers;
     }
 
 
@@ -115,7 +116,7 @@ class Renderer extends Base
         {
             let result = '';
             let didRender = false;
-            for (const renderer of scope._nodeRenderers)
+            for (const renderer of scope.nodeRenderers)
             {
                 const willRender = yield renderer.willRender(node, configuration);
                 if (willRender)
