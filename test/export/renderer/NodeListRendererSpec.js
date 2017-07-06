@@ -15,5 +15,9 @@ describe(NodeListRenderer.className, function()
     /**
      * NodeRenderer Test
      */
-    nodeRendererSpec(NodeListRenderer, 'export.renderer/NodeListRenderer');
+    const options =
+    {
+        basePath: ES_FIXTURES + '/export/nodeRenderer'
+    };
+    nodeRendererSpec(NodeListRenderer, 'export.renderer/NodeListRenderer', undefined, options);
 });

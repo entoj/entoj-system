@@ -5,9 +5,9 @@
  * @ignore
  */
 const baseSpec = require(ES_TEST + '/BaseShared.js').spec;
+const Renderer = require(ES_SOURCE + '/export/Renderer.js').Renderer;
 const AnyNodeRenderer = require(ES_SOURCE + '/export/renderer/AnyNodeRenderer.js').AnyNodeRenderer;
 const projectFixture = require(ES_FIXTURES + '/project/index.js');
-const exportHelper = require(ES_TEST + '/export/ExportHelper.js')();
 
 
 /**
@@ -15,6 +15,9 @@ const exportHelper = require(ES_TEST + '/export/ExportHelper.js')();
  */
 function spec(type, className, prepareParameters, options)
 {
+    // Initialize helpers
+    const exportHelper = require(ES_TEST + '/export/ExportHelper.js')(options);
+
     /**
      * Base Test
      */
@@ -29,7 +32,7 @@ function spec(type, className, prepareParameters, options)
     {
         global.fixtures = (options && options.createFixture)
             ? options.createFixture()
-            : projectFixture.createStatic({ skipEntities: true });
+            : projectFixture.createStatic();
     });
 
     // Create testee
@@ -43,6 +46,13 @@ function spec(type, className, prepareParameters, options)
         return new type(...parameters);
     };
 
+    // Runs a simple testfixture
+    function testFixture(name, nodeRenderer)
+    {
+        const renderer = new Renderer([nodeRenderer, new AnyNodeRenderer()]);
+        return exportHelper.testRendererFixture(name, renderer);
+    }
+    spec.testFixture = testFixture;
 
     describe('#willRender', function()
     {
@@ -76,20 +86,11 @@ function spec(type, className, prepareParameters, options)
         {
             it('should render to a string', function()
             {
-                return spec.testFixture(typeName, createTestee());
+                return testFixture(typeName, createTestee());
             });
         }
     });
 }
-
-
-// Runs a simple testfixture
-function testFixture(name, nodeRenderer)
-{
-    const nodeRenderers = [nodeRenderer, new AnyNodeRenderer()];
-    return exportHelper.testRenderFixture(name, nodeRenderers);
-}
-spec.testFixture = testFixture;
 
 
 /**

@@ -7,26 +7,18 @@ const RemoveLoadModelTransformer = require(ES_SOURCE + '/export/transformer/Remo
 const nodeTransformerSpec = require(ES_TEST + '/export/transformer/NodeTransformerShared.js').spec;
 
 
-/**
- * Spec
- */
 describe(RemoveLoadModelTransformer.className, function()
 {
     /**
      * NodeTransformer Test
      */
-    nodeTransformerSpec(RemoveLoadModelTransformer, 'export.transformer/RemoveLoadModelTransformer');
-
-
-    /**
-     * RemoveLoadModelTransformer Test
-     */
-    describe('#transform()', function()
+    const options =
     {
-        it('should remove model|load', function()
-        {
-            const testee = new RemoveLoadModelTransformer();
-            return nodeTransformerSpec.testFixture(testee);
-        });
-    });
+        basePath: ES_FIXTURES + '/export/transformer'
+    };
+    const testFixtures =
+    {
+        'should remove {% set model = ... %}': 'RemoveLoadModelTransformer'
+    };
+    nodeTransformerSpec(RemoveLoadModelTransformer, 'export.transformer/RemoveLoadModelTransformer', undefined, testFixtures, options);
 });

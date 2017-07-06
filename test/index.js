@@ -27,7 +27,8 @@ module.exports =
         ConfigurationShared: require('./export/ConfigurationShared.js').spec,
         ParserShared: require('./export/ParserShared.js').spec,
         NodeRendererShared: require('./export/renderer/NodeRendererShared.js').spec,
-        RendererShared: require('./export/RendererShared.js').spec
+        RendererShared: require('./export/RendererShared.js').spec,
+        Helper: require('./export/ExportHelper.js')
     },
     formatter:
     {

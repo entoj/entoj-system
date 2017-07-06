@@ -34,6 +34,10 @@ class Renderer extends Base
         {
             for (const nodeRenderer of nodeRenderers)
             {
+                if (!(nodeRenderer instanceof renderers.NodeRenderer))
+                {
+                    throw new Error(this.className + ' need instanciated NodeRenderers');
+                }
                 this._nodeRenderers.push(nodeRenderer);
             }
         }
@@ -41,11 +45,20 @@ class Renderer extends Base
 
 
     /**
-     * @inheritDoc
+     * @inheritDocs
      */
     static get className()
     {
         return 'export/Renderer';
+    }
+
+
+    /**
+     * @inheritDocs
+     */
+    static get injections()
+    {
+        return { 'parameters': ['transformer/Renderer.nodeRenderers', 'transformer/Renderer.options'] };
     }
 
 

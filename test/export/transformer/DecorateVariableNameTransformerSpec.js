@@ -15,23 +15,21 @@ describe(DecorateVariableNameTransformer.className, function()
     /**
      * NodeTransformer Test
      */
-    nodeTransformerSpec(DecorateVariableNameTransformer, 'export.transformer/DecorateVariableNameTransformer');
-
-
-    /**
-     * DecorateVariablesTransformer Test
-     */
-    describe('#transform()', function()
+    const options =
     {
-        it('should decorate variables', function()
-        {
-            const testee = new DecorateVariableNameTransformer(
-                {
-                    prefix: 'pre_',
-                    suffix: '_suf',
-                    filter: (name) => name !== 'keep'
-                });
-            return nodeTransformerSpec.testFixture(testee);
-        });
-    });
+        basePath: ES_FIXTURES + '/export/transformer'
+    };
+    const testFixtures =
+    {
+        'should decorate variables': 'DecorateVariableNameTransformer'
+    };
+    const prepareParameters = function()
+    {
+        return [{
+            prefix: 'pre_',
+            suffix: '_suf',
+            filter: (name) => name !== 'keep'
+        }];
+    };
+    nodeTransformerSpec(DecorateVariableNameTransformer, 'export.transformer/DecorateVariableNameTransformer', prepareParameters, testFixtures, options);
 });

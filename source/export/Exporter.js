@@ -49,7 +49,7 @@ class Exporter extends Base
      */
     static get injections()
     {
-        return { 'parameters': [GlobalRepository, Parser, Renderer, Transformer] };
+        return { 'parameters': [GlobalRepository, BuildConfiguration, Parser, Renderer, Transformer] };
     }
 
 

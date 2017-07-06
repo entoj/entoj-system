@@ -6,7 +6,6 @@
 const InlineMacroCallTransformer = require(ES_SOURCE + '/export/transformer/InlineMacroCallTransformer.js').InlineMacroCallTransformer;
 const nodeTransformerSpec = require(ES_TEST + '/export/transformer/NodeTransformerShared.js').spec;
 const projectFixture = require(ES_FIXTURES + '/project/index.js');
-const exportHelper = require(ES_TEST + '/export/ExportHelper.js')();
 const co = require('co');
 
 
@@ -18,8 +17,12 @@ describe(InlineMacroCallTransformer.className, function()
     /**
      * NodeTransformer Test
      */
-    nodeTransformerSpec(InlineMacroCallTransformer, 'export.transformer/InlineMacroCallTransformer');
-
+    const options =
+    {
+        basePath: ES_FIXTURES + '/export/transformer'
+    };
+    const exportHelper = require(ES_TEST + '/export/ExportHelper.js')(options);
+    nodeTransformerSpec(InlineMacroCallTransformer, 'export.transformer/InlineMacroCallTransformer', undefined, undefined, options);
 
     /**
      * DecorateVariablesTransformer Test
@@ -48,9 +51,11 @@ describe(InlineMacroCallTransformer.className, function()
                         }
                     }
                 };
-                const configuration = yield exportHelper.createConfiguration('base/modules/m-teaser', 'm_teaser', settings);
                 const testee = new InlineMacroCallTransformer();
-                yield nodeTransformerSpec.testFixture(testee, configuration);
+                const configuration = yield exportHelper.createConfiguration('base/modules/m-teaser', 'm_teaser', settings);
+                const node = yield exportHelper.loadFixture('InlineMacroCallTransformer.input.j2', 'ast');
+                const transformedNode = yield testee.transform(node, configuration);
+                return exportHelper.testNodeFixture('InlineMacroCallTransformer', transformedNode);
             });
             return promise;
         });

@@ -4,15 +4,17 @@
  * Requirements
  */
 const baseSpec = require(ES_TEST + '/BaseShared.js').spec;
-const exportHelper = require(ES_TEST + '/export/ExportHelper.js')();
 const co = require('co');
 
 
 /**
  * Shared NodeTransformer spec
  */
-function spec(type, className, prepareParameters)
+function spec(type, className, prepareParameters, testFixtures, options)
 {
+    // Initialize helpers
+    const exportHelper = require(ES_TEST + '/export/ExportHelper.js')(options);
+
     /**
      * Base Test
      */
@@ -33,6 +35,21 @@ function spec(type, className, prepareParameters)
         return new t(...parameters);
     }
 
+    // Loads a fixture and compares the transformed result to the expected
+    function testFixture(name, configuration)
+    {
+        const promise = co(function *()
+        {
+            const testee = createTestee(type, prepareParameters);
+            const fixtureName = name || testee.className.split('/').pop();
+            const node = yield exportHelper.loadFixture(fixtureName + '.input.j2', 'ast');
+            const transformedNode = yield testee.transform(node, configuration);
+            return exportHelper.testNodeFixture(fixtureName, transformedNode);
+        });
+        return promise;
+    }
+    spec.testFixture = testFixture;
+
 
     describe('#transform()', function()
     {
@@ -44,42 +61,18 @@ function spec(type, className, prepareParameters)
             return promise;
         });
 
-        it('should visit all nodes and clone them', function()
+        if (testFixtures)
         {
-            const promise = co(function *()
+            for (const fixtureName in testFixtures)
             {
-                const node = yield exportHelper.loadFixture('/export/transformer/NodeTransformer.input.j2', 'ast');
-                const testee = createTestee(type, prepareParameters);
-                const transformed = yield testee.transform(node);
-
-                // Shoud be new objects
-                expect(transformed).to.be.not.deep.equal(node);
-
-                // Shoud have the same structure
-                expect(transformed.serialize()).to.be.deep.equal(node.serialize());
-            });
-            return promise;
-        });
+                it(fixtureName, function()
+                {
+                    return testFixture(testFixtures[fixtureName]);
+                });
+            }
+        }
     });
 }
-
-
-/**
- * Loads a fixture and compares the transformed result to the expected
- */
-function testFixture(testee, configuration, name)
-{
-    const promise = co(function *()
-    {
-        const fixtureName = name || testee.className.split('/').pop();
-        const filename = '/export/transformer/' + fixtureName + '.input.j2';
-        const node = yield exportHelper.loadFixture(filename, 'ast');
-        const transformedNode = yield testee.transform(node, configuration);
-        return exportHelper.testNodeFixture(fixtureName, transformedNode);
-    });
-    return promise;
-}
-spec.testFixture = testFixture;
 
 
 /**

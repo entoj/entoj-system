@@ -15,5 +15,9 @@ describe(TextNodeRenderer.className, function()
     /**
      * NodeRenderer Test
      */
-    nodeRendererSpec(TextNodeRenderer, 'export.renderer/TextNodeRenderer');
+    const options =
+    {
+        basePath: ES_FIXTURES + '/export/nodeRenderer'
+    };
+    nodeRendererSpec(TextNodeRenderer, 'export.renderer/TextNodeRenderer', undefined, options);
 });

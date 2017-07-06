@@ -13,11 +13,8 @@ const projectFixture = require(ES_FIXTURES + '/project/index.js');
  */
 function spec(type, className, prepareParameters, testFixtures, options)
 {
-    /**
-     * Initialize export shared
-     */
-    const exportShared = require(ES_TEST + '/export/ExportShared.js')(options);
-
+    // Get helpers
+    const exportHelper = require(ES_TEST + '/export/ExportHelper.js')(options);
 
     /**
      * Base Test
@@ -48,12 +45,10 @@ function spec(type, className, prepareParameters, testFixtures, options)
     };
 
     // Runs a simple testfixture
-    function testFixture(name, nodeRenderers)
+    function testFixture(name)
     {
-        const basePath = (options && options.rootPath)
-            ? options.rootPath
-            : ES_FIXTURES + '/export/renderer/';
-        return exportShared.testFixture(name, nodeRenderers, basePath);
+        const testee = createTestee();
+        return exportHelper.testRendererFixture(name, testee);
     }
     spec.testFixture = testFixture;
 
