@@ -17,7 +17,7 @@ const co = require('co');
 /**
  * Shared Renderer spec
  */
-function spec(type, className, prepareParameters)
+function spec(type, className, prepareParameters, options)
 {
     /**
      * Base Test
@@ -28,6 +28,7 @@ function spec(type, className, prepareParameters)
     /**
      * Configuration Test
      */
+    const opts = options || {};
     beforeEach(function()
     {
         global.fixtures = projectFixture.createStatic({ skipEntities: true });
@@ -36,8 +37,10 @@ function spec(type, className, prepareParameters)
 
     function createTestee(entity, macro, settings)
     {
-        return new type(entity, macro, settings, undefined, undefined, undefined, global.fixtures.globalRepository, global.fixtures.buildConfiguration);
+        const params = prepareParameters([entity, macro, settings, undefined, undefined, undefined, global.fixtures.globalRepository, global.fixtures.buildConfiguration]);
+        return new type(...params);
     }
+
 
     /**
      * Create a new entity and registers it
@@ -178,6 +181,7 @@ function spec(type, className, prepareParameters)
             {
                 const promise = co(function *()
                 {
+                    const identifier = opts.identifier || 'default';
                     const properties =
                     {
                         base:
@@ -186,7 +190,7 @@ function spec(type, className, prepareParameters)
                             {
                                 settings:
                                 {
-                                    default:
+                                    [identifier]:
                                     {
                                         mode: 'inline'
                                     }
@@ -209,6 +213,7 @@ function spec(type, className, prepareParameters)
             {
                 const promise = co(function *()
                 {
+                    const identifier = opts.identifier || 'default';
                     const properties =
                     {
                         base:
@@ -217,7 +222,7 @@ function spec(type, className, prepareParameters)
                             {
                                 settings:
                                 {
-                                    default:
+                                    [identifier]:
                                     {
                                         macros:
                                         {

@@ -45,14 +45,29 @@ function configure(options)
                 throw new Error('Could not find entity ' + entityPath);
             }
             const macro = yield global.fixtures.globalRepository.resolveMacro(entity.entity.site, macroName);
-            const config = new configurationClass(entity.entity,
-                macro,
-                settings || {},
-                parser || new parserClass(),
-                renderer || new rendererClass(),
-                transformer || new transformerClass(),
-                global.fixtures.globalRepository,
-                global.fixtures.buildConfiguration);
+            let config;
+            if (opts.configurationCreator)
+            {
+                config = opts.configurationCreator(entity.entity,
+                    macro,
+                    settings || {},
+                    parser || new parserClass(),
+                    renderer || new rendererClass(),
+                    transformer || new transformerClass(),
+                    global.fixtures.globalRepository,
+                    global.fixtures.buildConfiguration);
+            }
+            else
+            {
+                config = new configurationClass(entity.entity,
+                    macro,
+                    settings || {},
+                    parser || new parserClass(),
+                    renderer || new rendererClass(),
+                    transformer || new transformerClass(),
+                    global.fixtures.globalRepository,
+                    global.fixtures.buildConfiguration);
+            }
             return config;
         });
         return promise;
