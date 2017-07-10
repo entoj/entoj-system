@@ -31,7 +31,7 @@ class StaticFileRoute extends Route
         // Assign options
         const opts = options || {};
         this._basePath = waitForPromise(pathesConfiguration.resolve(opts.basePath || ''));
-        this._allowedExtensions = opts.allowedExtensions || ['.css', '.png', '.jpg', '.gif', '.svg', '.woff', '.json', '.ico', '.html'];
+        this._allowedExtensions = opts.allowedExtensions || ['.css', '.png', '.jpg', '.gif', '.svg', '.woff', '.woff2', '.json', '.ico', '.html'];
     }
 
 
