@@ -109,6 +109,21 @@ class Exporter extends Base
 
     /**
      * @protected
+     * @param {model.entity.EntityAspect} entity
+     * @param {model.documentation.DocumentationCallable} macro
+     * @param {Object} settings
+     * @returns {Configuration}
+     */
+    createConfigurationInstance(entity, macro, settings)
+    {
+        return new this._configurationClass(entity, macro, settings,
+            this.parser, this.renderer, this.transformer,
+            this.globalRepository, this.buildConfiguration);
+    }
+
+
+    /**
+     * @protected
      * @param {String} macroQuery
      * @param {String} siteQuery
      * @param {Object} settings
@@ -134,8 +149,7 @@ class Exporter extends Base
                 /* istanbul ignore next */
                 throw new Error(scope.className + '::createContext - could not find entity for ' + macroQuery);
             }
-
-            return new scope._configurationClass(entity, macro, settings, scope.parser, scope.renderer, scope.transformer, scope.globalRepository, scope.buildConfiguration);
+            return scope.createConfigurationInstance(entity, macro, settings);
         });
         return promise;
     }
