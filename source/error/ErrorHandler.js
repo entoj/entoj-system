@@ -1,13 +1,26 @@
 'use strict';
 
 /**
+ * Requirements
+ */
+const intel = require('intel');
+
+
+/**
  * @memberOf error
  */
 class ErrorHandler
 {
     static error(instance, error)
     {
-        instance.logger.error(error.stack);
+        if (instance)
+        {
+            instance.logger.error(error.stack);
+        }
+        else
+        {
+            intel.getLogger('entoj.ErrorHandler').error(error.stack);
+        }
         throw error;
     }
 
