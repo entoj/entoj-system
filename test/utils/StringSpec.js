@@ -252,12 +252,15 @@ describe('utils/string', function()
 
         it('should contain markup', function()
         {
-            const lipsum = lorem(
-                {
-                    units: 'paragraphs',
-                    count: 1
-                });
-            expect(htmlify(lipsum)).to.match(/<[^p]{1}[^>]*>.*<\/[^p]+>/);
+            for (let i = 0; i < 100; i++)
+            {
+                const lipsum = lorem(
+                    {
+                        units: 'paragraphs',
+                        count: 1
+                    });
+                expect(htmlify(lipsum)).to.match(/<[^p][^>]*>.*<\/[^p][^>]*>/);
+            }
         });
 
         it('should allow to customize tag generation', function()
