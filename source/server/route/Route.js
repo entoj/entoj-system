@@ -79,7 +79,14 @@ class Route extends Base
      */
     addStaticFileHandler(route, basePath, allowedExtensions, pathTransformer)
     {
-        this.cliLogger.info('Adding static file route <' + route + '> searching files in <' + (typeof basePath === 'string' ? basePath : 'function') + '>');
+        if (allowedExtensions && allowedExtensions.length)
+        {
+            this.cliLogger.info('Adding static file route <' + route + '> searching for [' + allowedExtensions.join(', ') + '] in <' + (typeof basePath === 'string' ? basePath : 'function') + '>');
+        }
+        else
+        {
+            this.cliLogger.info('Adding static file route <' + route + '> searching in <' + (typeof basePath === 'string' ? basePath : 'function') + '>');
+        }
         const handler = (request, response, next) =>
         {
             // Check extension
