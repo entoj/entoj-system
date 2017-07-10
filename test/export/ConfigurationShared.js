@@ -37,7 +37,11 @@ function spec(type, className, prepareParameters, options)
 
     function createTestee(entity, macro, settings)
     {
-        const params = prepareParameters([entity, macro, settings, undefined, undefined, undefined, global.fixtures.globalRepository, global.fixtures.buildConfiguration]);
+        let params = [entity, macro, settings, undefined, undefined, undefined, global.fixtures.globalRepository, global.fixtures.buildConfiguration];
+        if (prepareParameters)
+        {
+            params = prepareParameters(params);
+        }
         return new type(...params);
     }
 

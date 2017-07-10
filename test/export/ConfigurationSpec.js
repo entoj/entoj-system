@@ -18,6 +18,10 @@ describe(Configuration.className, function()
      */
     function prepareParameters(parameters)
     {
+        if (parameters && parameters.length >= 8)
+        {
+            return parameters;
+        }
         const fixture = projectFixture.createStatic({ skipEntities: true });
         return [undefined, undefined, {}, undefined, undefined, undefined, fixture.globalRepository, fixture.buildConfiguration];
     }
