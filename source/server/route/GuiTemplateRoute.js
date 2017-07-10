@@ -201,12 +201,12 @@ class GuiTemplateRoute extends Route
                 return;
             }
 
-            const work = this._cliLogger.work('Serving template <' + template + '> for <' + request.url + '>');
+            const work = this.cliLogger.work('Serving template <' + template + '> for <' + request.url + '>');
             const tpl = fs.readFileSync(this._templateRoot + '/' + template, { encoding: 'utf8' });
             this._nunjucks.addGlobal('request', request);
             const html = this._nunjucks.renderString(tpl, { global: model });
             response.send(html);
-            this._cliLogger.end(work);
+            this.cliLogger.end(work);
         };
         this.express.all(route, handler);
     }

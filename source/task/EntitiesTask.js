@@ -141,7 +141,7 @@ class EntitiesTask extends Task
             const scope = this;
             co(function *()
             {
-                const work = scope._cliLogger.section(scope.sectionName);
+                const work = scope.cliLogger.section(scope.sectionName);
                 const params = yield scope.prepareParameters(buildConfiguration, parameters);
                 scope.cliLogger.options(params);
                 const files = yield scope.processEntities(buildConfiguration, parameters);

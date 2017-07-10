@@ -34,11 +34,11 @@ class ZipFilesTask extends Task
         }
 
         const filename = parameters.zipFilename || 'all.zip';
-        const work = this._cliLogger.section('Ziping files into <' + filename + '>');
+        const work = this.cliLogger.section('Ziping files into <' + filename + '>');
         const resultStream = stream.pipe(zip(filename));
         resultStream.on('finish', () =>
         {
-            this._cliLogger.end(work);
+            this.cliLogger.end(work);
         });
 
         return resultStream;

@@ -50,11 +50,11 @@ class WriteFilesTask extends Task
             return super.stream(stream, buildConfiguration, parameters);
         }
 
-        const work = this._cliLogger.section('Writing files to filesystem at <' + params.writePath + '>');
+        const work = this.cliLogger.section('Writing files to filesystem at <' + params.writePath + '>');
         const resultStream = stream.pipe(gulp.dest(params.writePath));
         resultStream.on('finish', () =>
         {
-            this._cliLogger.end(work);
+            this.cliLogger.end(work);
         });
 
         return resultStream;

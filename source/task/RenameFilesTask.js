@@ -57,7 +57,7 @@ class RenameFilesTask extends TransformingTask
             /* istanbul ignore next */
             if (!file || !file.isNull)
             {
-                scope._cliLogger.info('Invalid file <' + file + '>');
+                scope.cliLogger.info('Invalid file <' + file + '>');
                 return false;
             }
 
@@ -71,8 +71,8 @@ class RenameFilesTask extends TransformingTask
             }
             if (path && path !== file.path)
             {
-                const work = scope._cliLogger.work('Renamed file <' + file.path + '> to <' + path + '>');
-                scope._cliLogger.end(work);
+                const work = scope.cliLogger.work('Renamed file <' + file.path + '> to <' + path + '>');
+                scope.cliLogger.end(work);
                 return new VinylFile({ path: path, contents: file.contents });
             }
 

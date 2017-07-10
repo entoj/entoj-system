@@ -101,14 +101,14 @@ class ExportTask extends EntitiesTask
             const siteName = entity.site.name;
 
             // Export
-            const work = scope._cliLogger.work('Exporting macro <' + macroName + '>');
+            const work = scope.cliLogger.work('Exporting macro <' + macroName + '>');
             const exported = yield scope.exporter.export(siteName, macroName, settings);
-            scope._cliLogger.end(work);
+            scope.cliLogger.end(work);
 
             // Done
             const file = new VinylFile(
                 {
-                    path: exported.filename,
+                    path: exported.configuration.filename,
                     contents: new Buffer(exported.contents)
                 });
             return file;

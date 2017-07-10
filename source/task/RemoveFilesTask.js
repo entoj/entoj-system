@@ -56,7 +56,7 @@ class RemoveFilesTask extends TransformingTask
             /* istanbul ignore next */
             if (!file || !file.isNull)
             {
-                scope._cliLogger.info('Invalid file <' + file + '>');
+                scope.cliLogger.info('Invalid file <' + file + '>');
                 return false;
             }
 
@@ -65,8 +65,8 @@ class RemoveFilesTask extends TransformingTask
             {
                 if (file.path.match(new RegExp(remove)))
                 {
-                    const work = scope._cliLogger.work('Removing file <' + file.path + '>');
-                    scope._cliLogger.end(work);
+                    const work = scope.cliLogger.work('Removing file <' + file.path + '>');
+                    scope.cliLogger.end(work);
                     return false;
                 }
             }

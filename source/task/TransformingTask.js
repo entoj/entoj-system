@@ -59,7 +59,7 @@ class TransformingTask extends Task
             return super.stream(stream, buildConfiguration, parameters);
         }
 
-        const section = this._cliLogger.section(this.sectionName);
+        const section = this.cliLogger.section(this.sectionName);
 
         // Render stream
         const resultStream = new Stream.Transform({ objectMode: true });
@@ -86,7 +86,7 @@ class TransformingTask extends Task
         // Wait for stream
         resultStream.on('finish', () =>
         {
-            this._cliLogger.end(section);
+            this.cliLogger.end(section);
         });
 
         return stream.pipe(resultStream);

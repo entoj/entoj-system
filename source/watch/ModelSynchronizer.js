@@ -80,6 +80,15 @@ class ModelSynchronizer extends Base
 
 
     /**
+     * @type {cli.CliLogger}
+     */
+    get cliLogger()
+    {
+        return this._cliLogger;
+    }
+
+
+    /**
      * @returns {Promise.<*>}
      */
     processChanges(changes)
@@ -97,20 +106,20 @@ class ModelSynchronizer extends Base
             // Apply changes for sites
             if (changes.site)
             {
-                work = scope._cliLogger.work('Invalidating <SitesRepository>');
+                work = scope.cliLogger.work('Invalidating <SitesRepository>');
                 result.site = yield scope._sitesRepository.invalidate();
-                scope._cliLogger.end(work);
+                scope.cliLogger.end(work);
 
-                work = scope._cliLogger.work('Invalidating <EntitiesRepository>');
+                work = scope.cliLogger.work('Invalidating <EntitiesRepository>');
                 result.entityCategory = yield scope._entitiesRepository.invalidate();
-                scope._cliLogger.end(work);
+                scope.cliLogger.end(work);
             }
             // Apply changes for entities
             else if (changes.entity)
             {
-                work = scope._cliLogger.work('Invalidating <EntitiesRepository>');
+                work = scope.cliLogger.work('Invalidating <EntitiesRepository>');
                 result.entity = yield scope._entitiesRepository.invalidate(changes.entity);
-                scope._cliLogger.end(work);
+                scope.cliLogger.end(work);
             }
 
             // dispatch signal

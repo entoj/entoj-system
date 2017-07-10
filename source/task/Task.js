@@ -57,11 +57,7 @@ class Task extends Base
 
 
     /**
-     * Returns a object describing all dependencies needed
-     * for injection by DIContainer
-     *
-     * @see utils.DIContainer
-     * @returns {Object}
+     * @inheritDocs
      */
     static get injections()
     {
@@ -216,7 +212,7 @@ class Task extends Base
         // Start the task
         const promise = new Promise((resolve) =>
         {
-            const work = this._cliLogger.section('Running task ' + this.className);
+            const work = this.cliLogger.section('Running task ' + this.className);
             let stream = this.stream(undefined, buildConfiguration, parameters);
 
             // Handle chain
@@ -236,7 +232,7 @@ class Task extends Base
             {
                 stream.on('finish', () =>
                 {
-                    this._cliLogger.end(work);
+                    this.cliLogger.end(work);
                     resolve();
                 });
             }

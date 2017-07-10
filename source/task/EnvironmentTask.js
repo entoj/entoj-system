@@ -69,23 +69,23 @@ class EnvironmentTask extends TransformingTask
             /* istanbul ignore next */
             if (!file || !file.isNull)
             {
-                scope._cliLogger.info('Invalid file <' + file + '>');
+                scope.cliLogger.info('Invalid file <' + file + '>');
                 return false;
             }
 
             // Skip?
             if (!params.environmentEnabled || params.environmentSkipFiles.indexOf(path.extname(file.path)) > -1)
             {
-                const work = scope._cliLogger.work('Skip file <' + file.path + '>');
-                scope._cliLogger.end(work);
+                const work = scope.cliLogger.work('Skip file <' + file.path + '>');
+                scope.cliLogger.end(work);
                 return file;
             }
 
             // Activate environment configs
-            const work = scope._cliLogger.work('Activating environment on file <' + file.path + '>');
+            const work = scope.cliLogger.work('Activating environment on file <' + file.path + '>');
             const contents = activateEnvironment(file.contents.toString(), params.environment);
             const resultFile = new VinylFile({ path: file.path, contents: new Buffer(contents) });
-            scope._cliLogger.end(work);
+            scope.cliLogger.end(work);
 
             return resultFile;
         });

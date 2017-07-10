@@ -101,20 +101,20 @@ class TemplateTask extends TransformingTask
             /* istanbul ignore next */
             if (!file || !file.isNull)
             {
-                scope._cliLogger.info('Invalid file <' + file + '>');
+                scope.cliLogger.info('Invalid file <' + file + '>');
                 return false;
             }
 
             // Check skip files
             if (params.templateSkipFiles.indexOf(path.extname(file.path)) > -1)
             {
-                const work = scope._cliLogger.work('Skip file <' + file.path + '>');
-                scope._cliLogger.end(work);
+                const work = scope.cliLogger.work('Skip file <' + file.path + '>');
+                scope.cliLogger.end(work);
                 return file;
             }
 
             // Render template
-            const work = scope._cliLogger.work('Rendering template file <' + file.path + '>');
+            const work = scope.cliLogger.work('Rendering template file <' + file.path + '>');
             let resultFile;
             try
             {
@@ -128,9 +128,9 @@ class TemplateTask extends TransformingTask
             catch(e)
             {
                 /* istanbul ignore next */
-                scope._cliLogger.error(e);
+                scope.cliLogger.error(e);
             }
-            scope._cliLogger.end(work);
+            scope.cliLogger.end(work);
 
             return resultFile;
         });

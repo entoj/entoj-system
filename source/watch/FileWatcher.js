@@ -94,6 +94,16 @@ class FileWatcher extends Base
 
 
     /**
+     * @type {cli.CliLogger}
+     */
+    get cliLogger()
+    {
+        return this._cliLogger;
+    }
+
+
+
+    /**
      * @returns {Promise.<*>}
      */
     processEvents(events)
@@ -251,23 +261,23 @@ class FileWatcher extends Base
             result.sites = uniq(result.sites);
 
             // Done
-            scope._cliLogger.info('Detected changes:');
+            scope.cliLogger.info('Detected changes:');
             for (const file of result.files)
             {
-                scope._cliLogger.info('  - File <' + file + '>');
+                scope.cliLogger.info('  - File <' + file + '>');
             }
             if (result.entity && result.entity.add)
             {
                 for (const entity of result.entity.add)
                 {
-                    scope._cliLogger.info('  - Add Entity <' + entity.toString() + '>');
+                    scope.cliLogger.info('  - Add Entity <' + entity.toString() + '>');
                 }
             }
             if (result.entity && result.entity.remove)
             {
                 for (const entity of result.entity.remove)
                 {
-                    scope._cliLogger.info('  - Remove Entity <' + entity.toString() + '>');
+                    scope.cliLogger.info('  - Remove Entity <' + entity.toString() + '>');
                 }
             }
             scope.signals.changed.dispatch(scope, clone(result));
@@ -311,7 +321,7 @@ class FileWatcher extends Base
         const scope = this;
         const promise = new Promise(function(resolve)
         {
-            scope._cliLogger.info('Watching for file changes in <' + scope._pathesConfiguration.sites + '>');
+            scope.cliLogger.info('Watching for file changes in <' + scope._pathesConfiguration.sites + '>');
             scope._watcher = chokidar.watch(scope._pathesConfiguration.sites + '/**',
                 {
                     ignored: /[/\\]\./,

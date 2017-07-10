@@ -54,7 +54,7 @@ class ReadFilesTask extends Task
             return super.stream(stream, buildConfiguration, parameters);
         }
 
-        const section = this._cliLogger.section('Reading files from <' + params.readPath + '>');
+        const section = this.cliLogger.section('Reading files from <' + params.readPath + '>');
         const resultStream = new Stream.Transform({ objectMode: true });
         resultStream._transform = (file, encoding, callback) =>
         {
@@ -69,9 +69,9 @@ class ReadFilesTask extends Task
                         contents: file.contents
                     });
 
-                const work = this._cliLogger.work('Reading file <' + file.path + '>');
+                const work = this.cliLogger.work('Reading file <' + file.path + '>');
                 resultStream.push(resultFile);
-                this._cliLogger.end(work);
+                this.cliLogger.end(work);
             }
             callback();
         };
@@ -79,7 +79,7 @@ class ReadFilesTask extends Task
         // Wait for stream
         resultStream.on('finish', () =>
         {
-            this._cliLogger.end(section);
+            this.cliLogger.end(section);
         });
 
         return gulp.src(params.readPath).pipe(resultStream);
