@@ -8,6 +8,7 @@ const Configuration = require(ES_SOURCE + '/export/Configuration.js').Configurat
 const JinjaParser = require(ES_SOURCE + '/export/parser/JinjaParser.js').JinjaParser;
 const Renderer = require(ES_SOURCE + '/export/Renderer.js').Renderer;
 const Transformer = require(ES_SOURCE + '/export/Transformer.js').Transformer;
+const ErrorHandler = require(ES_SOURCE + '/error/ErrorHandler.js').ErrorHandler;
 const co = require('co');
 const fs = require('fs');
 const path = require('path');
@@ -69,7 +70,7 @@ function configure(options)
                     global.fixtures.buildConfiguration);
             }
             return config;
-        });
+        }).catch(ErrorHandler.handler());
         return promise;
     }
 
@@ -91,7 +92,7 @@ function configure(options)
                 result = yield parser.parseString(source);
             }
             return result;
-        });
+        }).catch(ErrorHandler.handler());
         return promise;
     }
 
