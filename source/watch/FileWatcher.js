@@ -102,7 +102,6 @@ class FileWatcher extends Base
     }
 
 
-
     /**
      * @returns {Promise.<*>}
      */
