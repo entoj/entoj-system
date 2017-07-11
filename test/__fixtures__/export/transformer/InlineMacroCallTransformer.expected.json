@@ -57,6 +57,24 @@
                                 "children": [
                                     {
                                         "type": "LiteralNode",
+                                        "value": "light"
+                                    }
+                                ]
+                            },
+                            "variable": {
+                                "type": "VariableNode",
+                                "fields": [
+                                    "skin_u1"
+                                ]
+                            }
+                        },
+                        {
+                            "type": "SetNode",
+                            "value": {
+                                "type": "ExpressionNode",
+                                "children": [
+                                    {
+                                        "type": "LiteralNode",
                                         "value": ""
                                     }
                                 ]
@@ -321,6 +339,24 @@
                                 "type": "VariableNode",
                                 "fields": [
                                     "level_u2"
+                                ]
+                            }
+                        },
+                        {
+                            "type": "SetNode",
+                            "value": {
+                                "type": "ExpressionNode",
+                                "children": [
+                                    {
+                                        "type": "LiteralNode",
+                                        "value": "light"
+                                    }
+                                ]
+                            },
+                            "variable": {
+                                "type": "VariableNode",
+                                "fields": [
+                                    "skin_u2"
                                 ]
                             }
                         },
