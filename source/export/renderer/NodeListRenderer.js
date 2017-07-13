@@ -27,7 +27,7 @@ class NodeListRenderer extends NodeRenderer
     /**
      * @inheritDocs
      */
-    willRender(node, parameters)
+    willRender(node, configuration)
     {
         return Promise.resolve(node && node.is('NodeList'));
     }
