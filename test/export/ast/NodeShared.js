@@ -4,6 +4,7 @@
  * Requirements
  * @ignore
  */
+const Node = require(ES_SOURCE + '/export/ast/Node.js').Node;
 const NodeList = require(ES_SOURCE + '/export/ast/NodeList.js').NodeList;
 const baseSpec = require(ES_TEST + '/BaseShared.js').spec;
 
@@ -161,6 +162,14 @@ function spec(type, className, fixture, prepareParameters)
         {
             const testee = createTestee();
             expect(testee.find(nodeName)).to.be.equal(testee);
+        });
+
+        it('should search all iterable fields', function()
+        {
+            const testee = createTestee();
+            testee.foo = new Node({ type: 'Foo' });
+            testee.iterableFields.push('foo');
+            expect(testee.find('Foo')).to.be.equal(testee.foo);
         });
     });
 

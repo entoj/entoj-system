@@ -25,7 +25,7 @@ class Node extends Base
         // Assign options
         const v = values || {};
         this._parent = v.parent || false;
-        this._type = this.className.split('/').pop();
+        this._type = v.type || this.className.split('/').pop();
         this._dataFields = [];
         this._iterableFields = [];
     }
@@ -199,6 +199,28 @@ class Node extends Base
         {
             return this;
         }
+        for (const iterableField of this.iterableFields)
+        {
+            if (this[iterableField] instanceof Node)
+            {
+                const found = this[iterableField].find(type, properties);
+                if (found)
+                {
+                    return found;
+                }
+            }
+            if (this[iterableField] instanceof BaseArray)
+            {
+                for (const node of this[iterableField])
+                {
+                    const found = node.find(type, properties);
+                    if (found)
+                    {
+                        return found;
+                    }
+                }
+            }
+        }
         return false;
     }
 
@@ -212,11 +234,26 @@ class Node extends Base
      */
     filter(type, properties)
     {
+        const result = [];
         if (this.is(type, properties))
         {
-            return [this];
+            result.push(this);
         }
-        return [];
+        for (const iterableField of this.iterableFields)
+        {
+            if (this[iterableField] instanceof Node)
+            {
+                result.push(...this[iterableField].filter(type, properties));
+            }
+            if (this[iterableField] instanceof BaseArray)
+            {
+                for (const node of this[iterableField])
+                {
+                    result.push(...node.filter(type, properties));
+                }
+            }
+        }
+        return result;
     }
 
 

@@ -79,59 +79,6 @@ class NodeList extends Node
 
 
     /**
-     * @param {String} type - Node type
-     * @param {Object} properties - Node properties
-     * @return {Bool}
-     */
-    find(type, properties)
-    {
-        if (this.is(type, properties))
-        {
-            return this;
-        }
-        for (const node of this.children)
-        {
-            const found = node.find(type, properties);
-            if (found)
-            {
-                return found;
-            }
-        }
-        return false;
-    }
-
-
-    /**
-     * @param {String} type - Node type
-     * @param {Object} properties - Node properties
-     * @return {Bool}
-     */
-    filter(type, properties)
-    {
-        const result = [];
-        if (this.is(type, properties))
-        {
-            result.push(this);
-        }
-        for (const iterableField of this.iterableFields)
-        {
-            if (this[iterableField] instanceof Node)
-            {
-                result.push(...this[iterableField].filter(type, properties));
-            }
-            if (this[iterableField] instanceof BaseArray)
-            {
-                for (const node of this[iterableField])
-                {
-                    result.push(...node.filter(type, properties));
-                }
-            }
-        }
-        return result;
-    }
-
-
-    /**
      * @return {Bool}
      */
     replace(reference, item)
