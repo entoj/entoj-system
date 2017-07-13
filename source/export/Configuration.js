@@ -64,6 +64,15 @@ class Configuration extends Base
 
 
     /**
+     * @type {model.configuration.BuildConfiguration}
+     */
+    get buildConfiguration()
+    {
+        return this._buildConfiguration;
+    }
+
+
+    /**
      * The configuration identifier used to extract
      * settings from entity configurations.
      *
