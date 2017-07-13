@@ -40,7 +40,7 @@ function createStatic(options)
     const result = {};
 
     result.pathToLibraries = testFixture.pathToLibraries;
-    result.globalConfiguration = new GlobalConfiguration();
+    result.globalConfiguration = new GlobalConfiguration(opts.settings);
     result.buildConfiguration = new BuildConfiguration();
     result.pathesConfiguration = new PathesConfiguration(
         merge(

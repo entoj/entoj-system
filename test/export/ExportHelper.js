@@ -34,6 +34,9 @@ function configure(options)
     const basePath = opts.basePath
         ? opts.basePath
         : ES_FIXTURES + '/export';
+    const resultExtension = opts.resultExtension
+        ? opts.resultExtension
+        : '.html';
 
     // Create a export configuration
     function createConfiguration(entityPath, macroName, settings, parser, renderer, transformer)
@@ -128,7 +131,7 @@ function configure(options)
         const promise = co(function*()
         {
             const ast = yield loadFixture('/' + name + '.input.j2', 'ast');
-            const expected = yield loadFixture('/' + name + '.expected.html');
+            const expected = yield loadFixture('/' + name + '.expected' + resultExtension);
             const configuration = yield createConfiguration('base/elements/e-cta', 'e_cta', undefined, undefined, renderer);
             let result = '';
             try
