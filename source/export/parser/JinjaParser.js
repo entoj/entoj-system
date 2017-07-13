@@ -337,14 +337,44 @@ class JinjaParser extends Parser
                     }
                     break;
 
-                case 'Not':
-                    result.push(new BooleanOperandNode({ value: 'not' }));
-                    parse(node.target, result);
+                case 'Add':
+                    parse(node.left, result);
+                    result.push(new OperandNode({ value: '+' }));
+                    parse(node.right, result);
+                    break;
+
+                case 'Sub':
+                    parse(node.left, result);
+                    result.push(new OperandNode({ value: '-' }));
+                    parse(node.right, result);
+                    break;
+
+                case 'Mul':
+                    parse(node.left, result);
+                    result.push(new OperandNode({ value: '*' }));
+                    parse(node.right, result);
+                    break;
+
+                case 'Mod':
+                    parse(node.left, result);
+                    result.push(new OperandNode({ value: '%' }));
+                    parse(node.right, result);
+                    break;
+
+                case 'Div':
+                    parse(node.left, result);
+                    result.push(new OperandNode({ value: '/' }));
+                    parse(node.right, result);
                     break;
 
                 case 'CompareOperand':
                     result.push(new OperandNode({ value: node.type }));
                     parse(node.expr, result);
+                    break;
+
+                case 'Not':
+                    result.push(new BooleanOperandNode({ value: 'not' }));
+                    parse(node.target, result);
                     break;
 
                 case 'Or':
@@ -425,6 +455,23 @@ class JinjaParser extends Parser
                 case 'Mod':
                     parse(node.left, result);
                     result.push(new OperandNode({ value: '%' }));
+                    parse(node.right, result);
+                    break;
+
+                case 'Not':
+                    result.push(new BooleanOperandNode({ value: 'not' }));
+                    parse(node.target, result);
+                    break;
+
+                case 'Or':
+                    parse(node.left, result);
+                    result.push(new BooleanOperandNode({ value: 'or' }));
+                    parse(node.right, result);
+                    break;
+
+                case 'And':
+                    parse(node.left, result);
+                    result.push(new BooleanOperandNode({ value: 'and' }));
                     parse(node.right, result);
                     break;
 
