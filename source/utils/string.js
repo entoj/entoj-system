@@ -215,6 +215,22 @@ function trimSlashesLeft(value)
 
 
 /**
+ * Trims any single ot double quotes from both sides of a string
+ *
+ * @memberOf utils.string
+ * @param {String} value
+ */
+function trimQuotes(value)
+{
+    if (!value || typeof value !== 'string')
+    {
+        return '';
+    }
+    return value.replace(/^['"]+|['"]+$/g, '');
+}
+
+
+/**
  * Adds <p> around paragraphs and add some inline
  * tags to that paragraphs.
  *
@@ -344,4 +360,5 @@ module.exports.shortenLeft = shortenLeft;
 module.exports.uppercaseFirst = uppercaseFirst;
 module.exports.activateEnvironment = activateEnvironment;
 module.exports.trimSlashesLeft = trimSlashesLeft;
+module.exports.trimQuotes = trimQuotes;
 module.exports.htmlify = htmlify;

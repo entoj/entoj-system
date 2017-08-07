@@ -89,7 +89,7 @@ describe(GlobalRepository.className, function()
             return promise;
         });
 
-        it('should resolve "m-teaser" to a EntityAspect', function()
+        it('should resolve "m-teaser" to a Entity', function()
         {
             const testee = new GlobalRepository(global.fixtures.sitesRepository, global.fixtures.categoriesRepository, global.fixtures.entitiesRepository);
             const promise = testee.resolve('m-teaser').then(function(result)
@@ -224,6 +224,69 @@ describe(GlobalRepository.className, function()
                 expect(result).to.be.ok;
                 expect(result).to.have.length(1);
                 expect(result[0]).to.be.instanceof(EntityAspect);
+            });
+            return promise;
+        });
+    });
+
+
+    describe('#resolveEntity', function()
+    {
+        it('should resolve to false for a non existing site', function()
+        {
+            const testee = new GlobalRepository(global.fixtures.sitesRepository, global.fixtures.categoriesRepository, global.fixtures.entitiesRepository);
+            const promise = co(function *()
+            {
+                const entity = yield testee.resolveEntity('foo', 'm-teaser');
+                expect(entity).to.be.not.ok;
+            });
+            return promise;
+        });
+
+        it('should resolve to false for a non existing entity', function()
+        {
+            const testee = new GlobalRepository(global.fixtures.sitesRepository, global.fixtures.categoriesRepository, global.fixtures.entitiesRepository);
+            const promise = co(function *()
+            {
+                const entity = yield testee.resolveEntity('base', 'foo');
+                expect(entity).to.be.not.ok;
+            });
+            return promise;
+        });
+
+        it('should resolve to a existing entity when given a valid site name and entity name', function()
+        {
+            const testee = new GlobalRepository(global.fixtures.sitesRepository, global.fixtures.categoriesRepository, global.fixtures.entitiesRepository);
+            const promise = co(function *()
+            {
+                const entity = yield testee.resolveEntity('base', 'm-teaser');
+                expect(entity).to.be.instanceof(EntityAspect);
+                expect(entity.id.name).to.be.equal('teaser');
+            });
+            return promise;
+        });
+
+        it('should resolve to a existing entity when given a valid site and a entity name', function()
+        {
+            const testee = new GlobalRepository(global.fixtures.sitesRepository, global.fixtures.categoriesRepository, global.fixtures.entitiesRepository);
+            const promise = co(function *()
+            {
+                const site = yield global.fixtures.sitesRepository.findBy(Site.ANY, 'base');
+                const entity = yield testee.resolveEntity(site, 'm-teaser');
+                expect(entity).to.be.instanceof(EntityAspect);
+                expect(entity.id.name).to.be.equal('teaser');
+            });
+            return promise;
+        });
+
+        it('should resolve to a existing entity when given only a entity name', function()
+        {
+            const testee = new GlobalRepository(global.fixtures.sitesRepository, global.fixtures.categoriesRepository, global.fixtures.entitiesRepository);
+            const promise = co(function *()
+            {
+                const entity = yield testee.resolveEntity(undefined, 'm-teaser');
+                expect(entity).to.be.instanceof(EntityAspect);
+                expect(entity.id.name).to.be.equal('teaser');
             });
             return promise;
         });

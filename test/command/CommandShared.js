@@ -13,7 +13,7 @@ const sinon = require('sinon');
 /**
  * Shared Command spec
  */
-function spec(type, className, prepareParameters)
+function spec(type, className, prepareParameters, settings)
 {
     /**
      * Base Test
@@ -24,9 +24,14 @@ function spec(type, className, prepareParameters)
     /**
      * Command Test
      */
+    const specSettings = settings || {};
     const createTestee = function()
     {
-        const parameters = prepareParameters();
+        let parameters = [];
+        if (prepareParameters)
+        {
+            parameters = prepareParameters(parameters);
+        }
         return new type(...parameters);
     };
 
@@ -52,7 +57,7 @@ function spec(type, className, prepareParameters)
         it('should return a promise', function()
         {
             const testee = createTestee();
-            const promise = testee.dispatch();
+            const promise = testee.dispatch(specSettings.action);
             expect(promise).to.be.instanceof(Promise);
             return promise;
         });
@@ -76,7 +81,7 @@ function spec(type, className, prepareParameters)
                 const parameters =
                 {
                     command: 'command',
-                    action: 'action'
+                    action: specSettings.action
                 };
                 const testee = createTestee();
                 testee.name = 'command';
@@ -94,8 +99,8 @@ function spec(type, className, prepareParameters)
                 const testee = createTestee();
                 testee.name = ['command', 'foo'];
                 sinon.spy(testee, 'dispatch');
-                yield testee.execute({ command: 'command' });
-                yield testee.execute({ command: 'foo' });
+                yield testee.execute({ command: 'command', action: specSettings.action });
+                yield testee.execute({ command: 'foo', action: specSettings.action });
                 expect(testee.dispatch.calledTwice).to.be.ok;
             });
             return promise;

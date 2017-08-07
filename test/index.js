@@ -20,11 +20,13 @@ module.exports =
     },
     command:
     {
-        CommandShared: require('./command/CommandShared.js').spec
+        CommandShared: require('./command/CommandShared.js').spec,
+        ExportCommandShared: require('./command/ExportCommandShared.js').spec
     },
     export:
     {
         ConfigurationShared: require('./export/ConfigurationShared.js').spec,
+        ExporterShared: require('./export/ExporterShared.js').spec,
         ParserShared: require('./export/ParserShared.js').spec,
         NodeRendererShared: require('./export/renderer/NodeRendererShared.js').spec,
         RendererShared: require('./export/RendererShared.js').spec,

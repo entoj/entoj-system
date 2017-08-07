@@ -97,12 +97,18 @@ class ExportTask extends EntitiesTask
         {
             // Prepare
             const settings = entitySettings || {};
-            const macroName = settings.macro || entity.idString.lodasherize();
+            const macroName = settings.macro || false;
             const siteName = entity.site.name;
+            const entityName = entity.idString;
 
             // Export
-            const work = scope.cliLogger.work('Exporting macro <' + macroName + '>');
-            const exported = yield scope.exporter.export(siteName, macroName, settings);
+            let workMessage = 'Exporting <' + entity.pathString + '>';
+            if (macroName)
+            {
+                workMessage+= ' / macro <' + macroName + '>';
+            }
+            const work = scope.cliLogger.work(workMessage);
+            const exported = yield scope.exporter.export(siteName, entityName, macroName, settings);
             scope.cliLogger.end(work);
 
             // Done

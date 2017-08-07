@@ -69,7 +69,8 @@
                     }
                 ]
             },
-            "elseChildren": []
+            "elseChildren": [],
+            "elseIfChildren": []
         },
         {
             "type": "TextNode",

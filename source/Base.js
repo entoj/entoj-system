@@ -5,6 +5,8 @@
  * @ignore
  */
 const intel = require('intel');
+require('./utils/prototypes.js');
+
 
 /**
  * Instance Id counter

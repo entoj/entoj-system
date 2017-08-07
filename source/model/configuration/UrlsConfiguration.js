@@ -21,7 +21,6 @@ const co = require('co');
 const routes = require('routes');
 const urlify = require('../../utils/urls.js').urlify;
 const urls = require('../../utils/urls.js');
-require('../../utils/prototypes.js');
 
 
 /**

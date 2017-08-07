@@ -10,6 +10,8 @@ const NodeTransformer = require('./NodeTransformer.js').NodeTransformer;
 /**
  * Adds configurable prefix and suffix to VariableNodes. To specify only a
  * subset of all variables use a filter function via options.filter
+ *
+ * @todo rename to ModifyVariableNameTransformer
  */
 class DecorateVariableNameTransformer extends NodeTransformer
 {
@@ -25,6 +27,7 @@ class DecorateVariableNameTransformer extends NodeTransformer
         this._filter = opts.filter || false;
         this._prefix = opts.prefix || '';
         this._suffix = opts.suffix || '';
+        this._mapping = opts.mapping || {};
     }
 
 
@@ -65,6 +68,15 @@ class DecorateVariableNameTransformer extends NodeTransformer
 
 
     /**
+     * @type {Object}
+     */
+    get mapping()
+    {
+        return this._mapping;
+    }
+
+
+    /**
      * @inheritDocs
      */
     transformNode(node, configuration)
@@ -75,7 +87,14 @@ class DecorateVariableNameTransformer extends NodeTransformer
             if (!this.filter ||
                 (this.filter && this.filter(node.fields[0])))
             {
-                this.logger.info('transformNode - decorating variable ' + node.fields.join('.'));
+                const variableName = node.fields.join('.');
+                this.logger.info('transformNode - decorating variable ' + variableName);
+
+                // See if variable needs to be mapped
+                if (this.mapping[variableName])
+                {
+                    node.fields = this.mapping[variableName].split('.');
+                }
 
                 // Add pre/suffix
                 node.fields[0] = this.prefix + node.fields[0] + this.suffix;

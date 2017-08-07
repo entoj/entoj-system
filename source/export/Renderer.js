@@ -36,7 +36,7 @@ class Renderer extends Base
             {
                 if (!(nodeRenderer instanceof renderers.NodeRenderer))
                 {
-                    throw new Error(this.className + ' need instanciated NodeRenderers');
+                    throw new Error(this.className + ' expects a list of NodeRenderer instances');
                 }
                 this._nodeRenderers.push(nodeRenderer);
             }
@@ -58,7 +58,7 @@ class Renderer extends Base
      */
     static get injections()
     {
-        return { 'parameters': ['transformer/Renderer.nodeRenderers', 'transformer/Renderer.options'] };
+        return { 'parameters': ['export/Renderer.nodeRenderers', 'export/Renderer.options'] };
     }
 
 

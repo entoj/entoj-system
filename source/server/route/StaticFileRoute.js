@@ -23,7 +23,8 @@ class StaticFileRoute extends Route
      */
     constructor(cliLogger, pathesConfiguration, options)
     {
-        super(cliLogger);
+        super(cliLogger.createPrefixed('routes.staticroute'));
+
 
         // Check params
         assertParameter(this, 'pathesConfiguration', pathesConfiguration, true, PathesConfiguration);

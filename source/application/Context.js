@@ -161,6 +161,10 @@ class Context extends Base
         const options = new Map();
         if (typeof configuration !== 'function')
         {
+            if (!configuration.type)
+            {
+                throw new Error('Invalid instance configuration: ' + JSON.stringify(configuration));
+            }
             for (const name in configuration)
             {
                 if (name !== 'type')

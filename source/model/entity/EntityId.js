@@ -200,6 +200,19 @@ class EntityId extends Base
             }
             return isEqual;
         }
+        else if (typeof other === 'string')
+        {
+            let isEqual = false;
+            if (this.name === other)
+            {
+                isEqual = true;
+            }
+            if (this.idString === other)
+            {
+                isEqual = true;
+            }
+            return isEqual;
+        }
 
         return false;
     }

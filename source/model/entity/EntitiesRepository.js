@@ -182,6 +182,10 @@ class EntitiesRepository extends Repository
             {
                 const parsedId = yield scope.entityIdParser.parse(entityId);
                 id = parsedId.entityId;
+                if (!id)
+                {
+                    return false;
+                }
             }
             if (site)
             {

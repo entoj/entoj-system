@@ -21,6 +21,7 @@ describe(IfNode.className, function()
             type: 'IfNode',
             children: [],
             elseChildren: [],
+            elseIfChildren: [],
             condition: undefined
         }
     };

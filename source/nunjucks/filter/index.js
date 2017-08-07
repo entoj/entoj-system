@@ -8,6 +8,8 @@ module.exports =
     AttributesFilter: require('./AttributesFilter.js').AttributesFilter,
     EmptyFilter: require('./EmptyFilter.js').EmptyFilter,
     Filter: require('./Filter.js').Filter,
+    FormatDateFilter: require('./FormatDateFilter.js').FormatDateFilter,
+    HyphenateFilter: require('./HyphenateFilter.js').HyphenateFilter,
     LinkUrlFilter: require('./LinkUrlFilter.js').LinkUrlFilter,
     LoadFilter: require('./LoadFilter.js').LoadFilter,
     MarkdownFilter: require('./MarkdownFilter.js').MarkdownFilter,

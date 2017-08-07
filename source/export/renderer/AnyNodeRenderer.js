@@ -41,7 +41,7 @@ class AnyNodeRenderer extends NodeRenderer
      */
     render(node, configuration)
     {
-        if (!node)
+        if (!node || !configuration)
         {
             return Promise.resolve('');
         }

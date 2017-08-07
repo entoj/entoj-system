@@ -15,7 +15,6 @@ const Site = require('../site/Site.js').Site;
 const assertParameter = require('../../utils/assert.js').assertParameter;
 const shortenMiddle = require('../../utils/string.js').shortenMiddle;
 const trimSlashesLeft = require('../../utils/string.js').trimSlashesLeft;
-require('../../utils/prototypes.js');
 
 
 /**

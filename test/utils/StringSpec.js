@@ -8,6 +8,7 @@ const shortenMiddle = require(ES_SOURCE + '/utils/string.js').shortenMiddle;
 const shortenLeft = require(ES_SOURCE + '/utils/string.js').shortenLeft;
 const activateEnvironment = require(ES_SOURCE + '/utils/string.js').activateEnvironment;
 const trimSlashesLeft = require(ES_SOURCE + '/utils/string.js').trimSlashesLeft;
+const trimQuotes = require(ES_SOURCE + '/utils/string.js').trimQuotes;
 const htmlify = require(ES_SOURCE + '/utils/string.js').htmlify;
 const lorem = require('lorem-ipsum');
 
@@ -221,6 +222,7 @@ describe('utils/string', function()
         });
     });
 
+
     describe('#trimSlashesLeft()', function()
     {
         it('should remove any slashes on the left side', function()
@@ -230,6 +232,20 @@ describe('utils/string', function()
             expect(trimSlashesLeft('/hi/there/')).to.be.equal('hi/there/');
             expect(trimSlashesLeft('\\/hi//')).to.be.equal('hi//');
             expect(trimSlashesLeft('hi//')).to.be.equal('hi//');
+        });
+    });
+
+
+    describe('#trimQuotes()', function()
+    {
+        it('should remove any quotes from both sides side', function()
+        {
+            expect(trimQuotes('hi')).to.be.equal('hi');
+            expect(trimQuotes('"hi')).to.be.equal('hi');
+            expect(trimQuotes('hi"')).to.be.equal('hi');
+            expect(trimQuotes('\'hi')).to.be.equal('hi');
+            expect(trimQuotes('hi\'')).to.be.equal('hi');
+            expect(trimQuotes('"\'hi"\'')).to.be.equal('hi');
         });
     });
 

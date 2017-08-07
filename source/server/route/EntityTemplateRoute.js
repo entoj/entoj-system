@@ -30,7 +30,7 @@ class EntityTemplateRoute extends Route
      */
     constructor(cliLogger, urlsConfiguration, pathesConfiguration, nunjucks, options)
     {
-        super(cliLogger);
+        super(cliLogger.createPrefixed('routes.entityroute'));
 
         // Check params
         assertParameter(this, 'urlsConfiguration', urlsConfiguration, true, UrlsConfiguration);

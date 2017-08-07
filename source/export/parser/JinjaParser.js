@@ -10,6 +10,7 @@ const unique = require('lodash.uniq');
 const TextNode = require('../ast/TextNode.js').TextNode;
 const SetNode = require('../ast/SetNode.js').SetNode;
 const IfNode = require('../ast/IfNode.js').IfNode;
+const ElseIfNode = require('../ast/ElseIfNode.js').ElseIfNode;
 const ForNode = require('../ast/ForNode.js').ForNode;
 const VariableNode = require('../ast/VariableNode.js').VariableNode;
 const ArgumentNode = require('../ast/ArgumentNode.js').ArgumentNode;
@@ -29,6 +30,7 @@ const YieldNode = require('../ast/YieldNode.js').YieldNode;
 const ComplexVariableNode = require('../ast/ComplexVariableNode.js').ComplexVariableNode;
 const ArrayNode = require('../ast/ArrayNode.js').ArrayNode;
 const BlockNode = require('../ast/BlockNode.js').BlockNode;
+const activateEnvironment = require('../../utils/string.js').activateEnvironment;
 const co = require('co');
 
 
@@ -569,6 +571,9 @@ class JinjaParser extends Parser
         const condition = this.parseCondition(node.cond);
         const children = [];
         const elseChildren = [];
+        const elseIfChildren = [];
+
+        // if
         if (node.body)
         {
             for (const child of node.body.children)
@@ -576,14 +581,43 @@ class JinjaParser extends Parser
                 children.push(this.parseNode(child));
             }
         }
-        if (node.else_ && node.else_.children)
+        // add else & elseif
+        if (node.else_)
         {
-            for (const child of node.else_.children)
+            const addElseNodes = (elseNode) =>
             {
-                elseChildren.push(this.parseNode(child));
-            }
+                // elseif
+                if (elseNode && elseNode.cond)
+                {
+                    const nodeCondition = this.parseCondition(elseNode.cond);
+                    const nodeChildren = [];
+                    if (elseNode.body)
+                    {
+                        for (const child of elseNode.body.children)
+                        {
+                            nodeChildren.push(this.parseNode(child));
+                        }
+                    }
+                    elseIfChildren.push(new ElseIfNode({ condition: nodeCondition, children: nodeChildren }));
+                }
+                // else
+                else if (elseNode)
+                {
+                    for (const child of elseNode.children)
+                    {
+                        elseChildren.push(this.parseNode(child));
+                    }
+                }
+                // add more else nodes?
+                if (elseNode && elseNode.else_)
+                {
+                    addElseNodes(elseNode.else_);
+                }
+            };
+            addElseNodes(node.else_);
         }
-        return new IfNode({ condition: condition, children: children, elseChildren: elseChildren });
+
+        return new IfNode({ condition: condition, children: children, elseChildren: elseChildren, elseIfChildren: elseIfChildren });
     }
 
 
@@ -815,9 +849,49 @@ class JinjaParser extends Parser
      */
     parseString(source, configuration)
     {
-        const ast = nunjucks.parser.parse(source || '');
-        //console.log(JSON.stringify(ast, null, 4));
+        let preparedSource = source || '';
+        if (configuration)
+        {
+            preparedSource = activateEnvironment(preparedSource, configuration.buildConfiguration.environment);
+        }
+        const ast = nunjucks.parser.parse(preparedSource);
         return Promise.resolve(this.parseNode(ast));
+    }
+
+
+    /**
+     * @inheritDocs
+     */
+    parseTemplate(entity, configuration)
+    {
+        if (!entity || !configuration)
+        {
+            return Promise.resolve(false);
+        }
+        const scope = this;
+        const promise = co(function *()
+        {
+            // Get template
+            const template = entity.files.find((file) => file.contentType == 'jinja' && file.basename == entity.id.idString + '.j2');
+            /* istanbul ignore next */
+            if (!template || !template.contents)
+            {
+                scope.logger.warn('parseTemplate - could not find template');
+                return false;
+            }
+
+            // Parse file
+            const rootNode = yield scope.parseString(template.contents, configuration);
+            /* istanbul ignore next */
+            if (!rootNode)
+            {
+                scope.logger.warn('parseTemplate - could not find file');
+                return false;
+            }
+
+            return rootNode;
+        });
+        return promise;
     }
 
 
@@ -843,6 +917,7 @@ class JinjaParser extends Parser
 
             // Parse file
             const rootNode = yield scope.parseString(macroConfiguration.macro.file.contents, configuration);
+            /* istanbul ignore next */
             if (!rootNode)
             {
                 scope.logger.warn('parseMacro - could not find file');
@@ -851,6 +926,7 @@ class JinjaParser extends Parser
 
             // Find macro node
             const macroNode = rootNode.find('MacroNode');
+            /* istanbul ignore next */
             if (!macroNode)
             {
                 scope.logger.warn('parseMacro - could not find macro node');

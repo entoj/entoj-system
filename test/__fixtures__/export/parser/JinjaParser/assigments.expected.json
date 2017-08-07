@@ -145,6 +145,7 @@
                                 }
                             ]
                         },
+                        "elseIfChildren": [],
                         "elseChildren": [
                             {
                                 "type": "ExpressionNode",

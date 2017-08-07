@@ -165,13 +165,13 @@ class Configuration extends Base
 
     /**
      * The default configurations used as a base
-     * for specific macro configurations.
+     * for specific configurations.
      *
      * @protected
      * @param {Object} configuration
      * @returns {Promise<Object>}
      */
-    getDefaultMacroConfiguration(configuration)
+    getDefaultConfiguration(configuration)
     {
         return Promise.resolve({});
     }
@@ -185,14 +185,14 @@ class Configuration extends Base
      * @param {Object} configuration
      * @returns {Promise<Object>}
      */
-    refineMacroConfiguration(configuration)
+    refineConfiguration(configuration)
     {
         return Promise.resolve(configuration);
     }
 
 
     /**
-     * Creates a macro specific configuration based
+     * Resolves to a macro specific configuration based
      * on the default, the entity configuration and the refined.
      *
      * @param {String} [macroQuery]
@@ -249,10 +249,12 @@ class Configuration extends Base
             configurations.push(basics);
 
             // Add defaults
-            configurations.push(yield scope.getDefaultMacroConfiguration(basics));
+            configurations.push(yield scope.getDefaultConfiguration(basics));
+
+            // Add global settings
+            configurations.push(omit(basics.entity.properties.getByPath('export.settings.' + scope.identifier, {}), ['macros']));
 
             // Add global macro settings
-            configurations.push(omit(basics.entity.properties.getByPath('export.settings.' + scope.identifier, {}), ['macros']));
             const globalMacros = basics.entity.properties.getByPath('export.settings.' + scope.identifier + '.macros', {});
             for (const match in globalMacros)
             {
@@ -262,11 +264,10 @@ class Configuration extends Base
                 }
             }
 
-            // Add local macro export settings
+            // Add local macro settings
             const localMacros = scope.settings.settings && scope.settings.settings.macros
                 ? scope.settings.settings.macros
                 : {};
-
             for (const match in localMacros)
             {
                 if (minimatch(basics.macro.name, match))
@@ -275,7 +276,7 @@ class Configuration extends Base
                 }
             }
 
-            // Add local export settings
+            // Add local settings
             if (!scope.macro || scope.macro.name === macro.name)
             {
                 configurations.push(omit(scope.settings, ['macros', 'macro']));
@@ -285,7 +286,57 @@ class Configuration extends Base
             const configuration = merge(...configurations);
 
             // Refine
-            const result = yield scope.refineMacroConfiguration(configuration);
+            const result = yield scope.refineConfiguration(configuration);
+
+            // Okay
+            return result;
+        });
+        return promise;
+    }
+
+
+    /**
+     * Resolves to the export configuration based
+     * on the default, the entity and the refined configuration.
+     *
+     * @returns {Promise<Object>}
+     */
+    getExportConfiguration()
+    {
+        const scope = this;
+        const promise = co(function *()
+        {
+            // See if it's a macro export
+            if (scope.macro)
+            {
+                const result = yield scope.getMacroConfiguration();
+                return result;
+            }
+
+            // Basic configuration
+            const basics = {};
+            basics.entity = scope.entity;
+            basics.site = scope.entity.id.site;
+            basics.filename = scope.entity.pathString;
+
+            // Extend
+            const configurations = [];
+            configurations.push(basics);
+
+            // Add defaults
+            configurations.push(yield scope.getDefaultConfiguration(basics));
+
+            // Add global settings
+            configurations.push(omit(basics.entity.properties.getByPath('export.settings.' + scope.identifier, {}), ['macros']));
+
+            // Add local settings
+            configurations.push(omit(scope.settings, ['macros', 'macro']));
+
+            // Merge
+            const configuration = merge(...configurations);
+
+            // Refine
+            const result = yield scope.refineConfiguration(configuration);
 
             // Okay
             return result;

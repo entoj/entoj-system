@@ -129,26 +129,27 @@ class Exporter extends Base
      * @param {Object} settings
      * @returns {Promise<Configuration>}
      */
-    createConfiguration(macroQuery, siteQuery, settings)
+    createConfiguration(macroQuery, entityQuery, siteQuery, settings)
     {
         const scope = this;
         const promise = co(function *()
         {
+            // Get entity
+            const entity = yield scope.globalRepository.resolveEntity(siteQuery, entityQuery);
+            if (!entity)
+            {
+                /* istanbul ignore next */
+                throw new Error(scope.className + '::createContext - could not find entity for ' + entityQuery);
+            }
+
             // Get macro
             const macro = yield scope.globalRepository.resolveMacro(siteQuery, macroQuery);
             if (!macro || !macro.file)
             {
                 /* istanbul ignore next */
-                throw new Error(scope.className + '::createContext - could not find macro ' + macroQuery);
+                scope.logger.debug('::createContext - could not find macro ' + macroQuery);
             }
 
-            // Get entity
-            const entity = yield scope.globalRepository.resolveEntityForMacro(siteQuery, macroQuery);
-            if (!entity)
-            {
-                /* istanbul ignore next */
-                throw new Error(scope.className + '::createContext - could not find entity for ' + macroQuery);
-            }
             return scope.createConfigurationInstance(entity, macro, settings);
         });
         return promise;
@@ -158,7 +159,7 @@ class Exporter extends Base
     /**
      * @returns {Promise<BaseNode>}
      */
-    export(siteQuery, macroQuery, settings)
+    export(siteQuery, entityQuery, macroQuery, settings)
     {
         const scope = this;
         const promise = co(function *()
@@ -170,11 +171,19 @@ class Exporter extends Base
             };
 
             // Create configuration
-            const configuration = yield scope.createConfiguration(macroQuery, siteQuery, settings);
-            result.configuration = yield configuration.getMacroConfiguration();
+            const configuration = yield scope.createConfiguration(macroQuery, entityQuery, siteQuery, settings);
+            result.configuration = yield configuration.getExportConfiguration();
 
             // Parse macro
-            const rootNode = yield scope.parser.parseMacro(configuration.macro.name, configuration);
+            let rootNode = false;
+            if (configuration.macro)
+            {
+                rootNode = yield scope.parser.parseMacro(configuration.macro.name, configuration);
+            }
+            else
+            {
+                rootNode = yield scope.parser.parseTemplate(configuration.entity, configuration);
+            }
             if (rootNode === false)
             {
                 /* istanbul ignore next */

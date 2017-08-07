@@ -10,7 +10,6 @@ const co = require('co');
 const nunjucks = require('nunjucks');
 const unique = require('lodash.uniq');
 const difference = require('lodash.difference');
-require('../../utils/prototypes.js');
 
 
 /**

@@ -5,6 +5,7 @@
  * @ignore
  */
 const Base = require('../Base.js').Base;
+const NodeTransformer = require('./transformer/NodeTransformer.js').NodeTransformer;
 const co = require('co');
 
 
@@ -17,21 +18,33 @@ class Transformer extends Base
     /**
      * @param {Array} nodeTransformers
      */
-    constructor(...nodeTransformers)
+    constructor(nodeTransformers)
     {
         super();
 
         // Assign options
         this._nodeTransformers = [];
-        for (const transformers of nodeTransformers)
+        if (nodeTransformers && Array.isArray(nodeTransformers) && nodeTransformers.length)
         {
-            if (!Array.isArray(transformers))
+            // Prepare passes
+            const passes = (!Array.isArray(nodeTransformers[1])) ? [nodeTransformers] : nodeTransformers;
+
+            // Add instances for each pass
+            for (const pass of passes)
             {
-                this._nodeTransformers.push([transformers]);
-            }
-            else
-            {
-                this._nodeTransformers.push(transformers);
+                if (Array.isArray(pass))
+                {
+                    const passInstances = [];
+                    for (const nodeTransformer of pass)
+                    {
+                        if (!(nodeTransformer instanceof NodeTransformer))
+                        {
+                            throw new Error(this.className + ' expects a list of NodeTransformer instances');
+                        }
+                        passInstances.push(nodeTransformer);
+                    }
+                    this._nodeTransformers.push(passInstances);
+                }
             }
         }
     }
@@ -42,7 +55,7 @@ class Transformer extends Base
      */
     static get injections()
     {
-        return { 'parameters': ['transformer/Transformer.nodeTransformers'] };
+        return { 'parameters': ['export/Transformer.nodeTransformers'] };
     }
 
 

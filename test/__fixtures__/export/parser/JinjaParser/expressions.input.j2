@@ -1,1 +1,1 @@
-{{ (1 * 2|pow(2) / 3 % 2 - 5)|default(0) + 1 }}
+{{ (1 * 2|pow(2) / 3 % 2 - 5 or 1 and not 2)|default(0) }}

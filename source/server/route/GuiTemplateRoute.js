@@ -40,7 +40,7 @@ class GuiTemplateRoute extends Route
     constructor(cliLogger, sitesRepository, entityCategoriesRepository, entitiesRepository, globalConfiguration,
         urlsConfiguration, pathesConfiguration, buildConfiguration, nunjucks, routes, options)
     {
-        super(cliLogger.createPrefixed('routes.pagesroute'));
+        super(cliLogger.createPrefixed('routes.guiroute'));
 
         // Check params
         assertParameter(this, 'sitesRepository', sitesRepository, true, SitesRepository);

@@ -61,8 +61,16 @@ class GlobalConfiguration extends Base
             {
                 default: 'common'
             },
+            formats:
+            {
+                date: 'YYYY-MM-DD'
+            },
             breakpoints:
             {
+                application:
+                {
+                    minWidth: '1280px'
+                },
                 desktop:
                 {
                     minWidth: '1025px',

@@ -45,6 +45,7 @@
                     }
                 ]
             },
+            "elseIfChildren": [],
             "elseChildren": []
         },
         {
@@ -71,6 +72,7 @@
                     }
                 ]
             },
+            "elseIfChildren": [],
             "elseChildren": [
                 {
                     "type": "TextNode",
@@ -136,10 +138,155 @@
                     }
                 ]
             },
+            "elseIfChildren": [],
             "elseChildren": [
                 {
                     "type": "TextNode",
                     "value": "COPY"
+                }
+            ]
+        },
+        {
+            "type": "TextNode",
+            "value": "\n"
+        },
+        {
+            "type": "IfNode",
+            "children": [
+                {
+                    "type": "TextNode",
+                    "value": "YES"
+                }
+            ],
+            "condition": {
+                "type": "ConditionNode",
+                "children": [
+                    {
+                        "type": "LiteralNode",
+                        "value": 2
+                    },
+                    {
+                        "type": "OperandNode",
+                        "value": "%"
+                    },
+                    {
+                        "type": "LiteralNode",
+                        "value": 4
+                    },
+                    {
+                        "type": "OperandNode",
+                        "value": "*"
+                    },
+                    {
+                        "type": "LiteralNode",
+                        "value": 2
+                    },
+                    {
+                        "type": "OperandNode",
+                        "value": "+"
+                    },
+                    {
+                        "type": "LiteralNode",
+                        "value": 1
+                    },
+                    {
+                        "type": "OperandNode",
+                        "value": "-"
+                    },
+                    {
+                        "type": "LiteralNode",
+                        "value": 2
+                    },
+                    {
+                        "type": "OperandNode",
+                        "value": "/"
+                    },
+                    {
+                        "type": "LiteralNode",
+                        "value": 2
+                    },
+                    {
+                        "type": "OperandNode",
+                        "value": ">"
+                    },
+                    {
+                        "type": "LiteralNode",
+                        "value": 1
+                    }
+                ]
+            },
+            "elseIfChildren": [],
+            "elseChildren": []
+        },
+        {
+            "type": "TextNode",
+            "value": "\n<!-- multiple ifs -->\n"
+        },
+        {
+            "type": "IfNode",
+            "children": [
+                {
+                    "type": "TextNode",
+                    "value": "\n  I am hungry\n"
+                }
+            ],
+            "condition": {
+                "type": "ConditionNode",
+                "children": [
+                    {
+                        "type": "VariableNode",
+                        "fields": [
+                            "hungry"
+                        ]
+                    }
+                ]
+            },
+            "elseIfChildren": [
+                {
+                    "type": "ElseIfNode",
+                    "children": [
+                        {
+                            "type": "TextNode",
+                            "value": "\n  I am tired\n"
+                        }
+                    ],
+                    "condition": {
+                        "type": "ConditionNode",
+                        "children": [
+                            {
+                                "type": "VariableNode",
+                                "fields": [
+                                    "tired"
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "type": "ElseIfNode",
+                    "children": [
+                        {
+                            "type": "TextNode",
+                            "value": "\n  I am thirsty\n"
+                        }
+                    ],
+                    "condition": {
+                        "type": "ConditionNode",
+                        "children": [
+                            {
+                                "type": "VariableNode",
+                                "fields": [
+                                    "thirsty"
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ],
+            "elseChildren": [
+                {
+                    "type": "TextNode",
+                    "value": "\n  I am good!\n"
                 }
             ]
         },
@@ -178,6 +325,7 @@
                                 }
                             ]
                         },
+                        "elseIfChildren": [],
                         "elseChildren": [
                             {
                                 "type": "ExpressionNode",

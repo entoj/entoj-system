@@ -129,6 +129,51 @@ class GlobalRepository extends Base
 
 
     /**
+     * @returns {Promise<Object>}
+     */
+    resolveEntity(siteQuery, entityQuery)
+    {
+        const scope = this;
+        const promise = co(function*()
+        {
+            // Get site
+            let site = (siteQuery instanceof Site) ? siteQuery : yield scope._sitesRepository.findBy(Site.ANY, siteQuery);
+            if (!site && !siteQuery)
+            {
+                site = yield scope._sitesRepository.getFirst();
+            }
+            if (!site)
+            {
+                /* istanbul ignore next */
+                scope.logger.warn('resolveEntity - could not determine site', siteQuery);
+                return false;
+            }
+
+            // Get entity
+            const entities = yield scope._entitiesRepository.getBySite(site);
+            let result;
+            for (const entity of entities)
+            {
+                if (entity.id.isEqualTo(entityQuery))
+                {
+                    result = entity;
+                }
+            }
+
+            /* istanbul ignore next */
+            if (!result)
+            {
+                scope.logger.warn('resolveEntity - could not find entity', entityQuery);
+                return false;
+            }
+
+            return result;
+        });
+        return promise;
+    }
+
+
+    /**
      * @inheritDocs
      */
     resolveEntities(query)

@@ -27,9 +27,9 @@ describe(Transformer.className, function()
      */
 
     // Create a initialized testee
-    const createTestee = function(...nodeTransformers)
+    const createTestee = function(nodeTransformers)
     {
-        return new Transformer(...nodeTransformers);
+        return new Transformer(nodeTransformers);
     };
 
 
@@ -45,7 +45,7 @@ describe(Transformer.className, function()
 
         it('should allow to configure a multi pass transformation', function()
         {
-            const testee = createTestee([new NodeTransformer()], [new NodeTransformer()]);
+            const testee = createTestee([[new NodeTransformer()], [new NodeTransformer()]]);
             expect(testee.nodeTransformers).to.have.length(2);
             expect(testee.nodeTransformers[0]).to.have.length(1);
             expect(testee.nodeTransformers[0][0]).to.be.instanceof(NodeTransformer);
@@ -64,7 +64,7 @@ describe(Transformer.className, function()
                 const nodeTransformer1 = new NodeTransformer();
                 const nodeTransformer2 = new NodeTransformer();
                 const nodeTransformer3 = new NodeTransformer();
-                const testee = createTestee([nodeTransformer1, nodeTransformer2], [nodeTransformer3]);
+                const testee = createTestee([[nodeTransformer1, nodeTransformer2], [nodeTransformer3]]);
                 sinon.spy(nodeTransformer1, 'transform');
                 sinon.spy(nodeTransformer2, 'transform');
                 sinon.spy(nodeTransformer3, 'transform');

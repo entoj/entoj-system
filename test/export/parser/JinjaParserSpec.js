@@ -4,6 +4,7 @@
  * Requirements
  */
 const JinjaParser = require(ES_SOURCE + '/export/parser/JinjaParser.js').JinjaParser;
+const Node = require(ES_SOURCE + '/export/ast/Node.js').Node;
 const MacroNode = require(ES_SOURCE + '/export/ast/MacroNode.js').MacroNode;
 const Configuration = require(ES_SOURCE + '/export/Configuration.js').Configuration;
 const parserSpec = require('../ParserShared.js').spec;
@@ -145,6 +146,34 @@ describe(JinjaParser.className, function()
     });
 
 
+    describe('#parseTemplate()', function()
+    {
+        it('should resolve to a Node for an existing entity', function()
+        {
+            const promise = co(function*()
+            {
+                const testee = new JinjaParser(global.fixtures.globalRepository);
+                const config = yield createConfiguration('e-cta');
+                const template = yield testee.parseTemplate(config.entity, config);
+                expect(template).to.be.instanceof(Node);
+            });
+            return promise;
+        });
+
+        it('should resolve to false for an non existing entity', function()
+        {
+            const promise = co(function*()
+            {
+                const testee = new JinjaParser(global.fixtures.globalRepository);
+                const config = yield createConfiguration('e-cto');
+                const template = yield testee.parseTemplate(config.entity, config);
+                expect(template).to.be.not.ok;
+            });
+            return promise;
+        });
+    });
+
+
     describe('#parseMacro()', function()
     {
         it('should resolve to a MacroNode for an existing macro', function()
@@ -159,7 +188,6 @@ describe(JinjaParser.className, function()
             });
             return promise;
         });
-
 
         it('should resolve to false when no macro was found', function()
         {

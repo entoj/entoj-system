@@ -78,178 +78,286 @@ function spec(type, className, prepareParameters, options)
 
     describe('#getMacroConfiguration()', function()
     {
-        describe('defaults', function()
+        it('should yield a configuration containing the macro, entity and site of the exported artefact', function()
         {
-            it('should yield a configuration containing the macro, entity and site of the main macro', function()
+            const promise = co(function *()
             {
-                const promise = co(function *()
-                {
-                    createEntity('base/elements/e-headline');
-                    const settings =
-                    {
-                        mode: 'inline',
-                        view: 'view.jsp'
-                    };
-                    const entity = yield global.fixtures.entitiesRepository.getById('e-headline', global.fixtures.siteBase);
-                    const macro = yield global.fixtures.globalRepository.resolveMacro(global.fixtures.siteBase, 'e_headline');
-                    const testee = createTestee(entity, macro, settings);
-                    const config = yield testee.getMacroConfiguration();
-                    expect(config.macro).to.be.instanceof(DocumentationCallable);
-                    expect(config.macro.name).to.be.equal('e_headline');
-                    expect(config.entity).to.be.instanceof(EntityAspect);
-                    expect(config.entity.idString).to.be.equal('e-headline');
-                    expect(config.site).to.be.instanceof(Site);
-                    expect(config.site.name).to.be.equal('Base');
-                });
-                return promise;
+                createEntity('base/elements/e-headline');
+                const settings = {};
+                const entity = yield global.fixtures.entitiesRepository.getById('e-headline', global.fixtures.siteBase);
+                const macro = yield global.fixtures.globalRepository.resolveMacro(global.fixtures.siteBase, 'e_headline');
+                const testee = createTestee(entity, macro, settings);
+                const config = yield testee.getMacroConfiguration();
+                expect(config.macro).to.be.instanceof(DocumentationCallable);
+                expect(config.macro.name).to.be.equal('e_headline');
+                expect(config.entity).to.be.instanceof(EntityAspect);
+                expect(config.entity.idString).to.be.equal('e-headline');
+                expect(config.site).to.be.instanceof(Site);
+                expect(config.site.name).to.be.equal('Base');
             });
-
-            it('should yield a configuration for a specific macro', function()
-            {
-                const promise = co(function *()
-                {
-                    createEntity('base/elements/e-headline', ['e_headline', 'e_headline2']);
-                    const settings = {};
-                    const entity = yield global.fixtures.entitiesRepository.getById('e-headline', global.fixtures.siteBase);
-                    const macro = yield global.fixtures.globalRepository.resolveMacro(global.fixtures.siteBase, 'e_headline2');
-                    const testee = createTestee(entity, macro, settings);
-                    const config = yield testee.getMacroConfiguration();
-                    expect(config.macro).to.be.instanceof(DocumentationCallable);
-                    expect(config.macro.name).to.be.equal('e_headline2');
-                    expect(config.entity).to.be.instanceof(EntityAspect);
-                    expect(config.entity.idString).to.be.equal('e-headline');
-                    expect(config.site).to.be.instanceof(Site);
-                    expect(config.site.name).to.be.equal('Base');
-                });
-                return promise;
-            });
+            return promise;
         });
 
 
-        describe('export settings', function()
+        it('should allow to change configuration via export settings', function()
         {
-            it('should allow to configure the main macro via export settings', function()
+            const promise = co(function *()
             {
-                const promise = co(function *()
+                createEntity('base/elements/e-headline');
+                const settings =
                 {
-                    createEntity('base/elements/e-headline', ['e_headline', 'e_headline2']);
-                    const settings =
-                    {
-                        mode: 'inline',
-                        view: 'view.jsp'
-                    };
-                    const entity = yield global.fixtures.entitiesRepository.getById('e-headline', global.fixtures.siteBase);
-                    const macro = yield global.fixtures.globalRepository.resolveMacro(global.fixtures.siteBase, 'e_headline');
-                    const testee = createTestee(entity, macro, settings);
-                    const config = yield testee.getMacroConfiguration();
-                    expect(config.mode).to.be.equal('inline');
-                    expect(config.view).to.be.equal('view.jsp');
-                });
-                return promise;
+                    view: 'local.html'
+                };
+                const entity = yield global.fixtures.entitiesRepository.getById('e-headline', global.fixtures.siteBase);
+                const macro = yield global.fixtures.globalRepository.resolveMacro(global.fixtures.siteBase, 'e_headline');
+                const testee = createTestee(entity, macro, settings);
+                const config = yield testee.getMacroConfiguration();
+                expect(config.view).to.be.equal('local.html');
             });
-
-            it('should allow to configure specific macros via export settings', function()
-            {
-                const promise = co(function *()
-                {
-                    createEntity('base/elements/e-headline', ['e_headline', 'e_headline2']);
-                    const settings =
-                    {
-                        settings:
-                        {
-                            macros:
-                            {
-                                e_headline2:
-                                {
-                                    mode: 'inline',
-                                    view: 'view.html'
-                                }
-                            }
-                        }
-                    };
-                    const entity = yield global.fixtures.entitiesRepository.getById('e-headline', global.fixtures.siteBase);
-                    const macro = yield global.fixtures.globalRepository.resolveMacro(global.fixtures.siteBase, 'e_headline2');
-                    const testee = createTestee(entity, macro, settings);
-                    const config = yield testee.getMacroConfiguration();
-                    expect(config.mode).to.be.equal('inline');
-                    expect(config.view).to.be.equal('view.html');
-                });
-                return promise;
-            });
+            return promise;
         });
 
 
-        describe('global settings', function()
+        it('should allow to change configuration for specific macros via export settings', function()
         {
-            it('should allow to configure the main macro via global settings', function()
+            const promise = co(function *()
             {
-                const promise = co(function *()
+                createEntity('base/elements/e-headline', ['e_headline']);
+                const settings =
                 {
-                    const identifier = opts.identifier || 'default';
-                    const properties =
+                    settings:
                     {
-                        base:
+                        macros:
                         {
-                            export:
+                            e_headline:
                             {
-                                settings:
+                                view: 'specific.html'
+                            }
+                        }
+                    }
+                };
+                const entity = yield global.fixtures.entitiesRepository.getById('e-headline', global.fixtures.siteBase);
+                const macro = yield global.fixtures.globalRepository.resolveMacro(global.fixtures.siteBase, 'e_headline');
+                const testee = createTestee(entity, macro, settings);
+                const config = yield testee.getMacroConfiguration();
+                expect(config.view).to.be.equal('specific.html');
+            });
+            return promise;
+        });
+
+
+        it('should allow to change configuration via global export settings', function()
+        {
+            const promise = co(function *()
+            {
+                const identifier = opts.identifier || 'default';
+                const globalSettings =
+                {
+                    base:
+                    {
+                        export:
+                        {
+                            settings:
+                            {
+                                [identifier]:
                                 {
-                                    [identifier]:
-                                    {
-                                        mode: 'inline'
-                                    }
+                                    view: 'global.html'
                                 }
                             }
                         }
-                    };
-                    createEntity('base/elements/e-headline', ['e_headline', 'e_headline2'], properties);
-                    const settings = {};
-                    const entity = yield global.fixtures.entitiesRepository.getById('e-headline', global.fixtures.siteBase);
-                    const macro = yield global.fixtures.globalRepository.resolveMacro(global.fixtures.siteBase, 'e_headline');
-                    const testee = createTestee(entity, macro, settings);
-                    const config = yield testee.getMacroConfiguration();
-                    expect(config.mode).to.be.equal('inline');
-                });
-                return promise;
+                    }
+                };
+                createEntity('base/elements/e-headline', ['e_headline'], globalSettings);
+                const settings = {};
+                const entity = yield global.fixtures.entitiesRepository.getById('e-headline', global.fixtures.siteBase);
+                const macro = yield global.fixtures.globalRepository.resolveMacro(global.fixtures.siteBase, 'e_headline');
+                const testee = createTestee(entity, macro, settings);
+                const config = yield testee.getMacroConfiguration();
+                expect(config.view).to.be.equal('global.html');
             });
+            return promise;
+        });
 
-            it('should allow to configure a specific macro via global settings', function()
+
+        it('should allow to change configuration for a specific macro via global export settings', function()
+        {
+            const promise = co(function *()
             {
-                const promise = co(function *()
+                const identifier = opts.identifier || 'default';
+                const globalSettings =
                 {
-                    const identifier = opts.identifier || 'default';
-                    const properties =
+                    base:
                     {
-                        base:
+                        export:
                         {
-                            export:
+                            settings:
                             {
-                                settings:
+                                [identifier]:
                                 {
-                                    [identifier]:
+                                    macros:
                                     {
-                                        macros:
+                                        '*':
                                         {
-                                            '*':
-                                            {
-                                                mode: 'inline'
-                                            }
+                                            view: 'specific.html'
                                         }
                                     }
                                 }
                             }
                         }
-                    };
-                    createEntity('base/elements/e-headline', ['e_headline', 'e_headline2'], properties);
-                    const settings = {};
-                    const entity = yield global.fixtures.entitiesRepository.getById('e-headline', global.fixtures.siteBase);
-                    const macro = yield global.fixtures.globalRepository.resolveMacro(global.fixtures.siteBase, 'e_headline2');
-                    const testee = createTestee(entity, macro, settings);
-                    const config = yield testee.getMacroConfiguration();
-                    expect(config.mode).to.be.equal('inline');
-                });
-                return promise;
+                    }
+                };
+                createEntity('base/elements/e-headline', ['e_headline'], globalSettings);
+                const settings = {};
+                const entity = yield global.fixtures.entitiesRepository.getById('e-headline', global.fixtures.siteBase);
+                const macro = yield global.fixtures.globalRepository.resolveMacro(global.fixtures.siteBase, 'e_headline');
+                const testee = createTestee(entity, macro, settings);
+                const config = yield testee.getMacroConfiguration();
+                expect(config.view).to.be.equal('specific.html');
             });
+            return promise;
+        });
+
+
+        it('should prefer local over global export settings', function()
+        {
+            const promise = co(function *()
+            {
+                const identifier = opts.identifier || 'default';
+                const globalSettings =
+                {
+                    base:
+                    {
+                        export:
+                        {
+                            settings:
+                            {
+                                [identifier]:
+                                {
+                                    view: 'global.html'
+                                }
+                            }
+                        }
+                    }
+                };
+                createEntity('base/elements/e-headline', ['e_headline'], globalSettings);
+                const settings =
+                {
+                    view: 'view.html'
+                };
+                const entity = yield global.fixtures.entitiesRepository.getById('e-headline', global.fixtures.siteBase);
+                const macro = yield global.fixtures.globalRepository.resolveMacro(global.fixtures.siteBase, 'e_headline');
+                const testee = createTestee(entity, macro, settings);
+                const config = yield testee.getExportConfiguration();
+                expect(config.view).to.be.equal('view.html');
+            });
+            return promise;
+        });
+    });
+
+
+
+    describe('#getExportConfiguration()', function()
+    {
+        it('should yield a configuration containing the entity and site of the export artefact', function()
+        {
+            const promise = co(function *()
+            {
+                createEntity('base/elements/e-headline');
+                const settings = {};
+                const entity = yield global.fixtures.entitiesRepository.getById('e-headline', global.fixtures.siteBase);
+                const testee = createTestee(entity, false, settings);
+                const config = yield testee.getExportConfiguration();
+                expect(config.entity).to.be.instanceof(EntityAspect);
+                expect(config.entity.idString).to.be.equal('e-headline');
+                expect(config.site).to.be.instanceof(Site);
+                expect(config.site.name).to.be.equal('Base');
+            });
+            return promise;
+        });
+
+
+        it('should allow to change configuration via export settings', function()
+        {
+            const promise = co(function *()
+            {
+                createEntity('base/elements/e-headline');
+                const settings =
+                {
+                    view: 'view.html'
+                };
+                const entity = yield global.fixtures.entitiesRepository.getById('e-headline', global.fixtures.siteBase);
+                const testee = createTestee(entity, false, settings);
+                const config = yield testee.getExportConfiguration();
+                expect(config.view).to.be.equal('view.html');
+            });
+            return promise;
+        });
+
+
+        it('should allow to change configuration via global export settings', function()
+        {
+            const promise = co(function *()
+            {
+                const identifier = opts.identifier || 'default';
+                const globalSettings =
+                {
+                    base:
+                    {
+                        export:
+                        {
+                            settings:
+                            {
+                                [identifier]:
+                                {
+                                    view: 'global.html'
+                                }
+                            }
+                        }
+                    }
+                };
+                createEntity('base/elements/e-headline', [], globalSettings);
+                const settings = {};
+                const entity = yield global.fixtures.entitiesRepository.getById('e-headline', global.fixtures.siteBase);
+                const testee = createTestee(entity, false, settings);
+                const config = yield testee.getExportConfiguration();
+                expect(config.view).to.be.equal('global.html');
+            });
+            return promise;
+        });
+
+
+        it('should prefer local over global export settings', function()
+        {
+            const promise = co(function *()
+            {
+                const identifier = opts.identifier || 'default';
+                const globalSettings =
+                {
+                    base:
+                    {
+                        export:
+                        {
+                            settings:
+                            {
+                                [identifier]:
+                                {
+                                    view: 'global.html'
+                                }
+                            }
+                        }
+                    }
+                };
+                createEntity('base/elements/e-headline', [], globalSettings);
+                const settings =
+                {
+                    view: 'view.html'
+                };
+                const entity = yield global.fixtures.entitiesRepository.getById('e-headline', global.fixtures.siteBase);
+                const testee = createTestee(entity, false, settings);
+                const config = yield testee.getExportConfiguration();
+                expect(config.view).to.be.equal('view.html');
+            });
+            return promise;
         });
     });
 }

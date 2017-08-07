@@ -30,16 +30,10 @@ describe(SettingFilter.className, function()
             expect(testee('not.there')).to.be.deep.equal({});
         });
 
-        it('should return a existing setting when key is the value', function()
+        it('should return a existing setting for an existing key', function()
         {
             const testee = new SettingFilter({ foo: 'bar' }).filter();
             expect(testee('foo')).to.be.equal('bar');
-        });
-
-        it('should return a existing setting when key is the first parameter', function()
-        {
-            const testee = new SettingFilter({ foo: 'bar' }).filter();
-            expect(testee(false, 'foo')).to.be.equal('bar');
         });
     });
 });

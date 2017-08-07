@@ -276,7 +276,8 @@
                                     }
                                 ]
                             },
-                            "elseChildren": []
+                            "elseChildren": [],
+                            "elseIfChildren": []
                         },
                         {
                             "type": "TextNode",
@@ -574,7 +575,8 @@
                                     }
                                 ]
                             },
-                            "elseChildren": []
+                            "elseChildren": [],
+                            "elseIfChildren": []
                         },
                         {
                             "type": "TextNode",

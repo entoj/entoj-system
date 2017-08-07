@@ -21,7 +21,7 @@ class SettingFilter extends Filter
         this._name = 'settings';
 
         // Assign options
-        this.settings = settings || {};
+        this._settings = settings || {};
     }
 
 
@@ -63,27 +63,23 @@ class SettingFilter extends Filter
     filter()
     {
         const scope = this;
-        return function (value, key)
+        return function (value, context)
         {
             // Use value or key for settings
-            let settingsKey = value;
-            if (!settingsKey && key)
-            {
-                settingsKey = key;
-            }
-            if (!settingsKey || typeof settingsKey !== 'string')
+            if (!value || typeof value !== 'string')
             {
                 scope.logger.warn('Missing key for settings', value);
                 return {};
             }
 
             // Get Setting
-            if (!scope.settings[settingsKey])
+            if (!scope.settings[value])
             {
-                scope.logger.warn('Missing settings for key', settingsKey);
+                scope.logger.warn('Missing settings for key', value);
                 return {};
             }
-            return scope.settings[settingsKey];
+
+            return scope.settings[value];
         };
     }
 }

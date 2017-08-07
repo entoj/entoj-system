@@ -38,6 +38,17 @@ class Parser extends Base
      * @param {export.Configuration} configuration
      * @returns {Promise<export.ast/MacroNode>}
      */
+    parseTemplate(name, configuration)
+    {
+        return Promise.resolve(new NodeList());
+    }
+
+
+    /**
+     * @param {String} name
+     * @param {export.Configuration} configuration
+     * @returns {Promise<export.ast/MacroNode>}
+     */
     parseMacro(name, configuration)
     {
         return Promise.resolve(new NodeList());
