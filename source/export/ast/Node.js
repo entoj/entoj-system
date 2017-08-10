@@ -187,6 +187,33 @@ class Node extends Base
 
 
     /**
+     * Returns the node at offset.
+     * Optionaly checks type & properties
+     *
+     * @param {Number} offset
+     * @return {export.ast.Node}
+     */
+    peek(offset, type, properties)
+    {
+        if (!offset)
+        {
+            return this;
+        }
+        if (!this.parent || !this.parent.children)
+        {
+            return false;
+        }
+        const index = this.parent.children.indexOf(this);
+        const result = this.parent.children[index + offset] || false;
+        if (result && !result.is(type, properties))
+        {
+            return false;
+        }
+        return result;
+    }
+
+
+    /**
      * Finds the first nodes with a specific type or property
      *
      * @param {String|Array} [type] - Node type
