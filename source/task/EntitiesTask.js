@@ -121,7 +121,7 @@ class EntitiesTask extends Task
 
             // Done
             return result;
-        });
+        }).catch(ErrorHandler.handler(scope));
         return promise;
     }
 
