@@ -29,6 +29,7 @@ module.exports =
         ExporterShared: require('./export/ExporterShared.js').spec,
         ParserShared: require('./export/ParserShared.js').spec,
         NodeRendererShared: require('./export/renderer/NodeRendererShared.js').spec,
+        NodeTransformerShared: require('./export/transformer/NodeTransformerShared.js').spec,
         RendererShared: require('./export/RendererShared.js').spec,
         Helper: require('./export/ExportHelper.js')
     },
