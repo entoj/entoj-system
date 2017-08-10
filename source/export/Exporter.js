@@ -143,11 +143,16 @@ class Exporter extends Base
             }
 
             // Get macro
-            const macro = yield scope.globalRepository.resolveMacro(siteQuery, macroQuery);
+            let macro = yield scope.globalRepository.resolveMacro(siteQuery, macroQuery);
             if (!macro || !macro.file)
             {
-                /* istanbul ignore next */
-                scope.logger.debug('::createContext - could not find macro ' + macroQuery);
+                // Try default macro
+                macro = yield scope.globalRepository.resolveMacro(siteQuery, entity.idString.lodasherize());
+                if (!macro || !macro.file)
+                {
+                    /* istanbul ignore next */
+                    scope.logger.debug('::createContext - could not find macro ' + macroQuery);
+                }
             }
 
             return scope.createConfigurationInstance(entity, macro, settings);
