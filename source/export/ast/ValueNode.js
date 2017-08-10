@@ -7,7 +7,6 @@
 const Node = require('./Node.js').Node;
 
 
-
 /**
  * Provides a value attribute.
  *
