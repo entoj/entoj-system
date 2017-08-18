@@ -44,6 +44,7 @@ function spec(type, className, prepareParameters, options)
         }
         return new type(...params);
     }
+    spec.createTestee = createTestee;
 
 
     /**
@@ -74,6 +75,7 @@ function spec(type, className, prepareParameters, options)
             entity.documentation.push(macro);
         }
     }
+    spec.createEntity = createEntity;
 
 
     describe('#getMacroConfiguration()', function()
