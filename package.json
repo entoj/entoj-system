@@ -35,6 +35,8 @@
     "glob": "^7.1.2",
     "gulp": "^3.9.1",
     "gulp-zip": "^4.0.0",
+    "hyphenation.de": "^0.2.1",
+    "hypher": "^0.2.5",
     "intel": "^1.2.0",
     "lodash.clone": "^4.5.0",
     "lodash.debounce": "^4.0.8",

@@ -5,6 +5,7 @@
  * @ignore
  */
 const Filter = require('./Filter.js').Filter;
+const Hypher = require('hypher');
 
 
 /**
@@ -19,11 +20,12 @@ class HyphenateFilter extends Filter
     {
         super();
         this._name = 'hyphenate';
+        this._hypher = new Hypher(require('hyphenation.de'));
     }
 
 
     /**
-     * @inheritDoc
+     * @inheritDocs
      */
     static get className()
     {
@@ -32,13 +34,27 @@ class HyphenateFilter extends Filter
 
 
     /**
-     * @inheritDoc
+     * @inheritDocs
+     */
+    get hypher()
+    {
+        return this._hypher;
+    }
+
+
+    /**
+     * @inheritDocs
      */
     filter()
     {
+        const scope = this;
         return function (value)
         {
-            return value;
+            if (!value)
+            {
+                return '';
+            }
+            return scope.hypher.hyphenateText(value);
         };
     }
 }
