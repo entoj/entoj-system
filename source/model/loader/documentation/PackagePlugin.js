@@ -112,7 +112,7 @@ class PackagePlugin extends LoaderPlugin
             catch(e)
             {
                 /* istanbul ignore next */
-                scope.logger.warn('Could not parse file', filename, e);
+                scope.logger.error('Could not parse file', filename, e);
                 /* istanbul ignore next */
                 return false;
             }
