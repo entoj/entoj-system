@@ -42,7 +42,7 @@ intel.config(
             'entoj':
             {
                 'handlers': ['console'],
-                'level': intel.ERROR
+                'level': intel.WARN
             }
         }
     });
