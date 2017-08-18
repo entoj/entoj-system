@@ -189,6 +189,19 @@ describe(JinjaParser.className, function()
             return promise;
         });
 
+        it('should resolve to a specific MacroNode for an existing macro', function()
+        {
+            const promise = co(function*()
+            {
+                const testee = new JinjaParser(global.fixtures.globalRepository);
+                const config = yield createConfiguration('m-teaser', 'm_teaser_hero');
+                const macro = yield testee.parseMacro('m_teaser_hero', config);
+                expect(macro).to.be.instanceof(MacroNode);
+                expect(macro.name).to.be.equal('m_teaser_hero');
+            });
+            return promise;
+        });
+
         it('should resolve to false when no macro was found', function()
         {
             const promise = co(function*()

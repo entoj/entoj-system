@@ -272,6 +272,9 @@ class JinjaParser extends Parser
                     }
                     return result;
 
+                case 'Symbol':
+                    return new VariableNode({ fields: [node.value] });
+
                 case 'Literal':
                     return node.value;
 
@@ -925,7 +928,7 @@ class JinjaParser extends Parser
             }
 
             // Find macro node
-            const macroNode = rootNode.find('MacroNode');
+            const macroNode = rootNode.find('MacroNode', { name: name });
             /* istanbul ignore next */
             if (!macroNode)
             {

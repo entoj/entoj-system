@@ -3,12 +3,6 @@
     "children": [
         {
             "type": "SetNode",
-            "variable": {
-                "type": "VariableNode",
-                "fields": [
-                    "map"
-                ]
-            },
             "value": {
                 "type": "ExpressionNode",
                 "children": [
@@ -19,9 +13,26 @@
                             "index": 1,
                             "options": {
                                 "key": "value"
+                            },
+                            "variable": {
+                                "_parent": false,
+                                "_type": "VariableNode",
+                                "_dataFields": [
+                                    "fields"
+                                ],
+                                "_iterableFields": [],
+                                "_fields": [
+                                    "variable"
+                                ]
                             }
                         }
                     }
+                ]
+            },
+            "variable": {
+                "type": "VariableNode",
+                "fields": [
+                    "map"
                 ]
             }
         },
@@ -31,12 +42,6 @@
         },
         {
             "type": "SetNode",
-            "variable": {
-                "type": "VariableNode",
-                "fields": [
-                    "breakpoints"
-                ]
-            },
             "value": {
                 "type": "ExpressionNode",
                 "children": [
@@ -55,6 +60,12 @@
                             }
                         ]
                     }
+                ]
+            },
+            "variable": {
+                "type": "VariableNode",
+                "fields": [
+                    "breakpoints"
                 ]
             }
         },
