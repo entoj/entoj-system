@@ -17,6 +17,9 @@ module.exports =
     MediaQueryFilter: require('./MediaQueryFilter.js').MediaQueryFilter,
     ModuleClassesFilter: require('./ModuleClassesFilter.js').ModuleClassesFilter,
     NotEmptyFilter: require('./NotEmptyFilter.js').NotEmptyFilter,
+    SetFilter: require('./SetFilter.js').SetFilter,
     SettingFilter: require('./SettingFilter.js').SettingFilter,
+    SvgUrlFilter: require('./SvgUrlFilter.js').SvgUrlFilter,
+    SvgViewBoxFilter: require('./SvgViewBoxFilter.js').SvgViewBoxFilter,
     TranslateFilter: require('./TranslateFilter.js').TranslateFilter
 };
