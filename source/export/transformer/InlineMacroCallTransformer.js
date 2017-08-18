@@ -6,6 +6,7 @@
  */
 const NodeTransformer = require('./NodeTransformer.js').NodeTransformer;
 const DecorateVariableNameTransformer = require('./DecorateVariableNameTransformer.js').DecorateVariableNameTransformer;
+const PreferYieldTransformer = require('./PreferYieldTransformer.js').PreferYieldTransformer;
 const NodeList = require('../ast/NodeList.js').NodeList;
 const SetNode = require('../ast/SetNode.js').SetNode;
 const VariableNode = require('../ast/VariableNode.js').VariableNode;
@@ -42,6 +43,37 @@ class InlineMacroCallTransformer extends NodeTransformer
 
 
     /**
+     * @param {export.ast.CallNode} callNode
+     * @param {export.ast.MacroNode} macroNode
+     * @param {Object} macroConfiguration
+     * @param {export.JspConfiguration} configuration
+     * @return {mixed}
+     */
+    prepareParameters(callNode, macroNode, macroConfiguration, configuration)
+    {
+        const parameters = {};
+
+        // Add macro values
+        for (const parameter of macroNode.parameters)
+        {
+            parameters[parameter.name] =
+            {
+                name: parameter.name,
+                value: parameter.value
+            };
+        }
+
+        // Add call values
+        for (const parameter of callNode.arguments)
+        {
+            parameters[parameter.name].value = parameter.value;
+        }
+
+        return parameters;
+    }
+
+
+    /**
      * @inheritDocs
      * @todo Handle extended / override macros
      */
@@ -54,8 +86,9 @@ class InlineMacroCallTransformer extends NodeTransformer
             if (node.is('CallNode') && configuration)
             {
                 // See if call needs to be inlined
-                const macroSettings = yield configuration.getMacroConfiguration(node.name);
-                if (macroSettings.mode === 'inline')
+                const macroConfiguration = yield configuration.getMacroConfiguration(node.name);
+                if (macroConfiguration.mode === 'inline' ||
+                    (node.children && node.children.length))
                 {
                     scope.logger.info('transformNode - inlining macro ' + node.name);
 
@@ -64,21 +97,20 @@ class InlineMacroCallTransformer extends NodeTransformer
                     const rootNode = new NodeList();
 
                     // Get called macro
-                    const rawMacroNode = yield configuration.parser.parseMacro(node.name, configuration);
-                    const macroNode = yield configuration.transformer.transform(rawMacroNode, configuration);
+                    const macroNode = yield configuration.parser.parseMacro(node.name, configuration);
 
                     // Add parameters as set's
-                    for (const parameter of macroNode.parameters)
+                    const parameters = scope.prepareParameters(node, macroNode, macroConfiguration, configuration);
+                    for (const parameterName in parameters)
                     {
-                        const variableNode = new VariableNode({ fields: [parameter.name + suffix] });
-                        const callArgument = node.arguments.find((arg) => arg.name == parameter.name);
-                        const setNode = new SetNode({ variable: variableNode, value: callArgument ? callArgument.value : parameter.value });
+                        const variableNode = new VariableNode({ fields: [parameterName + suffix] });
+                        const setNode = new SetNode({ variable: variableNode, value: parameters[parameterName].value });
                         rootNode.children.push(setNode);
                     }
 
                     // Make variables unique
                     const variablesTransformer = new DecorateVariableNameTransformer({ suffix: suffix });
-                    const preparedMacro = yield variablesTransformer.transform(macroNode, configuration);
+                    let preparedMacro = yield variablesTransformer.transform(macroNode, configuration);
 
                     // Add children to yield?
                     if (node.children && node.children.length)
@@ -86,11 +118,16 @@ class InlineMacroCallTransformer extends NodeTransformer
                         const yieldNode = preparedMacro.find('YieldNode');
                         if (yieldNode)
                         {
-                            const yieldNodes = new NodeList();
-                            yieldNodes.children.load(node.children);
+                            const yieldNodes = new NodeList({ children: node.children });
                             preparedMacro.replace(yieldNode, yieldNodes);
+
+                            const preferYieldTransformer = new PreferYieldTransformer();
+                            preparedMacro = yield preferYieldTransformer.transform(preparedMacro, configuration);
                         }
                     }
+
+                    // Transform macro
+                    preparedMacro = yield configuration.transformer.transform(preparedMacro, configuration);
 
                     // Add macro body to list
                     rootNode.children.load(preparedMacro.children);
@@ -102,6 +139,16 @@ class InlineMacroCallTransformer extends NodeTransformer
             return node;
         });
         return promise;
+    }
+
+
+    /**
+     * @inheritDocs
+     */
+    reset(configuration)
+    {
+        resetUniqueId();
+        return Promise.resolve();
     }
 }
 
