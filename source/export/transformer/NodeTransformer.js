@@ -106,6 +106,17 @@ class NodeTransformer extends Base
         }
         return this.walk(node.clone(), this.transformNode.bind(this), configuration);
     }
+
+
+    /**
+     * Reset's the state of the transformer
+     *
+     * @param {export.Configuration} configuration
+     */
+    reset(configuration)
+    {
+        return Promise.resolve();
+    }
 }
 
 

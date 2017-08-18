@@ -196,6 +196,7 @@ class Exporter extends Base
             }
 
             // Transform parsed nodes
+            yield scope.transformer.reset(configuration);
             const transformedRootNode = yield scope.transformer.transform(rootNode, configuration);
             if (!transformedRootNode)
             {

@@ -101,6 +101,29 @@ class Transformer extends Base
         });
         return promise;
     }
+
+
+    /**
+     * Reset's the internal state of all transformers.
+     *
+     * @param {export.Configuration} configuration
+     * @returns {Promise}
+     */
+    reset(node, configuration)
+    {
+        const scope = this;
+        const promise = co(function *()
+        {
+            for (const pass of scope.nodeTransformers)
+            {
+                for (const nodeTransformer of pass)
+                {
+                    yield nodeTransformer.reset(configuration);
+                }
+            }
+        });
+        return promise;
+    }
 }
 
 
