@@ -124,7 +124,7 @@ class Context extends Base
             params.sourceType = false;
             for (const name in configuration)
             {
-                // Handle instanciation of special properties
+                // Handle instanciation of array deps
                 if (name.startsWith('!'))
                 {
                     const items = this.createInstances(configuration[name]);
@@ -198,8 +198,15 @@ class Context extends Base
         const result = [];
         for (const config of configurations)
         {
-            const instance = this.createInstance(config, singleton);
-            result.push(instance);
+            if (Array.isArray(config))
+            {
+                result.push(this.createInstances(config, singleton));
+            }
+            else
+            {
+                const instance = this.createInstance(config, singleton);
+                result.push(instance);
+            }
         }
 
         return result;
