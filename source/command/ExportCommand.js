@@ -192,6 +192,7 @@ class ExportCommand extends Command
             task = yield scope.addTasks(task, mapping);
             task = task.pipe(scope.context.di.create(WriteFilesTask, mapping));
             yield task.run(buildConfiguration, options);
+            return true;
         }).catch(ErrorHandler.handler(scope));
         return promise;
     }
@@ -208,6 +209,7 @@ class ExportCommand extends Command
             case actionName:
                 return this.export(parameters);
         }
+        return Promise.resolve(false);
     }
 }
 

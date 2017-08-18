@@ -201,6 +201,7 @@ class LintCommand extends Command
                     process.exit(0);
                 }
             }
+            return true;
         }).catch(ErrorHandler.handler(scope));
         return promise;
     }
