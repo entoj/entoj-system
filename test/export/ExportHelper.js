@@ -116,7 +116,7 @@ function configure(options)
                 /* eslint no-console: "off" */
                 console.log('Testee:');
                 console.log(JSON.stringify(testee, null, 4));
-                console.log('Parsed:');
+                console.log('Expected:');
                 console.log(JSON.stringify(expected, null, 4));
                 throw e;
             }
