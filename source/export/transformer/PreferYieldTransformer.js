@@ -27,7 +27,7 @@ class PreferYieldTransformer extends NodeTransformer
      */
     transformNode(node, transformer, options)
     {
-        // Remove if caller then ... else ...
+        // Remove if caller|notempty then ...
         if (node.is('IfNode') &&
             node.condition.children.length &&
             node.condition.children[0].is('FilterNode') &&
@@ -36,6 +36,16 @@ class PreferYieldTransformer extends NodeTransformer
             node.condition.children[0].value.is('VariableNode') &&
             node.condition.children[0].value.fields.length === 1 &&
             node.condition.children[0].value.fields[0].startsWith('caller'))
+        {
+            return Promise.resolve(new NodeList({ children: node.children }));
+        }
+
+        // Remove if caller then ...
+        if (node.is('IfNode') &&
+            node.condition.children.length == 1 &&
+            node.condition.children[0].is('VariableNode') &&
+            node.condition.children[0].fields.length === 1 &&
+            node.condition.children[0].fields[0].startsWith('caller'))
         {
             return Promise.resolve(new NodeList({ children: node.children }));
         }
