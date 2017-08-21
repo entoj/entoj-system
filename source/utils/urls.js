@@ -58,6 +58,22 @@ function trimTrailingSlash(path)
 
 
 /**
+ * Ensures a trailing slash
+ *
+ * @memberof utils
+ */
+function ensureTrailingSlash(path)
+{
+    let result = normalizePathSeparators(path);
+    if (result.substr(result.length - 1, 1) !== '/')
+    {
+        result+= '/';
+    }
+    return result;
+}
+
+
+/**
  * Makes the given string a valid url
  *
  * @memberof utils
@@ -123,6 +139,7 @@ module.exports.concat = concat;
 module.exports.shift = shift;
 module.exports.trimLeadingSlash = trimLeadingSlash;
 module.exports.trimTrailingSlash = trimTrailingSlash;
+module.exports.ensureTrailingSlash = ensureTrailingSlash;
 module.exports.normalizePathSeparators = normalizePathSeparators;
 module.exports.normalize = normalize;
 module.exports.urlify = urlify;
