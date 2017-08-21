@@ -276,8 +276,8 @@
                                     }
                                 ]
                             },
-                            "elseChildren": [],
-                            "elseIfChildren": []
+                            "elseIfChildren": [],
+                            "elseChildren": []
                         },
                         {
                             "type": "TextNode",
@@ -552,7 +552,7 @@
                             ]
                         },
                         {
-                            "type": "IfNode",
+                            "type": "NodeList",
                             "children": [
                                 {
                                     "type": "NodeList",
@@ -563,20 +563,7 @@
                                         }
                                     ]
                                 }
-                            ],
-                            "condition": {
-                                "type": "ConditionNode",
-                                "children": [
-                                    {
-                                        "type": "VariableNode",
-                                        "fields": [
-                                            "caller_u2"
-                                        ]
-                                    }
-                                ]
-                            },
-                            "elseChildren": [],
-                            "elseIfChildren": []
+                            ]
                         },
                         {
                             "type": "TextNode",

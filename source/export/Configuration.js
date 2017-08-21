@@ -265,8 +265,8 @@ class Configuration extends Base
             }
 
             // Add local macro settings
-            const localMacros = scope.settings.settings && scope.settings.settings.macros
-                ? scope.settings.settings.macros
+            const localMacros = scope.settings.settings
+                ? scope.settings.settings
                 : {};
             for (const match in localMacros)
             {

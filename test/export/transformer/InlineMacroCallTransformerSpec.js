@@ -25,7 +25,7 @@ describe(InlineMacroCallTransformer.className, function()
     nodeTransformerSpec(InlineMacroCallTransformer, 'export.transformer/InlineMacroCallTransformer', undefined, undefined, options);
 
     /**
-     * DecorateVariablesTransformer Test
+     * InlineMacroCallTransformer Test
      */
     beforeEach(function()
     {
@@ -42,12 +42,9 @@ describe(InlineMacroCallTransformer.className, function()
                 {
                     settings:
                     {
-                        macros:
+                        e_headline:
                         {
-                            e_headline:
-                            {
-                                mode: 'inline'
-                            }
+                            mode: 'inline'
                         }
                     }
                 };

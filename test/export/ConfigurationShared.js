@@ -129,12 +129,9 @@ function spec(type, className, prepareParameters, options)
                 {
                     settings:
                     {
-                        macros:
+                        e_headline:
                         {
-                            e_headline:
-                            {
-                                view: 'specific.html'
-                            }
+                            view: 'specific.html'
                         }
                     }
                 };
