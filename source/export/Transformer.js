@@ -109,7 +109,7 @@ class Transformer extends Base
      * @param {export.Configuration} configuration
      * @returns {Promise}
      */
-    reset(node, configuration)
+    reset(configuration)
     {
         const scope = this;
         const promise = co(function *()

@@ -62,6 +62,17 @@ class NodeRenderer extends Base
     {
         return Promise.resolve('');
     }
+
+
+    /**
+     * Reset's the state of the renderer
+     *
+     * @param {export.Configuration} configuration
+     */
+    reset(configuration)
+    {
+        return Promise.resolve();
+    }
 }
 
 

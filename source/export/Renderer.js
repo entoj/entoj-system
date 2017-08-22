@@ -217,6 +217,26 @@ class Renderer extends Base
         });
         return promise;
     }
+
+
+    /**
+     * Reset's the internal state of all renderers.
+     *
+     * @param {export.Configuration} configuration
+     * @returns {Promise}
+     */
+    reset(configuration)
+    {
+        const scope = this;
+        const promise = co(function *()
+        {
+            for (const nodeRenderer of scope.nodeRenderers)
+            {
+                yield nodeRenderer.reset(configuration);
+            }
+        });
+        return promise;
+    }
 }
 
 

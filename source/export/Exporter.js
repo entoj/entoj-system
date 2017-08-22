@@ -205,6 +205,7 @@ class Exporter extends Base
             }
 
             // Render transformed nodes
+            yield scope.renderer.reset(configuration);
             result.contents = yield scope.renderer.render(transformedRootNode, configuration);
 
             //Done
