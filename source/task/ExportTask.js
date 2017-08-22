@@ -82,6 +82,23 @@ class ExportTask extends EntitiesTask
 
 
     /**
+     * @returns {Promise<Array>}
+     */
+    prepare(buildConfiguration, parameters)
+    {
+        const scope = this;
+        const promise = co(function *()
+        {
+            const section = scope.cliLogger.section('Preparing export');
+            const result = yield scope.exporter.createAdditionalFiles();
+            scope.cliLogger.end(section);
+            return result;
+        }).catch(ErrorHandler.handler(scope));
+        return promise;
+    }
+
+
+    /**
      * @returns {Promise<VinylFile>}
      */
     renderEntity(entity, entitySettings, buildConfiguration, parameters)

@@ -86,6 +86,16 @@ class EntitiesTask extends Task
 
 
     /**
+     * @inheritDocs
+     * @returns {Promise<Array>}
+     */
+    prepare(buildConfiguration, parameters)
+    {
+        return Promise.resolve([]);
+    }
+
+
+    /**
      * @returns {Promise<Array>}
      */
     processEntity(entity, buildConfiguration, parameters)
@@ -144,6 +154,11 @@ class EntitiesTask extends Task
                 const work = scope.cliLogger.section(scope.sectionName);
                 const params = yield scope.prepareParameters(buildConfiguration, parameters);
                 scope.cliLogger.options(params);
+                const additionalFiles = yield scope.prepare(buildConfiguration, parameters);
+                for (const file of additionalFiles)
+                {
+                    resultStream.write(file);
+                }
                 const files = yield scope.processEntities(buildConfiguration, parameters);
                 for (const file of files)
                 {

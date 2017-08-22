@@ -25,6 +25,17 @@ class NodeRenderer extends Base
 
 
     /**
+     * Returns a array of additional VinylFiles needed for this renderer.
+     *
+     * @return {Promise<Array>}
+     */
+    createAdditionalFiles()
+    {
+        return Promise.resolve([]);
+    }
+
+
+    /**
      * Resolve to true when the renderer want's to render the given node.
      *
      * @param {export.ast.Node} node

@@ -162,7 +162,22 @@ class Exporter extends Base
 
 
     /**
-     * @returns {Promise<BaseNode>}
+     * @returns {Promise<Array>}
+     */
+    createAdditionalFiles()
+    {
+        const scope = this;
+        const promise = co(function *()
+        {
+            const result = yield scope.renderer.createAdditionalFiles();
+            return result;
+        });
+        return promise;
+    }
+
+
+    /**
+     * @returns {Promise<Object>}
      */
     export(siteQuery, entityQuery, macroQuery, settings)
     {

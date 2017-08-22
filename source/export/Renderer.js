@@ -237,6 +237,28 @@ class Renderer extends Base
         });
         return promise;
     }
+
+
+    /**
+     * Creates any additional files needed by node renderers or transformers.
+     *
+     * @returns {Promise<Array>}
+     */
+    createAdditionalFiles()
+    {
+        const scope = this;
+        const promise = co(function *()
+        {
+            const result = [];
+            for (const nodeRenderer of scope.nodeRenderers)
+            {
+                const files = yield nodeRenderer.createAdditionalFiles();
+                result.push(...files);
+            }
+            return result;
+        });
+        return promise;
+    }
 }
 
 
