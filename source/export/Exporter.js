@@ -162,6 +162,8 @@ class Exporter extends Base
 
 
     /**
+     * Creates any additional files needed by the exported artifacts.
+     *
      * @returns {Promise<Array>}
      */
     createAdditionalFiles()
@@ -169,7 +171,8 @@ class Exporter extends Base
         const scope = this;
         const promise = co(function *()
         {
-            const result = yield scope.renderer.createAdditionalFiles();
+            const configuration = scope.createConfigurationInstance();
+            const result = yield scope.renderer.createAdditionalFiles(configuration);
             return result;
         });
         return promise;
