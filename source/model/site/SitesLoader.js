@@ -7,6 +7,7 @@
 const PluggableLoader = require('../loader/PluggableLoader.js').PluggableLoader;
 const PathesConfiguration = require('../configuration/PathesConfiguration.js').PathesConfiguration;
 const Site = require('./Site.js').Site;
+const ErrorHandler = require('../../error/ErrorHandler.js').ErrorHandler;
 const assertParameter = require('../../utils/assert.js').assertParameter;
 const co = require('co');
 const fs = require('co-fs-extra');
@@ -78,7 +79,7 @@ class SitesLoader extends PluggableLoader
                 }
                 return result;
             }
-        });
+        }).catch(ErrorHandler.handler(scope));
         return promise;
     }
 
