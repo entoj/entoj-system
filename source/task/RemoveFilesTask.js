@@ -60,14 +60,17 @@ class RemoveFilesTask extends TransformingTask
                 return false;
             }
 
-            // Remove file?
-            for (const remove of params.removeFiles)
+            if (params.removeFiles && Array.isArray(params.removeFiles))
             {
-                if (file.path.match(new RegExp(remove)))
+                // Remove file?
+                for (const remove of params.removeFiles)
                 {
-                    const work = scope.cliLogger.work('Removing file <' + file.path + '>');
-                    scope.cliLogger.end(work);
-                    return false;
+                    if (file.path.match(new RegExp(remove)))
+                    {
+                        const work = scope.cliLogger.work('Removing file <' + file.path + '>');
+                        scope.cliLogger.end(work);
+                        return false;
+                    }
                 }
             }
 
