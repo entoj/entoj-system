@@ -65,6 +65,38 @@ class PathesConfiguration extends Base
 
 
     /**
+     * Updates configurations mostly for testing purposes
+     *
+     * @private
+     * @param {string} options
+     */
+    configure(options)
+    {
+        const opts = options || {};
+        if (opts.root)
+        {
+            this._root = path.resolve(opts.root);
+        }
+        if (opts.cacheTemplate)
+        {
+            this._cache = this.renderTemplate(opts.cacheTemplate, {}, true);
+        }
+        if (opts.dataTemplate)
+        {
+            this._data = this.renderTemplate(opts.dataTemplate, {}, true);
+        }
+        if (opts.entojTemplate)
+        {
+            this._entoj = this.renderTemplate(opts.entojTemplate, {}, true);
+        }
+        if (opts.sitesTemplate)
+        {
+            this._sites = this.renderTemplate(opts.sitesTemplate, {}, true);
+        }
+    }
+
+
+    /**
      * Renders a path template
      *
      * @private
