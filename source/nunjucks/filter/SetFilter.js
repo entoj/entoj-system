@@ -15,13 +15,10 @@ class SetFilter extends Filter
     /**
      * @inheritDoc
      */
-    constructor(globalConfiguration)
+    constructor()
     {
         super();
         this._name = ['set', 'setProperty'];
-
-        // Assign options
-        this._globalConfiguration = globalConfiguration;
     }
 
 
