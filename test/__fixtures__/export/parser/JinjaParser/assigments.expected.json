@@ -3,12 +3,6 @@
     "children": [
         {
             "type": "SetNode",
-            "variable": {
-                "type": "VariableNode",
-                "fields": [
-                    "className"
-                ]
-            },
             "value": {
                 "type": "ExpressionNode",
                 "children": [
@@ -28,6 +22,12 @@
                         "value": "\"-teaser\""
                     }
                 ]
+            },
+            "variable": {
+                "type": "VariableNode",
+                "fields": [
+                    "className"
+                ]
             }
         },
         {
@@ -36,13 +36,6 @@
         },
         {
             "type": "SetNode",
-            "variable": {
-                "type": "VariableNode",
-                "fields": [
-                    "model",
-                    "nr"
-                ]
-            },
             "value": {
                 "type": "ExpressionNode",
                 "children": [
@@ -62,6 +55,13 @@
                         "value": 1
                     }
                 ]
+            },
+            "variable": {
+                "type": "VariableNode",
+                "fields": [
+                    "model",
+                    "nr"
+                ]
             }
         },
         {
@@ -70,12 +70,6 @@
         },
         {
             "type": "SetNode",
-            "variable": {
-                "type": "VariableNode",
-                "fields": [
-                    "simple"
-                ]
-            },
             "value": {
                 "type": "ExpressionNode",
                 "children": [
@@ -84,6 +78,12 @@
                         "value": 1.5
                     }
                 ]
+            },
+            "variable": {
+                "type": "VariableNode",
+                "fields": [
+                    "simple"
+                ]
             }
         },
         {
@@ -92,12 +92,6 @@
         },
         {
             "type": "SetNode",
-            "variable": {
-                "type": "VariableNode",
-                "fields": [
-                    "className"
-                ]
-            },
             "value": {
                 "type": "ExpressionNode",
                 "children": [
@@ -158,6 +152,93 @@
                             }
                         ]
                     }
+                ]
+            },
+            "variable": {
+                "type": "VariableNode",
+                "fields": [
+                    "className"
+                ]
+            }
+        },
+        {
+            "type": "TextNode",
+            "value": "\n"
+        },
+        {
+            "type": "SetNode",
+            "value": {
+                "type": "ExpressionNode",
+                "children": [
+                    {
+                        "type": "FunctionCallNode",
+                        "children": [],
+                        "name": {
+                            "type": "VariableNode",
+                            "fields": [
+                                "complex"
+                            ]
+                        },
+                        "arguments": [
+                            {
+                                "type": "ArgumentNode",
+                                "value": {
+                                    "type": "LiteralNode",
+                                    "value": 1
+                                }
+                            },
+                            {
+                                "type": "ArgumentNode",
+                                "value": {
+                                    "type": "LiteralNode",
+                                    "value": 5
+                                }
+                            },
+                            {
+                                "type": "ArgumentNode",
+                                "value": {
+                                    "type": "LiteralNode",
+                                    "value": "pow"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            "variable": {
+                "type": "VariableNode",
+                "fields": [
+                    "calculated"
+                ]
+            }
+        },
+        {
+            "type": "TextNode",
+            "value": "\n"
+        },
+        {
+            "type": "SetNode",
+            "value": {
+                "type": "ExpressionNode",
+                "children": [
+                    {
+                        "type": "FunctionCallNode",
+                        "children": [],
+                        "name": {
+                            "type": "VariableNode",
+                            "fields": [
+                                "utils",
+                                "complex"
+                            ]
+                        },
+                        "arguments": []
+                    }
+                ]
+            },
+            "variable": {
+                "type": "VariableNode",
+                "fields": [
+                    "calculated"
                 ]
             }
         },

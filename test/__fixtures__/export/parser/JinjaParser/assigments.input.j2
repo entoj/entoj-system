@@ -2,3 +2,5 @@
 {% set model.nr = model.id + 1 %}
 {% set simple = 1.5 %}
 {% set className = moduleClass + '--' + type if type else '' %}
+{% set calculated = complex(1, 5, 'pow') %}
+{% set calculated = utils.complex() %}

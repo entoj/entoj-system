@@ -349,6 +349,38 @@
         },
         {
             "type": "TextNode",
+            "value": "\n<!-- with a function call -->\n"
+        },
+        {
+            "type": "IfNode",
+            "children": [
+                {
+                    "type": "TextNode",
+                    "value": "COPY"
+                }
+            ],
+            "condition": {
+                "type": "ConditionNode",
+                "children": [
+                    {
+                        "type": "FunctionCallNode",
+                        "children": [],
+                        "name": {
+                            "type": "VariableNode",
+                            "fields": [
+                                "model",
+                                "copy"
+                            ]
+                        },
+                        "arguments": []
+                    }
+                ]
+            },
+            "elseIfChildren": [],
+            "elseChildren": []
+        },
+        {
+            "type": "TextNode",
             "value": "\n"
         }
     ]

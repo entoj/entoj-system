@@ -30,6 +30,7 @@ const YieldNode = require('../ast/YieldNode.js').YieldNode;
 const ComplexVariableNode = require('../ast/ComplexVariableNode.js').ComplexVariableNode;
 const ArrayNode = require('../ast/ArrayNode.js').ArrayNode;
 const BlockNode = require('../ast/BlockNode.js').BlockNode;
+const FunctionCallNode = require('../ast/FunctionCallNode.js').FunctionCallNode;
 const activateEnvironment = require('../../utils/string.js').activateEnvironment;
 const co = require('co');
 
@@ -398,6 +399,16 @@ class JinjaParser extends Parser
                     result.push(this.parseFilter(node));
                     break;
 
+                case 'FunCall':
+                    result.push(new FunctionCallNode(
+                        {
+                            name: (node.name.value)
+                                ? new VariableNode({ fields: [node.name.value] })
+                                : this.parseVariable(node.name),
+                            arguments: this.parseArguments(node.args)
+                        }));
+                    break;
+
                 /* istanbul ignore next */
                 default:
                     this.logger.error('parseCondition: Not Implemented', type, JSON.stringify(node, null, 4));
@@ -504,6 +515,16 @@ class JinjaParser extends Parser
                             condition: this.parseCondition(node.cond),
                             children: [new ExpressionNode({ children: parse(node.body) })],
                             elseChildren: [new ExpressionNode({ children: parse(node.else_) })]
+                        }));
+                    break;
+
+                case 'FunCall':
+                    result.push(new FunctionCallNode(
+                        {
+                            name: (node.name.value)
+                                ? new VariableNode({ fields: [node.name.value] })
+                                : this.parseVariable(node.name),
+                            arguments: this.parseArguments(node.args)
                         }));
                     break;
 
@@ -676,9 +697,12 @@ class JinjaParser extends Parser
         }
         else
         {
-            const children = this.parseYield(node.args);
-            const args = this.parseArguments(node.args);
-            return new CallNode({ name: node.name.value, arguments: args, children: children });
+            return new CallNode(
+                {
+                    name: node.name.value,
+                    arguments: this.parseArguments(node.args),
+                    children: this.parseYield(node.args)
+                });
         }
     }
 
