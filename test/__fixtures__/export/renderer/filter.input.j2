@@ -53,3 +53,4 @@
 {# linkUrl #}
 {{ url|linkUrl }}
 {% set path = model|linkUrl %}
+{% set path = model|linkUrl({ p:page, s:15 }) %}
