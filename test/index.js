@@ -16,7 +16,11 @@ module.exports =
     {
         files: path.join(__dirname, '/__fixtures__/files'),
         project: require('./__fixtures__/project/index.js'),
-        test: require('entoj-test-fixture')
+        test: require('entoj-test-fixture'),
+        export:
+        {
+            renderer: path.join(__dirname, '/__fixtures__/export/renderer')
+        }
     },
     command:
     {

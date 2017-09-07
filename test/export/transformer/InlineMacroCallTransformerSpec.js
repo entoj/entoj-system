@@ -50,7 +50,7 @@ describe(InlineMacroCallTransformer.className, function()
                 };
                 const testee = new InlineMacroCallTransformer();
                 const configuration = yield exportHelper.createConfiguration('base/modules/m-teaser', 'm_teaser', settings);
-                const node = yield exportHelper.loadFixture('InlineMacroCallTransformer.input.j2', 'ast');
+                const node = yield exportHelper.loadInputFixture('InlineMacroCallTransformer.input.j2', 'ast');
                 const transformedNode = yield testee.transform(node, configuration);
                 return exportHelper.testNodeFixture('InlineMacroCallTransformer', transformedNode);
             });

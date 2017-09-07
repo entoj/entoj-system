@@ -1,0 +1,18 @@
+{% if model.copy or (model.headline == '') %}COPY{% endif %}
+{% if model.copy %}COPY{% else %}NOCOPY{% endif %}
+{% if not model.copy and mode.headline|default('empty') %}NOCOPY{% else %}COPY{% endif %}
+{% if 2 % 4 * 2 + 1 - 2 / 2 > 1 %}YES{% endif %}
+<!-- multiple ifs -->
+{% if hungry %}
+  I am hungry
+{% elif tired %}
+  I am tired
+{% elif thirsty %}
+  I am thirsty
+{% else %}
+  I am good!
+{% endif %}
+<!-- inside a expression -->
+{% set value = type if type else '' %}
+<!-- with a function call -->
+{% if model.copy() %}COPY{% endif %}

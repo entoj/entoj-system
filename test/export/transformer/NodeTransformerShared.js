@@ -42,7 +42,7 @@ function spec(type, className, prepareParameters, testFixtures, options)
         {
             const testee = createTestee(type, prepareParameters);
             const fixtureName = name || testee.className.split('/').pop();
-            const node = yield exportHelper.loadFixture(fixtureName + '.input.j2', 'ast');
+            const node = yield exportHelper.loadInputFixture(fixtureName + '.input.j2', 'ast');
             const transformedNode = yield testee.transform(node, configuration);
             return exportHelper.testNodeFixture(fixtureName, transformedNode);
         });

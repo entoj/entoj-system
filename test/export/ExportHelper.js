@@ -31,9 +31,12 @@ function configure(options)
     const parserClass = opts.parserClass
         ? opts.parserClass
         : JinjaParser;
-    const basePath = opts.basePath
-        ? opts.basePath
-        : ES_FIXTURES + '/export';
+    const fixtureInputPath = opts.fixtureInputPath
+        ? opts.fixtureInputPath
+        : opts.basePath || ES_FIXTURES + '/export';
+    const fixtureExpectedPath = opts.fixtureExpectedPath
+        ? opts.fixtureExpectedPath
+        : opts.basePath || ES_FIXTURES + '/export';
     const resultExtension = opts.resultExtension
         ? opts.resultExtension
         : '.html';
@@ -83,7 +86,7 @@ function configure(options)
     {
         const promise = co(function *()
         {
-            const source = fs.readFileSync(path.join(basePath, filename), { encoding: 'utf8' }).replace(/\r/g, '');
+            const source = fs.readFileSync(filename, { encoding: 'utf8' }).replace(/\r/g, '');
             let result = source;
             if (type === 'json')
             {
@@ -100,13 +103,25 @@ function configure(options)
     }
 
 
+    function loadInputFixture(filename, type)
+    {
+        return loadFixture(path.join(fixtureInputPath, filename), type);
+    }
+
+
+    function loadExpectedFixture(filename, type)
+    {
+        return loadFixture(path.join(fixtureExpectedPath, filename), type);
+    }
+
+
     // Tests a node against a fixture
     function testNodeFixture(name, node)
     {
         const promise = co(function *()
         {
             const testee = JSON.parse(JSON.stringify(node.serialize()));
-            const expected = yield loadFixture('/' + name + '.expected.json', 'json');
+            const expected = yield loadFixture(path.join(fixtureExpectedPath, '/' + name + '.expected.json'), 'json');
             try
             {
                 expect(testee).to.be.deep.equal(expected);
@@ -130,8 +145,8 @@ function configure(options)
     {
         const promise = co(function*()
         {
-            const ast = yield loadFixture('/' + name + '.input.j2', 'ast');
-            const expected = yield loadFixture('/' + name + '.expected' + resultExtension);
+            const ast = yield loadFixture(path.join(fixtureInputPath, '/' + name + '.input.j2'), 'ast');
+            const expected = yield loadFixture(path.join(fixtureExpectedPath, '/' + name + '.expected' + resultExtension));
             const configuration = yield createConfiguration('base/elements/e-cta', 'e_cta', undefined, undefined, renderer);
             let result = '';
             try
@@ -157,6 +172,8 @@ function configure(options)
     exports.opts = opts;
     exports.createConfiguration = createConfiguration;
     exports.loadFixture = loadFixture;
+    exports.loadInputFixture = loadInputFixture;
+    exports.loadExpectedFixture = loadExpectedFixture;
     exports.testNodeFixture = testNodeFixture;
     exports.testRendererFixture = testRendererFixture;
     return exports;

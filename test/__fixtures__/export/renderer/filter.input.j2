@@ -1,0 +1,55 @@
+{# unknown #}
+{{ model.text|foo }}
+{{ model.text|foo('#Lipsum', '#Lorem') }}
+{{ model.text|foo(x)|bar('y') }}
+{{ ['one', two]|foo }}
+
+{# default #}
+{{ url|default() }}
+{{ url|default('string') }}
+{{ url|default(1) }}
+{{ url|default(variable) }}
+{% set value = false|default('hooraa') %}
+{% if false|default == 'yes' %}{% endif %}
+
+{# escape #}
+{{ url|escape }}
+{% set value = false|escape %}
+
+{# not/empty #}
+{{ url|empty }}
+{% set value = false|empty %}
+{% if false|notempty %}{% endif %}
+
+{# moduleClasses #}
+{{ url|moduleClasses }}
+{% set value = ['primary', 'green']|moduleClasses('e-cta') %}
+
+{# assetUrl #}
+{{ url|assetUrl }}
+{% set path = 'primary'|assetUrl() %}
+
+{# translate #}
+{% set translation = 'key'|translate %}
+{{ 'key'|translate }}
+
+{# markup #}
+{% set html = content|markup %}
+{% set html = 'content'|markup('default') %}
+{{ content|markup }}
+
+{# formatDate #}
+{% set date = timestamp|formatDate %}
+{% set date = timestamp|formatDate('DD.MM.YYYY') %}
+{{ timestamp|formatDate }}
+
+{# load #}
+{% set model = model|load %}
+
+{# imageUrl #}
+{{ url|imageUrl }}
+{% set path = 'primary'|imageUrl %}
+
+{# linkUrl #}
+{{ url|linkUrl }}
+{% set path = model|linkUrl %}
