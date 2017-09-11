@@ -17,10 +17,13 @@ class MarkupFilter extends Filter
     /**
      * @inheritDoc
      */
-    constructor()
+    constructor(styles)
     {
         super();
         this._name = 'markup';
+        this._styles = (styles)
+            ? styles
+            : { 'plain': 'plain' };
     }
 
 
@@ -36,12 +39,31 @@ class MarkupFilter extends Filter
     /**
      * @inheritDocs
      */
+    static get injections()
+    {
+        return { 'parameters': ['nunjucks.filter/MarkupFilter.styles'] };
+    }
+
+
+    /**
+     * @type {Object}
+     */
+    get styles()
+    {
+        return this._styles;
+    }
+
+    /**
+     * @inheritDocs
+     */
     filter()
     {
+        const scope = this;
         return function (value, style)
         {
             const result = value || '';
-            if (style == 'plain')
+            const styleName = scope.styles[style] || 'default';
+            if (styleName == 'plain')
             {
                 return striptags(result);
             }
