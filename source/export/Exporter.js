@@ -210,7 +210,7 @@ class Exporter extends Base
             if (rootNode === false)
             {
                 /* istanbul ignore next */
-                throw new Error(scope.className + '::transform - could not parse macro');
+                throw new Error(scope.className + '::transform - could not parse macro / template');
             }
 
             // Transform parsed nodes
