@@ -300,7 +300,6 @@ class JinjaParser extends Parser
 
                 case 'LookupVal':
                     return this.parseVariable(node);
-                    break;
 
                 /* istanbul ignore next */
                 default:
