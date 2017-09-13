@@ -236,6 +236,11 @@ class GlobalRepository extends Base
      */
     resolveMacro(siteQuery, macroQuery)
     {
+        if (!siteQuery || !macroQuery)
+        {
+            return Promise.resolve(false);
+        }
+
         const scope = this;
         const promise = co(function*()
         {
