@@ -18,15 +18,47 @@ const co = require('co');
 /**
  * EntityAspect cache
  */
-const aspectCache = {};
+let entityAspectCacheEnabled = false;
+const entityAspectCache = {};
+
+
+/**
+ * Creates a EntityAspect and caches it if enabled
+ *
+ * @param {model.entity.Entity} entity
+ * @param {model.site.Site} site
+ * @return {model.entity.EntityAspect}
+ */
 function createEntityAspect(entity, site)
 {
-    const key = site.name + '::' + entity.idString;
-    if (!aspectCache[key])
+    if (!entityAspectCacheEnabled)
     {
-        aspectCache[key] = new EntityAspect(entity, site);
+        return new EntityAspect(entity, site);
     }
-    return aspectCache[key];
+    const key = site.name + '::' + entity.idString;
+    if (!entityAspectCacheEnabled || !entityAspectCache[key])
+    {
+        entityAspectCache[key] = new EntityAspect(entity, site);
+    }
+    return entityAspectCache[key];
+}
+
+
+/**
+ * Enables the EntityAspect cache
+ */
+function enableEntityAspectCache()
+{
+    entityAspectCacheEnabled = true;
+}
+
+
+/**
+ * Disables the EntityAspect cache
+ */
+function disableEntityAspectCache()
+{
+    entityAspectCacheEnabled = false;
 }
 
 
@@ -223,3 +255,5 @@ class EntitiesRepository extends Repository
  * @ignore
  */
 module.exports.EntitiesRepository = EntitiesRepository;
+module.exports.enableEntityAspectCache = enableEntityAspectCache;
+module.exports.disableEntityAspectCache = disableEntityAspectCache;
