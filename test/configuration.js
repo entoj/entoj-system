@@ -9,6 +9,7 @@ const parameters = require('minimist')(process.argv.splice(2));
  * Configure path
  */
 const path = require('path');
+global.TESTS_RUNNING = true;
 global.ES_SOURCE = path.resolve(__dirname + '/../source');
 global.ES_FIXTURES = path.resolve(__dirname + '/__fixtures__');
 global.ES_TEST = __dirname;
