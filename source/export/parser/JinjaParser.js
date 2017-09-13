@@ -155,6 +155,10 @@ class JinjaParser extends Parser
                     result.push(new ArgumentNode({ value: new LiteralNode({ value: node.value }) }));
                     break;
 
+                case 'LookupVal':
+                    result.push(new ArgumentNode({ value: this.parseExpression(node) }));
+                    break;
+
                 /* istanbul ignore next */
                 default:
                     this.logger.error('parseArguments: Not Implemented', type, JSON.stringify(node, null, 4));
@@ -197,6 +201,10 @@ class JinjaParser extends Parser
 
                 case 'Symbol':
                     result.push(new ParameterNode({ name: node.value }));
+                    break;
+
+                case 'LookupVal':
+                    result.push(new ParameterNode({ value: this.parseExpression(node) }));
                     break;
 
                 /* istanbul ignore next */
@@ -288,6 +296,10 @@ class JinjaParser extends Parser
                     {
                         return parse(node.value);
                     }
+                    break;
+
+                case 'LookupVal':
+                    return this.parseVariable(node);
                     break;
 
                 /* istanbul ignore next */
