@@ -39,7 +39,6 @@ class CompactIdParser extends IdParser
         const opts = options || {};
         this._sitesRepository = sitesRepository;
         this._entityCategoriesRepository = entityCategoriesRepository;
-        this._idTemplate = new EntityIdTemplate(this);
         this._useNumbers = (typeof opts.useNumbers === 'undefined') ? false : opts.useNumbers === true;
 
         // Build templates
@@ -53,6 +52,7 @@ class CompactIdParser extends IdParser
         this._templates[IdParser.TEMPLATE_SITE_PATH] = '/' + this._templates[IdParser.TEMPLATE_SITE];
         this._templates[IdParser.TEMPLATE_CATEGORY_PATH] = this._templates[IdParser.TEMPLATE_SITE_PATH] + '/' + this._templates[IdParser.TEMPLATE_CATEGORY];
         this._templates[IdParser.TEMPLATE_ID_PATH] = this._templates[IdParser.TEMPLATE_CATEGORY_PATH] + '/' + this._templates[IdParser.TEMPLATE_ID];
+        this._idTemplate = new EntityIdTemplate(this);
     }
 
 
