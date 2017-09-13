@@ -16,6 +16,21 @@ const co = require('co');
 
 
 /**
+ * EntityAspect cache
+ */
+const aspectCache = {};
+function createEntityAspect(entity, site)
+{
+    const key = site.name + '::' + entity.idString;
+    if (!aspectCache[key])
+    {
+        aspectCache[key] = new EntityAspect(entity, site);
+    }
+    return aspectCache[key];
+}
+
+
+/**
  * @class
  * @memberOf model.entity
  * @extends {Base}
@@ -117,7 +132,7 @@ class EntitiesRepository extends Repository
             const entities = yield scope.getItems();
             const result = entities
                 .filter(item => (item.id.site === site || item.usedBy.indexOf(site) > -1))
-                .map(item => new EntityAspect(item, site));
+                .map(item => createEntityAspect(item, site));
             return result;
         });
         return promise;
@@ -159,7 +174,7 @@ class EntitiesRepository extends Repository
         {
             const result = data
                 .filter(item => ((item.id.site === site) || item.usedBy.indexOf(site) != -1) && (item.id.category === entityCategory))
-                .map(item => new EntityAspect(item, site));
+                .map(item => createEntityAspect(item, site));
             return result;
         });
         return promise;
@@ -194,7 +209,7 @@ class EntitiesRepository extends Repository
             const entity = data.find(item => item.id.isEqualTo(id, true));
             if (entity && id && id.site)
             {
-                return new EntityAspect(entity, id.site);
+                return createEntityAspect(entity, id.site);
             }
 
             return entity;
