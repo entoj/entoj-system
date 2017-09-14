@@ -150,7 +150,7 @@ class GlobalRepository extends Base
             if (!site)
             {
                 /* istanbul ignore next */
-                scope.logger.warn('resolveEntity - could not determine site', siteQuery);
+                scope.logger.debug('resolveEntity - could not determine site', siteQuery);
                 return false;
             }
 
@@ -168,7 +168,7 @@ class GlobalRepository extends Base
             /* istanbul ignore next */
             if (!result)
             {
-                scope.logger.warn('resolveEntity - could not find entity', entityQuery);
+                scope.logger.debug('resolveEntity - could not find entity', entityQuery);
                 return false;
             }
 
@@ -258,7 +258,7 @@ class GlobalRepository extends Base
             if (!site)
             {
                 /* istanbul ignore next */
-                scope.logger.warn('resolveMacro - could not determine site', siteQuery);
+                scope.logger.debug('resolveMacro - could not determine site', siteQuery);
                 return false;
             }
 
@@ -280,7 +280,7 @@ class GlobalRepository extends Base
             }
 
             /* istanbul ignore next */
-            scope.logger.warn('resolveMacro - could not find macro', macroQuery);
+            scope.logger.debug('resolveMacro - could not find macro', macroQuery);
             return false;
         });
         return promise;
@@ -303,6 +303,8 @@ class GlobalRepository extends Base
             }
             if (!site)
             {
+                /* istanbul ignore next */
+                scope.logger.debug('resolveEntityForMacro - could not find site', siteQuery);
                 return false;
             }
 
@@ -326,6 +328,8 @@ class GlobalRepository extends Base
                 }
             }
 
+            /* istanbul ignore next */
+            scope.logger.debug('resolveMacro - could not find macro', macroQuery);
             return false;
         });
         return promise;
