@@ -12,6 +12,7 @@ const Environment = require('../../nunjucks/Environment.js').Environment;
 const PathesConfiguration = require('../../model/configuration/PathesConfiguration.js').PathesConfiguration;
 const waitForPromise = require('../../utils/synchronize.js').waitForPromise;
 const assertParameter = require('../../utils/assert.js').assertParameter;
+const pathes = require('../../utils/pathes.js');
 const co = require('co');
 const fs = require('co-fs-extra');
 
@@ -40,6 +41,7 @@ class EntityTemplateRoute extends Route
         // Assign options
         const opts = options || {};
         this._basePath = waitForPromise(pathesConfiguration.resolve(opts.basePath || ''));
+        this._pathesConfiguration = pathesConfiguration;
         this._urlsConfiguration = urlsConfiguration;
         this._nunjucks = nunjucks;
     }
@@ -60,6 +62,15 @@ class EntityTemplateRoute extends Route
     static get className()
     {
         return 'server.route/EntityTemplateRoute';
+    }
+
+
+    /**
+     * @type {model.configuration.PathesConfiguration}
+     */
+    get pathesConfiguration()
+    {
+        return this._pathesConfiguration;
     }
 
 
@@ -97,16 +108,27 @@ class EntityTemplateRoute extends Route
             }
 
             // Check file hit
-            const data = yield scope.urlsConfiguration.matchEntityFile(request.path);
+            let data = yield scope.urlsConfiguration.matchEntityFile(request.path);
+            let filename;
             if (!data || !data.file)
             {
-                next();
-                return;
+                // Check direct file hit
+                filename = pathes.concat(scope.pathesConfiguration.sites, request.path);
+                if (!fs.existsSync(filename))
+                {
+                    next();
+                    return;
+                }
+                data = yield scope.urlsConfiguration.matchEntity(request.path, true);
+            }
+            else
+            {
+                filename = data.file.filename;
             }
 
             // Render template
-            const tpl = yield fs.readFile(data.file.filename, { encoding: 'utf8' });
-            const work = scope.cliLogger.work('Serving url <' + request.url + '> using template <' + data.file.filename + '>');
+            const tpl = yield fs.readFile(filename, { encoding: 'utf8' });
+            const work = scope.cliLogger.work('Serving url <' + request.url + '> using template <' + filename + '>');
             let html;
             try
             {
