@@ -14,6 +14,9 @@ if (process.argv.length > 1 && process.argv[process.argv.length - 2] == '--confi
 // Add cli parameters
 configuration.parameters = require('minimist')(process.argv.splice(2));
 
+// Enable caching
+require('./model/entity/EntitiesRepository.js').enableEntityAspectCache();
+
 // Create context & run commands
 const context = new Context(configuration);
 const runner = context.di.create(Runner);
