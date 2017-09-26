@@ -201,23 +201,38 @@ describe('utils/string', function()
         {
             it('should remove all environments when no environment is given', function()
             {
-                const input = 'All<!-- +environment: development -->-Development<!-- -environment --><!-- +environment: production -->-Production<!-- -environment -->';
-                const expected = 'All';
+                const input = 'Start<!-- +environment: development -->-Development<!-- -environment -->End';
+                const expected = 'StartEnd';
                 expect(activateEnvironment(input)).to.be.equal(expected);
             });
 
             it('should remove all environments except the given one', function()
             {
-                const input = 'All<!-- +environment: development -->-Development<!-- -environment --><!-- +environment: production -->-Production<!-- -environment -->';
-                const expected = 'All-Production';
+                const input = 'Start<!-- +environment: development -->-Development-<!-- -environment --><!-- +environment: production -->-Production-<!-- -environment -->End';
+                const expected = 'Start-Production-End';
                 expect(activateEnvironment(input, 'production')).to.be.equal(expected);
             });
 
             it('should allow to negate environments', function()
             {
-                const input = 'All<!-- +environment: !development -->-NotDevelopment<!-- -environment --><!-- +environment: production -->-Production<!-- -environment -->';
-                const expected = 'All-NotDevelopment-Production';
+                const input = 'Start<!-- +environment: !development -->-NotDevelopment-<!-- -environment --><!-- +environment: production -->-Production-<!-- -environment -->End';
+                const expected = 'Start-NotDevelopment--Production-End';
                 expect(activateEnvironment(input, 'production')).to.be.equal(expected);
+            });
+
+            it('should allow to use mutliple environments', function()
+            {
+                const input = 'Start<!-- +environment: production, staging -->-Production or Staging-<!-- -environment -->End';
+                const expected = 'Start-Production or Staging-End';
+                expect(activateEnvironment(input, 'production')).to.be.equal(expected);
+                expect(activateEnvironment(input, 'staging')).to.be.equal(expected);
+            });
+
+            it('should allow to use nested environments', function()
+            {
+                const input = 'Start<!-- +environment: production, staging -->-Production-<!-- +environment: staging -->-Staging-<!-- -environment --><!-- -environment -->End';
+                const expected = 'Start-Production--Staging-End';
+                expect(activateEnvironment(input, 'staging')).to.be.equal(expected);
             });
         });
     });

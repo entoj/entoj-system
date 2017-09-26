@@ -5,6 +5,7 @@
  * @ignore
  */
 const merge = require('lodash.merge');
+const XRegExp = require('xregexp');
 
 
 /**
@@ -132,6 +133,88 @@ function uppercaseFirst(content)
  * @param {String} environment
  */
 function activateEnvironment(content, environment)
+{
+    const doActivateEnvironment = function(content, environment, open, close)
+    {
+        let result = '';
+        const openRegex = new RegExp(open, 'mi');
+        const matches = XRegExp.matchRecursive(content, open, close, 'gmi',
+            {
+                valueNames: ['between', 'left', 'match', 'right']
+            });
+        let environments = [];
+        let body = '';
+        for (const match of matches)
+        {
+            switch(match.name)
+            {
+                case 'between':
+                    result += match.value;
+                    break;
+
+                case 'left':
+                    const environmentMatches = openRegex.exec(match.value);
+                    if (environmentMatches && environmentMatches.length)
+                    {
+                        environments = environmentMatches[1].split(',').map((item) => item.trim());
+                    }
+                    else
+                    {
+                        environments = [];
+                    }
+                    break;
+
+                case 'match':
+                    body+= match.value;
+                    break;
+
+                case 'right':
+                    let keep = false;
+                    for (const requiredEnvironment of environments)
+                    {
+                        if (requiredEnvironment.startsWith('!'))
+                        {
+                            if (requiredEnvironment.substr(1) != environment)
+                            {
+                                keep = true;
+                            }
+                        }
+                        else
+                        {
+                            if (requiredEnvironment == environment)
+                            {
+                                keep = true;
+                            }
+                        }
+                    }
+                    if (keep)
+                    {
+                        result+= doActivateEnvironment(body, environment, open, close);
+                    }
+                    body = '';
+                    break;
+            }
+        }
+        return result;
+    };
+
+    let result = content;
+    result = doActivateEnvironment(result, environment, '<!--\\s+\\+environment:\\s+([\\w\\s!,]+)\\s*-->', '<!--\\s+\\-environment\\s*-->');
+    result = doActivateEnvironment(result, environment, '\\{#\\s+\\+environment:\\s+([\\w\\s!,]+)\\s*#\\}', '\\{#\\s+\\-environment\\s*#\\}');
+    result = doActivateEnvironment(result, environment, '\\/\\*\\s*\\s+\\+environment:\\s+([\\w\\s!,]+)\\s*\\*\\/', '\\/\\*\\s*\\s+\\-environment\\s*\\*\\/');
+    return result;
+}
+
+
+
+/**
+ * Uppercases the frist character of a string
+ *
+ * @memberOf utils.string
+ * @param {String} content
+ * @param {String} environment
+ */
+function activateEnvironmentOld(content, environment)
 {
     const typeDefault = function(environment)
     {
