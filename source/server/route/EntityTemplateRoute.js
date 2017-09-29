@@ -140,6 +140,7 @@ class EntityTemplateRoute extends Route
                 };
                 scope._nunjucks.addGlobal('location', location);
                 scope._nunjucks.addGlobal('request', request);
+                scope._nunjucks.addGlobal('global', {});
                 html = scope.nunjucks.renderString(tpl, data);
             }
             catch (e)
