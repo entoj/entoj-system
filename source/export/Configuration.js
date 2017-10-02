@@ -277,7 +277,7 @@ class Configuration extends Base
             }
 
             // Add local settings
-            if (!scope.macro || scope.macro.name === macro.name)
+            if (scope.macro && scope.macro.name === macro.name)
             {
                 configurations.push(omit(scope.settings, ['macros', 'macro']));
             }
