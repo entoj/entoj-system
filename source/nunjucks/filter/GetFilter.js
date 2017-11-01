@@ -38,7 +38,7 @@ class GetFilter extends Filter
     {
         return function(value, key)
         {
-            if (value && typeof key == 'undefined')
+            if (value && typeof key !== 'undefined')
             {
                 return value[key];
             }
