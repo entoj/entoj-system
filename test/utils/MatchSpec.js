@@ -51,6 +51,16 @@ describe('utils/match', function()
             expect(matchObject(testee, { name: 'Test', age: 10 })).to.be.ok;
         });
 
+        it('should match one of any field when using *', function()
+        {
+            const testee =
+            {
+                name: 'Test',
+                age: 10
+            };
+            expect(matchObject(testee, { '*': 'Test' })).to.be.ok;
+        });
+
         it('should not match when at least one test fails', function()
         {
             const testee =

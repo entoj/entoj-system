@@ -128,11 +128,11 @@ class UrlsConfiguration extends Base
                 };
                 if (match.params.site && match.params.site.length)
                 {
-                    result.site = yield scope._sitesRepository.findBy(Site.NAME, match.params.site);
+                    result.site = yield scope._sitesRepository.findBy({ '*': match.params.site });
                 }
                 if (match.params.entityCategory && match.params.entityCategory.length)
                 {
-                    result.entityCategory = yield scope._entityCategoriesRepository.findBy(EntityCategory.ANY, match.params.entityCategory, function(value, searched)
+                    result.entityCategory = yield scope._entityCategoriesRepository.findBy({ '*': match.params.entityCategory }, function(value, searched)
                     {
                         return urlify(value) === searched;
                     });

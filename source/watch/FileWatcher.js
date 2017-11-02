@@ -144,7 +144,7 @@ class FileWatcher extends Base
                 let entityCategory;
                 if (entityCategoryName)
                 {
-                    entityCategory = yield scope._entityCategoriesRepository.findBy(EntityCategory.ANY, entityCategoryName, compare);
+                    entityCategory = yield scope._entityCategoriesRepository.findBy({ '*': entityCategoryName }, compare);
                 }
 
                 // Get entity id

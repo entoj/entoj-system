@@ -151,9 +151,9 @@ class CompactIdParser extends IdParser
             }
 
             // Prepare result
-            const site = yield scope._sitesRepository.findBy(Site.ANY, match.site);
+            const site = yield scope._sitesRepository.findBy({ '*': match.site });
             const entityCategoryName = match.category || match.categoryShort;
-            const entityCategory = yield scope._entityCategoriesRepository.findBy(EntityCategory.ANY, match.categoryShort || match.category);
+            const entityCategory = yield scope._entityCategoriesRepository.findBy({ '*': match.categoryShort || match.category });
             const entityNumber = parseInt(match.number || '0', 10);
             const result =
             {

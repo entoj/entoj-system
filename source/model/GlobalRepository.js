@@ -84,14 +84,14 @@ class GlobalRepository extends Base
                 }
 
                 // Check site
-                site = yield scope._sitesRepository.findBy(Site.ANY, query);
+                site = yield scope._sitesRepository.findBy({ '*': query });
                 if (site)
                 {
                     return { site: site };
                 }
 
                 // Check category
-                entityCategory = yield scope._entityCategoriesRepository.findBy(EntityCategory.ANY, query);
+                entityCategory = yield scope._entityCategoriesRepository.findBy({ '*': query });
                 if (entityCategory)
                 {
                     return { entityCategory: entityCategory };
@@ -101,10 +101,10 @@ class GlobalRepository extends Base
             if (parts.length == 2)
             {
                 // Check site / category
-                site = yield scope._sitesRepository.findBy('name', parts[0].trim());
+                site = yield scope._sitesRepository.findBy({ name: parts[0].trim() });
                 if (site)
                 {
-                    entityCategory = yield scope._entityCategoriesRepository.findBy(EntityCategory.ANY, parts[1].trim());
+                    entityCategory = yield scope._entityCategoriesRepository.findBy({ '*': parts[1].trim() });
                     if (entityCategory)
                     {
                         return { site: site, entityCategory: entityCategory };
@@ -142,7 +142,7 @@ class GlobalRepository extends Base
         const promise = co(function*()
         {
             // Get site
-            let site = (siteQuery instanceof Site) ? siteQuery : yield scope._sitesRepository.findBy(Site.ANY, siteQuery);
+            let site = (siteQuery instanceof Site) ? siteQuery : yield scope._sitesRepository.findBy({ '*': siteQuery });
             if (!site && !siteQuery)
             {
                 site = yield scope._sitesRepository.getFirst();
@@ -250,7 +250,7 @@ class GlobalRepository extends Base
         const promise = co(function*()
         {
             // Get site
-            let site = (siteQuery instanceof Site) ? siteQuery : yield scope._sitesRepository.findBy(Site.ANY, siteQuery);
+            let site = (siteQuery instanceof Site) ? siteQuery : yield scope._sitesRepository.findBy({ '*': siteQuery });
             if (!site && !siteQuery)
             {
                 site = yield scope._sitesRepository.getFirst();
@@ -296,7 +296,7 @@ class GlobalRepository extends Base
         const promise = co(function*()
         {
             // Get site
-            let site = (siteQuery instanceof Site) ? siteQuery : yield scope._sitesRepository.findBy(Site.ANY, siteQuery);
+            let site = (siteQuery instanceof Site) ? siteQuery : yield scope._sitesRepository.findBy({ '*': siteQuery });
             if (!site && !siteQuery)
             {
                 site = yield scope._sitesRepository.getFirst();

@@ -436,7 +436,7 @@ function spec(type, className, prepareParameters)
             const promise = co(function *()
             {
                 yield global.fixtures.addItems(testee);
-                const item = yield testee.findBy('name', 'One');
+                const item = yield testee.findBy({ 'name': 'One' });
                 expect(item).to.be.equal(global.fixtures.item1);
             });
             return promise;
@@ -448,7 +448,7 @@ function spec(type, className, prepareParameters)
             const promise = co(function *()
             {
                 yield global.fixtures.addItems(testee);
-                const item = yield testee.findBy(['name', 'number'], 2);
+                const item = yield testee.findBy({ '*': 2 });
                 expect(item).to.be.equal(global.fixtures.item2);
             });
             return promise;
@@ -460,7 +460,7 @@ function spec(type, className, prepareParameters)
             const promise = co(function *()
             {
                 yield global.fixtures.addItems(testee);
-                const item = yield testee.findBy('name', 'two');
+                const item = yield testee.findBy({ 'name': 'two' });
                 expect(item).to.be.equal(global.fixtures.item2);
             });
             return promise;
@@ -472,7 +472,7 @@ function spec(type, className, prepareParameters)
             const promise = co(function *()
             {
                 yield global.fixtures.addItems(testee);
-                const item = yield testee.findBy('name', /two/i);
+                const item = yield testee.findBy({ 'name':  /two/i });
                 expect(item).to.be.equal(global.fixtures.item2);
             });
             return promise;
@@ -484,7 +484,7 @@ function spec(type, className, prepareParameters)
             const promise = co(function *()
             {
                 yield global.fixtures.addItems(testee);
-                const item = yield testee.findBy('name', 'Foo');
+                const item = yield testee.findBy({ 'name': 'Foo' });
                 expect(item).to.be.not.ok;
             });
             return promise;

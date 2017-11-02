@@ -266,8 +266,8 @@ function createDynamic(configuration)
     result.cliLogger = result.context.di.create(CliLogger);
 
     // create shortcuts
-    result.siteBase = synchronize.execute(result.sitesRepository, 'findBy', ['name', 'Base']);
-    result.siteExtended = synchronize.execute(result.sitesRepository, 'findBy', ['name', 'Extended']);
+    result.siteBase = synchronize.execute(result.sitesRepository, 'findBy', [{ 'name': 'Base' }]);
+    result.siteExtended = synchronize.execute(result.sitesRepository, 'findBy', [{ 'name': 'Extended' }]);
 
     return result;
 }

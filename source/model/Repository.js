@@ -370,32 +370,17 @@ class Repository extends Base
 
 
     /**
-     * Find a item by property(s) value.
+     * Find item by property queries
      *
-     * @param {String|Array} property the property name, can be an array of property names
-     * @param {Mixed} value the property value
+     * @param {Object} properties
      * @param {Function} [compare] function that returns true if both values provided are equal
      * @returns {Promise.<*>}
-     * @todo make this work like filterBy
      */
-    findBy(property, value, compare)
+    findBy(properties, compare)
     {
         const promise = this.getItems().then(function(data)
         {
-            const properties = Array.isArray(property) ? property : [property];
-            const comparer = compare || matchValue;
-            const result = data.find(function(item)
-            {
-                for (const p of properties)
-                {
-                    if (comparer(item[p], value, compare))
-                    {
-                        return true;
-                    }
-                }
-                return false;
-            });
-            return result;
+            return data.find((item) => matchObject(item, properties, compare));
         });
         return promise;
     }
@@ -412,8 +397,7 @@ class Repository extends Base
     {
         const promise = this.getItems().then(function(data)
         {
-            const comparer = compare || matchObject;
-            return data.filter((item) => comparer(item, properties));
+            return data.filter((item) => matchObject(item, properties, compare));
         });
         return promise;
     }

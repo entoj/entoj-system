@@ -271,7 +271,7 @@ describe(GlobalRepository.className, function()
             const testee = new GlobalRepository(global.fixtures.sitesRepository, global.fixtures.categoriesRepository, global.fixtures.entitiesRepository);
             const promise = co(function *()
             {
-                const site = yield global.fixtures.sitesRepository.findBy(Site.ANY, 'base');
+                const site = yield global.fixtures.sitesRepository.findBy({ '*': 'base' });
                 const entity = yield testee.resolveEntity(site, 'm-teaser');
                 expect(entity).to.be.instanceof(EntityAspect);
                 expect(entity.id.name).to.be.equal('teaser');
@@ -334,7 +334,7 @@ describe(GlobalRepository.className, function()
             const testee = new GlobalRepository(global.fixtures.sitesRepository, global.fixtures.categoriesRepository, global.fixtures.entitiesRepository);
             const promise = co(function *()
             {
-                const site = yield global.fixtures.sitesRepository.findBy(Site.ANY, 'base');
+                const site = yield global.fixtures.sitesRepository.findBy({ '*': 'base' });
                 const macro = yield testee.resolveMacro(site, 'm_teaser');
                 expect(macro).to.be.instanceof(DocumentationCallable);
                 expect(macro.name).to.be.equal('m_teaser');
@@ -397,7 +397,7 @@ describe(GlobalRepository.className, function()
             const testee = new GlobalRepository(global.fixtures.sitesRepository, global.fixtures.categoriesRepository, global.fixtures.entitiesRepository);
             const promise = co(function *()
             {
-                const site = yield global.fixtures.sitesRepository.findBy(Site.ANY, 'base');
+                const site = yield global.fixtures.sitesRepository.findBy({ '*': 'base' });
                 const entity = yield testee.resolveEntityForMacro(site, 'm_teaser');
                 expect(entity).to.be.instanceof(EntityAspect);
                 expect(entity.idString).to.be.equal('m-teaser');

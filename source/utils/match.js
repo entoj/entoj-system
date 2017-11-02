@@ -10,6 +10,12 @@
  */
 function matchValue(value, test)
 {
+    // Undefined?
+    if (typeof value === 'undefined')
+    {
+        return false;
+    }
+
     // has isEqualTo() ?
     if (typeof value.isEqualTo == 'function')
     {
@@ -46,17 +52,38 @@ function matchValue(value, test)
  * @param {Object} tests
  * @returns {Boolean}
  */
-function matchObject(object, tests)
+function matchObject(object, tests, compare)
 {
     if (!object)
     {
         return false;
     }
+    const comparer = typeof compare == 'function'
+        ? compare
+        : matchValue;
     for (const test in tests)
     {
-        if (!matchValue(object[test], tests[test]))
+        if (test === '*')
         {
-            return false;
+            let hasMatch = false;
+            for (const key in object)
+            {
+                if (comparer(object[key], tests[test]))
+                {
+                    hasMatch = true;
+                }
+            }
+            if (!hasMatch)
+            {
+                return false;
+            }
+        }
+        else
+        {
+            if (!comparer(object[test], tests[test]))
+            {
+                return false;
+            }
         }
     }
     return true;
