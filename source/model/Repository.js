@@ -6,6 +6,8 @@
  */
 const Base = require('../Base.js').Base;
 const ErrorHandler = require('../error/ErrorHandler.js').ErrorHandler;
+const matchValue = require('../utils/match.js').matchValue;
+const matchObject = require('../utils/match.js').matchObject;
 const signals = require('signals');
 const co = require('co');
 
@@ -370,40 +372,53 @@ class Repository extends Base
     /**
      * Find a item by property(s) value.
      *
-     * @param {string|array} property the property name, can be an array of property names
-     * @param {mixed} value the property value
-     * @param {function} [compare] function that returns true if both values provided are equal
+     * @param {String|Array} property the property name, can be an array of property names
+     * @param {Mixed} value the property value
+     * @param {Function} [compare] function that returns true if both values provided are equal
      * @returns {Promise.<*>}
+     * @todo make this work like filterBy
      */
     findBy(property, value, compare)
     {
-        const properties = Array.isArray(property) ? property : [property];
-        const searchValue = (typeof value == 'string') ? value.toLowerCase() : value;
         const promise = this.getItems().then(function(data)
         {
+            const properties = Array.isArray(property) ? property : [property];
+            const comparer = compare || matchValue;
             const result = data.find(function(item)
             {
                 for (const p of properties)
                 {
-                    const itemValue = (typeof item[p] == 'string') ? item[p].toLowerCase() : item[p];
-                    let isMatch = itemValue === searchValue;
-                    if (compare)
-                    {
-                        isMatch = compare(itemValue, searchValue);
-                    }
-                    if (isMatch)
+                    if (comparer(item[p], value, compare))
                     {
                         return true;
                     }
                 }
                 return false;
             });
-            return Promise.resolve(result);
+            return result;
         });
+        return promise;
+    }
 
+
+    /**
+     * Filter items by property queries.
+     *
+     * @param {Object} properties
+     * @param {Function} [compare] function that returns true if both values provided are equal
+     * @returns {Promise.<Array>}
+     */
+    filterBy(properties, compare)
+    {
+        const promise = this.getItems().then(function(data)
+        {
+            const comparer = compare || matchObject;
+            return data.filter((item) => comparer(item, properties));
+        });
         return promise;
     }
 }
+
 
 /**
  * Exports

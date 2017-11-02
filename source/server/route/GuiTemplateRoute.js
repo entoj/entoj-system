@@ -16,7 +16,9 @@ const CliLogger = require('../../cli/CliLogger.js').CliLogger;
 const Environment = require('../../nunjucks/Environment.js').Environment;
 const assertParameter = require('../../utils/assert.js').assertParameter;
 const synchronize = require('../../utils/synchronize.js').synchronize;
+const waitForPromise = require('../../utils/synchronize.js').waitForPromise;
 const fs = require('fs');
+const path = require('path');
 
 
 /**
@@ -78,11 +80,11 @@ class GuiTemplateRoute extends Route
 
         // Options
         const opts = options || {};
-        this._templateRoot = opts.templateRoot || __dirname;
+        this.templatePaths = opts.templatePaths || __dirname;
         this._staticRoute = opts.staticRoute || '/internal';
 
         // Configure nunjucks
-        this._nunjucks.basePath = this._templateRoot;
+        this._nunjucks.templatePaths = this.templatePaths;
     }
 
 
@@ -106,6 +108,48 @@ class GuiTemplateRoute extends Route
 
 
     /**
+     * @type {Object}
+     */
+    static get model()
+    {
+        if (!GuiTemplateRoute.__model)
+        {
+            GuiTemplateRoute.__model = {};
+        }
+        return GuiTemplateRoute.__model;
+    }
+
+
+    /**
+     * @type {Array}
+     */
+    get templatePaths()
+    {
+        return this._templatePaths;
+    }
+
+
+    /**
+     * @type {Array}
+     */
+    set templatePaths(value)
+    {
+        this._templatePaths = [];
+        if (Array.isArray(value))
+        {
+            for (const templatePath of value)
+            {
+                this._templatePaths.push(waitForPromise(this.pathesConfiguration.resolve(templatePath)));
+            }
+        }
+        else
+        {
+            this._templatePaths.push(waitForPromise(this.pathesConfiguration.resolve(value || '')));
+        }
+    }
+
+
+    /**
      * @type {nunjucks.Environment}
      */
     get nunjucks()
@@ -120,6 +164,15 @@ class GuiTemplateRoute extends Route
     get sitesRepository()
     {
         return this._sitesRepository;
+    }
+
+
+    /**
+     * @type {model.configuration.PathesConfiguration}
+     */
+    get pathesConfiguration()
+    {
+        return this._pathesConfiguration;
     }
 
 
@@ -140,14 +193,7 @@ class GuiTemplateRoute extends Route
                 type:
                 {
                     DocumentationText: 'DocumentationText',
-                    DocumentationExample: 'DocumentationExample',
-                    DocumentationDatamodel: 'DocumnentationDatamodel'
-                },
-                kind:
-                {
-                    MACRO: 'macro',
-                    EXAMPLE: 'example',
-                    DATAMODEL: 'datamodel'
+                    DocumentationExample: 'DocumentationExample'
                 },
                 location:
                 {
@@ -201,10 +247,32 @@ class GuiTemplateRoute extends Route
                 return;
             }
 
+            // See if file exists
+            let filename = false;
+            for (const templatePath of this.templatePaths)
+            {
+                if (!filename)
+                {
+                    filename = path.join(templatePath, '/' + template);
+                    if (!fs.existsSync(filename))
+                    {
+                        filename = false;
+                    }
+                }
+            }
+            if (!filename)
+            {
+                next();
+                return;
+            }
+
             const work = this.cliLogger.work('Serving template <' + template + '> for <' + request.url + '>');
-            const tpl = fs.readFileSync(this._templateRoot + '/' + template, { encoding: 'utf8' });
-            this._nunjucks.addGlobal('request', request);
-            const html = this._nunjucks.renderString(tpl, { global: model });
+            const tpl = fs.readFileSync(filename, { encoding: 'utf8' });
+            this.nunjucks.addGlobal('request', request);
+            this.nunjucks.addGlobal('global', Object.assign({}, GuiTemplateRoute.model, model));
+            this.nunjucks.addGlobal('ContentKind', require('../../model/ContentKind.js').ContentKind);
+
+            const html = this._nunjucks.renderString(tpl);
             response.send(html);
             this.cliLogger.end(work);
         };

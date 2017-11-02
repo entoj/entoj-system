@@ -14,6 +14,32 @@ const urls = require('../utils/urls.js');
 const activateEnvironment = require('../utils/string.js').activateEnvironment;
 const unique = require('lodash.uniq');
 const assertParameter = require('../utils/assert.js').assertParameter;
+const crypto = require('crypto');
+
+/**
+ * Template cache
+ * @type {Map}
+ */
+const templates = new Map();
+let templateCacheEnabled = false;
+
+
+/**
+ * Enables the template cache
+ */
+function enableTemplateCache()
+{
+    templateCacheEnabled = true;
+}
+
+
+/**
+ * Disables the template cache
+ */
+function disableTemplateCache()
+{
+    templateCacheEnabled = false;
+}
 
 
 /**
@@ -25,7 +51,7 @@ class Template extends Base
      * @param {EntitiesRepository} entitiesRepository
      * @param {Object} options
      */
-    constructor(entitiesRepository, basePath, environment)
+    constructor(entitiesRepository, templatePaths, environment)
     {
         super();
 
@@ -33,7 +59,7 @@ class Template extends Base
         assertParameter(this, 'entitiesRepository', entitiesRepository, true, EntitiesRepository);
 
         // Add options
-        this._basePath = basePath || '';
+        this.templatePaths = templatePaths || [];
         this._environment = environment || '';
         this._entitiesRepository = entitiesRepository;
         this._callParser = new CallParser();
@@ -45,7 +71,7 @@ class Template extends Base
      */
     static get injections()
     {
-        return { 'parameters': [EntitiesRepository, 'nunjucks/Template.options'] };
+        return { 'parameters': [EntitiesRepository, 'nunjucks/Template.templatePaths', 'nunjucks/Template.options'] };
     }
 
 
@@ -66,18 +92,18 @@ class Template extends Base
      *
      * @type {string}
      */
-    get basePath()
+    get templatePaths()
     {
-        return this._basePath;
+        return this._templatePaths.slice();
     }
 
 
     /**
      * @type {string}
      */
-    set basePath(value)
+    set templatePaths(value)
     {
-        this._basePath = value;
+        this._templatePaths = Array.isArray(value) ? value.slice() : [value];
     }
 
 
@@ -94,7 +120,12 @@ class Template extends Base
             {
                 if (macro.name === name)
                 {
-                    return '{% from "' + urls.normalize(macro.file.filename.replace(this.basePath, '')) + '" import ' + macro.name + ' %}';
+                    let from = macro.file.filename;
+                    for (const templatePath of this.templatePaths)
+                    {
+                        from = from.replace(templatePath, '');
+                    }
+                    return '{% from "' + urls.normalize(from) + '" import ' + macro.name + ' %}';
                 }
             }
         }
@@ -107,6 +138,18 @@ class Template extends Base
      */
     prepare(content)
     {
+        // Check cache
+        let hash = false;
+        if (templateCacheEnabled)
+        {
+            hash = crypto.createHash('md5').update(content).digest('hex');
+            if (templates.has(hash))
+            {
+                this.logger.verbose('Using cached template');
+                return templates.get(hash);
+            }
+        }
+
         // Get macros
         const macros = synchronize.execute(this._callParser, 'parse', [content]);
 
@@ -132,8 +175,13 @@ class Template extends Base
         // Activate environments
         result = activateEnvironment(result, this._environment);
 
-        this.logger.verbose('Prepared Template\n', result);
+        // Update cache
+        if (templateCacheEnabled)
+        {
+            templates.set(hash, result);
+        }
 
+        this.logger.verbose('Prepared Template');
         return result;
     }
 }
@@ -144,3 +192,5 @@ class Template extends Base
  * @ignore
  */
 module.exports.Template = Template;
+module.exports.enableTemplateCache = enableTemplateCache;
+module.exports.disableTemplateCache = disableTemplateCache;

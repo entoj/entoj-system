@@ -76,7 +76,7 @@ class ValueObject extends Base
      */
     isEqualTo(other)
     {
-        return this.uniqueId === other.uniqueId;
+        return other && (this.uniqueId === other.uniqueId);
     }
 
 
@@ -101,6 +101,11 @@ class ValueObject extends Base
                     if (typeof defaultValue === 'function')
                     {
                         this[name] = new defaultValue();
+                        // Prefill VO
+                        if (this[name] instanceof ValueObject)
+                        {
+                            this[name].dehydrate({});
+                        }
                     }
                     else
                     {
@@ -121,6 +126,10 @@ class ValueObject extends Base
                 if (this[name] instanceof BaseArray || this[name] instanceof BaseMap)
                 {
                     this[name].load(importValue, true);
+                }
+                else if (this[name] instanceof ValueObject)
+                {
+                    this[name].dehydrate(importValue);
                 }
                 else
                 {
@@ -147,7 +156,45 @@ class ValueObject extends Base
         const result = {};
         for (const name in this.fields)
         {
-            result[name] = this[name];
+            if (this[name] instanceof ValueObject)
+            {
+                result[name] = this[name].hydrate();
+            }
+            else if (Array.isArray(this[name]))
+            {
+                result[name] = [];
+                for (const item of this[name])
+                {
+                    if (item instanceof ValueObject)
+                    {
+                        result[name].push(item.hydrate());
+                    }
+                    else
+                    {
+                        result[name].push(item);
+                    }
+                }
+            }
+            else if (this[name] instanceof BaseMap)
+            {
+                result[name] = {};
+                for (const key in this[name])
+                {
+                    const item = this[name][key];
+                    if (item instanceof ValueObject)
+                    {
+                        result[name][key] = item.hydrate();
+                    }
+                    else
+                    {
+                        result[name][key] = item;
+                    }
+                }
+            }
+            else
+            {
+                result[name] = this[name];
+            }
         }
         return result;
     }

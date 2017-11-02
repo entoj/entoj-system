@@ -15,5 +15,11 @@ module.exports =
     server: require('./server/index.js'),
     task: require('./task/index.js'),
     utils: require('./utils/index.js'),
-    watch: require('./watch/index.js')
+    watch: require('./watch/index.js'),
+    setLogLevel: function(level)
+    {
+        const intel = require('intel');
+        const logger = intel.getLogger('entoj');
+        logger.setLevel(level);
+    }
 };

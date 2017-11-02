@@ -33,7 +33,7 @@ describe(Environment.className, function()
     });
 
     // Creates a initialized testee
-    function createTestee(basePath)
+    function createTestee(templatePaths)
     {
         return new Environment(global.fixtures.entitiesRepository,
             global.fixtures.pathesConfiguration,
@@ -41,7 +41,9 @@ describe(Environment.className, function()
             [
                 new Filters.ModuleClassesFilter()
             ],
-            { basePath: basePath });
+            {
+                templatePaths: templatePaths
+            });
     }
 
 

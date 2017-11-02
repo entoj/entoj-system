@@ -13,13 +13,20 @@ class ErrorHandler
 {
     static error(instance, error)
     {
-        if (instance)
+        if (!error)
         {
-            instance.logger.error(error.stack);
+            console.error('Error handler without error object?', instance, error);
         }
         else
         {
-            intel.getLogger('entoj.ErrorHandler').error(error.stack);
+            if (instance)
+            {
+                instance.logger.error(typeof error.stack != 'undefined' ? error.stack : error);
+            }
+            else
+            {
+                intel.getLogger('entoj.ErrorHandler').error(typeof error.stack != 'undefined' ? error.stack : error);
+            }
         }
         throw error;
     }

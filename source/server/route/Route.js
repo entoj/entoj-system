@@ -104,7 +104,7 @@ class Route extends Base
             // Check if file exists
             const filename = (typeof basePath === 'string')
                 ? path.join(basePath, request.path)
-                : basePath(request.path);
+                : basePath(request.path, request);
             if (!filename || !fs.existsSync(filename))
             {
                 this.logger.debug('File not found', request.path);

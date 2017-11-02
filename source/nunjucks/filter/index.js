@@ -6,9 +6,11 @@ module.exports =
 {
     AssetUrlFilter: require('./AssetUrlFilter.js').AssetUrlFilter,
     AttributesFilter: require('./AttributesFilter.js').AttributesFilter,
+    DebugFilter: require('./DebugFilter.js').DebugFilter,
     EmptyFilter: require('./EmptyFilter.js').EmptyFilter,
     Filter: require('./Filter.js').Filter,
     FormatDateFilter: require('./FormatDateFilter.js').FormatDateFilter,
+    FormatNumberFilter: require('./FormatNumberFilter.js').FormatNumberFilter,
     GetFilter: require('./GetFilter.js').GetFilter,
     HyphenateFilter: require('./HyphenateFilter.js').HyphenateFilter,
     LinkUrlFilter: require('./LinkUrlFilter.js').LinkUrlFilter,

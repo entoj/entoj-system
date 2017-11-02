@@ -41,15 +41,15 @@ class Environment extends BaseMixin(nunjucks.Environment)
         this._buildConfiguration = buildConfiguration;
         this._pathesConfiguration = pathesConfiguration;
         this._filters = filters || [];
-        this._basePath = waitForPromise(pathesConfiguration.resolve(opts.path || opts.basePath || ''));
-        this._loader = new FileLoader(this._basePath, entitiesRepository, buildConfiguration);
-        this._template = new Template(entitiesRepository, this.basePath, this._buildConfiguration.environment);
+        this.templatePaths = opts.templatePaths;
+        this._loader = new FileLoader(this.templatePaths, entitiesRepository, buildConfiguration);
+        this._template = new Template(entitiesRepository, this.templatePaths, this.buildConfiguration.environment);
 
         // Add loader
         this.loaders.push(this._loader);
 
         // Add globals
-        this.addGlobal('environment', this._buildConfiguration);
+        this.addGlobal('environment', this.buildConfiguration);
 
         // Add filters
         for (const filter of this._filters)
@@ -82,24 +82,59 @@ class Environment extends BaseMixin(nunjucks.Environment)
 
 
     /**
-     * Returns the templates root path used for resolving templates.
-     *
-     * @type {string}
+     * @type {nunjucks.loader.FileLoader}
      */
-    get basePath()
+    get loader()
     {
-        return this._basePath;
+        return this._loader;
     }
 
 
     /**
-     * @type {string}
+     * @type {nunjucks.Template}
      */
-    set basePath(value)
+    get template()
     {
-        this._basePath = waitForPromise(this.pathesConfiguration.resolve(value));
-        this._loader.setSearchPaths(value);
-        this._template._basePath = value;
+        return this._template;
+    }
+
+
+    /**
+     * Returns the template root pathes used for resolving templates.
+     *
+     * @type {Array}
+     */
+    get templatePaths()
+    {
+        return this._templatePaths.slice();
+    }
+
+
+    /**
+     * @type {Array}
+     */
+    set templatePaths(value)
+    {
+        this._templatePaths = [];
+        if (Array.isArray(value))
+        {
+            for (const templatePath of value)
+            {
+                this._templatePaths.push(waitForPromise(this.pathesConfiguration.resolve(templatePath)));
+            }
+        }
+        else
+        {
+            this._templatePaths.push(waitForPromise(this.pathesConfiguration.resolve(value || '')));
+        }
+        if (this.loader)
+        {
+            this.loader.setSearchPaths(this._templatePaths);
+        }
+        if (this.template)
+        {
+            this.template.templatePaths = this._templatePaths;
+        }
     }
 
 
@@ -128,7 +163,6 @@ class Environment extends BaseMixin(nunjucks.Environment)
     {
         const template = this._template.prepare(content, this.buildConfiguration.environment);
         const result = super.renderString(template, context, callback);
-        this.logger.verbose('renderString\n', result);
         return result;
     }
 }

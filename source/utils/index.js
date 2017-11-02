@@ -7,6 +7,7 @@ module.exports =
     DIContainer: require('./DIContainer.js'),
     glob: require('./glob.js'),
     markdown: require('./markdown.js'),
+    match: require('./match.js'),
     pathes: require('./pathes.js'),
     prototypes: require('./prototypes.js'),
     string: require('./string.js'),

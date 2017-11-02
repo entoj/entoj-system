@@ -233,7 +233,7 @@ class PathesConfiguration extends Base
         // Check template
         if (typeof mainVO === 'string')
         {
-            return this.renderTemplate(mainVO, {});
+            return this.renderTemplate(mainVO, arguments[1] || {});
         }
 
         return Promise.resolve(false);

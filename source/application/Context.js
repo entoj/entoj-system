@@ -39,9 +39,12 @@ class Context extends Base
     {
         super();
 
+        // Prepare
         this._di = new DIContainer();
         this._configuration = configuration || {};
         this._parameters = this._configuration.parameters || {};
+
+        // Configure
         this.configure();
         Context._instance = this;
     }
@@ -58,6 +61,7 @@ class Context extends Base
         }
         return Context._instance;
     }
+
 
     /**
      * @inheritDoc
@@ -339,6 +343,15 @@ class Context extends Base
         {
             this._di.map('application/Runner.commands', []);
         }
+
+        // Modules
+        if (Array.isArray(Context.__modules__))
+        {
+            for (const module of Context.__modules__)
+            {
+                module.setup(this);
+            }
+        }
     }
 
 
@@ -349,6 +362,16 @@ class Context extends Base
     {
         this.configureLogger();
         this.configureDependencies();
+    }
+
+
+    /**
+     * @protected
+     */
+    static registerModule(module)
+    {
+        Context.__modules__ = Context.__modules__ || [];
+        Context.__modules__.push(module);
     }
 }
 

@@ -37,7 +37,6 @@ function spec(type, className, prepareParameters)
         it('should return a object containing all configured fields', function()
         {
             const testee = createTestee();
-
             expect(Object.keys(testee.hydrate())).to.be.deep.equal(Object.keys(testee.fields));
         });
     });

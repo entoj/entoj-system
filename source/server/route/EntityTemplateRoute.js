@@ -10,11 +10,37 @@ const ErrorHandler = require('../../error/ErrorHandler.js').ErrorHandler;
 const UrlsConfiguration = require('../../model/configuration/UrlsConfiguration.js').UrlsConfiguration;
 const Environment = require('../../nunjucks/Environment.js').Environment;
 const PathesConfiguration = require('../../model/configuration/PathesConfiguration.js').PathesConfiguration;
-const waitForPromise = require('../../utils/synchronize.js').waitForPromise;
 const assertParameter = require('../../utils/assert.js').assertParameter;
+const waitForPromise = require('../../utils/synchronize.js').waitForPromise;
 const pathes = require('../../utils/pathes.js');
 const co = require('co');
 const fs = require('co-fs-extra');
+
+
+/**
+ * Page cache
+ * @type {Map}
+ */
+const pages = new Map();
+let pageCacheEnabled = true;
+
+
+/**
+ * Enables the page cache
+ */
+function enablePageCache()
+{
+    pageCacheEnabled = true;
+}
+
+
+/**
+ * Disables the page cache
+ */
+function disablePageCache()
+{
+    pageCacheEnabled = false;
+}
 
 
 /**
@@ -40,10 +66,10 @@ class EntityTemplateRoute extends Route
 
         // Assign options
         const opts = options || {};
-        this._basePath = waitForPromise(pathesConfiguration.resolve(opts.basePath || ''));
         this._pathesConfiguration = pathesConfiguration;
         this._urlsConfiguration = urlsConfiguration;
         this._nunjucks = nunjucks;
+        this.templatePaths = opts.templatePaths || pathesConfiguration.sites;
     }
 
 
@@ -62,6 +88,36 @@ class EntityTemplateRoute extends Route
     static get className()
     {
         return 'server.route/EntityTemplateRoute';
+    }
+
+
+    /**
+     * @type {Array}
+     */
+    get templatePaths()
+    {
+        return this._templatePaths;
+    }
+
+
+    /**
+     * @type {Array}
+     */
+    set templatePaths(value)
+    {
+        this._templatePaths = [];
+        if (Array.isArray(value))
+        {
+            for (const templatePath of value)
+            {
+                this._templatePaths.push(waitForPromise(this.pathesConfiguration.resolve(templatePath)));
+            }
+        }
+        else
+        {
+            this._templatePaths.push(waitForPromise(this.pathesConfiguration.resolve(value || '')));
+        }
+        this.nunjucks.templatePaths = this._templatePaths;
     }
 
 
@@ -107,6 +163,18 @@ class EntityTemplateRoute extends Route
                 return;
             }
 
+            // Check cache
+            if (pageCacheEnabled)
+            {
+                if (pages.has(request.url))
+                {
+                    const work = scope.cliLogger.work('Serving url <' + request.url + '> using cache');
+                    response.send(pages.get(request.url));
+                    scope.cliLogger.end(work);
+                    return;
+                }
+            }
+
             // Check file hit
             let data = yield scope.urlsConfiguration.matchEntityFile(request.path);
             let filename;
@@ -138,6 +206,7 @@ class EntityTemplateRoute extends Route
                     entity: data.entity,
                     customPath: data.customPath
                 };
+                scope._nunjucks.addGlobal('global', {});
                 scope._nunjucks.addGlobal('location', location);
                 scope._nunjucks.addGlobal('request', request);
                 scope._nunjucks.addGlobal('global', {});
@@ -152,6 +221,12 @@ class EntityTemplateRoute extends Route
                 /* istanbul ignore next */
                 next();
                 return;
+            }
+
+            // Update cache
+            if (pageCacheEnabled)
+            {
+                pages.set(request.url, html);
             }
 
             // Send
@@ -182,3 +257,5 @@ class EntityTemplateRoute extends Route
  * @ignore
  */
 module.exports.EntityTemplateRoute = EntityTemplateRoute;
+module.exports.enablePageCache = enablePageCache;
+module.exports.disablePageCache = disablePageCache;

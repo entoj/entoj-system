@@ -40,7 +40,7 @@ class FileLoader extends BaseMixin(Loader)
         this.pathsToNames = {};
         this._entitiesRepository = entitiesRepository;
         this._buildConfiguration = buildConfiguration;
-        this._template = new Template(this._entitiesRepository, undefined, this._buildConfiguration.environment);
+        this._template = new Template(this._entitiesRepository, [], this._buildConfiguration.environment);
 
         // Set pathes
         this.setSearchPaths(searchPaths || '.');
@@ -71,7 +71,7 @@ class FileLoader extends BaseMixin(Loader)
         {
             return path.resolve(pth);
         });
-        this._template.basePath = this.searchPaths[0];
+        this._template.templatePaths = this.searchPaths[0];
     }
 
 
@@ -139,7 +139,7 @@ class FileLoader extends BaseMixin(Loader)
         const fullPath = this.resolve(name);
         if (!fullPath)
         {
-            this.logger.warn('Could not resolve ' + name + ' on path ' + fullPath);
+            this.logger.warn('Could not resolve ' + name + ' on pathes ',this.searchPaths);
             return null;
         }
 

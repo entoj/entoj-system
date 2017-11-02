@@ -25,6 +25,12 @@ describe(ValueObject.className, function()
      */
     class TestValueObject extends ValueObject
     {
+        constructor(fields)
+        {
+            super();
+            this._fields = fields || {};
+        }
+
         get fields()
         {
             return this._fields;
@@ -33,6 +39,14 @@ describe(ValueObject.className, function()
         set fields(value)
         {
             this._fields = value;
+        }
+    }
+
+    class TestNestedValueObject extends TestValueObject
+    {
+        constructor()
+        {
+            super({ street: '', nr: '' });
         }
     }
 
@@ -53,6 +67,34 @@ describe(ValueObject.className, function()
             const testee = new ValueObject();
             const other = new ValueObject();
             expect(testee.isEqualTo(other)).to.be.not.ok;
+        });
+    });
+
+
+    describe('#hydrate', function()
+    {
+        it('should hydrate nested value objects', function()
+        {
+            const fields =
+            {
+                name: '',
+                age: 0,
+                address: TestNestedValueObject
+            };
+            const expected =
+            {
+                name: '',
+                age: 0,
+                address:
+                {
+                    street: '',
+                    nr: ''
+                }
+            };
+            const testee = new TestValueObject(fields);
+            testee.dehydrate({});
+            const hydrated = testee.hydrate();
+            expect(hydrated).to.be.deep.equal(expected);
         });
     });
 
@@ -80,7 +122,6 @@ describe(ValueObject.className, function()
             expect(testee.address).to.be.equal(false);
             expect(testee.lastName).to.be.undefined;
         });
-
 
         it('should allow to import BaseArray fields', function()
         {
@@ -128,7 +169,6 @@ describe(ValueObject.className, function()
             expect(testee.properties).to.have.length(1);
             expect(testee.properties[0]).to.be.equal('karl');
         });
-
 
         it('should allow to import BaseMap fields', function()
         {

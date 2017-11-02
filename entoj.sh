@@ -8,6 +8,7 @@ SELF=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 ROOT="$SELF/../.."
 CLI="$SELF/source/cli.js"
 PROFILE="false"
+INSPECT="false"
 
 # Prepare options
 for arg do
@@ -20,7 +21,7 @@ done
 if [ "$PROFILE" == "true" ]
     then
         echo "Enabling profiler"
-        RUNNER="node --prof $SELF/source/cli.js"
+        RUNNER="node --inspect $SELF/source/cli.js"
     else
         RUNNER="node $SELF/source/cli.js"
 fi

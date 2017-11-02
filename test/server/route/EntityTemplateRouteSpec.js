@@ -49,7 +49,7 @@ describe(EntityTemplateRoute.className, function()
                 new Filters.NotEmptyFilter(),
                 new Filters.MediaQueryFilter(global.fixtures.globalConfiguration)
             ],
-            { basePath: global.fixtures.pathesConfiguration.sites });
+            { templatePaths: global.fixtures.pathesConfiguration.sites });
     });
 
 
@@ -60,8 +60,7 @@ describe(EntityTemplateRoute.className, function()
         return new EntityTemplateRoute(cliLogger,
             global.fixtures.urlsConfiguration,
             global.fixtures.pathesConfiguration,
-            global.fixtures.nunjucks,
-            { basePath: global.fixtures.pathesConfiguration.sites });
+            global.fixtures.nunjucks);
     };
 
 

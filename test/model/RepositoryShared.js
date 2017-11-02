@@ -91,15 +91,17 @@ function spec(type, className, prepareParameters)
     beforeEach(function()
     {
         global.fixtures = {};
-        global.fixtures.item1 = { name: 'One', number: 1 };
-        global.fixtures.item2 = { name: 'Two', number: 2 };
-        global.fixtures.item3 = { name: 'Three', number: 3, uniqueId: 'uid' };
-        global.fixtures.item4 = { name: 'Four', number: 4, uniqueId: 'uid' };
+        global.fixtures.item1 = { name: 'One', number: 1, category: 'one' };
+        global.fixtures.item2 = { name: 'Two', number: 2, category: 'one' };
+        global.fixtures.item3 = { name: 'Three', number: 3, uniqueId: 'uid', category: 'two' };
+        global.fixtures.item4 = { name: 'Four', number: 4, uniqueId: 'uid', category: 'two' };
 
         global.fixtures.addItems = function *(testee)
         {
             yield testee.add(global.fixtures.item1);
             yield testee.add(global.fixtures.item2);
+            yield testee.add(global.fixtures.item3);
+            yield testee.add(global.fixtures.item4);
         };
     });
 
@@ -419,7 +421,7 @@ function spec(type, className, prepareParameters)
             {
                 yield global.fixtures.addItems(testee);
                 const items = yield testee.getPropertyList('name');
-                expect(items).to.have.members(['One', 'Two']);
+                expect(items).to.have.members(['One', 'Two', 'Three', 'Four']);
             });
             return promise;
         });
@@ -457,8 +459,20 @@ function spec(type, className, prepareParameters)
             const testee = createTestee();
             const promise = co(function *()
             {
-                yield* global.fixtures.addItems(testee);
+                yield global.fixtures.addItems(testee);
                 const item = yield testee.findBy('name', 'two');
+                expect(item).to.be.equal(global.fixtures.item2);
+            });
+            return promise;
+        });
+
+        it('should allow regular expessions', function()
+        {
+            const testee = createTestee();
+            const promise = co(function *()
+            {
+                yield global.fixtures.addItems(testee);
+                const item = yield testee.findBy('name', /two/i);
                 expect(item).to.be.equal(global.fixtures.item2);
             });
             return promise;
@@ -469,9 +483,78 @@ function spec(type, className, prepareParameters)
             const testee = createTestee();
             const promise = co(function *()
             {
-                yield* global.fixtures.addItems(testee);
+                yield global.fixtures.addItems(testee);
                 const item = yield testee.findBy('name', 'Foo');
                 expect(item).to.be.not.ok;
+            });
+            return promise;
+        });
+    });
+
+
+    describe('#filterBy()', function()
+    {
+        it('should allow to filter items by a property value', function()
+        {
+            const testee = createTestee();
+            const promise = co(function *()
+            {
+                yield global.fixtures.addItems(testee);
+                const items = yield testee.filterBy({ 'name': 'One' });
+                expect(items).to.have.length(1);
+                expect(items[0]).to.be.equal(global.fixtures.item1);
+            });
+            return promise;
+        });
+
+        it('should ignore case', function()
+        {
+            const testee = createTestee();
+            const promise = co(function *()
+            {
+                yield global.fixtures.addItems(testee);
+                const items = yield testee.filterBy({ 'name': 'three' });
+                expect(items).to.have.length(1);
+                expect(items[0]).to.be.equal(global.fixtures.item3);
+            });
+            return promise;
+        });
+
+        it('should allow to filter items by a regex', function()
+        {
+            const testee = createTestee();
+            const promise = co(function *()
+            {
+                yield global.fixtures.addItems(testee);
+                const items = yield testee.filterBy({ 'name': /^T/ });
+                expect(items).to.have.length(2);
+                expect(items[0]).to.be.equal(global.fixtures.item2);
+                expect(items[1]).to.be.equal(global.fixtures.item3);
+            });
+            return promise;
+        });
+
+        it('should allow multiple properties', function()
+        {
+            const testee = createTestee();
+            const promise = co(function *()
+            {
+                yield global.fixtures.addItems(testee);
+                const items = yield testee.filterBy({ 'name': 'Two', number: 2 });
+                expect(items).to.have.length(1);
+                expect(items[0]).to.be.equal(global.fixtures.item2);
+            });
+            return promise;
+        });
+
+        it('should yield a empty array when nothing matched', function()
+        {
+            const testee = createTestee();
+            const promise = co(function *()
+            {
+                yield global.fixtures.addItems(testee);
+                const items = yield testee.filterBy({ 'name': 'Nope' });
+                expect(items).to.have.length(0);
             });
             return promise;
         });

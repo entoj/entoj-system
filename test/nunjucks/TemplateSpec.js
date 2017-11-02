@@ -34,14 +34,14 @@ describe(Template.className, function()
 
 
     // Creates a initialized testee
-    function createTestee(basePath, environment)
+    function createTestee(templatePaths, environment)
     {
-        return new Template(global.fixtures.entitiesRepository, basePath, environment);
+        return new Template(global.fixtures.entitiesRepository, templatePaths, environment);
     }
 
 
     // Properties
-    baseSpec.assertProperty(createTestee(), ['basePath'], 'foo', '');
+    baseSpec.assertProperty(createTestee(), ['templatePaths'], ['foo'], []);
 
 
     describe('#getInclude', function()
