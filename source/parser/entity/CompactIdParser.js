@@ -11,7 +11,6 @@ const EntityCategory = require('../../model/entity/EntityCategory.js').EntityCat
 const EntityId = require('../../model/entity/EntityId.js').EntityId;
 const EntityIdTemplate = require('../../model/entity/EntityIdTemplate.js').EntityIdTemplate;
 const SitesRepository = require('../../model/site/SitesRepository.js').SitesRepository;
-const Site = require('../../model/site/Site.js').Site;
 const assertParameter = require('../../utils/assert.js').assertParameter;
 const urlify = require('../../utils/urls.js').urlify;
 const XRegExp = require('xregexp');

@@ -6,7 +6,6 @@
  */
 const Base = require('../Base.js').Base;
 const ErrorHandler = require('../error/ErrorHandler.js').ErrorHandler;
-const matchValue = require('../utils/match.js').matchValue;
 const matchObject = require('../utils/match.js').matchObject;
 const signals = require('signals');
 const co = require('co');

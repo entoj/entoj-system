@@ -15,7 +15,7 @@ class ErrorHandler
     {
         if (!error)
         {
-            console.error('Error handler without error object?', instance, error);
+            intel.getLogger('entoj.ErrorHandler').error('Error handler without error object', instance, error);
         }
         else
         {

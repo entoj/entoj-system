@@ -9,7 +9,6 @@ const ErrorHandler = require('../error/ErrorHandler.js').ErrorHandler;
 const CliLogger = require('../cli/CliLogger.js').CliLogger;
 const PathesConfiguration = require('../model/configuration/PathesConfiguration.js').PathesConfiguration;
 const EntityCategoriesRepository = require('../model/entity/EntityCategoriesRepository.js').EntityCategoriesRepository;
-const EntityCategory = require('../model/entity/EntityCategory.js').EntityCategory;
 const IdParser = require('../parser/entity/IdParser.js').IdParser;
 const assertParameter = require('../utils/assert.js').assertParameter;
 const urlify = require('../utils/urls.js').urlify;

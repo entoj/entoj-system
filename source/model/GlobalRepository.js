@@ -8,7 +8,6 @@ const Base = require('../Base.js').Base;
 const SitesRepository = require('./site/SitesRepository.js').SitesRepository;
 const EntityCategoriesRepository = require('./entity/EntityCategoriesRepository.js').EntityCategoriesRepository;
 const EntitiesRepository = require('./entity/EntitiesRepository.js').EntitiesRepository;
-const EntityCategory = require('./entity/EntityCategory.js').EntityCategory;
 const Site = require('./site/Site.js').Site;
 const DocumentationCallable = require('./documentation/DocumentationCallable.js').DocumentationCallable;
 const ContentType = require('./ContentType.js').ContentType;
