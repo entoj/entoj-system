@@ -22,7 +22,7 @@ const fs = require('co-fs-extra');
  * @type {Map}
  */
 const pages = new Map();
-let pageCacheEnabled = true;
+let pageCacheEnabled = false;
 
 
 /**
