@@ -5,10 +5,6 @@
  * @ignore
  */
 const Base = require('../../Base.js').Base;
-const EntityTemplateRoute = require('../../server/route/EntityTemplateRoute.js').EntityTemplateRoute;
-const assertParameter = require('../../utils/assert.js').assertParameter;
-const Context = require('../../application/Context.js').Context;
-const waitForPromise = require('../../utils/synchronize.js').waitForPromise;
 
 
 /**
