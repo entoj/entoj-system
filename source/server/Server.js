@@ -13,7 +13,7 @@ const express = require('express');
 const fs = require('fs');
 const http = require('http');
 const spdy = require('spdy');
-const basicAuth = require('basic-auth-connect');
+const basicAuth = require('basic-auth');
 const compression = require('compression');
 const bodyParser = require('body-parser');
 
@@ -55,17 +55,13 @@ class Server extends Base
         this._routes = [];
         this._sslKey = opts.sslKey || (__dirname + '/localhost.key');
         this._sslCert = opts.sslCert || (__dirname + '/localhost.crt');
+        this.options = opts;
+        this.options.authentication = opts.authentication || false;
+        this.options.credentials = opts.credentials || { username: 'entoj', password: 'entoj' };
 
         // Add settings
         this.express.use(compression());
         this.express.use(bodyParser.json());
-
-        // Add basic auth
-        if (opts.authentication === true)
-        {
-            const credentials = opts.credentials || { username: 'entoj', password: 'entoj' };
-            this.express.use(basicAuth(credentials.username, credentials.password));
-        }
 
         // Add routes
         if (Array.isArray(routes))
@@ -164,6 +160,32 @@ class Server extends Base
      * @param {server.route.Route}
      * @return {Promise}
      */
+    authenticate(request, response, next)
+    {
+        if (this.options.authentication)
+        {
+            const authed = basicAuth(request);
+            if (!authed ||
+            authed.name !== this.options.credentials.name ||
+            authed.pass !== this.options.credentials.password)
+            {
+                response.statusCode = 401;
+                response.setHeader('WWW-Authenticate', 'Basic realm="example"');
+                response.end('Access denied');
+                next();
+                return false;
+            }
+        }
+
+        // Ok
+        return true;
+    }
+
+
+    /**
+     * @param {server.route.Route}
+     * @return {Promise}
+     */
     addRoute(route)
     {
         // Check params
@@ -171,7 +193,7 @@ class Server extends Base
 
         // Register
         this.routes.push(route);
-        return route.register(this.express);
+        return route.register(this);
     }
 
 

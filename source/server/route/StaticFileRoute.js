@@ -79,9 +79,9 @@ class StaticFileRoute extends Route
     /**
      * @inheritDocs
      */
-    register(express)
+    register(server)
     {
-        const promise = super.register(express);
+        const promise = super.register(server);
         promise.then(() =>
         {
             this.addStaticFileHandler('*', this.basePath, this.allowedExtensions);

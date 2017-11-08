@@ -64,7 +64,7 @@ function spec(type, className, prepareParameters)
         it('should return a promise', function()
         {
             const testee = createTestee();
-            expect(testee.register(express())).to.be.instanceof(Promise);
+            expect(testee.register()).to.be.instanceof(Promise);
         });
     });
 }

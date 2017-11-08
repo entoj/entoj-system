@@ -53,7 +53,9 @@ class EntityTemplateRoute extends Route
     /**
      * @param {cli.CliLogger} cliLogger
      * @param {model.configuration.UrlsConfiguration} urlsConfiguration
+     * @param {model.configuration.PathesConfiguration} pathesConfiguration
      * @param {nunjucks.Environment} nunjucks
+     * @param {Object} options
      */
     constructor(cliLogger, urlsConfiguration, pathesConfiguration, nunjucks, options)
     {
@@ -156,9 +158,12 @@ class EntityTemplateRoute extends Route
         const scope = this;
         const promise = co(function *()
         {
+            console.log('renderTemplate', path);
+
             // Check file hit
             let data = yield scope.urlsConfiguration.matchEntityFile(path);
             let filename;
+            console.log('Matched', path, data);
             if (!data || !data.file)
             {
                 // Check direct file hit
@@ -215,10 +220,18 @@ class EntityTemplateRoute extends Route
         const scope = this;
         const promise = co(function *()
         {
+            console.log('Adding request....');
+
             // Check extension
             if (!request.path.endsWith('.j2'))
             {
                 next();
+                return;
+            }
+
+            // Check authentication
+            if (!scope.server.authenticate(request, response, next))
+            {
                 return;
             }
 
@@ -234,11 +247,14 @@ class EntityTemplateRoute extends Route
                 }
             }
 
+            console.log('Serving request....', request.path);
+
             // Render template
             const work = scope.cliLogger.work('Serving url <' + request.url + '>');
             const html = yield scope.renderTemplate(request.path, request);
             if (!html)
             {
+                scope.cliLogger.error(work);
                 next();
                 return;
             }
@@ -261,12 +277,15 @@ class EntityTemplateRoute extends Route
     /**
      * @inheritDocs
      */
-    register(express)
+    register(server)
     {
-        const promise = super.register(express);
+        const promise = super.register(server);
         promise.then(() =>
         {
-            express.all('/:site/*', this.handleEntityTemplate.bind(this));
+            if (server)
+            {
+                server.express.all('/:site/*', this.handleEntityTemplate.bind(this));
+            }
         });
         return promise;
     }

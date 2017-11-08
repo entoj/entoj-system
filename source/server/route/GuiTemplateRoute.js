@@ -231,7 +231,7 @@ class GuiTemplateRoute extends Route
         this.nunjucks.addGlobal('global', Object.assign({}, GuiTemplateRoute.model, model));
         this.nunjucks.addGlobal('ContentKind', require('../../model/ContentKind.js').ContentKind);
         this.nunjucks.addGlobal('DocumentationType', require('../../model/documentation/DocumentationType.js').DocumentationType);
-        const result = this._nunjucks.renderString(tpl);
+        const result = this.nunjucks.renderString(tpl);
         this.cliLogger.end(work);
         return result;
     }
@@ -240,7 +240,7 @@ class GuiTemplateRoute extends Route
     /**
      * @inheritDocs
      */
-    addTemplateHandler(route, template, resolver)
+    addTemplateHandler(route, template, authenticate, resolver)
     {
         this.cliLogger.info('Adding template route <' + route + '> for template <' + template + '>');
         const scope = this;
@@ -325,13 +325,21 @@ class GuiTemplateRoute extends Route
                     return;
                 }
 
+                // Check authentication
+                if (authenticate &&
+                    !scope.server.authenticate(request, response, next))
+                {
+                    return;
+                }
+
+                // Render
                 const work = scope.cliLogger.work('Serving template <' + template + '> for <' + request.url + '>');
                 const html = scope.renderTemplate(filename, request, model);
                 response.send(html);
                 scope.cliLogger.end(work);
             });
         };
-        this.express.all(route, handler);
+        this.server.express.all(route, handler);
     }
 }
 

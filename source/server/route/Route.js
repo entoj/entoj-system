@@ -28,7 +28,7 @@ class Route extends Base
 
         // Assign options
         this._cliLogger = cliLogger;
-        this._express = undefined;
+        this._server = undefined;
     }
 
 
@@ -62,9 +62,9 @@ class Route extends Base
     /**
      * @type {express}
      */
-    get express()
+    get server()
     {
-        return this._express;
+        return this._server;
     }
 
 
@@ -117,7 +117,7 @@ class Route extends Base
             response.sendFile(filename);
             this.cliLogger.end(work);
         };
-        this.express.all(route, handler);
+        this.server.express.all(route, handler);
     }
 
 
@@ -127,9 +127,9 @@ class Route extends Base
      * @param {Express}
      * @return {Promise}
      */
-    register(express)
+    register(server)
     {
-        this._express = express;
+        this._server = server;
         return Promise.resolve();
     }
 }
