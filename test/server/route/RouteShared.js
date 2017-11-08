@@ -7,7 +7,6 @@
 const Server = require(ES_SOURCE + '/server/Server.js').Server;
 const CliLogger = require(ES_SOURCE + '/cli/CliLogger.js').CliLogger;
 const baseSpec = require(ES_TEST + '/BaseShared.js').spec;
-const express = require('express');
 
 
 /**
