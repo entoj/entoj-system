@@ -158,12 +158,9 @@ class EntityTemplateRoute extends Route
         const scope = this;
         const promise = co(function *()
         {
-            console.log('renderTemplate', path);
-
             // Check file hit
             let data = yield scope.urlsConfiguration.matchEntityFile(path);
             let filename;
-            console.log('Matched', path, data);
             if (!data || !data.file)
             {
                 // Check direct file hit
@@ -220,8 +217,6 @@ class EntityTemplateRoute extends Route
         const scope = this;
         const promise = co(function *()
         {
-            console.log('Adding request....');
-
             // Check extension
             if (!request.path.endsWith('.j2'))
             {
@@ -246,8 +241,6 @@ class EntityTemplateRoute extends Route
                     return;
                 }
             }
-
-            console.log('Serving request....', request.path);
 
             // Render template
             const work = scope.cliLogger.work('Serving url <' + request.url + '>');
