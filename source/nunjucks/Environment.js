@@ -55,15 +55,21 @@ class Environment extends BaseMixin(nunjucks.Environment)
         this.addGlobal('environment', this.buildConfiguration);
 
         // Add filters
-        for (const filter of this._filters)
+        if (Array.isArray(this._filters))
         {
-            filter.register(this);
+            for (const filter of this._filters)
+            {
+                filter.register(this);
+            }
         }
 
         // Add tags
-        for (const tag of this._tags)
+        if (Array.isArray(this._tags))
         {
-            tag.register(this);
+            for (const filter of this._tags)
+            {
+                filter.register(this);
+            }
         }
     }
 

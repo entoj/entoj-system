@@ -41,6 +41,7 @@ describe(Environment.className, function()
             [
                 new Filters.ModuleClassesFilter()
             ],
+            [],
             {
                 templatePaths: templatePaths
             });
