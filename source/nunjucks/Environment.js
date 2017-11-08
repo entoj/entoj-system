@@ -22,11 +22,13 @@ class Environment extends BaseMixin(nunjucks.Environment)
 {
     /**
      * @param {EntitiesRepository} entitiesRepository
+     * @param {PathesConfiguration} pathesConfiguration
      * @param {BuildConfiguration} buildConfiguration
      * @param {Array} filters
+     * @param {Array} tags
      * @param {Object} options
      */
-    constructor(entitiesRepository, pathesConfiguration, buildConfiguration, filters, options)
+    constructor(entitiesRepository, pathesConfiguration, buildConfiguration, filters, tags, options)
     {
         const opts = options || {};
         opts.autoescape = false;
@@ -41,6 +43,7 @@ class Environment extends BaseMixin(nunjucks.Environment)
         this._buildConfiguration = buildConfiguration;
         this._pathesConfiguration = pathesConfiguration;
         this._filters = filters || [];
+        this._tags = tags || [];
         this.templatePaths = opts.templatePaths;
         this._loader = new FileLoader(this.templatePaths, entitiesRepository, buildConfiguration);
         this._template = new Template(entitiesRepository, this.templatePaths, this.buildConfiguration.environment);
@@ -56,6 +59,12 @@ class Environment extends BaseMixin(nunjucks.Environment)
         {
             filter.register(this);
         }
+
+        // Add tags
+        for (const tag of this._tags)
+        {
+            tag.register(this);
+        }
     }
 
 
@@ -65,7 +74,7 @@ class Environment extends BaseMixin(nunjucks.Environment)
     static get injections()
     {
         return { 'parameters': [EntitiesRepository, PathesConfiguration, BuildConfiguration,
-            'nunjucks/Environment.filters', 'nunjucks/Environment.options'] };
+            'nunjucks/Environment.filters', 'nunjucks/Environment.tags', 'nunjucks/Environment.options'] };
     }
 
 

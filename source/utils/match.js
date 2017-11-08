@@ -38,6 +38,7 @@ function matchValue(value, test)
             return value.indexOf(test) > -1;
         }
     }
+
     // Simple compare
     const testValue = (typeof test == 'string') ? test.toLowerCase() : test;
     const valueValue = (typeof value == 'string') ? value.toLowerCase() : value;

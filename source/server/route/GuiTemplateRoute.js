@@ -17,6 +17,7 @@ const Environment = require('../../nunjucks/Environment.js').Environment;
 const assertParameter = require('../../utils/assert.js').assertParameter;
 const synchronize = require('../../utils/synchronize.js').synchronize;
 const waitForPromise = require('../../utils/synchronize.js').waitForPromise;
+const co = require('co');
 const fs = require('fs');
 const path = require('path');
 
@@ -55,13 +56,20 @@ class GuiTemplateRoute extends Route
         assertParameter(this, 'nunjucks', nunjucks, true, Environment);
 
         // Assign options
-        this._sitesRepository = synchronize(sitesRepository);
-        this._entityCategoriesRepository = synchronize(entityCategoriesRepository);
-        this._entitiesRepository = synchronize(entitiesRepository);
-        this._urlsConfiguration = synchronize(urlsConfiguration);
+        this._sitesRepository = sitesRepository;
+        this._entityCategoriesRepository = entityCategoriesRepository;
+        this._entitiesRepository = entitiesRepository;
+        this._urlsConfiguration = urlsConfiguration;
         this._pathesConfiguration = pathesConfiguration;
         this._buildConfiguration = buildConfiguration;
         this._nunjucks = nunjucks;
+        this._defaultModel =
+        {
+            sites: synchronize(sitesRepository),
+            entityCategories: synchronize(entityCategoriesRepository),
+            entities: synchronize(entitiesRepository),
+            urls: synchronize(urlsConfiguration)
+        };
 
         // Routes
         this._routes = [];
@@ -121,6 +129,15 @@ class GuiTemplateRoute extends Route
 
 
     /**
+     * @type {Object}
+     */
+    get defaultModel()
+    {
+        return this._defaultModel;
+    }
+
+
+    /**
      * @type {Array}
      */
     get templatePaths()
@@ -168,6 +185,24 @@ class GuiTemplateRoute extends Route
 
 
     /**
+     * @type {model.entity.EntityCategoriesRepository}
+     */
+    get entityCategoriesRepository()
+    {
+        return this._entityCategoriesRepository;
+    }
+
+
+    /**
+     * @type {model.entity.EntitiesRepository}
+     */
+    get entitiesRepository()
+    {
+        return this._entitiesRepository;
+    }
+
+
+    /**
      * @type {model.configuration.PathesConfiguration}
      */
     get pathesConfiguration()
@@ -177,104 +212,124 @@ class GuiTemplateRoute extends Route
 
 
     /**
+     * @type {model.configuration.UrlsConfiguration}
+     */
+    get urlsConfiguration()
+    {
+        return this._urlsConfiguration;
+    }
+
+
+    /**
      * @inheritDocs
      */
-    addTemplateHandler(route, template)
+    renderTemplate(filename, request, model)
+    {
+        const work = this.cliLogger.work('Rendering template <' + filename + '>');
+        const tpl = fs.readFileSync(filename, { encoding: 'utf8' });
+        this.nunjucks.addGlobal('request', request);
+        this.nunjucks.addGlobal('global', Object.assign({}, GuiTemplateRoute.model, model));
+        this.nunjucks.addGlobal('ContentKind', require('../../model/ContentKind.js').ContentKind);
+        this.nunjucks.addGlobal('DocumentationType', require('../../model/documentation/DocumentationType.js').DocumentationType);
+        const result = this._nunjucks.renderString(tpl);
+        this.cliLogger.end(work);
+        return result;
+    }
+
+
+    /**
+     * @inheritDocs
+     */
+    addTemplateHandler(route, template, resolver)
     {
         this.cliLogger.info('Adding template route <' + route + '> for template <' + template + '>');
+        const scope = this;
         const handler = (request, response, next) =>
         {
-            const model =
+            co(function*()
             {
-                sites: this.sitesRepository,
-                entityCategories: this._entityCategoriesRepository,
-                entities: this._entitiesRepository,
-                urls: this._urlsConfiguration,
-                type:
-                {
-                    DocumentationText: 'DocumentationText',
-                    DocumentationExample: 'DocumentationExample'
-                },
-                location:
+                const model = Object.assign({}, scope.defaultModel);
+                model.location =
                 {
                     url: request.url
-                }
-            };
+                };
 
-            // Create a short url for simple model matches
-            const url = request.url.split('/').slice(0, 4).join('/');
+                // Create a short url for simple model matches
+                const url = request.url.split('/').slice(0, 4).join('/');
 
-            // Get site
-            const site = this._urlsConfiguration.matchSite(url, true);
-            if (site)
-            {
-                model.location.site = site.site;
-            }
-
-            // Get entityCategory
-            const entityCategory = this._urlsConfiguration.matchEntityCategory(url, true);
-            if (entityCategory)
-            {
-                model.location.entityCategory = entityCategory.entityCategory;
-            }
-
-            // Get entity
-            const entity = this._urlsConfiguration.matchEntityId(url);
-            if (entity)
-            {
-                model.location.entity = entity.entity;
-            }
-
-            // Check if valid page
-            if (request.params.entityId === 'examples')
-            {
-                next();
-                return;
-            }
-            if (request.params.site && !model.location.site)
-            {
-                next();
-                return;
-            }
-            if (!request.params.entityId && request.params.entityCategory && !model.location.entityCategory)
-            {
-                next();
-                return;
-            }
-            if (request.params.entityId && !model.location.entity)
-            {
-                next();
-                return;
-            }
-
-            // See if file exists
-            let filename = false;
-            for (const templatePath of this.templatePaths)
-            {
-                if (!filename)
+                // Get site
+                const site = yield scope.urlsConfiguration.matchSite(url, true);
+                if (site)
                 {
-                    filename = path.join(templatePath, '/' + template);
-                    if (!fs.existsSync(filename))
+                    model.location.site = site.site;
+                }
+
+                // Get entityCategory
+                const entityCategory = yield scope.urlsConfiguration.matchEntityCategory(url, true);
+                if (entityCategory)
+                {
+                    model.location.entityCategory = entityCategory.entityCategory;
+                }
+
+                // Get entity
+                const entity = yield scope.urlsConfiguration.matchEntityId(url);
+                if (entity)
+                {
+                    model.location.entity = entity.entity;
+                }
+
+                // Apply resolver
+                if (typeof resolver === 'function')
+                {
+                    yield resolver(this, request, model);
+                }
+
+                // Check if valid page
+                if (request.params.entityId === 'examples')
+                {
+                    next();
+                    return;
+                }
+                if (request.params.site && !model.location.site)
+                {
+                    next();
+                    return;
+                }
+                if (!request.params.entityId && request.params.entityCategory && !model.location.entityCategory)
+                {
+                    next();
+                    return;
+                }
+                if (request.params.entityId && !model.location.entity)
+                {
+                    next();
+                    return;
+                }
+
+                // See if file exists
+                let filename = false;
+                for (const templatePath of scope.templatePaths)
+                {
+                    if (!filename)
                     {
-                        filename = false;
+                        filename = path.join(templatePath, '/' + template);
+                        if (!fs.existsSync(filename))
+                        {
+                            filename = false;
+                        }
                     }
                 }
-            }
-            if (!filename)
-            {
-                next();
-                return;
-            }
+                if (!filename)
+                {
+                    next();
+                    return;
+                }
 
-            const work = this.cliLogger.work('Serving template <' + template + '> for <' + request.url + '>');
-            const tpl = fs.readFileSync(filename, { encoding: 'utf8' });
-            this.nunjucks.addGlobal('request', request);
-            this.nunjucks.addGlobal('global', Object.assign({}, GuiTemplateRoute.model, model));
-            this.nunjucks.addGlobal('ContentKind', require('../../model/ContentKind.js').ContentKind);
-
-            const html = this._nunjucks.renderString(tpl);
-            response.send(html);
-            this.cliLogger.end(work);
+                const work = scope.cliLogger.work('Serving template <' + template + '> for <' + request.url + '>');
+                const html = scope.renderTemplate(filename, request, model);
+                response.send(html);
+                scope.cliLogger.end(work);
+            });
         };
         this.express.all(route, handler);
     }

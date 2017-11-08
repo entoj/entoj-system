@@ -379,7 +379,7 @@ class Repository extends Base
     {
         const promise = this.getItems().then(function(data)
         {
-            return data.find((item) => matchObject(item, properties, compare));
+            return Promise.resolve(data.find((item) => matchObject(item, properties, compare)));
         });
         return promise;
     }
@@ -396,7 +396,7 @@ class Repository extends Base
     {
         const promise = this.getItems().then(function(data)
         {
-            return data.filter((item) => matchObject(item, properties, compare));
+            return Promise.resolve(data.filter((item) => matchObject(item, properties, compare)));
         });
         return promise;
     }

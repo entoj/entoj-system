@@ -14,6 +14,7 @@ module.exports =
     GetFilter: require('./GetFilter.js').GetFilter,
     HyphenateFilter: require('./HyphenateFilter.js').HyphenateFilter,
     LinkUrlFilter: require('./LinkUrlFilter.js').LinkUrlFilter,
+    LipsumFilter: require('./LipsumFilter.js').LipsumFilter,
     LoadFilter: require('./LoadFilter.js').LoadFilter,
     MarkdownFilter: require('./MarkdownFilter.js').MarkdownFilter,
     MarkupFilter: require('./MarkupFilter.js').MarkupFilter,

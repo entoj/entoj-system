@@ -14,5 +14,6 @@ module.exports =
     DocumentationParameter: require('./DocumentationParameter.js').DocumentationParameter,
     DocumentationText: require('./DocumentationText.js').DocumentationText,
     DocumentationTextSection: require('./DocumentationTextSection.js').DocumentationTextSection,
+    DocumentationType: require('./DocumentationType.js').DocumentationType,
     DocumentationVariable: require('./DocumentationVariable.js').DocumentationVariable
 };

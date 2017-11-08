@@ -149,6 +149,65 @@ class EntityTemplateRoute extends Route
 
 
     /**
+     * @returns Promise
+     */
+    renderTemplate(path, request)
+    {
+        const scope = this;
+        const promise = co(function *()
+        {
+            // Check file hit
+            let data = yield scope.urlsConfiguration.matchEntityFile(path);
+            let filename;
+            if (!data || !data.file)
+            {
+                // Check direct file hit
+                filename = pathes.concat(scope.pathesConfiguration.sites, path);
+                if (!fs.existsSync(filename))
+                {
+                    return;
+                }
+                data = yield scope.urlsConfiguration.matchEntity(path, true);
+            }
+            else
+            {
+                filename = data.file.filename;
+            }
+
+            // Render
+            const tpl = yield fs.readFile(filename, { encoding: 'utf8' });
+            const work = scope.cliLogger.work('Rendering template <' + filename + '>');
+            let html;
+            try
+            {
+                const location =
+                {
+                    site: data.site,
+                    entity: data.entity,
+                    customPath: data.customPath
+                };
+                scope.nunjucks.addGlobal('global', {});
+                scope.nunjucks.addGlobal('location', location);
+                scope.nunjucks.addGlobal('request', request);
+                html = scope.nunjucks.renderString(tpl, data);
+            }
+            catch (e)
+            {
+                /* istanbul ignore next */
+                scope.logger.error('renderTemplate', e);
+                /* istanbul ignore next */
+                scope.cliLogger.error(scope.className + '::renderTemplate', e);
+                /* istanbul ignore next */
+                return;
+            }
+            scope.cliLogger.end(work);
+            return html;
+        }).catch(ErrorHandler.handler(scope));
+        return promise;
+    }
+
+
+    /**
      * @inheritDocs
      */
     handleEntityTemplate(request, response, next)
@@ -175,50 +234,11 @@ class EntityTemplateRoute extends Route
                 }
             }
 
-            // Check file hit
-            let data = yield scope.urlsConfiguration.matchEntityFile(request.path);
-            let filename;
-            if (!data || !data.file)
-            {
-                // Check direct file hit
-                filename = pathes.concat(scope.pathesConfiguration.sites, request.path);
-                if (!fs.existsSync(filename))
-                {
-                    next();
-                    return;
-                }
-                data = yield scope.urlsConfiguration.matchEntity(request.path, true);
-            }
-            else
-            {
-                filename = data.file.filename;
-            }
-
             // Render template
-            const tpl = yield fs.readFile(filename, { encoding: 'utf8' });
-            const work = scope.cliLogger.work('Serving url <' + request.url + '> using template <' + filename + '>');
-            let html;
-            try
+            const work = scope.cliLogger.work('Serving url <' + request.url + '>');
+            const html = yield scope.renderTemplate(request.path, request);
+            if (!html)
             {
-                const location =
-                {
-                    site: data.site,
-                    entity: data.entity,
-                    customPath: data.customPath
-                };
-                scope._nunjucks.addGlobal('global', {});
-                scope._nunjucks.addGlobal('location', location);
-                scope._nunjucks.addGlobal('request', request);
-                scope._nunjucks.addGlobal('global', {});
-                html = scope.nunjucks.renderString(tpl, data);
-            }
-            catch (e)
-            {
-                /* istanbul ignore next */
-                scope.logger.error('handleEntityTemplate', e);
-                /* istanbul ignore next */
-                scope.cliLogger.error(scope.className + '::handleEntityTemplate', e);
-                /* istanbul ignore next */
                 next();
                 return;
             }
@@ -232,6 +252,7 @@ class EntityTemplateRoute extends Route
             // Send
             response.send(html);
             scope.cliLogger.end(work);
+
         }).catch(ErrorHandler.handler(scope));
         return promise;
     }
