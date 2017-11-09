@@ -68,7 +68,8 @@ class GuiTemplateRoute extends Route
             sites: synchronize(sitesRepository),
             entityCategories: synchronize(entityCategoriesRepository),
             entities: synchronize(entitiesRepository),
-            urls: synchronize(urlsConfiguration)
+            urls: synchronize(urlsConfiguration),
+            configuration: synchronize(globalConfiguration)
         };
 
         // Routes
@@ -248,6 +249,8 @@ class GuiTemplateRoute extends Route
         {
             co(function*()
             {
+                scope.logger.trace('Trying route ' + route + ' for template ' + template);
+
                 const model = Object.assign({}, scope.defaultModel);
                 model.location =
                 {
@@ -287,21 +290,25 @@ class GuiTemplateRoute extends Route
                 // Check if valid page
                 if (request.params.entityId === 'examples')
                 {
+                    scope.logger.trace('Skipping route ' + route + ': examples');
                     next();
                     return;
                 }
                 if (request.params.site && !model.location.site)
                 {
+                    scope.logger.trace('Skipping route ' + route + ': missing site');
                     next();
                     return;
                 }
                 if (!request.params.entityId && request.params.entityCategory && !model.location.entityCategory)
                 {
+                    scope.logger.trace('Skipping route ' + route + ': missing entityCategory');
                     next();
                     return;
                 }
                 if (request.params.entityId && !model.location.entity)
                 {
+                    scope.logger.trace('Skipping route ' + route + ': missing entity');
                     next();
                     return;
                 }
@@ -321,6 +328,7 @@ class GuiTemplateRoute extends Route
                 }
                 if (!filename)
                 {
+                    scope.logger.trace('Skipping route ' + route + ': missing template file');
                     next();
                     return;
                 }
@@ -329,10 +337,12 @@ class GuiTemplateRoute extends Route
                 if (authenticate &&
                     !scope.server.authenticate(request, response, next))
                 {
+                    scope.logger.trace('Skipping route ' + route + ': failed autohorization');
                     return;
                 }
 
                 // Render
+                scope.logger.trace('Rendering route ' + route);
                 const work = scope.cliLogger.work('Serving template <' + template + '> for <' + request.url + '>');
                 const html = scope.renderTemplate(filename, request, model);
                 response.send(html);
