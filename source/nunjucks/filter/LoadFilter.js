@@ -75,8 +75,8 @@ class LoadFilter extends Filter
             {
                 return value;
             }
-            const globals = (this && this.env && this.env.globals) ? this.env.globals : {};
-            const site = globals.site || false;
+            const globals = (this && this.env && this.env.globals) ? this.env.globals : { location: {} };
+            const site = globals.location.site || false;
             const staticMode = (globals.request) ? (typeof globals.request.query.static !== 'undefined') : false;
             const viewModel = synchronize.execute(scope.viewModelRepository, 'getByPath', [value, site, staticMode]);
             return viewModel.data;
