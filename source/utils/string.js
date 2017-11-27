@@ -261,6 +261,7 @@ function htmlify(value, options)
     // Default config
     const defaults =
     {
+        random: Math.random,
         wordsPerTag: 10,
         maxTagOffset: 3,
         minWordsBetweenTags: 1,
@@ -304,7 +305,7 @@ function htmlify(value, options)
     let result = '';
     for (const paragraph of paragraphs)
     {
-        // Count words an get a max tag count
+        // Count words and get a max tag count
         const words = paragraph.split(/\s+/);
         const tagCount = Math.floor((words.length + opts.minWordsBetweenTags) / (opts.wordsPerTag + opts.minWordsBetweenTags));
 
@@ -313,14 +314,15 @@ function htmlify(value, options)
         for (let tagId = 0; tagId < tagCount; tagId++)
         {
             // Determine which tag is used in a somewhat randomn fashion
-            let tagValue = Math.random();
+            let tagValue = opts.random();
+
             // Make sure we always have at least one tag
             if (addedTags < 1 && tagId == tagCount - 1)
             {
                 tagValue = 1;
             }
             const tags = opts.tags.filter((tag) => tag.probability + tagValue >= 1);
-            const tagIndex = Math.round((tags.length - 1) * Math.random());
+            const tagIndex = Math.round((tags.length - 1) * opts.random());
             const tag = tags[tagIndex];
 
             // Add a tag if necessary
@@ -328,11 +330,11 @@ function htmlify(value, options)
             {
                 // Get start and end index so that they don't overlap
                 const startIndex = Math.round(tagId * opts.wordsPerTag
-                    + (Math.random() * opts.maxTagOffset)
+                    + (opts.random() * opts.maxTagOffset)
                     + (tagId * opts.minWordsBetweenTags));
                 const endIndex = Math.round(startIndex
                     + opts.minWordsInTag
-                    + ((opts.maxWordsInTag - opts.minWordsInTag) * Math.random()))
+                    + ((opts.maxWordsInTag - opts.minWordsInTag) * opts.random()))
                     - 1;
 
                 // Prepare attributes
@@ -347,12 +349,12 @@ function htmlify(value, options)
 
                 // Add to words
                 const tagName = Array.isArray(tag.name)
-                    ? tag.name[Math.round((tag.name.length - 1) * Math.random())]
+                    ? tag.name[Math.round((tag.name.length - 1) * opts.random())]
                     : tag.name;
                 words[startIndex] = '<' + tagName + attributes + '>' + words[startIndex];
                 words[endIndex] = words[endIndex] + '</' + tagName + '>';
 
-                // We got one, coach
+                // We got one
                 addedTags++;
             }
         }
