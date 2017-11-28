@@ -166,8 +166,8 @@ class Server extends Base
         {
             const authed = basicAuth(request);
             if (!authed ||
-            authed.name !== this.options.credentials.name ||
-            authed.pass !== this.options.credentials.password)
+                authed.name !== this.options.credentials.username ||
+                authed.pass !== this.options.credentials.password)
             {
                 response.statusCode = 401;
                 response.setHeader('WWW-Authenticate', 'Basic realm="example"');
