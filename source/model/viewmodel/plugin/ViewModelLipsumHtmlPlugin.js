@@ -17,7 +17,7 @@ const createRandomNumberGenerator = require('../../../utils/random.js').createRa
 class ViewModelLipsumHtmlPlugin extends ViewModelLipsumPlugin
 {
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
     constructor()
     {
@@ -27,7 +27,7 @@ class ViewModelLipsumHtmlPlugin extends ViewModelLipsumPlugin
 
 
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
     static get className()
     {
@@ -36,7 +36,7 @@ class ViewModelLipsumHtmlPlugin extends ViewModelLipsumPlugin
 
 
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
     doExecute(repository, site, useStaticContent, name, parameters)
     {
@@ -52,7 +52,7 @@ class ViewModelLipsumHtmlPlugin extends ViewModelLipsumPlugin
                 }
             },
             {
-                name: ['sub', 'sup'],
+                name: ['b', 'i'],
                 probability: 0.2
             }
         ];

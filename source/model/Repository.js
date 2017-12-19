@@ -6,6 +6,7 @@
  */
 const Base = require('../Base.js').Base;
 const ErrorHandler = require('../error/ErrorHandler.js').ErrorHandler;
+const matchValue = require('../utils/match.js').matchValue;
 const matchObject = require('../utils/match.js').matchObject;
 const signals = require('signals');
 const co = require('co');
@@ -204,7 +205,7 @@ class Repository extends Base
                     {
                         for (existingItem of existingItems)
                         {
-                            scope.logger.debug('invalidate: updating existing items');
+                            scope.logger.debug('invalidate: updating existing item', existingItem.pathString);
                             yield scope.invalidateBefore(result, 'update', existingItem);
                             existingItem.dehydrate(item);
                             yield scope.invalidateAfter(result, 'update', existingItem);
@@ -213,6 +214,7 @@ class Repository extends Base
                     // Add
                     else
                     {
+                        scope.logger.debug('invalidate: adding new item', item.pathString);
                         yield scope.invalidateBefore(result, 'add', item);
                         scope._items.push(item);
                         yield scope.invalidateAfter(result, 'add', item);

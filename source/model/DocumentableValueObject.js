@@ -7,7 +7,7 @@
 const ValueObject = require('./ValueObject.js').ValueObject;
 const DocumentationArray = require('./documentation/DocumentationArray.js').DocumentationArray;
 const TestArray = require('./test/TestArray.js').TestArray;
-const BaseArray = require('../base/BaseArray.js').BaseArray;
+const SearchableArray = require('../base/SearchableArray.js').SearchableArray;
 const BaseMap = require('../base/BaseMap.js').BaseMap;
 
 
@@ -35,7 +35,7 @@ class DocumentableValueObject extends ValueObject
         super.initialize();
         this._properties = new BaseMap();
         this._documentation = new DocumentationArray();
-        this._files = new BaseArray();
+        this._files = new SearchableArray();
         this._tests = new TestArray();
     }
 
@@ -48,7 +48,7 @@ class DocumentableValueObject extends ValueObject
         return {
             properties: BaseMap,
             documentation: DocumentationArray,
-            files: BaseArray,
+            files: SearchableArray,
             tests: TestArray
         };
     }

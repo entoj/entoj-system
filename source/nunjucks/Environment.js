@@ -176,7 +176,7 @@ class Environment extends BaseMixin(nunjucks.Environment)
      */
     renderString(content, context, callback)
     {
-        const template = this._template.prepare(content, this.buildConfiguration.environment);
+        const template = this._template.prepare(content, this.globals['location']);
         const result = super.renderString(template, context, callback);
         return result;
     }

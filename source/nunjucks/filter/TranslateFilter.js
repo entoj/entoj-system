@@ -5,6 +5,8 @@
  * @ignore
  */
 const Filter = require('./Filter.js').Filter;
+const TranslationsRepository = require('../../model/translation/TranslationsRepository.js').TranslationsRepository;
+const waitForPromise = require('../../utils/synchronize.js').waitForPromise;
 
 
 /**
@@ -15,13 +17,13 @@ class TranslateFilter extends Filter
     /**
      * @inheritDocs
      */
-    constructor(translations)
+    constructor(translationsRepository)
     {
         super();
         this._name = 'translate';
 
         // Assign options
-        this._translations = translations || {};
+        this._translationsRepository = translationsRepository;
     }
 
 
@@ -30,7 +32,7 @@ class TranslateFilter extends Filter
      */
     static get injections()
     {
-        return { 'parameters': ['nunjucks.filter/TranslateFilter.translations'] };
+        return { 'parameters': [TranslationsRepository] };
     }
 
 
@@ -44,11 +46,11 @@ class TranslateFilter extends Filter
 
 
     /**
-     * @type {Object}
+     * @inheritDocs
      */
-    get translations()
+    get translationsRepository()
     {
-        return this._translations;
+        return this._translationsRepository;
     }
 
 
@@ -73,12 +75,13 @@ class TranslateFilter extends Filter
             }
 
             // Translate
-            if (!scope.translations[translationKey])
+            const translation = waitForPromise(scope.translationsRepository.findBy({ name: translationKey }));
+            if (!translation)
             {
-                scope.logger.warn('Missing translation for ' + translationKey);
-                return translationKey;
+                scope.logger.warn('Missing translation for key', value);
+                return '';
             }
-            let result = scope.translations[translationKey];
+            let result = translation.value;
             if (variables && variables.length)
             {
                 for (let index = 0; index < variables.length; index++)

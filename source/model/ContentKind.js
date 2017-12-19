@@ -66,6 +66,14 @@ class ContentKind extends Base
     /**
      *
      */
+    static get STYLEGUIDE()
+    {
+        return 'styleguide';
+    }
+
+    /**
+     *
+     */
     static get DATAMODEL()
     {
         return 'datamodel';

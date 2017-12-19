@@ -164,15 +164,16 @@ class Exporter extends Base
     /**
      * Creates any additional files needed by the exported artifacts.
      *
+     * @param {String} stage
      * @returns {Promise<Array>}
      */
-    createAdditionalFiles()
+    createAdditionalFiles(stage)
     {
         const scope = this;
         const promise = co(function *()
         {
             const configuration = scope.createConfigurationInstance();
-            const result = yield scope.renderer.createAdditionalFiles(configuration);
+            const result = yield scope.renderer.createAdditionalFiles(configuration, stage);
             return result;
         });
         return promise;

@@ -158,6 +158,25 @@ class EntityTemplateRoute extends Route
         const scope = this;
         const promise = co(function *()
         {
+            // Check extension
+            if (!request.path.endsWith('.j2'))
+            {
+                next();
+                return;
+            }
+
+            // Check cache
+            if (pageCacheEnabled)
+            {
+                if (pages.has(request.url))
+                {
+                    const work = scope.cliLogger.work('Serving url <' + request.url + '> using cache');
+                    response.send(pages.get(request.url));
+                    scope.cliLogger.end(work);
+                    return;
+                }
+            }
+
             // Check file hit
             let data = yield scope.urlsConfiguration.matchEntityFile(path);
             let filename;
@@ -191,6 +210,7 @@ class EntityTemplateRoute extends Route
                 scope.nunjucks.addGlobal('global', {});
                 scope.nunjucks.addGlobal('location', location);
                 scope.nunjucks.addGlobal('request', request);
+                scope._nunjucks.addGlobal('global', {});
                 html = scope.nunjucks.renderString(tpl, data);
             }
             catch (e)

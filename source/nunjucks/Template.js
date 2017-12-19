@@ -110,23 +110,44 @@ class Template extends Base
     /**
      * @returns {Boolean|String}
      */
-    getInclude(name)
+    getInclude(name, site)
     {
         const items = synchronize.execute(this._entitiesRepository, 'getItems');
         for (const item of items)
         {
-            const macros = item.documentation.filter(doc => doc.contentType == ContentType.JINJA && doc instanceof DocumentationCallable);
-            for (const macro of macros)
+            // Get all matching macros
+            const macros = item.documentation.filter((doc) =>
             {
-                if (macro.name === name)
+                return doc.contentType == ContentType.JINJA &&
+                    doc instanceof DocumentationCallable &&
+                    doc.name == name;
+            });
+
+            // Default to first found
+            let macro = macros.length
+                ? macros[0]
+                : false;
+
+            // Process
+            if (macro)
+            {
+                // Prefer macro that matches given site
+                if (site)
                 {
-                    let from = macro.file.filename;
-                    for (const templatePath of this.templatePaths)
+                    const preferedMacro = macros.find((macro) => macro.site.isEqualTo(site));
+                    if (preferedMacro)
                     {
-                        from = from.replace(templatePath, '');
+                        macro = preferedMacro;
                     }
-                    return '{% from "' + urls.normalize(from) + '" import ' + macro.name + ' %}';
                 }
+
+                // Build include
+                let from = macro.file.filename;
+                for (const templatePath of this.templatePaths)
+                {
+                    from = from.replace(templatePath, '');
+                }
+                return '{% from "' + urls.normalize(from) + '" import ' + macro.name + ' %}';
             }
         }
         return false;
@@ -136,13 +157,18 @@ class Template extends Base
     /**
      * Prepares a template for rendering
      */
-    prepare(content)
+    prepare(content, location)
     {
+        // Get site
+        const site = location && location.site
+            ? location.site
+            : false;
+
         // Check cache
         let hash = false;
         if (templateCacheEnabled)
         {
-            hash = crypto.createHash('md5').update(content).digest('hex');
+            hash = crypto.createHash('md5').update((site ? site.name : 'Default') + '::' + content).digest('hex');
             if (templates.has(hash))
             {
                 this.logger.verbose('Using cached template');
@@ -157,7 +183,7 @@ class Template extends Base
         let includes = [];
         for (const macro of macros.externals)
         {
-            const include = this.getInclude(macro);
+            const include = this.getInclude(macro, site);
             if (include)
             {
                 includes.push(include);

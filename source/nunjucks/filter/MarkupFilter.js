@@ -71,7 +71,22 @@ class MarkupFilter extends Filter
             {
                 return result;
             }
-            return htmlify(result);
+            const tags =
+            [
+                {
+                    name: 'a',
+                    probability: 0.2,
+                    attributes:
+                    {
+                        href: 'JavaScript:;'
+                    }
+                },
+                {
+                    name: ['b', 'i'],
+                    probability: 0.2
+                }
+            ];
+            return htmlify(result, { tags: tags });
         };
     }
 }

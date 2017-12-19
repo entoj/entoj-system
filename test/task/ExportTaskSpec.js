@@ -82,7 +82,10 @@ describe(ExportTask.className, function()
             {
                 const testee = createTestee();
                 const entity = (yield global.fixtures.globalRepository.resolveEntities('base/modules/m-teaser')).pop();
-                const file = yield testee.renderEntity(entity);
+                const files = yield testee.renderEntity(entity);
+                const file = Array.isArray(files)
+                    ? files[0]
+                    : files;
                 expect(file).to.be.instanceof(VinylFile);
                 expect(file.contents.toString()).to.have.length.above(1);
             });

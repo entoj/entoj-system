@@ -177,7 +177,7 @@ class ExportCommand extends Command
             }
             const options = yield scope.addTaskOptions(
                 {
-                    writePath: yield pathesConfiguration.resolve((parameters && parameters.destination) || moduleConfiguration.exportPath),
+                    writePath: yield pathesConfiguration.resolve((parameters && parameters.destination) || moduleConfiguration.exportPath, moduleConfiguration.variables),
                     query: parameters && parameters._ && parameters._[0] || '*',
                     decorateVariables:
                     {

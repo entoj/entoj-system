@@ -117,7 +117,10 @@ class Route extends Base
             response.sendFile(filename);
             this.cliLogger.end(work);
         };
-        this.server.express.all(route, handler);
+        if (this.server)
+        {
+            this.server.express.all(route, handler);
+        }
     }
 
 

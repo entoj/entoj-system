@@ -243,9 +243,10 @@ class Renderer extends Base
      * Creates any additional files needed by node renderers.
      *
      * @param {export.Configuration} configuration
+     * @param {String} stage
      * @returns {Promise<Array>}
      */
-    createAdditionalFiles(configuration)
+    createAdditionalFiles(configuration, stage)
     {
         const scope = this;
         const promise = co(function *()
@@ -253,7 +254,7 @@ class Renderer extends Base
             const result = [];
             for (const nodeRenderer of scope.nodeRenderers)
             {
-                const files = yield nodeRenderer.createAdditionalFiles(configuration);
+                const files = yield nodeRenderer.createAdditionalFiles(configuration, stage);
                 result.push(...files);
             }
             return result;

@@ -4,6 +4,9 @@
  * Requirements
  */
 const SettingFilter = require(ES_SOURCE + '/nunjucks/filter/SettingFilter.js').SettingFilter;
+const SettingsRepository = require(ES_SOURCE + '/model/setting/SettingsRepository.js').SettingsRepository;
+const SettingsLoader = require(ES_SOURCE + '/model/setting/SettingsLoader.js').SettingsLoader;
+const projectFixture = require(ES_FIXTURES + '/project/index.js');
 const filterSpec = require(ES_TEST + '/nunjucks/filter/FilterShared.js').spec;
 
 
@@ -21,6 +24,13 @@ describe(SettingFilter.className, function()
     /**
      * SettingFilter Test
      */
+    beforeEach(function()
+    {
+        global.fixtures = projectFixture.createStatic();
+        global.fixtures.settingsRepository = new SettingsRepository(new SettingsLoader(global.fixtures.pathesConfiguration, ES_FIXTURES + '/model/SettingsModel.json'));
+    });
+
+
     describe('#filter()', function()
     {
         it('should return a empty object for a unknown setting', function()
@@ -32,8 +42,8 @@ describe(SettingFilter.className, function()
 
         it('should return a existing setting for an existing key', function()
         {
-            const testee = new SettingFilter({ foo: 'bar' }).filter();
-            expect(testee('foo')).to.be.equal('bar');
+            const testee = new SettingFilter(global.fixtures.settingsRepository).filter();
+            expect(testee('that.is.the.key')).to.be.equal('model');
         });
     });
 });

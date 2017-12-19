@@ -108,7 +108,7 @@ class File extends ValueObject
 
 
     /**
-     * The name of the file without any diretories
+     * The name of the file without any directories
      *
      * @type {String}
      */

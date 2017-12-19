@@ -9,6 +9,8 @@ const ViewModelRepository = require('../../model/viewmodel/ViewModelRepository.j
 const assertParameter = require('../../utils/assert.js').assertParameter;
 const synchronize = require('../../utils/synchronize.js');
 const isString = require('lodash.isstring');
+const deasync = require('deasync');
+const request = deasync(require('request'));
 
 
 /**
@@ -75,8 +77,33 @@ class LoadFilter extends Filter
             {
                 return value;
             }
-            const globals = (this && this.env && this.env.globals) ? this.env.globals : { location: {} };
-            const site = globals.location.site || false;
+
+            // See if it's a url
+            if (value.startsWith('http'))
+            {
+                const response = request(value, { strictSSL: false });
+                let data = {};
+                if (response.body)
+                {
+                    try
+                    {
+                        data = JSON.parse(response.body);
+                    }
+                    catch (e)
+                    {
+                        scope.logger.warn('Failed loading model from ' + value);
+                    }
+                }
+                return data;
+            }
+
+            // Load internal models
+            const globals = (this && this.env && this.env.globals)
+                ? this.env.globals
+                : { location: {} };
+            const site = globals.location
+                ? globals.location.site || false
+                : false;
             const staticMode = (globals.request) ? (typeof globals.request.query.static !== 'undefined') : false;
             const viewModel = synchronize.execute(scope.viewModelRepository, 'getByPath', [value, site, staticMode]);
             return viewModel.data;

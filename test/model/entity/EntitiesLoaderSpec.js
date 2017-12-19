@@ -6,8 +6,8 @@
 const EntitiesLoader = require(ES_SOURCE + '/model/entity/EntitiesLoader.js').EntitiesLoader;
 const Entity = require(ES_SOURCE + '/model/entity/Entity.js').Entity;
 const Site = require(ES_SOURCE + '/model/site/Site.js').Site;
-//const JinjaPlugin = require(ES_SOURCE + '/model/loader/documentation').JinjaPlugin;
 const loaderSpec = require('../LoaderShared.js');
+const MarkdownPlugin = require(ES_SOURCE + '/model/loader/documentation').MarkdownPlugin;
 const projectFixture = require(ES_FIXTURES + '/project/index.js');
 const co = require('co');
 
@@ -40,11 +40,12 @@ describe(EntitiesLoader.className, function()
             const promise = co(function *()
             {
                 const items = yield testee.load();
-                expect(items).to.have.length(9);
+                expect(items).to.have.length(10);
                 expect(items.find(item => item.id.name == 'cta')).to.be.instanceof(Entity);
                 expect(items.find(item => item.id.name == 'headline')).to.be.instanceof(Entity);
                 expect(items.find(item => item.id.name == 'image')).to.be.instanceof(Entity);
                 expect(items.find(item => item.id.category.longName == 'Global')).to.be.instanceof(Entity);
+                expect(items.find(item => item.id.name == 'imagetext')).to.be.instanceof(Entity);
             });
             return promise;
         });
@@ -99,22 +100,19 @@ describe(EntitiesLoader.className, function()
             return promise;
         });
 
-        xit('should load Files from base and extended versions ', function()
+        it('should load Files from base and extended versions ', function()
         {
-            /*
-            const plugin = new JinjaPlugin(global.fixtures.pathesConfiguration);
+            const plugin = new MarkdownPlugin(global.fixtures.pathesConfiguration);
             const testee = new EntitiesLoader(global.fixtures.sitesRepository, global.fixtures.categoriesRepository,
                 global.fixtures.entityIdParser, global.fixtures.pathesConfiguration, [plugin]);
             const promise = co(function *()
             {
                 const items = yield testee.load();
                 const entity = items.find(item => item.id.name == 'image');
-                console.log(entity, global.fixtures.entityImage);
-                expect(category.files.filter(file => file.site.name === 'Base')).has.length(7);
-                expect(category.files.filter(file => file.site.name === 'Extended')).has.length(1);
+                expect(entity.files.filter(file => file.site.name === 'Base')).has.length(1);
+                expect(entity.files.filter(file => file.site.name === 'Extended')).has.length(1);
             });
             return promise;
-            */
         });
     });
 });

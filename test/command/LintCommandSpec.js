@@ -53,7 +53,7 @@ describe(LintCommand.className, function()
                 sinon.spy(linter, 'lint');
                 const testee = createTestee([linter]);
                 yield testee.execute({ command: 'lint' });
-                expect(linter.lint.callCount).to.be.equal(18);
+                expect(linter.lint.callCount).to.be.equal(19);
             });
             return promise;
         });

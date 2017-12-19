@@ -472,7 +472,7 @@ function spec(type, className, prepareParameters)
             const promise = co(function *()
             {
                 yield global.fixtures.addItems(testee);
-                const item = yield testee.findBy({ 'name':  /two/i });
+                const item = yield testee.findBy({ 'name': /two/i });
                 expect(item).to.be.equal(global.fixtures.item2);
             });
             return promise;

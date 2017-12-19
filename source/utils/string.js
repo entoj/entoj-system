@@ -284,16 +284,16 @@ function htmlify(value, options)
                 }
             },
             {
-                name: ['sub', 'sup'],
+                name: ['b', 'i'],
                 probability: 0.2
             },
             {
                 name: 'h1',
-                probability: 0.3
+                probability: 0.1
             },
             {
                 name: ['h2', 'h3', 'h4', 'h5', 'em'],
-                probability: 0.4
+                probability: 0.2
             }
         ];
     }

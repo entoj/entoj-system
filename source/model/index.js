@@ -17,6 +17,7 @@ module.exports =
     entity: require('./entity/index.js'),
     file: require('./file/index.js'),
     loader: require('./loader/index.js'),
+    setting: require('./setting/index.js'),
     site: require('./site/index.js'),
     viewmodel: require('./viewmodel/index.js')
 };

@@ -95,6 +95,14 @@ class DecorateVariableNameTransformer extends NodeTransformer
                 {
                     node.fields = this.mapping[variableName].split('.');
                 }
+                if (configuration &&
+                    configuration.settings &&
+                    configuration.settings.mapping &&
+                    configuration.settings.mapping.variables &&
+                    configuration.settings.mapping.variables[variableName])
+                {
+                    node.fields = configuration.settings.mapping.variables[variableName].split('.');
+                }
 
                 // Add pre/suffix
                 node.fields[0] = this.prefix + node.fields[0] + this.suffix;

@@ -5,6 +5,8 @@
  * @ignore
  */
 const Filter = require('./Filter.js').Filter;
+const SettingsRepository = require('../../model/setting/SettingsRepository.js').SettingsRepository;
+const waitForPromise = require('../../utils/synchronize.js').waitForPromise;
 
 
 /**
@@ -15,13 +17,13 @@ class SettingFilter extends Filter
     /**
      * @inheritDoc
      */
-    constructor(settings)
+    constructor(settingsRepository)
     {
         super();
         this._name = 'settings';
 
         // Assign options
-        this._settings = settings || {};
+        this._settingsRepository = settingsRepository;
     }
 
 
@@ -30,7 +32,7 @@ class SettingFilter extends Filter
      */
     static get injections()
     {
-        return { 'parameters': ['nunjucks.filter/SettingFilter.settings'] };
+        return { 'parameters': [SettingsRepository] };
     }
 
 
@@ -44,16 +46,11 @@ class SettingFilter extends Filter
 
 
     /**
-     * @type {Object}
+     * @type {model.setting.SettingsRepository}
      */
-    get settings()
+    get settingsRepository()
     {
-        return this._settings;
-    }
-
-    set settings(value)
-    {
-        this._settings = value || {};
+        return this._settingsRepository;
     }
 
 
@@ -65,6 +62,13 @@ class SettingFilter extends Filter
         const scope = this;
         return function (value, context)
         {
+            // Check for repo
+            if (!scope.settingsRepository)
+            {
+                scope.logger.warn('Missing settingsRepository');
+                return {};
+            }
+
             // Use value or key for settings
             if (!value || typeof value !== 'string')
             {
@@ -73,13 +77,14 @@ class SettingFilter extends Filter
             }
 
             // Get Setting
-            if (!scope.settings[value])
+            const setting = waitForPromise(scope.settingsRepository.findBy({ name: value }));
+            if (!setting)
             {
                 scope.logger.warn('Missing settings for key', value);
                 return {};
             }
 
-            return scope.settings[value];
+            return setting.value;
         };
     }
 }

@@ -90,7 +90,24 @@ class ExportTask extends EntitiesTask
         const promise = co(function *()
         {
             const section = scope.cliLogger.section('Preparing export');
-            const result = yield scope.exporter.createAdditionalFiles();
+            const result = yield scope.exporter.createAdditionalFiles('prepare');
+            scope.cliLogger.end(section);
+            return result;
+        }).catch(ErrorHandler.handler(scope));
+        return promise;
+    }
+
+
+    /**
+     * @returns {Promise<Array>}
+     */
+    finalize(buildConfiguration, parameters)
+    {
+        const scope = this;
+        const promise = co(function *()
+        {
+            const section = scope.cliLogger.section('Finalizing export');
+            const result = yield scope.exporter.createAdditionalFiles('finalize');
             scope.cliLogger.end(section);
             return result;
         }).catch(ErrorHandler.handler(scope));
@@ -134,7 +151,7 @@ class ExportTask extends EntitiesTask
                     path: exported.configuration.filename,
                     contents: new Buffer(exported.contents)
                 });
-            return file;
+            return [file];
         }).catch(ErrorHandler.handler(scope));
         return promise;
     }
@@ -161,10 +178,13 @@ class ExportTask extends EntitiesTask
             for (const setting of settings)
             {
                 // Render entity
-                const file = yield scope.renderEntity(entity, setting, buildConfiguration, parameters);
-                if (file)
+                const files = yield scope.renderEntity(entity, setting, buildConfiguration, parameters);
+                if (files)
                 {
-                    result.push(file);
+                    const filesArray = Array.isArray(files)
+                        ? files
+                        : [files];
+                    result.push(...filesArray);
                 }
             }
             return result;
