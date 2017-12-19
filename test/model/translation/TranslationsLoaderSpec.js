@@ -3,7 +3,7 @@
 /**
  * Requirements
  */
-const TranslationsLoader = require(ES_SOURCE + '/model/Translation/TranslationsLoader.js').TranslationsLoader;
+const TranslationsLoader = require(ES_SOURCE + '/model/translation/TranslationsLoader.js').TranslationsLoader;
 const MissingArgumentError = require(ES_SOURCE + '/error/MissingArgumentError.js').MissingArgumentError;
 const loaderSpec = require('../LoaderShared.js').spec;
 const projectFixture = require(ES_FIXTURES + '/project/index.js');

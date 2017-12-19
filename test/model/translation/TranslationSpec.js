@@ -3,7 +3,7 @@
 /**
  * Requirements
  */
-const Translation = require(ES_SOURCE + '/model/Translation/Translation.js').Translation;
+const Translation = require(ES_SOURCE + '/model/translation/Translation.js').Translation;
 const valueObjectSpec = require('../ValueObjectShared.js').spec;
 const baseSpec = require(ES_TEST + '/BaseShared.js').spec;
 

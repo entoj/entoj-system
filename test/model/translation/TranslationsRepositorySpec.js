@@ -3,7 +3,7 @@
 /**
  * Requirements
  */
-const TranslationsRepository = require(ES_SOURCE + '/model/Translation/TranslationsRepository.js').TranslationsRepository;
+const TranslationsRepository = require(ES_SOURCE + '/model/translation/TranslationsRepository.js').TranslationsRepository;
 const repositorySpec = require(ES_TEST + '/model/RepositoryShared.js').spec;
 
 
