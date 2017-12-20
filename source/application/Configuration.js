@@ -168,8 +168,8 @@ class Configuration extends Base
     {
         // Some helpers
         const siteTemplate = this.options.siteTemplate || '${site.name.urlify()}';
-        const entityCategoryTemplate = siteTemplate + (this.options.entityCategoryTemplate || '/${entityCategory.pluralName.urlify()}');
-        const entityIdTemplate = entityCategoryTemplate + (this.options.entityIdTemplate || '/${entityCategory.shortName.urlify()}-${entityId.name.urlify()}');
+        const entityCategoryTemplate = siteTemplate + '/' + (this.options.entityCategoryTemplate || '${entityCategory.pluralName.urlify()}');
+        const entityIdTemplate = entityCategoryTemplate + '/' + (this.options.entityIdTemplate || '${entityCategory.shortName.urlify()}-${entityId.name.urlify()}');
 
         // Settings
         this.settings.formats =
@@ -209,35 +209,42 @@ class Configuration extends Base
             });
 
         // EntityCategories
+        const entityCategories = this.options.entityCategories ||
+            [
+                {
+                    longName: 'Global',
+                    pluralName: 'Global',
+                    isGlobal: true
+                },
+                {
+                    longName: 'Atom'
+                },
+                {
+                    longName: 'Molecule'
+                },
+                {
+                    longName: 'Organism'
+                },
+                {
+                    longName: 'Template'
+                },
+                {
+                    longName: 'Page'
+                }
+            ];
         this.mappings.add(require('../model/index.js').entity.EntityCategoriesLoader,
             {
-                categories:
-                [
-                    {
-                        longName: 'Global',
-                        pluralName: 'Global',
-                        isGlobal: true
-                    },
-                    {
-                        longName: 'Atom'
-                    },
-                    {
-                        longName: 'Molecule'
-                    },
-                    {
-                        longName: 'Organism'
-                    },
-                    {
-                        longName: 'Template'
-                    },
-                    {
-                        longName: 'Page'
-                    }
-                ]
+                categories: entityCategories
             });
 
         // Entities
-        this.mappings.add(require('../parser/index.js').entity.CompactIdParser);
+        this.mappings.add(require('../parser/index.js').entity.CompactIdParser,
+            {
+                options:
+                {
+                    useNumbers: this.options.entityIdUseNumbers || false
+                }
+            });
         this.mappings.add(require('../model/index.js').entity.EntitiesLoader,
             {
                 '!plugins':
@@ -257,6 +264,18 @@ class Configuration extends Base
                     require('../model/index.js').loader.documentation.JinjaPlugin,
                     require('../model/index.js').loader.documentation.ExamplePlugin,
                     require('../model/index.js').loader.documentation.StyleguidePlugin
+                ]
+            });
+
+        // ViewModel
+        this.mappings.add(require('../model/index.js').viewmodel.ViewModelRepository,
+            {
+                '!plugins':
+                [
+                    require('../model/index.js').viewmodel.plugin.ViewModelImagePlugin,
+                    require('../model/index.js').viewmodel.plugin.ViewModelImportPlugin,
+                    require('../model/index.js').viewmodel.plugin.ViewModelLipsumPlugin,
+                    require('../model/index.js').viewmodel.plugin.ViewModelLipsumHtmlPlugin
                 ]
             });
 
