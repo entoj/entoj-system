@@ -19,5 +19,6 @@ module.exports =
     loader: require('./loader/index.js'),
     setting: require('./setting/index.js'),
     site: require('./site/index.js'),
+    translation: require('./translation/index.js'),
     viewmodel: require('./viewmodel/index.js')
 };
