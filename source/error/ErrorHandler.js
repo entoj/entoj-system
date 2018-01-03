@@ -11,7 +11,7 @@ const intel = require('intel');
  */
 class ErrorHandler
 {
-    static error(instance, error)
+    static error(instance, error, message)
     {
         if (!error)
         {
@@ -21,10 +21,18 @@ class ErrorHandler
         {
             if (instance)
             {
+                if (message)
+                {
+                    instance.logger.error(message);
+                }
                 instance.logger.error(typeof error.stack != 'undefined' ? error.stack : error);
             }
             else
             {
+                if (message)
+                {
+                    intel.getLogger('entoj.ErrorHandler').error(message);
+                }
                 intel.getLogger('entoj.ErrorHandler').error(typeof error.stack != 'undefined' ? error.stack : error);
             }
         }
@@ -33,11 +41,11 @@ class ErrorHandler
 
 
     // Returns a bound error handler
-    static handler(instance)
+    static handler(instance, message)
     {
         return function(error)
         {
-            ErrorHandler.error(instance, error);
+            ErrorHandler.error(instance, error, message);
         };
     }
 }
