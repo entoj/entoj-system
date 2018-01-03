@@ -4,8 +4,6 @@
  * Requirements
  * @ignore
  */
-const path = require('path');
-const templateString = require('es6-template-strings');
 const Base = require('../../Base.js').Base;
 const EntityCategory = require('../entity/EntityCategory.js').EntityCategory;
 const EntityId = require('../entity/EntityId.js').EntityId;
@@ -15,6 +13,8 @@ const Site = require('../site/Site.js').Site;
 const assertParameter = require('../../utils/assert.js').assertParameter;
 const shortenMiddle = require('../../utils/string.js').shortenMiddle;
 const trimSlashesLeft = require('../../utils/string.js').trimSlashesLeft;
+const path = require('path');
+const templateString = require('es6-template-strings');
 
 
 /**
@@ -35,9 +35,9 @@ class PathesConfiguration extends Base
 
         const opts = options || {};
         this._root = path.resolve(opts.root || __dirname);
-        this._cache = this.renderTemplate(opts.cacheTemplate || '${root}/cache', {}, true);
         this._data = this.renderTemplate(opts.dataTemplate || '${root}/data', {}, true);
-        this._entoj = this.renderTemplate(opts.entojTemplate || '${root}/entoj', {}, true);
+        this._entoj = this.renderTemplate(opts.entojTemplate || '${root}', {}, true);
+        this._cache = this.renderTemplate(opts.cacheTemplate || '${root}/cache', {}, true);
         this._sites = this.renderTemplate(opts.sitesTemplate || '${root}/sites', {}, true);
         this._siteTemplate = opts.siteTemplate || '${sites}/${site.name.toLowerCase()}';
         this._entityCategoryTemplate = opts.entityCategoryTemplate || '${sites}/${site.name.toLowerCase()}/${entityCategory.pluralName.toLowerCase()}';
