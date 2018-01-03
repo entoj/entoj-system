@@ -5,12 +5,11 @@
  * @ignore
  */
 const NodeTransformer = require('./NodeTransformer.js').NodeTransformer;
-const DecorateVariableNameTransformer = require('./DecorateVariableNameTransformer.js').DecorateVariableNameTransformer;
 const co = require('co');
 
 
 /**
- * Maps macro parameters to specified variable names.
+ * Maps variables to specified variable names.
  * The mapping is configured via export.settings.[exporter].parameterMapping
  */
 class MapParametersTransformer extends NodeTransformer
@@ -25,37 +24,30 @@ class MapParametersTransformer extends NodeTransformer
 
 
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
     transformNode(node, configuration)
     {
         const scope = this;
         const promise = co(function*()
         {
-            if (configuration && node.is('MacroNode'))
+            if (configuration && node.is('VariableNode'))
             {
-                scope.logger.info('transformNode - mapping parameters for ' + node.name);
+                scope.logger.debug('transformNode - mapping variable ' + node.fields.join('.'));
 
                 // Get config
-                const macroConfiguration = yield configuration.getMacroConfiguration(node.name);
-                if (!macroConfiguration.parameterMapping)
-                {
-                    return node;
-                }
+                const macro = node.findParent('MacroNode');
+                const macroConfiguration = yield configuration.getMacroConfiguration(macro.name);
+                const variableName = node.fields.join('.');
 
-                // Change parameters
-                for (const param of node.parameters)
+                // Apply variable mapping
+                if (macroConfiguration &&
+                    macroConfiguration.parameters &&
+                    macroConfiguration.parameters[variableName] &&
+                    macroConfiguration.parameters[variableName].name)
                 {
-                    // See if variable needs to be mapped
-                    if (macroConfiguration.parameterMapping[param.name])
-                    {
-                        param.name = macroConfiguration.parameterMapping[param.name];
-                    }
+                    node.fields = macroConfiguration.parameters[variableName].name.split('.');
                 }
-
-                // Change uses
-                const variablesTransformer = new DecorateVariableNameTransformer({ mapping: macroConfiguration.parameterMapping });
-                node = yield variablesTransformer.transform(node, configuration);
             }
             return node;
         });
