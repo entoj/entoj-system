@@ -153,6 +153,7 @@ class FileParser extends Parser
             files: [],
             items: []
         };
+        let lastFilename = '';
         const promise = co(function*()
         {
             // Options
@@ -172,6 +173,7 @@ class FileParser extends Parser
             // Read & parse
             for (const filename of files)
             {
+                lastFilename = filename;
                 const file = new File({ filename: filename, contentType: fileType, contentKind: fileKind });
                 result.files.push(file);
                 if (file.contents)
@@ -185,7 +187,7 @@ class FileParser extends Parser
             }
 
             return result;
-        }).catch(ErrorHandler.handler(scope));
+        }).catch(ErrorHandler.handler(scope, 'Parsing file ' + lastFilename));
         return promise;
     }
 }
