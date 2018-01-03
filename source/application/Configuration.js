@@ -146,6 +146,8 @@ class Configuration extends Base
         this.commands.add = (type, sourceType, values) => add(this, 'commands', type, sourceType, values);
         this.pathes.add = (values) => Object.assign(this._pathes, values);
         this.urls.add = (values) => Object.assign(this._urls, values);
+        this.build.add = (values) => Object.assign(this._build, values);
+        this.build.environments.add = (values) => Object.assign(this._build.environments, values);
 
         // Setup
         this.setup();
@@ -162,7 +164,7 @@ class Configuration extends Base
 
 
     /**
-     * Adds a usable default configuration
+     * Creates a usable default configuration
      */
     setup()
     {
@@ -172,11 +174,14 @@ class Configuration extends Base
         const entityIdTemplate = entityCategoryTemplate + '/' + (this.options.entityIdTemplate || '${entityCategory.shortName.urlify()}-${entityId.name.urlify()}');
 
         // Settings
-        this.settings.formats =
-        {
-            date: 'DD.MM.YYYY',
-            number: '0.00'
-        };
+        this.settings.add(
+            {
+                formats:
+                {
+                    date: 'DD.MM.YYYY',
+                    number: '0.00'
+                }
+            });
 
         // Urls
         this.urls.add(
@@ -191,7 +196,8 @@ class Configuration extends Base
         this.pathes.add(
             {
                 root: this.options.root,
-                cacheTemplate: '${root}/entoj/cache',
+                entoj: '${root}',
+                cacheTemplate: '${entoj}/cache',
                 sitesTemplate: '${root}/sites',
                 siteTemplate: '${sites}/' + siteTemplate,
                 entityCategoryTemplate: '${sites}/' + entityCategoryTemplate,
