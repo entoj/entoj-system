@@ -2,7 +2,7 @@
   "name": "entoj-system",
   "version": "0.2.0",
   "engines": {
-    "node": "6.x"
+    "node": ">= 6.x"
   },
   "main": "source/index.js",
   "scripts": {
@@ -74,9 +74,7 @@
     "coveralls": "^2.13.3",
     "eslint": "^4.14.0",
     "git-changelog": "^1.1.2",
-    "ink-docstrap": "^1.3.0",
     "istanbul": "^0.4.5",
-    "jsdoc": "^3.4.3",
     "jspm": "^0.16.53",
     "mocha": "^3.5.3"
   }
