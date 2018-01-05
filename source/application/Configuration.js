@@ -98,7 +98,7 @@ function add(data, key, type, sourceType, values)
         config =
         {
             type: type,
-            sourceType: type
+            sourceType: sourceType
         };
         data[key].push(config);
     }
@@ -128,7 +128,11 @@ class Configuration extends Base
 
         // Initialize
         this._options = options || {};
-        this._local = this.localConfiguration || {},
+        this._options.pathes = this._options.pathes || {};
+        this._options.filters = this._options.filters || {};
+        this._options.models = this._options.models || {};
+        this._options.server = this._options.server || {};
+        this._local = localConfiguration || {},
         this._settings = {};
         this._urls = {};
         this._pathes = {};
@@ -182,6 +186,10 @@ class Configuration extends Base
                     number: '0.00'
                 }
             });
+        if (this.options.settings)
+        {
+            this.settings.add(this.options.settings);
+        }
 
         // Urls
         this.urls.add(
@@ -194,15 +202,16 @@ class Configuration extends Base
 
         // Pathes
         this.pathes.add(
-            {
-                root: this.options.root,
-                entoj: '${root}',
-                cacheTemplate: '${entoj}/cache',
-                sitesTemplate: '${root}/sites',
-                siteTemplate: '${sites}/' + siteTemplate,
-                entityCategoryTemplate: '${sites}/' + entityCategoryTemplate,
-                entityIdTemplate: '${sites}/' + entityIdTemplate
-            });
+            this.clean(
+                {
+                    root: this.options.pathes.root,
+                    entojTemplate: this.options.pathes.entoj || '${root}',
+                    cacheTemplate: '${entoj}/cache',
+                    sitesTemplate: '${root}/sites',
+                    siteTemplate: '${sites}/' + siteTemplate,
+                    entityCategoryTemplate: '${sites}/' + entityCategoryTemplate,
+                    entityIdTemplate: '${sites}/' + entityIdTemplate
+                }));
 
         // Sites
         this.mappings.add(require('../model/index.js').site.SitesLoader,
@@ -239,9 +248,10 @@ class Configuration extends Base
                 }
             ];
         this.mappings.add(require('../model/index.js').entity.EntityCategoriesLoader,
-            {
-                categories: entityCategories
-            });
+            this.clean(
+                {
+                    categories: entityCategories
+                }));
 
         // Entities
         this.mappings.add(require('../parser/index.js').entity.CompactIdParser,
@@ -286,22 +296,18 @@ class Configuration extends Base
             });
 
         // Translations
-        if (this.options.translationsFile)
-        {
-            this.mappings.add(require('../model/translation/TranslationsLoader.js').TranslationsLoader,
+        this.mappings.add(require('../model/translation/TranslationsLoader.js').TranslationsLoader,
+            this.clean(
                 {
-                    filename: this.options.translationsFile
-                });
-        }
+                    filename: this.options.models.translationsFile
+                }));
 
         // Settings
-        if (this.options.settingsFile)
-        {
-            this.mappings.add(require('../model/setting/SettingsLoader.js').SettingsLoader,
+        this.mappings.add(require('../model/setting/SettingsLoader.js').SettingsLoader,
+            this.clean(
                 {
-                    filename: this.options.settingsFile
-                });
-        }
+                    filename: this.options.models.settingsFile
+                }));
 
         // Nunjucks filter
         this.mappings.add(require('../nunjucks/index.js').Environment,
@@ -310,37 +316,71 @@ class Configuration extends Base
                 {
                     basePath: this.pathes.root + '/sites'
                 },
-                '!filters':
-                [
-                    {
-                        type: require('../nunjucks/index.js').filter.AssetUrlFilter,
-                        baseUrl: this.options.assetUrl || '/'
-                    },
-                    require('../nunjucks/index.js').filter.AttributesFilter,
-                    require('../nunjucks/index.js').filter.EmptyFilter,
-                    require('../nunjucks/index.js').filter.FormatDateFilter,
-                    require('../nunjucks/index.js').filter.FormatNumberFilter,
-                    require('../nunjucks/index.js').filter.HyphenateFilter,
-                    require('../nunjucks/index.js').filter.LinkUrlFilter,
-                    require('../nunjucks/index.js').filter.LoadFilter,
-                    require('../nunjucks/index.js').filter.MarkdownFilter,
-                    require('../nunjucks/index.js').filter.MarkupFilter,
-                    require('../nunjucks/index.js').filter.MediaQueryFilter,
-                    require('../nunjucks/index.js').filter.ModuleClassesFilter,
-                    require('../nunjucks/index.js').filter.NotEmptyFilter,
-                    require('../nunjucks/index.js').filter.SetFilter,
-                    require('../nunjucks/index.js').filter.SettingFilter,
-                    {
-                        type: require('../nunjucks/index.js').filter.SvgUrlFilter,
-                        baseUrl: this.options.svgUrl || '/'
-                    },
-                    {
-                        type: require('../nunjucks/index.js').filter.SvgViewBoxFilter,
-                        basePath: this.options.svgUrl || '/'
-                    },
-                    require('../nunjucks/index.js').filter.TranslateFilter,
-                    require('../nunjucks/index.js').filter.UniqueFilter
-                ]
+                '!filters': this.clean(
+                    [
+                        {
+                            type: require('../nunjucks/index.js').filter.AssetUrlFilter,
+                            baseUrl: this.options.filters.assetUrl
+                        },
+                        {
+                            type: require('../nunjucks/index.js').filter.AttributesFilter
+                        },
+                        {
+                            type: require('../nunjucks/index.js').filter.EmptyFilter
+                        },
+                        {
+                            type: require('../nunjucks/index.js').filter.FormatDateFilter
+                        },
+                        {
+                            type: require('../nunjucks/index.js').filter.FormatNumberFilter
+                        },
+                        {
+                            type: require('../nunjucks/index.js').filter.HyphenateFilter
+                        },
+                        {
+                            type: require('../nunjucks/index.js').filter.LinkUrlFilter,
+                            dataProperties: this.options.filters.linkProperties
+                        },
+                        {
+                            type: require('../nunjucks/index.js').filter.LoadFilter
+                        },
+                        {
+                            type: require('../nunjucks/index.js').filter.MarkdownFilter
+                        },
+                        {
+                            type: require('../nunjucks/index.js').filter.MarkupFilter,
+                            styles: this.options.filters.markupStyles
+                        },
+                        {
+                            type: require('../nunjucks/index.js').filter.MediaQueryFilter
+                        },
+                        {
+                            type: require('../nunjucks/index.js').filter.ModuleClassesFilter
+                        },
+                        {
+                            type: require('../nunjucks/index.js').filter.NotEmptyFilter
+                        },
+                        {
+                            type: require('../nunjucks/index.js').filter.SetFilter
+                        },
+                        {
+                            type: require('../nunjucks/index.js').filter.SettingFilter
+                        },
+                        {
+                            type: require('../nunjucks/index.js').filter.SvgUrlFilter,
+                            baseUrl: this.options.filters.svgUrl || '/'
+                        },
+                        {
+                            type: require('../nunjucks/index.js').filter.SvgViewBoxFilter,
+                            basePath: this.options.filters.svgPath || '/'
+                        },
+                        {
+                            type: require('../nunjucks/index.js').filter.TranslateFilter
+                        },
+                        {
+                            type: require('../nunjucks/index.js').filter.UniqueFilter
+                        }
+                    ])
             }
         );
 
@@ -349,12 +389,12 @@ class Configuration extends Base
             {
                 options:
                 {
-                    port: this.local.port || 3000,
-                    http2: this.local.http2 || false,
-                    sslKey: this.local.sslKey || false,
-                    sslCert: this.local.sslCert || false,
+                    port: this.options.server.port || this.local.port || 3000,
+                    http2: this.options.server.http2 || this.local.http2 || false,
+                    sslKey: this.options.server.sslKey || this.local.sslKey || false,
+                    sslCert: this.options.server.sslCert || this.local.sslCert || false,
                     authentication: this.local.authentication || false,
-                    credentials: this.local.credentials || { username: 'entoj', password: 'entoj' },
+                    credentials: this.options.server.credentials || this.local.credentials || { username: 'entoj', password: 'entoj' },
                     routes:
                     [
                         {
@@ -451,13 +491,43 @@ class Configuration extends Base
 
 
     /**
+     * Cleans configuration from undefined values
+     *
+     * @param {*} data
+     */
+    clean(data)
+    {
+        if (typeof data === 'object')
+        {
+            for (const key in data)
+            {
+                if (typeof data[key] === 'undefined')
+                {
+                    this.logger.debug('removing config ' + key);
+                    delete data[key];
+                }
+            }
+        }
+        if (Array.isArray(data))
+        {
+            for (const item of data)
+            {
+                this.clean(item);
+            }
+        }
+        return data;
+    }
+
+
+    /**
      * Registers a plugin configuration
      *
      * @param {Object} module
+     * @param {Object} options
      */
-    register(module)
+    register(module, options)
     {
-        module.register(this);
+        module.register(this, options);
     }
 }
 
