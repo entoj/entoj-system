@@ -3,9 +3,11 @@
 /**
  * Requirements
  */
+const assertClass = require(ES_SOURCE + '/utils/assert.js').assertClass;
 const assertParameter = require(ES_SOURCE + '/utils/assert.js').assertParameter;
 const MissingArgumentError = require(ES_SOURCE + '/error/MissingArgumentError.js').MissingArgumentError;
 const Base = require(ES_SOURCE + '/Base.js').Base;
+const Linter = require(ES_SOURCE + '/linter/Linter.js').Linter;
 
 
 /**
@@ -13,6 +15,33 @@ const Base = require(ES_SOURCE + '/Base.js').Base;
  */
 describe('utils/assert', function()
 {
+    describe('#assertClass', function()
+    {
+        it('should return false when type or className missing', function()
+        {
+            expect(assertClass()).to.be.not.ok;
+            expect(assertClass(Base)).to.be.not.ok;
+            expect(assertClass(undefined, 'Base')).to.be.not.ok;
+        });
+
+        it('should return true when type directly matches className', function()
+        {
+            expect(assertClass(Base, 'Base')).to.be.ok;
+            expect(assertClass(Base, 'Foo')).to.be.not.ok;
+            expect(assertClass(new Base(), 'Base')).to.be.ok;
+            expect(assertClass(new Base(), 'Foo')).to.be.not.ok;
+        });
+
+        it('should return true when type inherits from className', function()
+        {
+            expect(assertClass(Linter, 'Base')).to.be.ok;
+            expect(assertClass(Linter, 'Foo')).to.be.not.ok;
+            expect(assertClass(new Linter(), 'Base')).to.be.ok;
+            expect(assertClass(new Linter(), 'Foo')).to.be.not.ok;
+        });
+    });
+
+
     describe('#assertParameter', function()
     {
         it('should throw if instance is missing', function()

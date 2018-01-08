@@ -45,6 +45,29 @@ class DIContainer extends Base
     /**
      * @protected
      * @param {string|Class} type
+     * @returns {mixed}
+     */
+    getKeyForType(type)
+    {
+        if (!type)
+        {
+            throw new TypeError('Tried to map falsy type');
+        }
+        if (typeof type === 'string')
+        {
+            return type;
+        }
+        if (typeof type['className'] !== 'undefined')
+        {
+            return type.className;
+        }
+        return type;
+    }
+
+
+    /**
+     * @protected
+     * @param {string|Class} type
      * @param {*} the value used for type when creating objects
      * @param {bool} isSingleton
      * @returns {void}
@@ -103,11 +126,14 @@ class DIContainer extends Base
             return undefined;
         }
 
+        // Get key
+        const typeKey = this.getKeyForType(type);
+
         // Get own mapping
         let ownMapping;
-        if (this.mappings.has(type))
+        if (this.mappings.has(typeKey))
         {
-            ownMapping = this.mappings.get(type);
+            ownMapping = this.mappings.get(typeKey);
             if (ownMapping.isSingleton && ownMapping.value)
             {
                 //console.log('Using singleton for', type);
@@ -219,8 +245,9 @@ class DIContainer extends Base
      */
     map(type, value, isSingleton)
     {
+        const typeKey = this.getKeyForType(type);
         const mapping = this.prepareMapping(type, value, isSingleton);
-        this.mappings.set(type, mapping);
+        this.mappings.set(typeKey, mapping);
     }
 }
 

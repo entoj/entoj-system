@@ -11,6 +11,41 @@ const MissingArgumentError = require('../error/MissingArgumentError.js').Missing
  * Checks a parameter for required and type
  *
  * @memberof utils
+ * @param {Class|Array<Class>} type - type to check
+ * @param {String} className - the expected class (or parent class)
+ * @returns {Bool}
+ */
+function assertClass(type, className)
+{
+    if (!type ||
+        typeof type.className === 'undefined' ||
+        !className)
+    {
+        return false;
+    }
+    if (type.className === className)
+    {
+        return true;
+    }
+    if (type.prototype &&
+        Object.getPrototypeOf(type.prototype))
+    {
+        return assertClass(Object.getPrototypeOf(type.prototype), className);
+    }
+    if (type.constructor &&
+        type.constructor.prototype &&
+        Object.getPrototypeOf(type.constructor.prototype))
+    {
+        return assertClass(Object.getPrototypeOf(type.constructor.prototype), className);
+    }
+    return false;
+}
+
+
+/**
+ * Checks a parameter for required and type
+ *
+ * @memberof utils
  * @param {String} name - The name of the parameter
  * @param {Mixed} value - The value of the parameter
  * @param {Boolean} required - Is the parameter required?
@@ -33,7 +68,7 @@ function assertParameter(instance, name, value, required, type)
         let ok = false;
         for (const t of types)
         {
-            if (value instanceof t)
+            if (assertClass(value, t.className))
             {
                 ok = true;
             }
@@ -46,4 +81,9 @@ function assertParameter(instance, name, value, required, type)
     }
 }
 
+
+/**
+ * API
+ */
+module.exports.assertClass = assertClass;
 module.exports.assertParameter = assertParameter;
