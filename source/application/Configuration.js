@@ -342,6 +342,9 @@ class Configuration extends Base
                             dataProperties: this.options.filters.linkProperties
                         },
                         {
+                            type: require('../nunjucks/index.js').filter.LipsumFilter
+                        },
+                        {
                             type: require('../nunjucks/index.js').filter.LoadFilter
                         },
                         {
