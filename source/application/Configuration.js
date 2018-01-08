@@ -94,7 +94,7 @@ function add(data, key, type, sourceType, values)
         ? data[key].find((i) =>
         {
             return (i && ((i.type === type) ||
-                            (i.type instanceof Base && type instanceof Base && i.type.className === type.className)));
+                            (i.type.className && type.className && i.type.className === type.className)));
         })
         : data[key];
     if (!config)
