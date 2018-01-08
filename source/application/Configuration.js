@@ -527,7 +527,14 @@ class Configuration extends Base
      */
     register(module, options)
     {
-        module.register(this, options);
+        if (module && typeof module.register === 'function')
+        {
+            module.register(this, options);
+        }
+        else
+        {
+            this.logger.warn('Error registering module', module);
+        }
     }
 }
 
