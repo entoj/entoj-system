@@ -5,6 +5,7 @@
  * @ignore
  */
 const Task = require('./Task.js').Task;
+const CliLogger = require('../cli/CliLogger.js').CliLogger;
 const Stream = require('stream');
 
 
@@ -14,6 +15,15 @@ const Stream = require('stream');
  */
 class TransformingTask extends Task
 {
+    /**
+     * @inheritDocs
+     */
+    static get injections()
+    {
+        return { 'parameters': [CliLogger] };
+    }
+
+
     /**
      * @inheritDocs
      */
@@ -31,6 +41,36 @@ class TransformingTask extends Task
     get sectionName()
     {
         return 'TransformingTask';
+    }
+
+
+    /**
+     * @inheritDoc
+     * @returns {void}
+     */
+    prepare(buildConfiguration, parameters)
+    {
+    }
+
+
+    /**
+     * @inheritDoc
+     * @returns {void}
+     */
+    finalize(buildConfiguration, parameters)
+    {
+    }
+
+
+    /**
+     * Allows to make last minute additions to the underlying stream.
+     *
+     * @param {Stream} strem
+     * @returns {Promise}
+     */
+    flush(stream)
+    {
+        return Promise.resolve();
     }
 
 
@@ -58,8 +98,8 @@ class TransformingTask extends Task
         {
             return super.stream(stream, buildConfiguration, parameters);
         }
-
         const section = this.cliLogger.section(this.sectionName);
+        this.prepare(buildConfiguration, parameters);
 
         // Render stream
         const resultStream = new Stream.Transform({ objectMode: true });
@@ -82,10 +122,15 @@ class TransformingTask extends Task
                     callback();
                 });
         };
+        resultStream._flush = (callback) =>
+        {
+            this.flush(resultStream).then(callback);
+        };
 
         // Wait for stream
         resultStream.on('finish', () =>
         {
+            this.finalize(buildConfiguration, parameters);
             this.cliLogger.end(section);
         });
 

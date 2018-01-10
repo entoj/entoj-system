@@ -5,6 +5,7 @@
  */
 const taskSpec = require(ES_TEST + '/task/TaskShared.js').spec;
 const pathes = require(ES_SOURCE + '/utils/pathes.js');
+const glob = require(ES_SOURCE + '/utils/glob.js');
 const sinon = require('sinon');
 const co = require('co');
 
@@ -21,6 +22,7 @@ function spec(type, className, prepareParameters, options)
     taskSpec(type, className, prepareParameters, options);
     spec.readStream = taskSpec.readStream;
     spec.filesStream = taskSpec.filesStream;
+    const opts = options || {};
 
 
     /**
@@ -45,8 +47,12 @@ function spec(type, className, prepareParameters, options)
             {
                 const testee = createTestee();
                 sinon.spy(testee, 'processFile');
-                yield taskSpec.feedFiles(testee, pathes.concat(ES_FIXTURES, '/files/**/*.js'));
-                expect(testee.processFile.calledTwice).to.be.ok;
+                const testFilesGlob = opts.testFilesGlob
+                    ? opts.testFilesGlob
+                    : pathes.concat(ES_FIXTURES, '/files/**/*.js');
+                const testFiles = yield glob(testFilesGlob);
+                yield taskSpec.feedFiles(testee, testFilesGlob);
+                expect(testee.processFile.callCount).to.be.equal(testFiles.length);
             });
             return promise;
         });

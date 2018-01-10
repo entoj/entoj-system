@@ -9,3 +9,6 @@ indent_style = space
 indent_size = 4
 trim_trailing_whitespace = true
 curly_bracket_next_line = true
+
+[*.svg]
+insert_final_newline = false

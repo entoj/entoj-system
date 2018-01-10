@@ -34,7 +34,7 @@ class EntitiesTask extends Task
 
 
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
     static get injections()
     {
@@ -43,7 +43,7 @@ class EntitiesTask extends Task
 
 
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
     static get className()
     {
@@ -86,7 +86,7 @@ class EntitiesTask extends Task
 
 
     /**
-     * @inheritDocs
+     * @inheritDoc
      * @returns {Promise<Array>}
      */
     prepare(buildConfiguration, parameters)
@@ -96,7 +96,7 @@ class EntitiesTask extends Task
 
 
     /**
-     * @inheritDocs
+     * @inheritDoc
      * @returns {Promise<Array>}
      */
     finalize(buildConfiguration, parameters)
@@ -115,7 +115,7 @@ class EntitiesTask extends Task
 
 
     /**
-     * @inheritDocs
+     * @inheritDoc
      * @returns {Promise<Array>}
      */
     processEntities(buildConfiguration, parameters)
