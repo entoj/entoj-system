@@ -149,6 +149,43 @@ class EntitiesRepository extends Repository
 
 
     /**
+     * @param {Entity}
+     * @param {Site}
+     * @returns {Promise.<Array>}
+     */
+    filterEntities(site, entityCategory, item)
+    {
+        if (!item)
+        {
+            return false;
+        }
+        if (site && (item.id.site !== site) && (item.usedBy.indexOf(site) == -1))
+        {
+            return false;
+        }
+        if (site && (item.id.site !== site) && Array.isArray(site.extendExcludes))
+        {
+            for (const exclude of site.extendExcludes)
+            {
+                if (item.id.category.longName.toLowerCase() === exclude.toLowerCase())
+                {
+                    return false;
+                }
+                if (item.id.category.pluralName.toLowerCase() === exclude.toLowerCase())
+                {
+                    return false;
+                }
+            }
+        }
+        if (entityCategory && (item.id.category !== entityCategory))
+        {
+            return false;
+        }
+        return true;
+    }
+
+
+    /**
      * @param {Site}
      * @returns {Promise.<Array>}
      */
@@ -163,7 +200,7 @@ class EntitiesRepository extends Repository
         {
             const entities = yield scope.getItems();
             const result = entities
-                .filter(item => (item.id.site === site || item.usedBy.indexOf(site) > -1))
+                .filter(scope.filterEntities.bind(scope, site, false))
                 .map(item => createEntityAspect(item, site));
             return result;
         });
@@ -181,10 +218,10 @@ class EntitiesRepository extends Repository
         assertParameter(this, 'entityCategory', entityCategory, true, EntityCategory);
 
         // Find
+        const scope = this;
         const promise = this.getItems().then(function(data)
         {
-            const result = data.filter(item => item.id.category === entityCategory);
-            return result;
+            return data.filter(scope.filterEntities.bind(scope, false, entityCategory));
         });
         return promise;
     }
@@ -202,10 +239,11 @@ class EntitiesRepository extends Repository
         assertParameter(this, 'entityCategory', entityCategory, true, EntityCategory);
 
         // Find
+        const scope = this;
         const promise = this.getItems().then(function(data)
         {
             const result = data
-                .filter(item => ((item.id.site === site) || item.usedBy.indexOf(site) != -1) && (item.id.category === entityCategory))
+                .filter(scope.filterEntities.bind(scope, site, entityCategory))
                 .map(item => createEntityAspect(item, site));
             return result;
         });

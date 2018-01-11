@@ -104,9 +104,10 @@ class SitesLoader extends PluggableLoader
             // Add extends
             for (const item of items)
             {
-                if (item.properties.get('extends'))
+                if (item.properties.getByPath('extends.site'))
                 {
-                    item.extends = find(item.properties.get('extends'));
+                    item.extends = find(item.properties.getByPath('extends.site'));
+                    item.extendExcludes = item.properties.getByPath('extends.exclude', []);
                 }
             }
 

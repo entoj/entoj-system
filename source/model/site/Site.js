@@ -43,6 +43,7 @@ class Site extends DocumentableValueObject
         fields.name = '';
         fields.description = '';
         fields.extends = false;
+        fields.extendExcludes = [];
         return fields;
     }
 
@@ -56,6 +57,7 @@ class Site extends DocumentableValueObject
         this._name = '';
         this._description = '';
         this._extends = false;
+        this._extendExcludes = [];
     }
 
 
@@ -106,7 +108,7 @@ class Site extends DocumentableValueObject
 
 
     /**
-     * @let {site}
+     * @let {model.site.Site}
      */
     get extends()
     {
@@ -116,6 +118,20 @@ class Site extends DocumentableValueObject
     set extends(value)
     {
         this._extends = value;
+    }
+
+
+    /**
+     * @let {Array}
+     */
+    get extendExcludes()
+    {
+        return this._extendExcludes;
+    }
+
+    set extendExcludes(value)
+    {
+        this._extendExcludes = value;
     }
 
 
