@@ -408,7 +408,8 @@ class Configuration extends Base
                             type: require('../server/index.js').route.StaticFileRoute,
                             options:
                             {
-                                basePath: '${sites}'
+                                basePath: '${sites}',
+                                allowedExtensions: this.options.server.staticExtensions
                             }
                         },
                         {
