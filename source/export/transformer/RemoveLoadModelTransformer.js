@@ -26,10 +26,9 @@ class RemoveLoadModelTransformer extends NodeTransformer
      */
     transformNode(node, transformer, options)
     {
-        // remove any set's to model references
+        // remove any set's that use the load filter
         if (node.is('SetNode') &&
-            node.variable.fields.length == 1 &&
-            node.variable.fields[0] == 'model')
+            node.value.find('FilterNode', { name: 'load' }))
         {
             return Promise.resolve(false);
         }

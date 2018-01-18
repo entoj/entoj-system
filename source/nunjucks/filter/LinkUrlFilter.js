@@ -25,7 +25,7 @@ class LinkUrlFilter extends Filter
         this._name = ['linkUrl', 'link'];
 
         // Assign options
-        this.dataProperties = dataProperties || [];
+        this.dataProperties = dataProperties || ['url'];
     }
 
 

@@ -253,6 +253,27 @@ class Node extends Base
 
 
     /**
+     * Finds the first nodes with a specific type or property
+     *
+     * @param {String|Array} [type] - Node type
+     * @param {Object} [properties] - Node properties
+     * @return {export.ast.Node}
+     */
+    findParent(type, properties)
+    {
+        if (this.is(type, properties))
+        {
+            return this;
+        }
+        if (!this.parent)
+        {
+            return false;
+        }
+        return this.parent.findParent(type, properties);
+    }
+
+
+    /**
      * Filters nodes with a specific type or property
      *
      * @param {String|Array} [type] - Node type

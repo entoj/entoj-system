@@ -21,7 +21,7 @@ class AssetUrlFilter extends Filter
     constructor(baseUrl)
     {
         super();
-        this._name = 'assetUrl';
+        this._name = ['assetUrl', 'asset'];
 
         // Assign options
         this.baseUrl = baseUrl || '/';

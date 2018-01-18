@@ -12,14 +12,14 @@ const co = require('co');
  * Maps variables to specified variable names.
  * The mapping is configured via export.settings.[exporter].parameterMapping
  */
-class MapParametersTransformer extends NodeTransformer
+class MapVariablesTransformer extends NodeTransformer
 {
     /**
      * @inheritDoc
      */
     static get className()
     {
-        return 'export.transformer/MapParametersTransformer';
+        return 'export.transformer/MapVariablesTransformer';
     }
 
 
@@ -33,7 +33,7 @@ class MapParametersTransformer extends NodeTransformer
         {
             if (configuration && node.is('VariableNode'))
             {
-                scope.logger.debug('transformNode - mapping parameter ' + node.fields.join('.'));
+                scope.logger.debug('transformNode - mapping variable ' + node.fields.join('.'));
 
                 // Get config
                 const macro = node.findParent('MacroNode');
@@ -42,11 +42,10 @@ class MapParametersTransformer extends NodeTransformer
 
                 // Apply parameter mapping
                 if (macroConfiguration &&
-                    macroConfiguration.parameters &&
-                    macroConfiguration.parameters[variableName] &&
-                    macroConfiguration.parameters[variableName].name)
+                    macroConfiguration.variables &&
+                    macroConfiguration.variables[variableName])
                 {
-                    node.fields = macroConfiguration.parameters[variableName].name.split('.');
+                    node.fields = macroConfiguration.variables[variableName].split('.');
                 }
             }
             return node;
@@ -55,4 +54,4 @@ class MapParametersTransformer extends NodeTransformer
     }
 }
 
-module.exports.MapParametersTransformer = MapParametersTransformer;
+module.exports.MapVariablesTransformer = MapVariablesTransformer;

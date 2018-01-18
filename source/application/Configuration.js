@@ -330,6 +330,9 @@ class Configuration extends Base
                             type: require('../nunjucks/index.js').filter.AttributesFilter
                         },
                         {
+                            type: require('../nunjucks/index.js').filter.DebugFilter
+                        },
+                        {
                             type: require('../nunjucks/index.js').filter.EmptyFilter
                         },
                         {

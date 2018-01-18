@@ -18,7 +18,7 @@ class GetFilter extends Filter
     constructor()
     {
         super();
-        this._name = ['get'];
+        this._name = ['get', 'getProperty'];
     }
 
 
