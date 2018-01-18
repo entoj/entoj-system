@@ -6,32 +6,6 @@
             "value": "\n"
         },
         {
-            "type": "SetNode",
-            "value": {
-                "type": "ExpressionNode",
-                "children": [
-                    {
-                        "type": "FilterNode",
-                        "children": [],
-                        "name": "load",
-                        "arguments": [],
-                        "value": {
-                            "type": "VariableNode",
-                            "fields": [
-                                "model"
-                            ]
-                        }
-                    }
-                ]
-            },
-            "variable": {
-                "type": "VariableNode",
-                "fields": [
-                    "mdl"
-                ]
-            }
-        },
-        {
             "type": "TextNode",
             "value": "\n"
         }
