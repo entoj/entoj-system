@@ -49,7 +49,10 @@ function spec(type, className, prepareParameters, options)
     // Runs a simple testfixture
     function testFixture(name, nodeRenderer)
     {
-        const renderer = new Renderer([nodeRenderer, new AnyNodeRenderer()]);
+        const RendererClass = options && options.rendererClass
+            ? options.rendererClass
+            : Renderer;
+        const renderer = new RendererClass([nodeRenderer, new AnyNodeRenderer()]);
         return exportHelper.testRendererFixture(name, renderer);
     }
     spec.testFixture = testFixture;
