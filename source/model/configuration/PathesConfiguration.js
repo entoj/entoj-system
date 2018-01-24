@@ -41,8 +41,7 @@ class PathesConfiguration extends Base
         this._sites = this.renderTemplate(opts.sitesTemplate || '${root}/sites', {}, true);
         this._siteTemplate = opts.siteTemplate || '${sites}/${site.name.toLowerCase()}';
         this._entityCategoryTemplate = opts.entityCategoryTemplate || '${sites}/${site.name.toLowerCase()}/${entityCategory.pluralName.toLowerCase()}';
-        this._entityIdTemplate = opts.entityIdTemplate || '${sites}/${site.name.toLowerCase()}/${entityCategory.pluralName.toLowerCase()}/${entityCategory.shortName.toLowerCase()}-${entityId.name.toLowerCase()}';
-        this._entityIdGlobalTemplate = opts.entityIdGlobalTemplate || '${sites}/${site.name.toLowerCase()}/${entityCategory.pluralName.toLowerCase()}';
+        this._entityTemplate = opts.entityIdTemplate || opts.entityTemplate || '${sites}/${site.name.toLowerCase()}/${entityCategory.pluralName.toLowerCase()}/${entityCategory.shortName.toLowerCase()}-${entityId.name.toLowerCase()}';
     }
 
 
@@ -97,7 +96,9 @@ class PathesConfiguration extends Base
 
 
     /**
-     * Renders a path template
+     * Renders a path template.
+     *
+     * Provides access to most pathes and templates fro the template
      *
      * @private
      * @param {string} template
@@ -113,9 +114,14 @@ class PathesConfiguration extends Base
                 cache: this.cache,
                 data: this.data,
                 entoj: this.entoj,
-                sites: this.sites
+                sites: this.sites,
+                siteTemplate: this._siteTemplate,
+                entityCategoryTemplate: this._entityCategoryTemplate,
+                entityTemplate: this._entityTemplate
             }, variables);
-        const result = path.resolve(templateString(template, data));
+        const passOne = templateString(template, data);
+        const passTwo = templateString(passOne, data);
+        const result = path.resolve(passTwo);
         if (directReturn === true)
         {
             return result;
@@ -354,10 +360,10 @@ class PathesConfiguration extends Base
         assertParameter(this, 'entityId', entityId, true, EntityId);
         assertParameter(this, 'site', site, true, Site);
 
-        let template = this._entityIdTemplate;
+        let template = this._entityTemplate;
         if (entityId.isGlobal)
         {
-            template = this._entityIdGlobalTemplate;
+            template = this._entityCategoryTemplate;
         }
 
         // Resolve path

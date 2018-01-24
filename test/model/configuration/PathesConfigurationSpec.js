@@ -174,7 +174,7 @@ describe(PathesConfiguration.className, function()
         {
             const promise = co(function*()
             {
-                const testee = new PathesConfiguration({ root: '/', entityIdGlobalTemplate: '${sites}/${site.name}/${entityCategory.shortName}' });
+                const testee = new PathesConfiguration({ root: '/', entityCategoryTemplate: '${sites}/${site.name}/${entityCategory.shortName}' });
                 const result = yield testee.resolveEntityId(global.fixtures.entityGlobal.id);
                 expect(result).to.be.equal(testee.root + 'sites' + path.sep + 'Base' + path.sep + 'l');
             });
@@ -226,7 +226,7 @@ describe(PathesConfiguration.className, function()
         {
             const promise = co(function*()
             {
-                const testee = new PathesConfiguration({ root: '/', entityIdGlobalTemplate: '${sites}/${site.name}/${entityCategory.shortName}' });
+                const testee = new PathesConfiguration({ root: '/', entityCategoryTemplate: '${sites}/${site.name}/${entityCategory.shortName}' });
                 const result = yield testee.resolveEntity(global.fixtures.entityGlobal);
                 expect(result).to.be.equal(testee.root + 'sites' + path.sep + 'Base' + path.sep + 'l');
             });
@@ -285,7 +285,6 @@ describe(PathesConfiguration.className, function()
             return promise;
         });
 
-
         it('should return a path based on the given site', function()
         {
             const promise = co(function*()
@@ -326,6 +325,28 @@ describe(PathesConfiguration.className, function()
                 const testee = new PathesConfiguration({ root: '/' });
                 const result = yield testee.resolve('${cache}/css');
                 expect(result).to.be.equal(testee.root + 'cache' + path.sep + 'css');
+            });
+            return promise;
+        });
+
+        it('should return a path based on the given template and variables', function()
+        {
+            const promise = co(function*()
+            {
+                const testee = new PathesConfiguration({ root: '/' });
+                const result = yield testee.resolve('${cache}/css/${foo}', { foo: 'bar' });
+                expect(result).to.be.equal(testee.root + 'cache' + path.sep + 'css' + path.sep + 'bar');
+            });
+            return promise;
+        });
+
+        it('should return a path based on the given template that uses a template', function()
+        {
+            const promise = co(function*()
+            {
+                const testee = new PathesConfiguration({ root: '/' });
+                const result = yield testee.resolve('${siteTemplate}/css', { site: global.fixtures.siteBase });
+                expect(result).to.be.equal(testee.root + 'sites' + path.sep + 'base' + path.sep + 'css');
             });
             return promise;
         });
