@@ -5,10 +5,7 @@ export FORCE_COLOR=true
 
 # Prepare pathes
 SELF=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-ROOT="$SELF/../.."
-CLI="$SELF/source/cli.js"
 PROFILE="false"
-INSPECT="false"
 
 # Prepare options
 for arg do
