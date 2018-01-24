@@ -51,6 +51,10 @@ module.exports =
         loader:
         {
             LoaderPluginShared: require('./model/loader/LoaderPluginShared.js').spec
+        },
+        test:
+        {
+            TestShared: require('./model/test/TestShared.js').spec
         }
     },
     nunjucks:

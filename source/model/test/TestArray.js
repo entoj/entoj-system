@@ -4,7 +4,7 @@
  * Requirements
  * @ignore
  */
-const BaseArray = require('../../base/BaseArray.js').BaseArray;
+const SearchableArray = require('../../base/SearchableArray.js').SearchableArray;
 
 
 /**
@@ -12,7 +12,7 @@ const BaseArray = require('../../base/BaseArray.js').BaseArray;
  * @memberOf model.test
  * @extends {Base}
  */
-class TestArray extends BaseArray
+class TestArray extends SearchableArray
 {
     /**
      * The namespaced class name
