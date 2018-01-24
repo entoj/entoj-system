@@ -37,7 +37,7 @@ class ExportTask extends EntitiesTask
 
 
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
     static get injections()
     {
@@ -46,7 +46,7 @@ class ExportTask extends EntitiesTask
 
 
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
     static get className()
     {
@@ -55,7 +55,7 @@ class ExportTask extends EntitiesTask
 
 
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
     get sectionName()
     {
