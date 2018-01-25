@@ -4,3 +4,4 @@
 .DS_Store
 /npm-debug.log
 /task.md
+/test/__fixtures__/temp
