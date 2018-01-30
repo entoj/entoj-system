@@ -125,17 +125,22 @@ class Communication extends Base
         }
         const promise = new Promise((resolve) =>
         {
+            this.cliLogger.info('Connecting to server <' + this.id + '>');
             ipc.connectTo(this.id, () =>
             {
+                const erroHandler = () =>
+                {
+                    this.cliLogger.info('Error connecting to server <' + this.id + '>');
+                    this._connection = false;
+                    resolve(this._connection);
+                };
                 this._connection = ipc.of[this.id];
+                this._connection.once('destroy', erroHandler);
                 this._connection.on('connect', () =>
                 {
-                    this.cliLogger.info('Connected to server');
+                    this.cliLogger.info('Connected to server <' + this.id + '>');
+                    this._connection.off('destroy', erroHandler);
                     resolve(this._connection);
-                });
-                this._connection.on('disconnect', () =>
-                {
-                    this._connection = false;
                 });
                 this._connection.on('message', (data, socket) =>
                 {
@@ -162,14 +167,19 @@ class Communication extends Base
             if (ipc.server)
             {
                 ipc.server.broadcast('message', { command: command, data: data || false });
+                return true;
             }
             else
             {
                 const connection = yield scope.connect();
-                connection.emit('message', { command: command, data: data || false });
+                if (connection)
+                {
+                    connection.emit('message', { command: command, data: data || false });
+                    return true;
+                }
             }
-            return true;
-        });
+            return false;
+        }).catch((e) => console.log(e));
         return promise;
     }
 
@@ -181,14 +191,14 @@ class Communication extends Base
      */
     waitFor(command, timeout)
     {
-        const promise = new Promise((resolve, reject) =>
+        const promise = new Promise((resolve) =>
         {
             const timer = setTimeout(()  =>
             {
                 clearTimeout(timer);
                 this.events.removeListener(command, handler);
-                reject();
-            }, timeout || 1000);
+                resolve(false);
+            }, timeout || 500);
             const handler = (data) =>
             {
                 clearTimeout(timer);
