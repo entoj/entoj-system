@@ -115,7 +115,7 @@ class ValueObject extends Base
                 catch(e)
                 {
                     /* istanbul ignore next */
-                    this.warn('FAIL: Creating field', name, this.className, e);
+                    this.logger.warn('FAIL: Creating field', name, this.className, e);
                 }
             }
 
@@ -140,7 +140,7 @@ class ValueObject extends Base
                     catch(e)
                     {
                         /* istanbul ignore next */
-                        this.warn('FAIL: Importing default for', name, this.className, e);
+                        this.logger.warn('FAIL: Importing default for', name, this.className, e);
                     }
                 }
             }
