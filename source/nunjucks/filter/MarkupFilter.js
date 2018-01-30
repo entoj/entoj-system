@@ -5,6 +5,7 @@
  * @ignore
  */
 const Filter = require('./Filter.js').Filter;
+const createRandomNumberGenerator = require('../../utils/random.js').createRandomNumberGenerator;
 const striptags = require('striptags');
 const htmlify = require('../../utils/string.js').htmlify;
 
@@ -71,6 +72,10 @@ class MarkupFilter extends Filter
             {
                 return result;
             }
+            const globals = (this && this.env && this.env.globals)
+                ? this.env.globals
+                : { location: {} };
+            const staticMode = (globals.request) ? (typeof globals.request.query.static !== 'undefined') : false;
             const tags =
             [
                 {
@@ -86,7 +91,7 @@ class MarkupFilter extends Filter
                     probability: 0.2
                 }
             ];
-            return htmlify(result, { tags: tags });
+            return htmlify(result, { tags: tags, random: createRandomNumberGenerator(staticMode) });
         };
     }
 }
