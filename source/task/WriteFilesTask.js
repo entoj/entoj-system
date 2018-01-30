@@ -16,7 +16,7 @@ const synchronize = require('../utils/synchronize.js');
 class WriteFilesTask extends Task
 {
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
     static get className()
     {
@@ -25,7 +25,7 @@ class WriteFilesTask extends Task
 
 
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
     prepareParameters(buildConfiguration, parameters)
     {
