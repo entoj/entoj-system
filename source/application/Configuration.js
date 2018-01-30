@@ -292,7 +292,6 @@ class Configuration extends Base
             {
                 '!plugins':
                 [
-                    require('../model/index.js').viewmodel.plugin.ViewModelImagePlugin,
                     require('../model/index.js').viewmodel.plugin.ViewModelImportPlugin,
                     require('../model/index.js').viewmodel.plugin.ViewModelLipsumPlugin,
                     require('../model/index.js').viewmodel.plugin.ViewModelLipsumHtmlPlugin
