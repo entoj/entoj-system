@@ -55,6 +55,7 @@ class Server extends Base
         this._routes = [];
         this._sslKey = opts.sslKey || (__dirname + '/localhost.key');
         this._sslCert = opts.sslCert || (__dirname + '/localhost.crt');
+        this._baseUrl = 'http' + (this._http2 ? 's' : '') + '://localhost:' + this._port;
         this.options = opts;
         this.options.authentication = opts.authentication || false;
         this.options.credentials = opts.credentials || { username: 'entoj', password: 'entoj' };
@@ -126,6 +127,15 @@ class Server extends Base
     get http2()
     {
         return this._http2;
+    }
+
+
+    /**
+     * @let {String}
+     */
+    get baseUrl()
+    {
+        return this._baseUrl;
     }
 
 

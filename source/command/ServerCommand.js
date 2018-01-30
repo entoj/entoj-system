@@ -7,6 +7,7 @@
 const Command = require('./Command.js').Command;
 const Server = require('../server/Server.js').Server;
 const Context = require('../application/Context.js').Context;
+const Communication = require('../application/Communication.js').Communication;
 const CliLogger = require('../cli/CliLogger.js').CliLogger;
 const ModelSynchronizer = require('../watch/ModelSynchronizer.js').ModelSynchronizer;
 const ErrorHandler = require('../error/ErrorHandler.js').ErrorHandler;
@@ -101,6 +102,18 @@ class ServerCommand extends Command
             if (!scope.server)
             {
                 const logger = scope.createLogger('command.server');
+
+                // Start ipc communication
+                logger.info('Starting IPC server');
+                const com = scope.context.di.create(Communication);
+                com.events.on('find-server', () =>
+                {
+                    if (scope.server && scope.server.baseUrl)
+                    {
+                        com.send('found-server', scope.server.baseUrl);
+                    }
+                });
+                com.serve();
 
                 // prepare routes
                 const configure = logger.section('Configuring routes');
