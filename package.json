@@ -55,6 +55,7 @@
     "minimatch": "^3.0.4",
     "minimist": "^1.2.0",
     "moment": "^2.20.1",
+    "node-ipc": "^9.1.1",
     "numeral": "^2.0.6",
     "nunjucks": "^3.0.1",
     "request": "^2.83.0",
