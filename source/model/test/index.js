@@ -3,6 +3,6 @@
  */
 module.exports =
 {
-    Test: require('./Test.js').Test,
-    TestArray: require('./TestArray.js').TestArray
+    TestSuite: require('./TestSuite.js').TestSuite,
+    TestSuiteArray: require('./TestSuiteArray.js').TestSuiteArray
 };

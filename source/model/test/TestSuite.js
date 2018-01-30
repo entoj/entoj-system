@@ -5,22 +5,23 @@
  * @ignore
  */
 const ValueObject = require('../ValueObject.js').ValueObject;
+const SearchableArray = require('../../base/SearchableArray.js').SearchableArray;
 
 
 /**
- * Describes a Test
+ * Describes a Test suite
  *
  * @memberOf model.test
  * @extends Base
  */
-class Test extends ValueObject
+class TestSuite extends ValueObject
 {
     /**
      * @inheritDocs
      */
     static get className()
     {
-        return 'model.test/Test';
+        return 'model.test/TestSuite';
     }
 
 
@@ -31,10 +32,11 @@ class Test extends ValueObject
     {
         const fields = super.fields;
         fields.name = '';
+        fields.site = false;
+        fields.isValid = false;
         fields.ok = 0;
         fields.failed = 0;
-        fields.tests = [];
-        fields.site = false;
+        fields.tests = SearchableArray;
         return fields;
     }
 
@@ -50,6 +52,20 @@ class Test extends ValueObject
     set name(value)
     {
         this._name = value;
+    }
+
+
+    /**
+     * @property {Boolean}
+     */
+    get isValid()
+    {
+        return this._isValid;
+    }
+
+    set isValid(value)
+    {
+        this._isValid = value;
     }
 
 
@@ -114,4 +130,4 @@ class Test extends ValueObject
  * Exports
  * @ignore
  */
-module.exports.Test = Test;
+module.exports.TestSuite = TestSuite;

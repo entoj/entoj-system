@@ -23,7 +23,7 @@ class EntityInheriter extends Base
 
     /**
      * Inherit data from entity to entityAspect honoring
-     * inheritance from left to right.
+     * inheritance from extended sites.
      *
      * @param  {Array<Site>} sites
      * @param  {model.entity.Entity} entity

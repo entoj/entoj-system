@@ -8,7 +8,7 @@ const baseSpec = require('../../BaseShared.js').spec;
 
 
 /**
- * Shared Test spec
+ * Shared TestSuite spec
  */
 function spec(type, className, prepareParameters)
 {
@@ -33,6 +33,7 @@ function spec(type, className, prepareParameters)
 
     // Simple properties
     baseSpec.assertProperty(createTestee(), ['name'], 'Name', '');
+    baseSpec.assertProperty(createTestee(), ['isValid'], true, false);
     baseSpec.assertProperty(createTestee(), ['ok'], 10, 0);
     baseSpec.assertProperty(createTestee(), ['failed'], 1, 0);
     baseSpec.assertProperty(createTestee(), ['tests'], ['test'], []);

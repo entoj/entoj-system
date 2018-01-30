@@ -3,25 +3,25 @@
 /**
  * Requirements
  */
-const TestArray = require(ES_SOURCE + '/model/test/TestArray.js').TestArray;
-const Test = require(ES_SOURCE + '/model/test/Test.js').Test;
+const TestSuiteArray = require(ES_SOURCE + '/model/test/TestSuiteArray.js').TestSuiteArray;
+const TestSuite = require(ES_SOURCE + '/model/test/TestSuite.js').TestSuite;
 const baseSpec = require(ES_TEST + '/BaseShared.js').spec;
 
 
 /**
  * Spec
  */
-describe(TestArray.className, function()
+describe(TestSuiteArray.className, function()
 {
     /**
      * Base Test
      */
-    baseSpec(TestArray, 'model.test/TestArray');
+    baseSpec(TestSuiteArray, 'model.test/TestSuiteArray');
 
     /**
-     * Linter Test
+     * TestSuiteArray Test
      */
-    class ExampleTest extends Test
+    class ExampleTest extends TestSuite
     {
         /**
          * @inheritDocs
@@ -36,8 +36,8 @@ describe(TestArray.className, function()
     {
         it('should return all tests of given type', function()
         {
-            const testee = new TestArray();
-            testee.push(new Test({ name: 'Test1' }));
+            const testee = new TestSuiteArray();
+            testee.push(new TestSuite({ name: 'Test1' }));
             testee.push(new ExampleTest({ name: 'Test2' }));
             const tests = testee.getByType(ExampleTest);
             expect(tests).to.have.length(1);
@@ -46,8 +46,8 @@ describe(TestArray.className, function()
 
         it('should return all tests of given type name', function()
         {
-            const testee = new TestArray();
-            testee.push(new Test({ name: 'Test1' }));
+            const testee = new TestSuiteArray();
+            testee.push(new TestSuite({ name: 'Test1' }));
             testee.push(new ExampleTest({ name: 'Test2' }));
             const tests = testee.getByType('ExampleTest');
             expect(tests).to.have.length(1);
@@ -56,7 +56,7 @@ describe(TestArray.className, function()
 
         it('should return a empty array when no tests were found', function()
         {
-            const testee = new TestArray();
+            const testee = new TestSuiteArray();
             const tests = testee.getByType('ExampleTest');
             expect(tests).to.have.length(0);
         });
@@ -67,8 +67,8 @@ describe(TestArray.className, function()
     {
         it('should return the first example of given type', function()
         {
-            const testee = new TestArray();
-            testee.push(new Test({ name: 'Test1' }));
+            const testee = new TestSuiteArray();
+            testee.push(new TestSuite({ name: 'Test1' }));
             testee.push(new ExampleTest({ name: 'Test2' }));
             const test = testee.getFirstByType(ExampleTest);
             expect(test).to.be.ok;
@@ -77,8 +77,8 @@ describe(TestArray.className, function()
 
         it('should return the first example of given type name', function()
         {
-            const testee = new TestArray();
-            testee.push(new Test({ name: 'Test1' }));
+            const testee = new TestSuiteArray();
+            testee.push(new TestSuite({ name: 'Test1' }));
             testee.push(new ExampleTest({ name: 'Test2' }));
             const test = testee.getFirstByType('ExampleTest');
             expect(test).to.be.ok;
@@ -87,7 +87,7 @@ describe(TestArray.className, function()
 
         it('should return undefined when no example was found', function()
         {
-            const testee = new TestArray();
+            const testee = new TestSuiteArray();
             const test = testee.getFirstByType('ExampleTest');
             expect(test).to.be.not.ok;
         });
@@ -98,8 +98,8 @@ describe(TestArray.className, function()
     {
         it('should return the first example of given name', function()
         {
-            const testee = new TestArray();
-            testee.push(new Test({ name: 'Test1' }));
+            const testee = new TestSuiteArray();
+            testee.push(new TestSuite({ name: 'Test1' }));
             testee.push(new ExampleTest({ name: 'Test2' }));
             const test = testee.getByName('Test2');
             expect(test).to.be.ok;
@@ -108,7 +108,7 @@ describe(TestArray.className, function()
 
         it('should return undefined when no example was found', function()
         {
-            const testee = new TestArray();
+            const testee = new TestSuiteArray();
             const test = testee.getByName('ExampleTest');
             expect(test).to.be.not.ok;
         });

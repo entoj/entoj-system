@@ -25,9 +25,9 @@ class EntityPropertiesInheriter extends EntityInheriter
 
 
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
-    inherit(sites, entity, entityAspect)
+    inheritProperties(sites, entity)
     {
         const properties = new BaseMap();
         for (const site of sites)
@@ -35,7 +35,16 @@ class EntityPropertiesInheriter extends EntityInheriter
             const siteProperties = entity.properties.getByPath(site.name.toLowerCase(), {});
             properties.merge(siteProperties);
         }
-        entityAspect.properties.load(properties);
+        return properties;
+    }
+
+
+    /**
+     * @inheritDoc
+     */
+    inherit(sites, entity, entityAspect)
+    {
+        entityAspect.properties.load(this.inheritProperties(sites, entity));
     }
 }
 

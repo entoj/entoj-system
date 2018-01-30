@@ -10,6 +10,7 @@ const EntityPropertiesInheriter = require('./inheriter/EntityPropertiesInheriter
 const EntityFilesInheriter = require('./inheriter/EntityFilesInheriter.js').EntityFilesInheriter;
 const EntityExamplesInheriter = require('./inheriter/EntityExamplesInheriter.js').EntityExamplesInheriter;
 const EntityMacrosInheriter = require('./inheriter/EntityMacrosInheriter.js').EntityMacrosInheriter;
+const EntityTestSuitesInheriter = require('./inheriter/EntityTestSuitesInheriter.js').EntityTestSuitesInheriter;
 const EntityTextInheriter = require('./inheriter/EntityTextInheriter.js').EntityTextInheriter;
 const assertParameter = require('../../utils/assert.js').assertParameter;
 
@@ -54,6 +55,7 @@ class EntityAspect extends Entity
         new EntityTextInheriter().inherit(sites, entity, this);
         new EntityExamplesInheriter().inherit(sites, entity, this);
         new EntityMacrosInheriter().inherit(sites, entity, this);
+        new EntityTestSuitesInheriter().inherit(sites, entity, this);
 
         // Inheriters
         const inheriterList = inheriters || [];

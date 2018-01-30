@@ -9,7 +9,7 @@ const valueObjectSpec = require('./ValueObjectShared.js').spec;
 const DocumentationArray = require(ES_SOURCE + '/model/documentation/DocumentationArray.js').DocumentationArray;
 const BaseArray = require(ES_SOURCE + '/base/BaseArray.js').BaseArray;
 const BaseMap = require(ES_SOURCE + '/base/BaseMap.js').BaseMap;
-const TestArray = require(ES_SOURCE + '/model/test/TestArray.js').TestArray;
+const TestSuiteArray = require(ES_SOURCE + '/model/test/TestSuiteArray.js').TestSuiteArray;
 
 
 /**
@@ -40,7 +40,7 @@ function spec(type, className, prepareParameters)
     baseSpec.assertProperty(createTestee(), ['properties'], undefined, BaseMap);
     baseSpec.assertProperty(createTestee(), ['documentation'], undefined, DocumentationArray);
     baseSpec.assertProperty(createTestee(), ['files'], undefined, BaseArray);
-    baseSpec.assertProperty(createTestee(), ['tests'], undefined, TestArray);
+    baseSpec.assertProperty(createTestee(), ['testSuites'], undefined, TestSuiteArray);
 
     describe('#dehydrate', function()
     {
@@ -60,7 +60,7 @@ function spec(type, className, prepareParameters)
                 [
                     'bar'
                 ],
-                tests:
+                testSuites:
                 [
                     'boom'
                 ]
@@ -71,7 +71,7 @@ function spec(type, className, prepareParameters)
             expect(testee.properties.getByPath('foo')).to.be.equal('bar');
             expect(testee.documentation).to.include('foo');
             expect(testee.files).to.include('bar');
-            expect(testee.tests).to.include('boom');
+            expect(testee.testSuites).to.include('boom');
         });
 
         it('should allow to update properties, documentation and files with another ValueObject', function()
@@ -80,14 +80,14 @@ function spec(type, className, prepareParameters)
             data.properties.set('foo', 'bar');
             data.documentation.push('foo');
             data.files.push('bar');
-            data.tests.push('boom');
+            data.testSuites.push('boom');
             const testee = createTestee();
 
             testee.dehydrate(data);
             expect(testee.properties.getByPath('foo')).to.be.equal('bar');
             expect(testee.documentation).to.include('foo');
             expect(testee.files).to.include('bar');
-            expect(testee.tests).to.include('boom');
+            expect(testee.testSuites).to.include('boom');
         });
     });
 }

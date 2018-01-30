@@ -12,7 +12,7 @@ const SearchableArray = require('../../base/SearchableArray.js').SearchableArray
  * @memberOf model.test
  * @extends {Base}
  */
-class TestArray extends SearchableArray
+class TestSuiteArray extends SearchableArray
 {
     /**
      * The namespaced class name
@@ -22,7 +22,7 @@ class TestArray extends SearchableArray
      */
     static get className()
     {
-        return 'model.test/TestArray';
+        return 'model.test/TestSuiteArray';
     }
 
 
@@ -72,4 +72,4 @@ class TestArray extends SearchableArray
  * Exports
  * @ignore
  */
-module.exports.TestArray = TestArray;
+module.exports.TestSuiteArray = TestSuiteArray;

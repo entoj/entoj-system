@@ -54,7 +54,11 @@ module.exports =
         },
         test:
         {
-            TestShared: require('./model/test/TestShared.js').spec
+            TestSuiteShared: require('./model/test/TestSuiteShared.js').spec
+        },
+        viewmodel:
+        {
+            ViewModelPluginShared: require('./model/viewmodel/ViewModelPluginShared.js').spec
         }
     },
     nunjucks:
