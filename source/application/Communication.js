@@ -179,7 +179,7 @@ class Communication extends Base
                 }
             }
             return false;
-        }).catch((e) => console.log(e));
+        });
         return promise;
     }
 

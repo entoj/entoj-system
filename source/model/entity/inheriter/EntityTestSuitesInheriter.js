@@ -5,11 +5,10 @@
  * @ignore
  */
 const EntityInheriter = require('../EntityInheriter.js').EntityInheriter;
-const ContentKind = require('../../ContentKind.js').ContentKind;
 
 
 /**
- * Inherits examples
+ * Inherits test suites
  *
  * @namespace model.entity.inheriter
  */
