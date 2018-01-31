@@ -36,7 +36,6 @@ describe(EntityTemplateRoute.className, function()
         global.fixtures = projectFixture.createDynamic();
         global.fixtures.cliLogger = new CliLogger('', { muted: true });
         global.fixtures.viewModelRepository.plugins.push(new Plugins.ViewModelLipsumPlugin());
-        global.fixtures.viewModelRepository.plugins.push(new Plugins.ViewModelImagePlugin());
         global.fixtures.viewModelRepository.plugins.push(new Plugins.ViewModelImportPlugin());
         global.fixtures.nunjucks = new Environment(global.fixtures.entitiesRepository,
             global.fixtures.pathesConfiguration,
