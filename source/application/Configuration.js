@@ -317,7 +317,7 @@ class Configuration extends Base
             {
                 options:
                 {
-                    basePath: this.pathes.root + '/sites'
+                    templatePaths: this.pathes.root + '/sites'
                 },
                 '!filters': this.clean(
                     [
