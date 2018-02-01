@@ -100,6 +100,30 @@ class Context extends Base
 
 
     /**
+     * Examines the configuration and returns true if it does'nt contain the instanciation ! operator.
+     *
+     * @protected
+     * @param {Object|Function} configuration - The mapping configuration or a target type
+     */
+    isSimpleMapping(configuration)
+    {
+        if (!configuration ||
+            typeof configuration === 'function')
+        {
+            return true;
+        }
+        for (const name in configuration)
+        {
+            if (name.startsWith('!'))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
+    /**
      * Maps type to use the given type configuration.
      *
      * @protected
@@ -311,17 +335,38 @@ class Context extends Base
             this.mapType(EntitiesLoader, true, this._configuration.entities.loader, { plugins: this.createInstances.bind(this) });
         }
 
-        // Global mappings
-        this.logger.debug('Adding mappings');
+        // Global simple mappings
+        this.logger.debug('Adding simple mappings');
         if (this._configuration.mappings && this._configuration.mappings.length)
         {
             for (const mapping of this._configuration.mappings)
             {
-                const type = (typeof mapping === 'function') ? mapping : mapping.type;
-                const sourceType = mapping.sourceType || type;
-                if (sourceType)
+                if (this.isSimpleMapping(mapping))
                 {
-                    this.mapType(sourceType, undefined, mapping);
+                    const type = (typeof mapping === 'function') ? mapping : mapping.type;
+                    const sourceType = mapping.sourceType || type;
+                    if (sourceType)
+                    {
+                        this.mapType(sourceType, undefined, mapping);
+                    }
+                }
+            }
+        }
+
+        // Global mappings
+        this.logger.debug('Adding complex mappings');
+        if (this._configuration.mappings && this._configuration.mappings.length)
+        {
+            for (const mapping of this._configuration.mappings)
+            {
+                if (!this.isSimpleMapping(mapping))
+                {
+                    const type = (typeof mapping === 'function') ? mapping : mapping.type;
+                    const sourceType = mapping.sourceType || type;
+                    if (sourceType)
+                    {
+                        this.mapType(sourceType, undefined, mapping);
+                    }
                 }
             }
         }
