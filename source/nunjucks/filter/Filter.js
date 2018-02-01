@@ -70,6 +70,32 @@ class Filter extends Base
 
 
     /**
+     * Returns true when the filter should return static (read : no random) content.
+     * This is used for tests or html exports.
+     *
+     * @param {Request} request
+     * @returns {Boolean}
+     */
+    useStaticContent(request)
+    {
+        let result = false;
+        if (request &&
+            request.query &&
+            typeof request.query.static !== 'undefined')
+        {
+            result = true;
+        }
+        if (this.environment &&
+            this.environment.buildConfiguration &&
+            this.environment.buildConfiguration.get('template.useStaticContent', false) === true)
+        {
+            result = true;
+        }
+        return result;
+    }
+
+
+    /**
      * Registers the filter with a nunjucks environent.
      *
      * @param {nunjucks.Environment} environment

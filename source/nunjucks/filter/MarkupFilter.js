@@ -75,7 +75,7 @@ class MarkupFilter extends Filter
             const globals = (this && this.env && this.env.globals)
                 ? this.env.globals
                 : { location: {} };
-            const staticMode = (globals.request) ? (typeof globals.request.query.static !== 'undefined') : false;
+            const useStaticContent = scope.useStaticContent(globals.request);
             const tags =
             [
                 {
@@ -91,7 +91,7 @@ class MarkupFilter extends Filter
                     probability: 0.2
                 }
             ];
-            return htmlify(result, { tags: tags, random: createRandomNumberGenerator(staticMode) });
+            return htmlify(result, { tags: tags, random: createRandomNumberGenerator(useStaticContent) });
         };
     }
 }
