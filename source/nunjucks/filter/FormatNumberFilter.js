@@ -87,6 +87,20 @@ class FormatNumberFilter extends Filter
 
 
     /**
+     * @type {String}
+     */
+    get format()
+    {
+        if (this.environment &&
+            this.environment.buildConfiguration)
+        {
+            return this.environment.buildConfiguration.get('filters.formatNumber');
+        }
+        return false;
+    }
+
+
+    /**
      * @inheritDocs
      */
     filter()
@@ -94,7 +108,7 @@ class FormatNumberFilter extends Filter
         const scope = this;
         return function(value, format)
         {
-            return numeral(value).format(format || scope.globalConfiguration.get('formats.number'));
+            return numeral(value).format(format || scope.format || scope.globalConfiguration.get('formats.number'));
         };
     }
 }

@@ -38,7 +38,7 @@ describe(AttributesFilter.className, function()
             expect(testee({ 'id': 1, href:'#1' })).to.be.equal('id="1" href="#1" ');
         });
 
-        it('should allow to prefic all attributes', function()
+        it('should allow to prefix all attributes', function()
         {
             const testee = new AttributesFilter().filter();
             expect(testee({ 'id': 1, href:'#1' }, 'data')).to.be.equal('data-id="1" data-href="#1" ');

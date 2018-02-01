@@ -24,7 +24,7 @@ class AssetUrlFilter extends Filter
         this._name = ['assetUrl', 'asset'];
 
         // Assign options
-        this.baseUrl = baseUrl || '/';
+        this._baseUrl = baseUrl || '/';
     }
 
 
@@ -43,6 +43,20 @@ class AssetUrlFilter extends Filter
     static get className()
     {
         return 'nunjucks.filter/AssetUrlFilter';
+    }
+
+
+    /**
+     * @type {String}
+     */
+    get baseUrl()
+    {
+        if (this.environment &&
+            this.environment.buildConfiguration)
+        {
+            return this.environment.buildConfiguration.get('filters.assetUrl', this._baseUrl);
+        }
+        return this._baseUrl;
     }
 
 

@@ -60,6 +60,20 @@ class FormatDateFilter extends Filter
 
 
     /**
+     * @type {String}
+     */
+    get format()
+    {
+        if (this.environment &&
+            this.environment.buildConfiguration)
+        {
+            return this.environment.buildConfiguration.get('filters.formatDate');
+        }
+        return false;
+    }
+
+
+    /**
      * @inheritDocs
      */
     filter()
@@ -67,7 +81,7 @@ class FormatDateFilter extends Filter
         const scope = this;
         return function(value, format)
         {
-            return moment(value).format(format || scope.globalConfiguration.get('formats.date'));
+            return moment(value).format(format || scope.format || scope.globalConfiguration.get('formats.date'));
         };
     }
 }

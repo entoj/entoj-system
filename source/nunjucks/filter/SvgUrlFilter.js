@@ -51,6 +51,11 @@ class SvgUrlFilter extends Filter
      */
     get baseUrl()
     {
+        if (this.environment &&
+            this.environment.buildConfiguration)
+        {
+            return this.environment.buildConfiguration.get('filters.svgUrl', this._baseUrl);
+        }
         return this._baseUrl;
     }
 

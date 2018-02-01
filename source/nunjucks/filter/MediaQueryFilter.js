@@ -61,7 +61,6 @@ class MediaQueryFilter extends Filter
         return function (value)
         {
             const mediaQuery = scope._mediaQueries[value] || '';
-            scope.logger.info('breakpoint=' + value + ', mediaQuery=' + mediaQuery);
             return mediaQuery;
         };
     }

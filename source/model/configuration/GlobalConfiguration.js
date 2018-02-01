@@ -63,7 +63,8 @@ class GlobalConfiguration extends Base
             },
             formats:
             {
-                date: 'YYYY-MM-DD'
+                date: 'YYYY-MM-DD',
+                number: '0.000'
             },
             breakpoints:
             {

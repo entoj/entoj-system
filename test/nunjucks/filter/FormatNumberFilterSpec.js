@@ -3,7 +3,7 @@
 /**
  * Requirements
  */
-const FormatDateFilter = require(ES_SOURCE + '/nunjucks/filter/FormatDateFilter.js').FormatDateFilter;
+const FormatNumberFilter = require(ES_SOURCE + '/nunjucks/filter/FormatNumberFilter.js').FormatNumberFilter;
 const filterSpec = require(ES_TEST + '/nunjucks/filter/FilterShared.js').spec;
 const projectFixture = require(ES_FIXTURES + '/project/index.js');
 const Environment = require(ES_SOURCE + '/nunjucks/Environment.js').Environment;
@@ -13,19 +13,19 @@ const moment = require('moment');
 /**
  * Spec
  */
-describe(FormatDateFilter.className, function()
+describe(FormatNumberFilter.className, function()
 {
     /**
      * Filter Test
      */
-    filterSpec(FormatDateFilter, 'nunjucks.filter/FormatDateFilter', function(parameters)
+    filterSpec(FormatNumberFilter, 'nunjucks.filter/FormatNumberFilter', function(parameters)
     {
         return [global.fixtures.globalConfiguration];
     });
 
 
     /**
-     * FormatDateFilter Test
+     * FormatNumberFilter Test
      */
     beforeEach(function()
     {
@@ -34,25 +34,19 @@ describe(FormatDateFilter.className, function()
 
     describe('#filter()', function()
     {
-        it('should return the current date in the form YYYY-MM-DD when no date given', function()
+        it('should return the given number in the form 0.000 when no format given', function()
         {
-            const testee = new FormatDateFilter(global.fixtures.globalConfiguration).filter();
-            expect(testee()).to.be.equal(moment().format('YYYY-MM-DD'));
-        });
-
-        it('should return the given date in the form YYYY-MM-DD when no format given', function()
-        {
-            const testee = new FormatDateFilter(global.fixtures.globalConfiguration).filter();
-            expect(testee('1995-12-25')).to.be.equal(moment('1995-12-25').format('YYYY-MM-DD'));
+            const testee = new FormatNumberFilter(global.fixtures.globalConfiguration).filter();
+            expect(testee(42.123456789)).to.be.equal('42.123');
         });
 
         it('should allow to specify the format', function()
         {
-            const testee = new FormatDateFilter(global.fixtures.globalConfiguration).filter();
-            expect(testee('2013-02-08 09:30:26', 'DD-MM-YY')).to.be.equal(moment('2013-02-08 09:30:26').format('DD-MM-YY'));
+            const testee = new FormatNumberFilter(global.fixtures.globalConfiguration).filter();
+            expect(testee(42.123456789, '0.0')).to.be.equal('42.1');
         });
 
-        it('should allow to override the format via buildConfiguration filters.formatDate', function()
+        it('should allow to override the format via buildConfiguration filters.formatNumber', function()
         {
             const options =
             {
@@ -65,7 +59,7 @@ describe(FormatDateFilter.className, function()
                         {
                             filters:
                             {
-                                formatDate: 'DD-MM-YY'
+                                formatNumber: '0.0'
                             }
                         }
                     }
@@ -73,10 +67,10 @@ describe(FormatDateFilter.className, function()
             };
             const fixture = projectFixture.createStatic(options);
             const environment = new Environment(fixture.entitiesRepository, fixture.pathesConfiguration, fixture.buildConfiguration);
-            const filter = new FormatDateFilter(global.fixtures.globalConfiguration);
+            const filter = new FormatNumberFilter(global.fixtures.globalConfiguration);
             filter.register(environment);
             const testee = filter.filter();
-            expect(testee('2013-02-08 09:30:26')).to.be.equal(moment('2013-02-08 09:30:26').format('DD-MM-YY'));
+            expect(testee(42.123456789)).to.be.equal('42.1');
         });
     });
 });

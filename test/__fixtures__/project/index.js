@@ -41,7 +41,7 @@ function createStatic(options)
 
     result.pathToLibraries = testFixture.pathToLibraries;
     result.globalConfiguration = new GlobalConfiguration(opts.settings);
-    result.buildConfiguration = new BuildConfiguration();
+    result.buildConfiguration = new BuildConfiguration(opts.build);
     result.pathesConfiguration = new PathesConfiguration(
         merge(
             {
