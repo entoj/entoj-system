@@ -4,6 +4,7 @@
  * Requirements
  */
 const FileLoader = require(ES_SOURCE + '/nunjucks/loader/FileLoader.js').FileLoader;
+const Template = require(ES_SOURCE + '/nunjucks/Template.js').Template;
 const baseSpec = require(ES_TEST + '/BaseShared.js').spec;
 const projectFixture = require(ES_FIXTURES + '/project/index.js');
 
@@ -19,7 +20,8 @@ describe(FileLoader.className, function()
     baseSpec(FileLoader, 'nunjucks.loader/FileLoader', function(parameters)
     {
         const fixture = projectFixture.createStatic();
-        return [undefined, fixture.entitiesRepository, fixture.buildConfiguration];
+        const template = new Template(fixture.entitiesRepository);
+        return [undefined, template];
     });
 
 
@@ -35,7 +37,8 @@ describe(FileLoader.className, function()
     // Creates a initialized testee
     function createTestee(basePath)
     {
-        return new FileLoader(basePath, global.fixtures.entitiesRepository, global.fixtures.buildConfiguration);
+        const template = new Template(global.fixtures.entitiesRepository);
+        return new FileLoader(basePath, template);
     }
 
 

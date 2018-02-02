@@ -8,8 +8,6 @@ const fs = require('fs');
 const path = require('path');
 const BaseMixin = require('../../Base.js').BaseMixin;
 const Loader = require('nunjucks').Loader;
-const EntitiesRepository = require('../../model/entity/EntitiesRepository.js').EntitiesRepository;
-const BuildConfiguration = require('../../model/configuration/BuildConfiguration.js').BuildConfiguration;
 const Template = require('../Template.js').Template;
 const assertParameter = require('../../utils/assert.js').assertParameter;
 const PATH_SEPERATOR = require('path').sep;
@@ -26,21 +24,18 @@ class FileLoader extends BaseMixin(Loader)
     /**
      * @inheritDocs
      */
-    constructor(searchPaths, entitiesRepository, buildConfiguration)
+    constructor(searchPaths, template)
     {
         super();
 
         // Check params
-        assertParameter(this, 'entitiesRepository', entitiesRepository, true, EntitiesRepository);
-        assertParameter(this, 'buildConfiguration', buildConfiguration, true, BuildConfiguration);
+        assertParameter(this, 'template', template, true, Template);
 
         // Assign
         this.noCache = true;
         this.cache = {};
         this.pathsToNames = {};
-        this._entitiesRepository = entitiesRepository;
-        this._buildConfiguration = buildConfiguration;
-        this._template = new Template(this._entitiesRepository, [], this._buildConfiguration.environment);
+        this._template = template;
 
         // Set pathes
         this.setSearchPaths(searchPaths || '.');
@@ -60,6 +55,18 @@ class FileLoader extends BaseMixin(Loader)
 
 
     /**
+     * The template preparation
+     *
+     * @type {string}
+     * @static
+     */
+    get template()
+    {
+        return this._template;
+    }
+
+
+    /**
      * Updates search pathes
      *
      * @param {String} value
@@ -71,7 +78,6 @@ class FileLoader extends BaseMixin(Loader)
         {
             return path.resolve(pth);
         });
-        this._template.templatePaths = this.searchPaths[0];
     }
 
 
@@ -152,7 +158,7 @@ class FileLoader extends BaseMixin(Loader)
         };
 
         // Prepare the source
-        template.src = this._template.prepare(template.src);
+        template.src = this.template.prepare(template.src);
 
         return template;
     }
