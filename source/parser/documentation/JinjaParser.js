@@ -105,19 +105,22 @@ class JinjaParser extends Parser
                 case 'int':
                 case 'string':
                 case 'boolean':
-                    if (token.type == 'macro' && token.arguments.length)
+                    if (token)
                     {
-                        let value = t.value;
-                        if (t.type == 'string')
+                        if (token.type == 'macro' && token.arguments.length)
                         {
-                            value = '\'' + value + '\'';
+                            let value = t.value;
+                            if (t.type == 'string')
+                            {
+                                value = '\'' + value + '\'';
+                            }
+                            token.arguments[token.arguments.length - 1].type = t.type;
+                            token.arguments[token.arguments.length - 1].value = value;
                         }
-                        token.arguments[token.arguments.length - 1].type = t.type;
-                        token.arguments[token.arguments.length - 1].value = value;
-                    }
-                    else if (token.type == 'include')
-                    {
-                        token.include = t.value;
+                        else if (token.type == 'include')
+                        {
+                            token.include = t.value;
+                        }
                     }
                     break;
 
