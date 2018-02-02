@@ -68,7 +68,8 @@ class AssetUrlFilter extends Filter
         const scope = this;
         return function(value)
         {
-            return urls.concat(scope.baseUrl, value);
+            const result = urls.concat(scope.baseUrl, value);
+            return scope.applyCallbacks(result, arguments, { asset: value });
         };
     }
 }

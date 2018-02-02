@@ -70,6 +70,21 @@ class Filter extends Base
 
 
     /**
+     * Applies environment callbacks to value
+     *
+     * @returns {*}
+     */
+    applyCallbacks(value, args, data)
+    {
+        if (!this.environment)
+        {
+            return value;
+        }
+        return this.environment.applyFilterCallbacks(this, value, args, data);
+    }
+
+
+    /**
      * Returns true when the filter should return static (read : no random) content.
      * This is used for tests or html exports.
      *
@@ -93,6 +108,27 @@ class Filter extends Base
         }
         return result;
     }
+
+
+    /**
+     * Returns the globals used in the nunjucks environment
+     *
+     * @param {Nunjucks} context
+     * @returns {Object}
+     */
+    getGlobals(context)
+    {
+        const globals = (context && context.env && context.env.globals)
+            ? context.env.globals
+            : {};
+        const result =
+        {
+            location: globals.location || {},
+            request: globals.request || false
+        };
+        return result;
+    }
+
 
 
     /**

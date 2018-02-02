@@ -74,14 +74,15 @@ class FormatDateFilter extends Filter
 
 
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
     filter()
     {
         const scope = this;
         return function(value, format)
         {
-            return moment(value).format(format || scope.format || scope.globalConfiguration.get('formats.date'));
+            const result = moment(value).format(format || scope.format || scope.globalConfiguration.get('formats.date'));
+            return scope.applyCallbacks(result, arguments);
         };
     }
 }

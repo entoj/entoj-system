@@ -38,11 +38,12 @@ class AttributesFilter extends Filter
      */
     filter(value)
     {
+        const scope = this;
         return function(value, prefix)
         {
             if (!value || !isPlainObject(value))
             {
-                return '';
+                return scope.applyCallbacks('');
             }
             let result = '';
             const pref = prefix ? prefix + '-' : '';
@@ -50,7 +51,7 @@ class AttributesFilter extends Filter
             {
                 result += pref + kebabCase(key) + '="' + value[key] + '" ';
             }
-            return result;
+            return scope.applyCallbacks(result, arguments);
         };
     }
 }

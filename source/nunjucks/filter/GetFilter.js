@@ -36,13 +36,15 @@ class GetFilter extends Filter
      */
     filter(value)
     {
+        const scope = this;
         return function(value, key)
         {
+            let result = undefined;
             if (value && typeof key !== 'undefined')
             {
-                return value[key];
+                result = value[key];
             }
-            return undefined;
+            return scope.applyCallbacks(result, arguments);
         };
     }
 }

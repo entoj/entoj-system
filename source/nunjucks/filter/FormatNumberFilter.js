@@ -108,7 +108,8 @@ class FormatNumberFilter extends Filter
         const scope = this;
         return function(value, format)
         {
-            return numeral(value).format(format || scope.format || scope.globalConfiguration.get('formats.number'));
+            const result = numeral(value).format(format || scope.format || scope.globalConfiguration.get('formats.number'));
+            return scope.applyCallbacks(result, arguments);
         };
     }
 }

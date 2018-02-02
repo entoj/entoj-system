@@ -45,8 +45,9 @@ class Environment extends BaseMixin(nunjucks.Environment)
         this._filters = filters || [];
         this._tags = tags || [];
         this.templatePaths = opts.templatePaths;
-        this._loader = new FileLoader(this.templatePaths, entitiesRepository, buildConfiguration);
         this._template = new Template(entitiesRepository, this.templatePaths, this.buildConfiguration.environment);
+        this._loader = new FileLoader(this.templatePaths, this._template);
+        this._callbacks = {};
 
         // Add loader
         this.loaders.push(this._loader);
@@ -178,6 +179,52 @@ class Environment extends BaseMixin(nunjucks.Environment)
     {
         const template = this._template.prepare(content, this.globals['location']);
         const result = super.renderString(template, context, callback);
+        return result;
+    }
+
+
+    /**
+     * Clears all filter callbacks
+     */
+    clearFilterCallbacks()
+    {
+        this._callbacks = {};
+    }
+
+
+    /**
+     * Adds a callback for a specific filter
+     *
+     * @param {String} name
+     * @param {Function} callback
+     */
+    addFilterCallback(name, callback)
+    {
+        if (!this._callbacks[name])
+        {
+            this._callbacks[name] = [];
+        }
+        this._callbacks[name].push(callback);
+    }
+
+
+    /**
+     * Applies all callbacks to value for filter
+     *
+     * @param {nunjucks.filter.Filter} name
+     * @param {Function} callback
+     */
+    applyFilterCallbacks(filter, value, args, data)
+    {
+        if (!this._callbacks[filter.name[0]])
+        {
+            return value;
+        }
+        let result = value;
+        for (const callback of this._callbacks[filter.name[0]])
+        {
+            result = callback(filter, result, args, data);
+        }
         return result;
     }
 }

@@ -98,12 +98,8 @@ class LoadFilter extends Filter
             }
 
             // Load internal models
-            const globals = (this && this.env && this.env.globals)
-                ? this.env.globals
-                : { location: {} };
-            const site = globals.location
-                ? globals.location.site || false
-                : false;
+            const globals = scope.getGlobals(this);
+            const site = globals.location.site || false;
             const useStaticContent = scope.useStaticContent(globals.request);
             const viewModel = synchronize.execute(scope.viewModelRepository, 'getByPath', [value, site, useStaticContent]);
             return viewModel.data;
