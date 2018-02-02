@@ -63,6 +63,7 @@ class Template extends Base
         this._environment = environment || '';
         this._entitiesRepository = entitiesRepository;
         this._callParser = new CallParser();
+        this._calls = {};
     }
 
 
@@ -84,6 +85,17 @@ class Template extends Base
     static get className()
     {
         return 'nunjucks/Template';
+    }
+
+
+    /**
+     * Returns a map of all calls
+     *
+     * @type {string}
+     */
+    get calls()
+    {
+        return this._calls;
     }
 
 
@@ -140,6 +152,10 @@ class Template extends Base
                         macro = preferedMacro;
                     }
                 }
+
+                // Memorize call
+                this._calls[item.pathString] = this._calls[item.pathString] || [];
+                this._calls[item.pathString].push(macro.name);
 
                 // Build include
                 let from = macro.file.filename;
