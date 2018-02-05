@@ -7,7 +7,6 @@ const FormatNumberFilter = require(ES_SOURCE + '/nunjucks/filter/FormatNumberFil
 const filterSpec = require(ES_TEST + '/nunjucks/filter/FilterShared.js').spec;
 const projectFixture = require(ES_FIXTURES + '/project/index.js');
 const Environment = require(ES_SOURCE + '/nunjucks/Environment.js').Environment;
-const moment = require('moment');
 
 
 /**
