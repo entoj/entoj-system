@@ -57,7 +57,7 @@ class Task extends Base
 
 
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
     static get injections()
     {
@@ -204,15 +204,16 @@ class Task extends Base
     run(buildConfiguration, parameters)
     {
         // Part of a chain?
-        if (this._previousTask)
+        if (this.previousTask)
         {
-            return this._previousTask.run(buildConfiguration, parameters);
+            return this.previousTask.run(buildConfiguration, parameters);
         }
 
         // Start the task
         const promise = new Promise((resolve) =>
         {
             const work = this.cliLogger.section('Running task ' + this.className);
+            const result = [];
             let stream = this.stream(undefined, buildConfiguration, parameters);
 
             // Handle chain
@@ -223,17 +224,23 @@ class Task extends Base
                 currentTask = currentTask.nextTask;
             }
 
+            // Collect result
+            stream.on('data', (item) =>
+            {
+                result.push(item);
+            });
+
             // Wait for stream end
             if (stream._readableState && stream._readableState.ended)
             {
-                resolve();
+                resolve(result);
             }
             else
             {
                 stream.on('finish', () =>
                 {
                     this.cliLogger.end(work);
-                    resolve();
+                    resolve(result);
                 });
             }
         });

@@ -14,6 +14,7 @@ module.exports =
     Task: require('./Task.js').Task,
     TemplateTask: require('./TemplateTask.js').TemplateTask,
     TransformingTask: require('./TransformingTask.js').TransformingTask,
+    WrappingTask: require('./WrappingTask.js').WrappingTask,
     WriteFilesTask: require('./WriteFilesTask.js').WriteFilesTask,
     ZipFilesTask: require('./ZipFilesTask.js').ZipFilesTask
 };

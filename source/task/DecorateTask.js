@@ -41,7 +41,7 @@ class DecorateTask extends TransformingTask
 
 
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
     prepareParameters(buildConfiguration, parameters)
     {
@@ -62,7 +62,7 @@ class DecorateTask extends TransformingTask
 
 
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
     processFile(file, buildConfiguration, parameters)
     {
