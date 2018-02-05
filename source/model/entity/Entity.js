@@ -125,7 +125,7 @@ class Entity extends DocumentableValueObject
      */
     toString()
     {
-        return `[${this.className} ${this.id.category.longName}-${this.id.name}]`;
+        return `[${this.className} ${this.pathString}]`;
     }
 }
 

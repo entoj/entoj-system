@@ -98,7 +98,7 @@ class EntityAspect extends Entity
      */
     toString()
     {
-        return `[${this.className} ${this.site.name}/${this.id.category.longName}-${this.id.name}]`;
+        return `[${this.className} ${this.pathString}]`;
     }
 }
 
