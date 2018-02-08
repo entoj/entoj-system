@@ -36,6 +36,7 @@ class CallParser extends Parser
         let name = false;
         let call = false;
         let definition = false;
+        let extend = false;
         while(token)
         {
             switch(token.type)
@@ -48,6 +49,10 @@ class CallParser extends Parser
                     else if (token.value === 'macro')
                     {
                         definition = true;
+                    }
+                    else if (token.value === 'extends')
+                    {
+                        extend = true;
                     }
                     else
                     {
@@ -63,6 +68,14 @@ class CallParser extends Parser
                     if (definition && !result.definition)
                     {
                         result.definition = name;
+                    }
+                    break;
+
+                case nunjucks.lexer.TOKEN_STRING:
+                    if (extend)
+                    {
+                        result.extends = token.value;
+                        extend = false;
                     }
                     break;
 
@@ -125,7 +138,8 @@ class CallParser extends Parser
         {
             calls: [],
             definitions: [],
-            externals: []
+            externals: [],
+            extends: []
         };
         let token;
         while ((token = ast.nextToken()))
@@ -141,6 +155,10 @@ class CallParser extends Parser
                     if (yieldCall.definition)
                     {
                         result.definitions.push(yieldCall.definition);
+                    }
+                    if (yieldCall.extends)
+                    {
+                        result.extends.push(yieldCall.extends);
                     }
                     break;
 

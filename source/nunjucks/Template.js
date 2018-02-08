@@ -64,6 +64,7 @@ class Template extends Base
         this._entitiesRepository = entitiesRepository;
         this._callParser = new CallParser();
         this._calls = {};
+        this._extends = [];
     }
 
 
@@ -91,11 +92,22 @@ class Template extends Base
     /**
      * Returns a map of all calls
      *
-     * @type {string}
+     * @type {Object}
      */
     get calls()
     {
         return this._calls;
+    }
+
+
+    /**
+     * Returns a array of template extends
+     *
+     * @type {Array}
+     */
+    get extends()
+    {
+        return this._extends;
     }
 
 
@@ -194,6 +206,12 @@ class Template extends Base
 
         // Get macros
         const macros = synchronize.execute(this._callParser, 'parse', [content]);
+
+        // Add extends
+        if (macros.extends && Array.isArray(macros.extends))
+        {
+            this._extends.push(...macros.extends);
+        }
 
         // Build includes
         let includes = [];
