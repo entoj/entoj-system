@@ -1,0 +1,36 @@
+{
+    "type": "TagNode",
+    "children": [
+        {
+            "type": "TextNode",
+            "value": "Yes "
+        },
+        {
+            "type": "OutputNode",
+            "children": [
+                {
+                    "type": "VariableNode",
+                    "fields": [
+                        "foo"
+                    ]
+                }
+            ]
+        }
+    ],
+    "name": "LinkTag",
+    "arguments": [
+        {
+            "type": "ArgumentNode",
+            "value": {
+                "type": "ExpressionNode",
+                "children": [
+                    {
+                        "type": "LiteralNode",
+                        "value": "_self"
+                    }
+                ]
+            },
+            "name": "target"
+        }
+    ]
+}

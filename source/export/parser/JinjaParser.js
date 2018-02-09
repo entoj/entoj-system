@@ -30,6 +30,7 @@ const YieldNode = require('../ast/YieldNode.js').YieldNode;
 const ComplexVariableNode = require('../ast/ComplexVariableNode.js').ComplexVariableNode;
 const ArrayNode = require('../ast/ArrayNode.js').ArrayNode;
 const BlockNode = require('../ast/BlockNode.js').BlockNode;
+const TagNode = require('../ast/TagNode.js').TagNode;
 const FunctionCallNode = require('../ast/FunctionCallNode.js').FunctionCallNode;
 const activateEnvironment = require('../../utils/string.js').activateEnvironment;
 const co = require('co');
@@ -41,11 +42,41 @@ const co = require('co');
 class JinjaParser extends Parser
 {
     /**
+     * @ignore
+     */
+    constructor(tags)
+    {
+        super();
+
+        // Assign options
+        this._tags = tags || [];
+    }
+
+
+    /**
+     * @inheritDoc
+     */
+    static get injections()
+    {
+        return { 'parameters': ['export.parser/JinjaParser.tags'] };
+    }
+
+
+    /**
      * @inheritDoc
      */
     static get className()
     {
         return 'export.parser/JinjaParser';
+    }
+
+
+    /**
+     * @type {Array}
+     */
+    get tags()
+    {
+        return this._tags;
     }
 
 
@@ -551,7 +582,6 @@ class JinjaParser extends Parser
 
 
     /**
-     *
      * @protected
      * @param {export.ast.Node}
      */
@@ -596,7 +626,6 @@ class JinjaParser extends Parser
 
 
     /**
-     *
      * @protected
      * @param {export.ast.Node}
      */
@@ -657,7 +686,6 @@ class JinjaParser extends Parser
 
 
     /**
-     *
      * @protected
      * @param {export.ast.Node}
      */
@@ -677,7 +705,6 @@ class JinjaParser extends Parser
 
 
     /**
-     *
      * @protected
      * @param {export.ast.Node}
      */
@@ -696,7 +723,6 @@ class JinjaParser extends Parser
 
 
     /**
-     *
      * @protected
      * @param {export.ast.Node}
      */
@@ -716,6 +742,31 @@ class JinjaParser extends Parser
                 });
         }
     }
+
+
+    /**
+     * @protected
+     * @param {export.ast.Node}
+     */
+    parseTag(node)
+    {
+        const children = [];
+        if (node.contentArgs && 
+            Array.isArray(node.contentArgs) &&
+            node.contentArgs.length)
+        {
+            for (const child of node.contentArgs[0].children)
+            {
+                children.push(this.parseNode(child));
+            }    
+        }
+        return new TagNode(
+            {
+                name: node.extName.type,
+                arguments: this.parseArguments(node.args),
+                children: children
+            });
+    }    
 
 
     /**
@@ -755,7 +806,6 @@ class JinjaParser extends Parser
 
 
     /**
-     *
      * @protected
      * @param {export.ast.Node}
      */
@@ -779,7 +829,6 @@ class JinjaParser extends Parser
 
 
     /**
-     *
      * @protected
      * @param {export.ast.Node}
      */
@@ -836,6 +885,10 @@ class JinjaParser extends Parser
                 result = this.parseCall(node);
                 break;
 
+            case 'CallExtension':
+                result = this.parseTag(node);
+                break;                
+
             case 'Filter':
                 result = this.parseFilter(node);
                 break;
@@ -883,7 +936,7 @@ class JinjaParser extends Parser
 
 
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
     parseString(source, configuration)
     {
@@ -892,13 +945,13 @@ class JinjaParser extends Parser
         {
             preparedSource = activateEnvironment(preparedSource, configuration.buildConfiguration.environment);
         }
-        const ast = nunjucks.parser.parse(preparedSource);
+        const ast = nunjucks.parser.parse(preparedSource, this.tags);
         return Promise.resolve(this.parseNode(ast));
     }
 
 
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
     parseTemplate(entity, configuration)
     {
@@ -934,7 +987,7 @@ class JinjaParser extends Parser
 
 
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
     parseMacro(name, configuration)
     {
