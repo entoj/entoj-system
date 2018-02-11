@@ -68,7 +68,8 @@ class SvgUrlFilter extends Filter
         const scope = this;
         return function(value)
         {
-            return urls.concat(scope.baseUrl, value + '.svg#icon');
+            const result = urls.concat(scope.baseUrl, value + '.svg#icon');
+            return scope.applyCallbacks(result, arguments, { asset: value });
         };
     }
 }
