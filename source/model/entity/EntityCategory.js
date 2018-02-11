@@ -73,6 +73,7 @@ class EntityCategory extends DocumentableValueObject
         fields.shortName = '';
         fields.pluralName = '';
         fields.isGlobal = false;
+        fields.priority = 0;
         return fields;
     }
 
@@ -142,6 +143,23 @@ class EntityCategory extends DocumentableValueObject
     }
 
 
+    /**
+     * The priority of the category. 
+     * Higher priority categories depend on lower priority categories.
+     * 
+     * @property {Bool}
+     */
+    get priority()
+    {
+        return this._priority;
+    }
+
+    set priority(value)
+    {
+        this._priority = value;
+    }
+    
+    
     /**
      * @inheritDocs
      */

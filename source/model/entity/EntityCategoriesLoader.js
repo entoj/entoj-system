@@ -57,7 +57,8 @@ class EntityCategoriesLoader extends PluggableLoader
         for (const config of this._categories)
         {
             const item = new EntityCategory(config);
-            result.push(item);
+            item.priority = result.length;
+            result.push(item);            
         }
         return Promise.resolve(result);
     }
