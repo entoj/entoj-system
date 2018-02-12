@@ -46,7 +46,7 @@ class Environment extends BaseMixin(nunjucks.Environment)
         this._tags = tags || [];
         this.templatePaths = opts.templatePaths;
         this._template = new Template(entitiesRepository, this.templatePaths, this.buildConfiguration.environment);
-        this._loader = new FileLoader(this.templatePaths, this._template);
+        this._loader = new FileLoader(this.templatePaths, this._template, this);
         this._callbacks = {};
 
         // Add loader

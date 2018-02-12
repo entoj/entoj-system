@@ -770,7 +770,10 @@ class JinjaParser extends Parser
 
 
     /**
-     *
+     * [...]
+     * 
+     * @protected
+     * @param {export.ast.Node} 
      */
     parseArray(node)
     {
@@ -1002,7 +1005,7 @@ class JinjaParser extends Parser
             const macroConfiguration = yield configuration.getMacroConfiguration(name);
             if (!macroConfiguration)
             {
-                scope.logger.warn('parseMacro - could not find macro');
+                scope.logger.warn('parseMacro - could not find macro configuration');
                 return false;
             }
 

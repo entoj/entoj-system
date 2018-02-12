@@ -22,9 +22,9 @@ const PATH_SEPERATOR = require('path').sep;
 class FileLoader extends BaseMixin(Loader)
 {
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
-    constructor(searchPaths, template)
+    constructor(searchPaths, template, nunjucks)
     {
         super();
 
@@ -36,6 +36,7 @@ class FileLoader extends BaseMixin(Loader)
         this.cache = {};
         this.pathsToNames = {};
         this._template = template;
+        this._nunjucks = nunjucks;
 
         // Set pathes
         this.setSearchPaths(searchPaths || '.');
@@ -63,6 +64,18 @@ class FileLoader extends BaseMixin(Loader)
     get template()
     {
         return this._template;
+    }
+
+
+    /**
+     * Nunjucks environment
+     *
+     * @type {Nunjucks}
+     * @static
+     */
+    get nunjucks()
+    {
+        return this._nunjucks;
     }
 
 
@@ -115,7 +128,7 @@ class FileLoader extends BaseMixin(Loader)
 
 
     /**
-     * @inheritDocs
+     * @inheritDoc
      * @see https://mozilla.github.io/nunjucks/api.html#loader
      */
     resolve(filename)
@@ -136,7 +149,7 @@ class FileLoader extends BaseMixin(Loader)
 
 
     /**
-     * @inheritDocs
+     * @inheritDoc
      * @see https://mozilla.github.io/nunjucks/api.html#loader
      */
     getSource(name)
@@ -158,7 +171,10 @@ class FileLoader extends BaseMixin(Loader)
         };
 
         // Prepare the source
-        template.src = this.template.prepare(template.src);
+        const location = (this.nunjucks) 
+            ? this.nunjucks.globals['location']
+            : {};
+        template.src = this.template.prepare(template.src, location);
 
         return template;
     }
