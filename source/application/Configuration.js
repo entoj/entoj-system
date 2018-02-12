@@ -312,13 +312,19 @@ class Configuration extends Base
                     filename: this.options.models.settingsFile
                 }));
 
-        // Nunjucks filter
+        // Nunjucks filter & tags
         this.mappings.add(require('../nunjucks/index.js').Environment,
             {
                 options:
                 {
                     templatePaths: this.pathes.root + '/sites'
                 },
+                '!tags': this.clean(
+                    [
+                        {
+                            type: require('../nunjucks/index.js').tag.LinkTag
+                        }
+                    ]),                
                 '!filters': this.clean(
                     [
                         {
@@ -388,6 +394,16 @@ class Configuration extends Base
                         },
                         {
                             type: require('../nunjucks/index.js').filter.UniqueFilter
+                        }
+                    ])
+            }
+        );
+        this.mappings.add(require('../export/index.js').parser.JinjaParser,
+            {
+                '!tags': this.clean(
+                    [
+                        {
+                            type: require('../nunjucks/index.js').tag.LinkTag
                         }
                     ])
             }
