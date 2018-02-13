@@ -46,12 +46,31 @@ class Tag extends Base
 
 
     /**
+     * @property {model.configuration.BuildConfiguration}
+     */
+    get environment()
+    {
+        return this._environment;
+    }
+
+
+    /**
      * @type {Array}
      */
-    get tags()
+    get name()
     {
         return ['tag'];
     }
+
+
+    /**
+     * @type {Array}
+     * @protected
+     */
+    get tags()
+    {
+        return this.name;
+    }  
 
 
     /**
@@ -68,20 +87,20 @@ class Tag extends Base
         parser.advanceAfterBlockEnd(tok.value);
         
         // parse the body and possibly the error block, which is optional
-        const body = parser.parseUntilBlocks('end' + this.tags[0]);
+        const body = parser.parseUntilBlocks('end' + this.name[0]);
         parser.advanceAfterBlockEnd();
 
         // See above for notes about CallExtension
-        const result = new nodes.CallExtension(this, 'run', args, [body]);
+        const result = new nodes.CallExtension(this, 'generate', args, [body]);
 
         return result;
     }
 
 
     /**
-     * Runs the tag
+     * Generate the tag contents
      */
-    run(context, ...params)
+    generate(context, ...params)
     {
         return '';
     }
@@ -100,7 +119,10 @@ class Tag extends Base
             return false;
         }
 
-        environment.addExtension(this.tags.pop(), this);
+        for (const name of this.name)
+        {
+            environment.addExtension(name, this);
+        }
         this._environment = environment;
         return true;
     }

@@ -7,7 +7,7 @@ const JinjaParser = require(ES_SOURCE + '/export/parser/JinjaParser.js').JinjaPa
 const Node = require(ES_SOURCE + '/export/ast/Node.js').Node;
 const MacroNode = require(ES_SOURCE + '/export/ast/MacroNode.js').MacroNode;
 const Configuration = require(ES_SOURCE + '/export/Configuration.js').Configuration;
-const LinkTag = require(ES_SOURCE + '/nunjucks/tag/LinkTag.js').LinkTag;
+const Tag = require(ES_SOURCE + '/nunjucks/tag/Tag.js').Tag;
 const parserSpec = require('../ParserShared.js').spec;
 const projectFixture = require(ES_FIXTURES + '/project/index.js');
 const fs = require('fs');
@@ -66,7 +66,7 @@ describe(JinjaParser.className, function()
             const rootPath = ES_FIXTURES + '/export/parser/JinjaParser/';
             const input = fs.readFileSync(rootPath + name + '.input.j2', { encoding: 'utf8' }).replace(/\r/g, '');
             const expected = JSON.parse(fs.readFileSync(rootPath + name + '.expected.json', { encoding: 'utf8' }));
-            const testee = new JinjaParser([new LinkTag()]);
+            const testee = new JinjaParser([new Tag()]);
             const node = yield testee.parseString(input);
             try
             {
@@ -78,7 +78,7 @@ describe(JinjaParser.className, function()
             {
                 /* eslint no-console: "off" */
                 console.log('Nunjucks AST:');
-                console.log(JSON.stringify(nunjucks.parser.parse(input, [new LinkTag()]), null, 4));
+                console.log(JSON.stringify(nunjucks.parser.parse(input, [new Tag()]), null, 4));
                 console.log('Parsed:');
                 console.log(JSON.stringify(node.serialize(), null, 4));
                 throw e;

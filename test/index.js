@@ -63,7 +63,8 @@ module.exports =
     },
     nunjucks:
     {
-        FilterShared: require('./nunjucks/filter/FilterShared.js').spec
+        FilterShared: require('./nunjucks/filter/FilterShared.js').spec,
+        TagShared: require('./nunjucks/tag/TagShared.js').spec
     },
     parser:
     {
