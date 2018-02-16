@@ -209,11 +209,10 @@ class Renderer extends Base
         const scope = this;
         const promise = co(function*()
         {
-            let source = '';
-            source+= yield scope.renderPreface(configuration);
-            source+= yield scope.renderNode(node, configuration);
-            source+= yield scope.renderPostface(configuration);
-            return source;
+            const nodes = yield scope.renderNode(node, configuration);
+            const preface = yield scope.renderPreface(configuration);
+            const postface = yield scope.renderPostface(configuration);
+            return preface + nodes + postface;
         });
         return promise;
     }
