@@ -13,14 +13,14 @@ const Base = require('../../Base.js').Base;
 class Tag extends Base
 {
     /**
-     * @param {Object} values
      */
-    constructor(values)
+    constructor()
     {
         super();
 
         // Assign options
         this._type = this.className.split('/').pop();
+        this._hasBody = true;
     }
     
     
@@ -74,6 +74,18 @@ class Tag extends Base
 
 
     /**
+     * Single tag or wrapping tag?
+     * 
+     * @type {Boolean}
+     * @protected
+     */
+    get hasBody()
+    {
+        return this._hasBody;
+    }         
+
+
+    /**
      * @returns {Boolean|String}
      */
     parse(parser, nodes, lexer)
@@ -86,21 +98,38 @@ class Tag extends Base
         const args = parser.parseSignature(null, true);
         parser.advanceAfterBlockEnd(tok.value);
         
-        // parse the body and possibly the error block, which is optional
-        const body = parser.parseUntilBlocks('end' + this.name[0]);
-        parser.advanceAfterBlockEnd();
+        // parse the body
+        const body = [];
+        if (this.hasBody)
+        {
+            body.push(parser.parseUntilBlocks('end' + tok.value));
+            parser.advanceAfterBlockEnd();    
+        }
 
-        // See above for notes about CallExtension
-        const result = new nodes.CallExtension(this, 'generate', args, [body]);
-
+        // Call __generate__ on each tag invocation
+        const result = new nodes.CallExtension(this, '__generate__', args, body);
         return result;
     }
 
 
     /**
+     * Normalizes generate params
+     * @protected
+     */
+    __generate__(context, params, caller)
+    {
+        if (typeof params === 'function')
+        {
+            return this.generate(context, {}, params);
+        }
+        return this.generate(context, params, caller);
+    }
+    
+
+    /**
      * Generate the tag contents
      */
-    generate(context, ...params)
+    generate(context, params, caller)
     {
         return '';
     }

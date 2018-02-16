@@ -12,7 +12,7 @@ const sinon = require('sinon');
 /**
  * Shared tag spec
  */
-function spec(type, className, prepareParameters)
+function spec(type, className, tests, prepareParameters)
 {
     /**
      * Base Test
@@ -64,13 +64,32 @@ function spec(type, className, prepareParameters)
             const environment = new Environment();
             testee.register(environment);
             sinon.spy(testee, 'generate');
-            const template = '{% ' + testee.name[0] + ' one=\'one\', two=2 %}{% end' + testee.name[0] + ' %}';
+            const template = '{% ' + testee.name[0] + ' one=\'one\', two=2 %}' + (testee.hasBody ? '{% end' + testee.name[0] + ' %}' : '');
             environment.renderString(template);
             expect(testee.generate.calledOnce).to.be.ok;
             expect(testee.generate.getCall(0).args[1].one).to.be.equal('one');
             expect(testee.generate.getCall(0).args[1].two).to.be.equal(2);
         });        
     });
+
+
+    describe('rendering', function()
+    {      
+        if (tests)  
+        {
+            for (const test of tests)
+            {
+                it(test.name, function()
+                {
+                    const testee = createTestee();
+                    const environment = new Environment(null, { autoescape: false });
+                    testee.register(environment);
+                    const result = environment.renderString(test.input);
+                    expect(result).to.be.equal(test.expected);
+                });        
+            }    
+        }
+    });      
 }
 
 /**

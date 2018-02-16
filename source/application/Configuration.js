@@ -319,12 +319,6 @@ class Configuration extends Base
                 {
                     templatePaths: this.pathes.root + '/sites'
                 },
-                '!tags': this.clean(
-                    [
-                        {
-                            type: require('../nunjucks/index.js').tag.LinkTag
-                        }
-                    ]),                
                 '!filters': this.clean(
                     [
                         {
@@ -394,16 +388,6 @@ class Configuration extends Base
                         },
                         {
                             type: require('../nunjucks/index.js').filter.UniqueFilter
-                        }
-                    ])
-            }
-        );
-        this.mappings.add(require('../export/index.js').parser.JinjaParser,
-            {
-                '!tags': this.clean(
-                    [
-                        {
-                            type: require('../nunjucks/index.js').tag.LinkTag
                         }
                     ])
             }
