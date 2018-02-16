@@ -12,6 +12,8 @@ const DocumentationCallable = require('../../model/documentation/DocumentationCa
 const DocumentationParameter = require('../../model/documentation/DocumentationParameter.js').DocumentationParameter;
 const ContentType = require('../../model/ContentType.js').ContentType;
 const ContentKind = require('../../model/ContentKind.js').ContentKind;
+const Dependency = require('../../model/documentation/Dependency.js').Dependency;
+const DependencyType = require('../../model/documentation/DependencyType.js').DependencyType;
 const trimMultiline = require('../../utils/string.js').trimMultiline;
 const co = require('co');
 const nunjucks = require('nunjucks');
@@ -52,23 +54,46 @@ class JinjaParser extends Parser
         const ast = nunjucks.lexer.lex(content);
         const result = [];
         let t;
-        let token;
+        let block;
+        let variable;
         while ((t = ast.nextToken()))
         {
+            //console.log(t);            
             switch (t.type)
             {
                 case 'comment':
-                    token =
+                    const comment =
                     {
                         type: 'comment',
                         comment: t.value
                     };
-                    result.push(token);
-                    token = false;
+                    result.push(comment);
                     break;
 
+                case 'variable-start':
+                    variable =
+                    {
+                        type: false,
+                        name: false
+                    };
+                    break;
+
+                case 'variable-end':
+                    variable = false;
+                    break; 
+                    
+                case 'left-paren':
+                    if (variable && 
+                        variable.name)
+                    {
+                        variable.type = 'call';
+                        result.push(variable);
+                    }
+                    variable = false;
+                    break;                     
+
                 case 'block-start':
-                    token =
+                    block =
                     {
                         type: false,
                         name: false,
@@ -77,27 +102,41 @@ class JinjaParser extends Parser
                     break;
 
                 case 'block-end':
-                    if (token && (token.type == 'include' || token.type == 'macro'))
+                    if (block && 
+                        (block.type == 'include' || block.type == 'macro' || block.type == 'call'))
                     {
-                        result.push(token);
+                        result.push(block);
                     }
-                    token = false;
+                    block = false;
                     break;
 
                 case 'symbol':
-                    if (token)
+                    if (variable)
                     {
-                        if (!token.type)
+                        variable.name = t.value;
+                    }
+                    if (block)
+                    {
+                        if (!block.type)
                         {
-                            token.type = t.value;
+                            block.type = t.value;
                         }
-                        else if (token.type == 'macro' && !token.name)
+                        else if (block.type == 'macro' && !block.name)
                         {
-                            token.name = t.value;
+                            block.name = t.value;
                         }
-                        else if (token.arguments)
+                        else if (block.type == 'call' && !block.name)
                         {
-                            token.arguments.push({ name: t.value, type: '*', value: undefined });
+                            block.name = t.value;
+                        }                        
+                        else if (block.arguments)
+                        {
+                            block.arguments.push(
+                                { 
+                                    name: t.value, 
+                                    type: '*', 
+                                    value: undefined 
+                                });
                         }
                     }
                     break;
@@ -105,27 +144,27 @@ class JinjaParser extends Parser
                 case 'int':
                 case 'string':
                 case 'boolean':
-                    if (token)
+                    if (block)
                     {
-                        if (token.type == 'macro' && token.arguments.length)
+                        if (block.type == 'macro' && block.arguments.length)
                         {
                             let value = t.value;
                             if (t.type == 'string')
                             {
                                 value = '\'' + value + '\'';
                             }
-                            token.arguments[token.arguments.length - 1].type = t.type;
-                            token.arguments[token.arguments.length - 1].value = value;
+                            block.arguments[block.arguments.length - 1].type = t.type;
+                            block.arguments[block.arguments.length - 1].value = value;
                         }
-                        else if (token.type == 'include')
+                        else if (block.type == 'include')
                         {
-                            token.include = t.value;
+                            block.include = t.value;
                         }
                     }
                     break;
 
                 default:
-                    //console.log(token);
+                    //console.log(t);
                     break;
             }
         }
@@ -156,6 +195,7 @@ class JinjaParser extends Parser
 
             // Parse
             let comment = false;
+            let documentation = false;
             for (const token of tokens)
             {
                 switch (token.type)
@@ -164,9 +204,20 @@ class JinjaParser extends Parser
                         comment = token.comment;
                         break;
 
+                    case 'call':
+                        if (documentation)
+                        {
+                            const dependency = new Dependency(
+                                {
+                                    name: token.name,
+                                    type: DependencyType.MACRO
+                                });
+                            documentation.dependencies.push(dependency);
+                        }
+                        break;
+
                     case 'macro':
                         // Do we have a docblock?
-                        let documentation;
                         if (comment)
                         {
                             documentation = yield scope._parser.parse(comment,

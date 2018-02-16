@@ -6,6 +6,7 @@
 const parserSpec = require(ES_TEST + '/parser/ParserShared.js').spec;
 const JinjaParser = require(ES_SOURCE + '/parser/documentation/JinjaParser.js').JinjaParser;
 const DocumentationCallable = require(ES_SOURCE + '/model/documentation/DocumentationCallable.js').DocumentationCallable;
+const Dependency = require(ES_SOURCE + '/model/documentation/Dependency.js').Dependency;
 
 
 /**
@@ -221,6 +222,27 @@ describe(JinjaParser.className, function()
             });
             return promise;
         });
+
+        it('should generate a list of dependencies', function()
+        {
+            const testee = new JinjaParser();
+            const docblock = `
+            {% macro e001_link() %}
+                {{ 'hey' + x + e002_text() + y }}
+                {{ text }}
+                {% call e003_rte() %}{% endcall %}
+            {% endmacro %}
+            `;
+
+            const promise = testee.parse(docblock).then(function(documentation)
+            {
+                const doc = documentation[0];
+                expect(doc.dependencies).to.have.length(2);
+                expect(doc.dependencies.find(dep => dep.name == 'e002_text')).to.be.instanceof(Dependency);
+                expect(doc.dependencies.find(dep => dep.name == 'e003_rte')).to.be.instanceof(Dependency);                
+            });
+            return promise;
+        });        
     });
 
 
