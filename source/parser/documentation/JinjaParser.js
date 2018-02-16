@@ -207,12 +207,19 @@ class JinjaParser extends Parser
                     case 'call':
                         if (documentation)
                         {
-                            const dependency = new Dependency(
-                                {
+                            if (!documentation.dependencies.findBy(
+                                { 
                                     name: token.name,
                                     type: DependencyType.MACRO
-                                });
-                            documentation.dependencies.push(dependency);
+                                }))
+                            {
+                                const dependency = new Dependency(
+                                    {
+                                        name: token.name,
+                                        type: DependencyType.MACRO
+                                    });
+                                documentation.dependencies.push(dependency);    
+                            }
                         }
                         break;
 

@@ -242,7 +242,27 @@ describe(JinjaParser.className, function()
                 expect(doc.dependencies.find(dep => dep.name == 'e003_rte')).to.be.instanceof(Dependency);                
             });
             return promise;
-        });        
+        });   
+        
+        it('should add dependencies only once', function()
+        {
+            const testee = new JinjaParser();
+            const docblock = `
+            {% macro e001_link() %}
+                {{ e002_text() }}
+                {{ e002_text() }}
+                {{ e002_text() }}                
+            {% endmacro %}
+            `;
+
+            const promise = testee.parse(docblock).then(function(documentation)
+            {
+                const doc = documentation[0];
+                expect(doc.dependencies).to.have.length(1);
+                expect(doc.dependencies.find(dep => dep.name == 'e002_text')).to.be.instanceof(Dependency);
+            });
+            return promise;
+        });         
     });
 
 
