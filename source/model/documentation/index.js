@@ -4,6 +4,8 @@
  */
 module.exports =
 {
+    Dependency: require('./Dependency.js').Dependency,
+    DependencyType: require('./DependencyType.js').DependencyType,
     Documentation: require('./Documentation.js').Documentation,
     DocumentationArray: require('./DocumentationArray.js').DocumentationArray,
     DocumentationCallable: require('./DocumentationCallable.js').DocumentationCallable,

@@ -21,6 +21,7 @@ describe(DocumentationCallable.className, function()
     /**
      * DocumentationCallable Test
      */
+    baseSpec.assertProperty(new DocumentationCallable(), ['dependencies'], ['hey'], []);
     baseSpec.assertProperty(new DocumentationCallable(), ['parameters'], ['hey'], []);
     baseSpec.assertProperty(new DocumentationCallable(), ['returns'], 'void');
 });
