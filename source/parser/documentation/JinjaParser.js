@@ -188,8 +188,11 @@ class JinjaParser extends Parser
                             documentation.contentKind = ContentKind.MACRO;
                             documentation.name = token.name;
 
+                            // Update with arguments
+                            const order = [];
                             for (const argument of token.arguments)
                             {
+                                order.push(argument.name);
                                 let parameter = documentation.parameters.find(item => item.name === argument.name);
                                 if (!parameter)
                                 {
@@ -203,6 +206,14 @@ class JinjaParser extends Parser
                                     parameter.defaultValue = argument.value;
                                 }
                             }
+
+                            // Ensure correct order
+                            const parameters = documentation.parameters.slice(0);
+                            documentation.parameters = [];
+                            for (const name of order)
+                            {
+                                documentation.parameters.push(parameters.find(item => item.name === name));
+                            }                            
 
                             result.push(documentation);
                         }

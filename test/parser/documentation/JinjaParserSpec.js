@@ -34,10 +34,10 @@ describe(JinjaParser.className, function()
                 expect(documentation).to.have.length(1);
                 const macro = documentation.find(doc => doc.name == 'one');
                 expect(macro.parameters).to.have.length(2);
-                expect(macro.parameters.find(param => param.name == 'name')).to.be.ok;
-                expect(macro.parameters.find(param => param.name == 'name').defaultValue).to.be.equal('\'unnamed\'');
-                expect(macro.parameters.find(param => param.name == 'id')).to.be.ok;
-                expect(macro.parameters.find(param => param.name == 'id').defaultValue).to.be.equal('5');
+                expect(macro.parameters[0]).to.be.ok;
+                expect(macro.parameters[0].defaultValue).to.be.equal('\'unnamed\'');
+                expect(macro.parameters[1]).to.be.ok;
+                expect(macro.parameters[1].defaultValue).to.be.equal('5');
             });
             return promise;
         });
@@ -57,13 +57,34 @@ describe(JinjaParser.className, function()
                 expect(documentation).to.have.length(1);
                 const macro = documentation.find(doc => doc.name == 'one');
                 expect(macro.parameters).to.have.length(2);
-                expect(macro.parameters.find(param => param.name == 'name')).to.be.ok;
-                expect(macro.parameters.find(param => param.name == 'name').type).to.contain('String');
-                expect(macro.parameters.find(param => param.name == 'id')).to.be.ok;
-                expect(macro.parameters.find(param => param.name == 'id').type).to.contain('Number');
+                expect(macro.parameters[0]).to.be.ok;
+                expect(macro.parameters[0].type).to.contain('String');
+                expect(macro.parameters[1]).to.be.ok;
+                expect(macro.parameters[1].type).to.contain('Number');
             });
             return promise;
         });
+
+        it('should use arguments order from the macro definition', function()
+        {
+            const testee = new JinjaParser();
+            const docblock = `
+            {##
+                @param {number} id
+                @param {string} name
+             #}
+            {% macro one(name, id) %}{% endmacro %}`;
+
+            const promise = testee.parse(docblock).then(function(documentation)
+            {
+                expect(documentation).to.have.length(1);
+                const macro = documentation.find(doc => doc.name == 'one');
+                expect(macro.parameters).to.have.length(2);
+                expect(macro.parameters[0].name).to.be.equal('name');                
+                expect(macro.parameters[1].name).to.be.equal('id');
+            });
+            return promise;
+        });        
 
         it('should parse macros with mixed identation', function()
         {
