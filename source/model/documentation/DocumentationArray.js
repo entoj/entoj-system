@@ -4,7 +4,7 @@
  * Requirements
  * @ignore
  */
-const BaseArray = require('../../base/BaseArray.js').BaseArray;
+const SearchableArray = require('../../base/SearchableArray.js').SearchableArray;
 const documentationTypes = require('./index.js');
 
 
@@ -13,7 +13,7 @@ const documentationTypes = require('./index.js');
  * @memberOf model.docmentation
  * @extends {Base}
  */
-class DocumentationArray extends BaseArray
+class DocumentationArray extends SearchableArray
 {
     /**
      * The namespaced class name
