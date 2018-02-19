@@ -425,6 +425,10 @@ class Configuration extends Base
                 }
             }
         );
+
+
+        // Config  
+        this.commands.add(require('../command/index.js').ConfigCommand);      
     }
 
 
