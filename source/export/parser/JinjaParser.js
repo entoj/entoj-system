@@ -332,6 +332,9 @@ class JinjaParser extends Parser
                 case 'LookupVal':
                     return this.parseVariable(node);
 
+                case 'Filter':
+                    return this.parseFilter(node);                    
+
                 /* istanbul ignore next */
                 default:
                     this.logger.error('parseComplexVariable: Not Implemented', type, JSON.stringify(node, null, 4));
