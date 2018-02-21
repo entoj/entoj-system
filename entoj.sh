@@ -18,7 +18,7 @@ done
 if [ "$PROFILE" == "true" ]
     then
         echo "Enabling profiler"
-        RUNNER="node --stack_size=1500 --inspect $SELF/source/cli.js"
+        RUNNER="node --stack_size=1500 --prof $SELF/source/cli.js"
     else
         RUNNER="node --stack_size=1500 $SELF/source/cli.js"
 fi
