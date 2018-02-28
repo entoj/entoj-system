@@ -203,12 +203,10 @@ class EntityTemplateRoute extends Route
                 scope.nunjucks.addGlobal('global', {});
                 scope.nunjucks.addGlobal('location', location);
                 scope.nunjucks.addGlobal('request', request);
-                html = scope.nunjucks.renderString(tpl, data);
+                html = scope.nunjucks.renderString(tpl, data, { path: filename });
             }
             catch (e)
             {
-                /* istanbul ignore next */
-                scope.logger.error('renderTemplate', e);
                 /* istanbul ignore next */
                 scope.cliLogger.error(scope.className + '::renderTemplate', e);
                 /* istanbul ignore next */
@@ -216,7 +214,7 @@ class EntityTemplateRoute extends Route
             }
             scope.cliLogger.end(work);
             return html;
-        }).catch(ErrorHandler.handler(scope));
+        });
         return promise;
     }
 
@@ -259,7 +257,7 @@ class EntityTemplateRoute extends Route
             const html = yield scope.renderTemplate(request.path, request);
             if (!html)
             {
-                scope.cliLogger.error(work);
+                scope.cliLogger.end(work, 'Rendering template failed');
                 next();
                 return;
             }
