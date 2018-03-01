@@ -57,5 +57,26 @@ describe(Environment.className, function()
             const source = testee.renderString(input);
             expect(source).to.include('<a class="e-cta');
         });
+
+        it('should allow to register a callback for supporting filters', function()
+        {
+            const testee = createTestee(global.fixtures.pathesConfiguration.sites);
+            let calls = 0;
+            testee.addFilterCallback('moduleClasses', (value) => { calls++; return value; });
+            const input = '{{ e_cta() }}';
+            testee.renderString(input);
+            expect(calls).to.equal(1);
+        });
+
+        it('should allow to remove all registered filter callbacks', function()
+        {
+            const testee = createTestee(global.fixtures.pathesConfiguration.sites);
+            let calls = 0;
+            testee.addFilterCallback('moduleClasses', (value) => { calls++; return value; });
+            testee.clearFilterCallbacks();
+            const input = '{{ e_cta() }}';
+            testee.renderString(input);
+            expect(calls).to.equal(0);
+        });
     });
 });

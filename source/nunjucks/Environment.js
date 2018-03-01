@@ -76,7 +76,7 @@ class Environment extends BaseMixin(nunjucks.Environment)
 
 
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
     static get injections()
     {
@@ -173,12 +173,15 @@ class Environment extends BaseMixin(nunjucks.Environment)
 
 
     /**
-     * @type {string}
+     * @param {String} content
+     * @param {Mixed} context
+     * @param {Object} options
+     * @returns {String}
      */
-    renderString(content, context, callback)
+    renderString(content, context, options)
     {
         const template = this._template.prepare(content, this.globals['location']);
-        const result = super.renderString(template, context, callback);
+        const result = super.renderString(template, context, options);
         return result;
     }
 
@@ -213,6 +216,7 @@ class Environment extends BaseMixin(nunjucks.Environment)
      *
      * @param {nunjucks.filter.Filter} name
      * @param {Function} callback
+     * @returns {Mixed}
      */
     applyFilterCallbacks(filter, value, args, data)
     {
