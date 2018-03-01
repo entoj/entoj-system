@@ -66,14 +66,14 @@ class SettingFilter extends Filter
             if (!scope.settingsRepository)
             {
                 scope.logger.warn('Missing settingsRepository');
-                return {};
+                return scope.applyCallbacks({}, arguments);
             }
 
             // Use value or key for settings
             if (!value || typeof value !== 'string')
             {
                 scope.logger.warn('Missing key for settings', value);
-                return {};
+                return scope.applyCallbacks({}, arguments);
             }
 
             // Get Setting
@@ -81,10 +81,10 @@ class SettingFilter extends Filter
             if (!setting)
             {
                 scope.logger.warn('Missing settings for key', value);
-                return {};
+                return scope.applyCallbacks({}, arguments);
             }
 
-            return setting.value;
+            return scope.applyCallbacks(setting.value, arguments);
         };
     }
 }

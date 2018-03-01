@@ -42,7 +42,7 @@ class NotEmptyFilter extends EmptyFilter
         const scope = this;
         return function(value)
         {
-            return !scope.isEmpty(value);
+            return scope.applyCallbacks(!scope.isEmpty(value), arguments);
         };
     }
 }

@@ -91,7 +91,12 @@ class MarkupFilter extends Filter
                     probability: 0.2
                 }
             ];
-            return htmlify(result, { tags: tags, random: createRandomNumberGenerator(useStaticContent) });
+            const options =
+            {
+                tags: tags,
+                random: createRandomNumberGenerator(useStaticContent)
+            };
+            return scope.applyCallbacks(htmlify(result, options), arguments, options);
         };
     }
 }

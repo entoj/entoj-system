@@ -36,6 +36,7 @@ class SetFilter extends Filter
      */
     filter(value)
     {
+        const scope = this;
         return function(value, key, val)
         {
             const result = value || {};
@@ -43,7 +44,7 @@ class SetFilter extends Filter
             {
                 result[key] = val;
             }
-            return result;
+            return scope.applyCallbacks(result, arguments);
         };
     }
 }

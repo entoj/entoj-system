@@ -71,7 +71,7 @@ class TranslateFilter extends Filter
             if (!translationKey || typeof translationKey !== 'string')
             {
                 scope.logger.warn('Missing translation key');
-                return '';
+                return scope.applyCallbacks('', arguments);
             }
 
             // Translate
@@ -79,7 +79,7 @@ class TranslateFilter extends Filter
             if (!translation)
             {
                 scope.logger.warn('Missing translation for key', value);
-                return '';
+                return scope.applyCallbacks('', arguments);
             }
             let result = translation.value;
             if (variables && variables.length)
@@ -89,7 +89,7 @@ class TranslateFilter extends Filter
                     result = result.replace('{' + index + '}', variables[index]);
                 }
             }
-            return result;
+            return scope.applyCallbacks(result, arguments);
         };
     }
 }

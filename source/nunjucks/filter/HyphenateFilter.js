@@ -50,11 +50,12 @@ class HyphenateFilter extends Filter
         const scope = this;
         return function (value)
         {
-            if (!value)
+            let result = '';
+            if (value)
             {
-                return '';
+                result = scope.hypher.hyphenateText(value);
             }
-            return scope.hypher.hyphenateText(value);
+            return scope.applyCallbacks(result, arguments);
         };
     }
 }

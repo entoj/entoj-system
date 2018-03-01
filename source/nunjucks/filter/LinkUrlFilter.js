@@ -55,21 +55,22 @@ class LinkUrlFilter extends Filter
         const scope = this;
         return function(value)
         {
+            let result = 'JavaScript:;';
             if (typeof value === 'string')
             {
-                return value;
+                result = value;
             }
-            if (isPlainObject(value))
+            else if (isPlainObject(value))
             {
                 for (const dataProperty of scope.dataProperties)
                 {
                     if (typeof value[dataProperty] === 'string')
                     {
-                        return value[dataProperty];
+                        result = value[dataProperty];
                     }
                 }
             }
-            return 'JavaScript:;';
+            return scope.applyCallbacks(result, arguments, { dataProperties: scope.dataProperties });
         };
     }
 }

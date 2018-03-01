@@ -36,6 +36,7 @@ class ModuleClassesFilter extends Filter
      */
     filter()
     {
+        const scope = this;
         return function(value, moduleClass)
         {
             if (!value || !moduleClass)
@@ -51,7 +52,7 @@ class ModuleClassesFilter extends Filter
                     result += ' ' + moduleClass + '--' + item;
                 }
             });
-            return result;
+            return scope.applyCallbacks(result, arguments);
         };
     }
 }

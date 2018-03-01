@@ -42,11 +42,12 @@ class UniqueFilter extends Filter
      */
     filter()
     {
+        const scope = this;
         return function(value, separator)
         {
             const sep = typeof separator === 'undefined' ? '-' : separator;
             uniqueId = (uniqueId + 1) % Number.MAX_SAFE_INTEGER;
-            return String(value) + sep + uniqueId;
+            return scope.applyCallbacks(String(value) + sep + uniqueId, arguments);
         };
     }
 }

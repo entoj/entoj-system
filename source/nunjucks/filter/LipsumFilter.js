@@ -40,6 +40,7 @@ class LipsumFilter extends Filter
      */
     filter(value)
     {
+        const scope = this;
         return function (value, unit, minCount, maxCount)
         {
             // Prepare
@@ -65,7 +66,7 @@ class LipsumFilter extends Filter
             options.count = min + ((max - min) * Math.random());
 
             // Generate
-            return uppercaseFirst(lorem(options));
+            return scope.applyCallbacks(uppercaseFirst(lorem(options)), arguments, options);
         };
     }
 }

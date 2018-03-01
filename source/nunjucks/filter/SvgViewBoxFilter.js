@@ -92,7 +92,7 @@ class SvgViewBoxFilter extends Filter
             {
                 scope.logger.warn('Could not locate svg <' + filename + '>');
             }
-            return result;
+            return scope.applyCallbacks(result, arguments);
         };
     }
 }
