@@ -20,6 +20,7 @@ const SitesRepository = require('../model/site/SitesRepository.js').SitesReposit
 const SitesLoader = require('../model/site/SitesLoader.js').SitesLoader;
 const FilesRepository = require('../model/file/FilesRepository.js').FilesRepository;
 const ModelSynchronizer = require('../watch/ModelSynchronizer.js').ModelSynchronizer;
+const Communication = require('./Communication.js').Communication;
 
 
 /**
@@ -282,6 +283,7 @@ class Context extends Base
         // Globals
         this._di.map('cli/CliLogger.options', {});
         this._di.map(ModelSynchronizer, ModelSynchronizer, true);
+        this._di.map(Communication, Communication, true);
 
         // Configs
         this.logger.debug('Setup configurations');
