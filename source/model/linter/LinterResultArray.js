@@ -5,6 +5,7 @@
  * @ignore
  */
 const SearchableArray = require('../../base/SearchableArray.js').SearchableArray;
+const LinterResult = require('./LinterResult.js').LinterResult;
 
 
 /**
@@ -36,15 +37,16 @@ class LinterResultArray extends SearchableArray
             : [data];
         for (const item of items)
         {
-            let resultItem = this.findBy(
+            let linterResult = this.findBy(
                 {
                     linter: data.linter
                 });
-            if (!resultItem)
+            if (!linterResult)
             {
-                resultItem = new LinterResult();
+                linterResult = new LinterResult();
+                this.push(linterResult);
             }
-            resultItem.load(item);
+            linterResult.dehydrate(item);
         }
     }
 }
