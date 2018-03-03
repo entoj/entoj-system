@@ -37,6 +37,7 @@ class DocumentableValueObject extends ValueObject
         this._documentation = new DocumentationArray();
         this._files = new SearchableArray();
         this._testSuites = new TestSuiteArray();
+        this._lintResults = new SearchableArray();
     }
 
 
@@ -87,6 +88,15 @@ class DocumentableValueObject extends ValueObject
     get testSuites()
     {
         return this._testSuites;
+    }
+
+
+    /**
+     * @property {Array}
+     */
+    get lintResults()
+    {
+        return this._lintResults;
     }
 }
 
