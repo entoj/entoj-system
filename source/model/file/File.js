@@ -12,8 +12,8 @@ const fs = require('fs');
 
 
 /**
- * @memberOf file
- * @extends {Base}
+ * @memberOf model.file
+ * @extends {model.ValueObject}
  */
 class File extends ValueObject
 {

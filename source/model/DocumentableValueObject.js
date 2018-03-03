@@ -7,6 +7,7 @@
 const ValueObject = require('./ValueObject.js').ValueObject;
 const DocumentationArray = require('./documentation/DocumentationArray.js').DocumentationArray;
 const TestSuiteArray = require('./test/TestSuiteArray.js').TestSuiteArray;
+const LinterResultArray = require('./linter/LinterResultArray.js').LinterResultArray;
 const SearchableArray = require('../base/SearchableArray.js').SearchableArray;
 const BaseMap = require('../base/BaseMap.js').BaseMap;
 
@@ -37,7 +38,7 @@ class DocumentableValueObject extends ValueObject
         this._documentation = new DocumentationArray();
         this._files = new SearchableArray();
         this._testSuites = new TestSuiteArray();
-        this._lintResults = new SearchableArray();
+        this._lintResults = new LinterResultArray();
     }
 
 
