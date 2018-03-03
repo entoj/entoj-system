@@ -16,14 +16,11 @@ const matchObject = require('../utils/match.js').matchObject;
 class SearchableArray extends BaseArray
 {
     /**
-     * The namespaced class name
-     *
-     * @type {string}
-     * @static
+     * @inheritDoc
      */
     static get className()
     {
-        return 'model.performance/SearchableArray';
+        return 'base/SearchableArray';
     }
 
 
