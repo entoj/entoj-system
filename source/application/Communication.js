@@ -163,9 +163,9 @@ class Communication extends Base
         const scope = this;
         const promise = co(function*()
         {
-            scope.cliLogger.info('Sending command <' + command + '>');
             if (ipc.server)
             {
+                scope.cliLogger.info('Sending command <' + command + '> via broadcast');
                 ipc.server.broadcast('message', { command: command, data: data || false });
                 return true;
             }
@@ -174,6 +174,7 @@ class Communication extends Base
                 const connection = yield scope.connect();
                 if (connection)
                 {
+                    scope.cliLogger.info('Sending command <' + command + '> via emit');
                     connection.emit('message', { command: command, data: data || false });
                     return true;
                 }
@@ -228,7 +229,6 @@ class Communication extends Base
             });
         });
         ipc.server.start();
-
         return Promise.resolve();
     }
 }
