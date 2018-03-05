@@ -4,6 +4,7 @@
  * Requirements
  */
 const LintCommand = require(ES_SOURCE + '/command/LintCommand.js').LintCommand;
+const Communication = require(ES_SOURCE + '/application/Communication.js').Communication;
 const commandSpec = require(ES_TEST + '/command/CommandShared.js').spec;
 const projectFixture = require(ES_FIXTURES + '/project/index.js');
 const FileLinter = require(ES_SOURCE + '/linter/FileLinter.js').FileLinter;
@@ -25,6 +26,7 @@ describe(LintCommand.className, function()
     function prepareParameters(parameters)
     {
         global.fixtures = projectFixture.createDynamic();
+        global.fixtures.context.di.map(Communication, Communication, false);
         return [global.fixtures.context, global.fixtures.globalRepository, global.fixtures.pathesConfiguration, [], { exitCodes: false }];
     }
 
@@ -35,11 +37,11 @@ describe(LintCommand.className, function()
     beforeEach(function()
     {
         global.fixtures = projectFixture.createDynamic();
+        global.fixtures.context.di.map(Communication, Communication, false);
     });
 
     function createTestee(linters)
     {
-        global.fixtures = projectFixture.createDynamic();
         return new LintCommand(global.fixtures.context, global.fixtures.globalRepository, global.fixtures.pathesConfiguration, linters, { exitCodes: false });
     }
 
