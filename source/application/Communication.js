@@ -38,8 +38,9 @@ class Communication extends Base
         // ipc config
         ipc.config.id = this._id;
         ipc.config.silent = true;
-        ipc.config.retry = 1500;
+        ipc.config.retry = 10;
         ipc.config.maxRetries = 10;
+        ipc.disconnect(this._id);
     }
 
 
