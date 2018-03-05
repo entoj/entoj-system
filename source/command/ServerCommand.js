@@ -10,6 +10,7 @@ const Context = require('../application/Context.js').Context;
 const Communication = require('../application/Communication.js').Communication;
 const CliLogger = require('../cli/CliLogger.js').CliLogger;
 const ModelSynchronizer = require('../watch/ModelSynchronizer.js').ModelSynchronizer;
+const EntitiesRepository = require('../model/entity/EntitiesRepository.js').EntitiesRepository;
 const ErrorHandler = require('../error/ErrorHandler.js').ErrorHandler;
 const co = require('co');
 
@@ -92,6 +93,32 @@ class ServerCommand extends Command
 
 
     /**
+     *
+     */
+    importLinterResults(lintResults)
+    {
+        if (!lintResults)
+        {
+            return;
+        }
+        const scope = this;
+        co(function *()
+        {
+            const entityRepository = scope.context.di.create(EntitiesRepository);
+            for (const lintResult of lintResults)
+            {
+                const entityAspect = yield entityRepository.getById(lintResult.entity);
+                if (entityAspect)
+                {
+                    lintResult.site = entityAspect.id.site;
+                    entityAspect.entity.lintResults.import(lintResult);
+                }
+            }
+        });
+    }
+
+
+    /**
      * @returns {Promise<server.Server>}
      */
     start(parameters)
@@ -112,6 +139,10 @@ class ServerCommand extends Command
                     {
                         com.send('found-server', scope.server.baseUrl);
                     }
+                });
+                com.events.on('lint-results', (data) =>
+                {
+                    scope.importLinterResults(data);
                 });
                 com.serve();
 
