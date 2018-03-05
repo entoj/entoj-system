@@ -8,6 +8,7 @@ const Command = require('./Command.js').Command;
 const Context = require('../application/Context.js').Context;
 const GlobalRepository = require('../model/GlobalRepository.js').GlobalRepository;
 const PathesConfiguration = require('../model/configuration/PathesConfiguration.js').PathesConfiguration;
+const Communication = require('../application/Communication.js').Communication;
 const assertParameter = require('../utils/assert.js').assertParameter;
 const ErrorHandler = require('../error/ErrorHandler.js').ErrorHandler;
 const chalk = require('chalk');
@@ -117,6 +118,7 @@ class LintCommand extends Command
         const logger = scope.createLogger('command.lint');
         const promise = co(function *()
         {
+            const com = scope.context.di.create(Communication);
             const query = action || '*';
             const section = logger.section('Linting <' + query + '>');
             const sectionResult =
@@ -124,7 +126,9 @@ class LintCommand extends Command
                 errorCount: 0,
                 warningCount: 0
             };
+            const linterResults = [];
 
+            // Lint each entity
             const entities = yield scope.globalRepository.resolveEntities(query);
             for (const entity of entities)
             {
@@ -141,6 +145,19 @@ class LintCommand extends Command
                 for (const linter of scope.linters)
                 {
                     const linterResult = yield linter.lint(entityPath);
+
+                    // Add linter results
+                    linterResults.push(
+                        {
+                            entity: entity.pathString,
+                            linter: linter.name,
+                            success: linterResult.success,
+                            warningCount: linterResult.warningCount,
+                            errorCount: linterResult.errorCount,
+                            messages: linterResult.messages
+                        });
+
+                    // Prepare for output
                     if (!linterResult.success)
                     {
                         result.success = false;
@@ -182,6 +199,10 @@ class LintCommand extends Command
                     }
                 }
             }
+
+            // Dispatch lint results
+            yield com.send('lint-results', linterResults);
+            console.log(linterResults);
 
             if (sectionResult.errorCount > 0)
             {
