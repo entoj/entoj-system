@@ -6,9 +6,6 @@
 const LinterResult = require(ES_SOURCE + '/model/linter/LinterResult.js').LinterResult;
 const ContentType = require(ES_SOURCE + '/model/ContentType.js').ContentType;
 const ContentKind = require(ES_SOURCE + '/model/ContentKind.js').ContentKind;
-const Site = require(ES_SOURCE + '/model/site/Site.js').Site;
-const PATH_SEPERATOR = require('path').sep;
-const isWin32 = (process.platform == 'win32');
 const baseSpec = require('../../BaseShared.js').spec;
 const valueObjectSpec = require('../ValueObjectShared.js').spec;
 

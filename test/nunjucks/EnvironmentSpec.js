@@ -62,7 +62,11 @@ describe(Environment.className, function()
         {
             const testee = createTestee(global.fixtures.pathesConfiguration.sites);
             let calls = 0;
-            testee.addFilterCallback('moduleClasses', (value) => { calls++; return value; });
+            testee.addFilterCallback('moduleClasses', (value) =>
+            {
+                calls++;
+                return value;
+            });
             const input = '{{ e_cta() }}';
             testee.renderString(input);
             expect(calls).to.equal(1);
@@ -72,7 +76,11 @@ describe(Environment.className, function()
         {
             const testee = createTestee(global.fixtures.pathesConfiguration.sites);
             let calls = 0;
-            testee.addFilterCallback('moduleClasses', (value) => { calls++; return value; });
+            testee.addFilterCallback('moduleClasses', (value) =>
+            {
+                calls++;
+                return value;
+            });
             testee.clearFilterCallbacks();
             const input = '{{ e_cta() }}';
             testee.renderString(input);
