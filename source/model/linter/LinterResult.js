@@ -30,6 +30,7 @@ class LinterResult extends ValueObject
     get fields()
     {
         const fields = super.fields;
+        fields.site = false;
         fields.linter = '';
         fields.contentType = ContentType.ANY;
         fields.contentKind = ContentKind.UNKNOWN;
@@ -38,6 +39,20 @@ class LinterResult extends ValueObject
         fields.errorCount = 0;
         fields.messages = [];
         return fields;
+    }
+
+
+    /**
+     * @property {model.site.Site}
+     */
+    get site()
+    {
+        return this._site;
+    }
+
+    set site(value)
+    {
+        this._site = value;
     }
 
 
