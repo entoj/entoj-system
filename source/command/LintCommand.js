@@ -202,7 +202,6 @@ class LintCommand extends Command
 
             // Dispatch lint results
             yield com.send('lint-results', linterResults);
-            console.log(linterResults);
 
             if (sectionResult.errorCount > 0)
             {
