@@ -25,6 +25,15 @@ class Linter extends Base
 
 
     /**
+     * @type {String}
+     */
+    get name()
+    {
+        return this.className.split('/').pop();
+    }
+
+
+    /**
      * @param {*} content
      * @param {Object} options
      * @returns {Promise<Object>}
