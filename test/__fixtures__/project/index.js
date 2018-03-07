@@ -192,7 +192,8 @@ function createDynamic(configuration)
         plugins:
         [
             require(ES_SOURCE + '/model/loader/documentation').PackagePlugin,
-            require(ES_SOURCE + '/model/loader/documentation').JinjaPlugin
+            require(ES_SOURCE + '/model/loader/documentation').JinjaPlugin,
+            require(ES_SOURCE + '/model/loader/documentation').MarkdownPlugin
         ]
     };
 

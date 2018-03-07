@@ -5,10 +5,11 @@
  */
 const EntityAspect = require(ES_SOURCE + '/model/entity/EntityAspect.js').EntityAspect;
 const Site = require(ES_SOURCE + '/model/site/Site.js').Site;
-const MissingArgumentError = require(ES_SOURCE + '/error/MissingArgumentError.js').MissingArgumentError;
+const ContentKind = require(ES_SOURCE + '/model/ContentKind.js').ContentKind;
 const valueObjectSpec = require('../ValueObjectShared.js').spec;
 const projectFixture = require(ES_FIXTURES + '/project/index.js');
 const baseSpec = require('../../BaseShared.js').spec;
+const co = require('co');
 
 
 /**
@@ -48,41 +49,39 @@ describe(EntityAspect.className, function()
 
     beforeEach(function()
     {
-        global.fixtures = projectFixture.createStatic();
+        global.fixtures = projectFixture.createDynamic();
     });
 
-    xdescribe('#constructor()', function()
+    describe('#hasOwnContentOfKind()', function()
     {
-        it('should throw a exception when created without a Entity', function()
+        it('should return true if the entity defines its own content for the given kind', function()
         {
-            expect(function()
+            const promise = co(function*()
             {
-                new EntityAspect();
-            }).to.throw(MissingArgumentError);
+                const entity = yield global.fixtures.entitiesRepository.getById('base/elements/e-cta');
+                expect(entity.hasOwnContentOfKind(ContentKind.MACRO)).to.be.true;
+            });
+            return promise;
         });
 
-        it('should throw a exception when created without a proper Entity', function()
+        it('should return false if the entity does not define its own content for the given kind', function()
         {
-            expect(function()
+            const promise = co(function*()
             {
-                new EntityAspect('Category');
-            }).to.throw(MissingArgumentError);
+                const entity = yield global.fixtures.entitiesRepository.getById('extended/elements/e-cta');
+                expect(entity.hasOwnContentOfKind(ContentKind.MACRO)).to.be.false;
+            });
+            return promise;
         });
 
-        it('should throw a exception when created without a Site', function()
+        it('should return true if the extended entity does define its own content for the given kind', function()
         {
-            expect(function()
+            const promise = co(function*()
             {
-                new EntityAspect(global.fixtures.entityImage);
-            }).to.throw(MissingArgumentError);
-        });
-
-        it('should throw a exception when created without a proper Site', function()
-        {
-            expect(function()
-            {
-                new EntityAspect(global.fixtures.entityImage, 'Site');
-            }).to.throw(TypeError);
+                const entity = yield global.fixtures.entitiesRepository.getById('extended/elements/e-image');
+                expect(entity.hasOwnContentOfKind(ContentKind.TEXT)).to.be.true;
+            });
+            return promise;
         });
     });
 });
