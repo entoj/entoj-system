@@ -82,6 +82,16 @@ class BuildConfiguration extends Base
     /**
      * @inheritDoc
      */
+    set(name, value)
+    {
+        const path = this._environment + '.' + name;
+        return this._values.setByPath(path, value);
+    }
+
+
+    /**
+     * @inheritDoc
+     */
     toString()
     {
         return `[${this.className} ${this.root}`;
