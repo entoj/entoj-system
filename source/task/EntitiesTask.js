@@ -118,6 +118,16 @@ class EntitiesTask extends Task
      * @inheritDoc
      * @returns {Promise<Array>}
      */
+    getEntities(query)
+    {
+        return this.globalRepository.resolveEntities(query);
+    }
+
+
+    /**
+     * @inheritDoc
+     * @returns {Promise<Array>}
+     */
     processEntities(buildConfiguration, parameters)
     {
         const scope = this;
@@ -128,7 +138,7 @@ class EntitiesTask extends Task
 
             // Process each entity
             const result = [];
-            const entities = yield scope.globalRepository.resolveEntities(params.query);
+            const entities = yield scope.getEntities(params.query);
             for (const entity of entities)
             {
                 // Render entity
