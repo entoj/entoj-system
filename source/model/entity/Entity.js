@@ -13,6 +13,7 @@ const EntityId = require('./EntityId.js').EntityId;
  */
 class Entity extends DocumentableValueObject
 {
+
     /**
      * @inheritDoc
      */
@@ -51,6 +52,22 @@ class Entity extends DocumentableValueObject
         return fields;
     }
 
+
+    /**
+     * @param {*} values
+     * @returns {void}
+     */
+    dehydrate(values)
+    {
+        super.dehydrate(values);
+        this._sitesChain = [];
+        let currentSite = this.site;
+        while (currentSite)
+        {
+            this._sitesChain.push(currentSite);
+            currentSite = currentSite.extends;
+        }
+    }
 
     /**
      * @property {*}
@@ -119,6 +136,16 @@ class Entity extends DocumentableValueObject
         return this.id.site;
     }
 
+
+    /**
+     * Returns the site and all sites that it extends from.
+     *
+     * @property {Array<Site>}
+     */
+    get sitesChain()
+    {
+        return this._sitesChain;
+    }
 
     /**
      * @inheritDoc

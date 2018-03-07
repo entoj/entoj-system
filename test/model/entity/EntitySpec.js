@@ -50,4 +50,17 @@ describe(Entity.className, function()
             expect(testee.id).to.be.equal(data.id);
         });
     });
+
+    describe('.sitesChain', function()
+    {
+        it('should return the site and all sites it extends', function()
+        {
+            const id = global.fixtures.entityCta.id.clone();
+            id.site = global.fixtures.siteExtended;
+            const testee = new Entity({ id: id });
+            expect(testee.sitesChain).to.have.length(2);
+            expect(testee.sitesChain[0]).to.be.equal(global.fixtures.siteExtended);
+            expect(testee.sitesChain[1]).to.be.equal(global.fixtures.siteBase);
+        });
+    });
 });
