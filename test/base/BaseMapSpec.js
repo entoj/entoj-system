@@ -93,6 +93,24 @@ describe(BaseMap.className, function()
     });
 
 
+    describe('#setByPath', function()
+    {
+        it('should set the value at the given path', function()
+        {
+            const testee = new BaseMap();
+            testee.set('map', new Map());
+            testee.set('object', {});
+            testee.setByPath('map.name', 'Map');
+            testee.setByPath('object.name', 'Object');
+            testee.setByPath('very.long.path.to', 'Path');
+
+            expect(testee.getByPath('map.name')).to.be.equal('Map');
+            expect(testee.getByPath('object.name')).to.be.equal('Object');
+            expect(testee.getByPath('very.long.path.to')).to.be.equal('Path');
+        });
+    });
+
+
     describe('#load', function()
     {
         it('should allow to import a Map', function()

@@ -80,6 +80,58 @@ class BaseMap extends BaseMixin(Map)
 
 
     /**
+     * @param {String} path
+     * @param {*} value
+     */
+    setByPath(path, value)
+    {
+        // Path valid?
+        if (!path)
+        {
+            return false;
+        }
+
+        // Walk path and find value
+        const names = path.split('.');
+        let parent = this;
+        let current;
+        for (let index = 0; index < names.length; index++)
+        {
+            const name = names[index];
+
+            // Try to get value at current name
+            current = undefined;
+            if (parent instanceof Map)
+            {
+                current = parent.get(name);
+            }
+            else if (typeof parent[name] !== 'undefined')
+            {
+                current = parent[name];
+            }
+
+            // Add value if missing
+            if (!current)
+            {
+                current = (index < names.length - 1)
+                    ? {}
+                    : value;
+            }
+
+            if (parent instanceof Map)
+            {
+                parent.set(name, current);
+            }
+            else
+            {
+                parent[name] = current;
+            }
+            parent = current;
+        }
+    }
+
+
+    /**
      * @param {*} data
      * @param {bool} clear
      */
