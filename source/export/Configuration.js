@@ -1,6 +1,9 @@
 'use strict';
 
-// Requirements
+/**
+ * Requirements
+ * @ignore
+ */
 const Base = require('../Base.js').Base;
 const GlobalRepository = require('../model/GlobalRepository.js').GlobalRepository;
 const BuildConfiguration = require('../model/configuration/BuildConfiguration.js').BuildConfiguration;
