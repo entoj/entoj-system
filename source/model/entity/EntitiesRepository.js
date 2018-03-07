@@ -272,6 +272,10 @@ class EntitiesRepository extends Repository
                     return false;
                 }
             }
+            else
+            {
+                id = entityId.clone();
+            }
             if (site)
             {
                 id.site = site;
