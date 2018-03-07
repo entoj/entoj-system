@@ -45,7 +45,7 @@ class Exporter extends Base
 
 
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
     static get injections()
     {
@@ -54,7 +54,7 @@ class Exporter extends Base
 
 
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
     static get className()
     {

@@ -254,7 +254,6 @@ function spec(type, className, prepareParameters, options)
     });
 
 
-
     describe('#getExportConfiguration()', function()
     {
         it('should yield a configuration containing the entity and site of the export artefact', function()
