@@ -76,6 +76,15 @@ class Configuration extends Base
 
 
     /**
+     * @type {model.GlobalRepository}
+     */
+    get globalRepository()
+    {
+        return this._globalRepository;
+    }
+
+
+    /**
      * The configuration identifier used to extract
      * settings from entity configurations.
      *
@@ -195,13 +204,13 @@ class Configuration extends Base
 
 
     /**
-     * Resolves to a macro specific configuration based
-     * on the default, the entity configuration and the refined.
+     * Resolves to the first macro that matches macroQuery.
      *
+     * @protected
      * @param {String} [macroQuery]
-     * @returns {Promise<Object>}
+     * @returns {Promise<model.documentation.DocumentationCallable>}
      */
-    getMacroConfiguration(macroQuery)
+    getMacro(macroQuery)
     {
         const scope = this;
         const promise = co(function *()
@@ -221,8 +230,50 @@ class Configuration extends Base
             }
             else
             {
-                macro = yield scope._globalRepository.resolveMacro(scope.site, macroQuery);
+                macro = yield scope.globalRepository.resolveMacro(scope.site, macroQuery);
             }
+            if (!macro || !(macro instanceof DocumentationCallable))
+            {
+                return false;
+            }
+
+            return macro;
+        });
+        return promise;
+    }
+
+
+    /**
+     * Resolves to the entity containing macro.
+     *
+     * @protected
+     * @param {model.documentation.DocumentationCallable} [macro]
+     * @returns {Promise<model.entity.Entity>}
+     */
+    getMacroEntity(macro)
+    {
+        return this.globalRepository.resolveEntityForMacro(this.site, macro);
+    }
+
+
+    /**
+     * Resolves to a macro specific configuration based
+     * on the default, the entity configuration and the refined.
+     *
+     * @param {String} [macroQuery]
+     * @returns {Promise<Object>}
+     */
+    getMacroConfiguration(macroQuery)
+    {
+        if (!macroQuery)
+        {
+            console.trace('No Macro given!');
+        }
+        const scope = this;
+        const promise = co(function *()
+        {
+            // Get macro
+            const macro = yield scope.getMacro(macroQuery);
             if (!macro || !(macro instanceof DocumentationCallable))
             {
                 /* istanbul ignore next */
@@ -231,7 +282,7 @@ class Configuration extends Base
             }
 
             // Get Entity
-            const entity = yield scope._globalRepository.resolveEntityForMacro(scope.site, macro);
+            const entity = yield scope.getMacroEntity(macro);
             if (!entity)
             {
                 /* istanbul ignore next */
@@ -312,7 +363,7 @@ class Configuration extends Base
             // See if it's a macro export
             if (scope.macro)
             {
-                const result = yield scope.getMacroConfiguration();
+                const result = yield scope.getMacroConfiguration(scope.macro.name);
                 return result;
             }
 
