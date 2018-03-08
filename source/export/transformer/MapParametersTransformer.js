@@ -35,9 +35,19 @@ class MapParametersTransformer extends NodeTransformer
             {
                 scope.logger.debug('transformNode - mapping parameter ' + node.fields.join('.'));
 
-                // Get config
+                // Get macro
                 const macro = node.findParent('MacroNode');
+                if (!macro)
+                {
+                    return node;
+                }
+
+                // Get config
                 const macroConfiguration = yield configuration.getMacroConfiguration(macro.name);
+                if (!macroConfiguration)
+                {
+                    return node;
+                }
                 const variableName = node.fields.join('.');
 
                 // Apply parameter mapping
