@@ -178,7 +178,7 @@ class GlobalRepository extends Base
 
 
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
     resolveEntities(query)
     {
@@ -287,9 +287,11 @@ class GlobalRepository extends Base
 
 
     /**
+     * @param {String|model.site.Site} siteQuery
+     * @param {String|model.documentation.DocumentationCallable} macroQuery
      * @returns {Promise<Object>}
      */
-    resolveEntityForMacro(siteQuery, macroQuery)
+    resolveEntityForMacro(siteQuery, macroQuery, findDefining)
     {
         const scope = this;
         const promise = co(function*()
@@ -316,11 +318,22 @@ class GlobalRepository extends Base
                 : macroQuery;
             for (const entity of entities)
             {
+                // Find the macro
                 const macro = entity.documentation.find((doc) =>
                 {
                     return doc.contentType === ContentType.JINJA &&
                            doc.name === macroName;
                 });
+
+                // We want the actual entity that defined the macro
+                if (macro &&
+                    findDefining &&
+                    macro.site.name !== site.name)
+                {
+                    return scope.resolveEntityForMacro(macro.site, macro.name, findDefining);
+                }
+
+                // Ok, found it
                 if (macro)
                 {
                     return entity;
@@ -328,7 +341,7 @@ class GlobalRepository extends Base
             }
 
             /* istanbul ignore next */
-            scope.logger.debug('resolveMacro - could not find macro', macroQuery);
+            scope.logger.debug('resolveEntityForMacro - could not find macro', macroQuery);
             return false;
         });
         return promise;

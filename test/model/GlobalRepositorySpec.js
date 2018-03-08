@@ -9,8 +9,6 @@ const EntityCategory = require(ES_SOURCE + '/model/entity/EntityCategory.js').En
 const Entity = require(ES_SOURCE + '/model/entity/Entity.js').Entity;
 const EntityAspect = require(ES_SOURCE + '/model/entity/EntityAspect.js').EntityAspect;
 const DocumentationCallable = require(ES_SOURCE + '/model/documentation/DocumentationCallable.js').DocumentationCallable;
-const ContentType = require(ES_SOURCE + '/model/ContentType.js').ContentType;
-const ContentKind = require(ES_SOURCE + '/model/ContentKind.js').ContentKind;
 const projectFixture = require(ES_FIXTURES + '/project/index.js');
 const baseSpec = require(ES_TEST + '/BaseShared.js').spec;
 const co = require('co');
@@ -27,7 +25,7 @@ describe(GlobalRepository.className, function()
     baseSpec(GlobalRepository, 'model/GlobalRepository', function(parameters)
     {
         parameters.unshift(global.fixtures.entitiesRepository);
-        parameters.unshift(global.fixtures.categoriesRepository);
+        parameters.unshift(global.fixtures.entityCategoriesRepository);
         parameters.unshift(global.fixtures.sitesRepository);
         return parameters;
     });
@@ -38,23 +36,19 @@ describe(GlobalRepository.className, function()
      */
     beforeEach(function()
     {
-        global.fixtures = projectFixture.createStatic();
-        const macro = new DocumentationCallable(
-            {
-                name: 'm_teaser',
-                contentType: ContentType.JINJA,
-                contentKind: ContentKind.MACRO,
-                site: global.fixtures.siteBase
-            });
-        global.fixtures.entityTeaser.documentation.push(macro);
+        global.fixtures = projectFixture.createDynamic();
     });
 
+    function createTestee()
+    {
+        return new GlobalRepository(global.fixtures.sitesRepository, global.fixtures.entityCategoriesRepository, global.fixtures.entitiesRepository);
+    }
 
     describe('#resolve', function()
     {
         it('should resolve "*" to all Sites', function()
         {
-            const testee = new GlobalRepository(global.fixtures.sitesRepository, global.fixtures.categoriesRepository, global.fixtures.entitiesRepository);
+            const testee = createTestee();
             const promise = testee.resolve('*').then(function(result)
             {
                 expect(result).to.be.ok;
@@ -67,7 +61,7 @@ describe(GlobalRepository.className, function()
 
         it('should resolve "base" to a Site', function()
         {
-            const testee = new GlobalRepository(global.fixtures.sitesRepository, global.fixtures.categoriesRepository, global.fixtures.entitiesRepository);
+            const testee = createTestee();
             const promise = testee.resolve('base').then(function(result)
             {
                 expect(result).to.be.ok;
@@ -79,7 +73,7 @@ describe(GlobalRepository.className, function()
 
         it('should resolve "global" to a EntityCategory', function()
         {
-            const testee = new GlobalRepository(global.fixtures.sitesRepository, global.fixtures.categoriesRepository, global.fixtures.entitiesRepository);
+            const testee = createTestee();
             const promise = testee.resolve('global').then(function(result)
             {
                 expect(result).to.be.ok;
@@ -91,7 +85,7 @@ describe(GlobalRepository.className, function()
 
         it('should resolve "m-teaser" to a Entity', function()
         {
-            const testee = new GlobalRepository(global.fixtures.sitesRepository, global.fixtures.categoriesRepository, global.fixtures.entitiesRepository);
+            const testee = createTestee();
             const promise = testee.resolve('m-teaser').then(function(result)
             {
                 expect(result).to.be.ok;
@@ -103,7 +97,7 @@ describe(GlobalRepository.className, function()
 
         it('should resolve "base/modules/m-teaser" to a EntityAspect', function()
         {
-            const testee = new GlobalRepository(global.fixtures.sitesRepository, global.fixtures.categoriesRepository, global.fixtures.entitiesRepository);
+            const testee = createTestee();
             const promise = testee.resolve('base/modules/m-teaser').then(function(result)
             {
                 expect(result).to.be.ok;
@@ -115,7 +109,7 @@ describe(GlobalRepository.className, function()
 
         it('should resolve "base/global" to a Site and EntityCategory', function()
         {
-            const testee = new GlobalRepository(global.fixtures.sitesRepository, global.fixtures.categoriesRepository, global.fixtures.entitiesRepository);
+            const testee = createTestee();
             const promise = testee.resolve('base/global').then(function(result)
             {
                 expect(result).to.be.ok;
@@ -129,7 +123,7 @@ describe(GlobalRepository.className, function()
 
         it('should ignore trailing slahes like in "/base/global"', function()
         {
-            const testee = new GlobalRepository(global.fixtures.sitesRepository, global.fixtures.categoriesRepository, global.fixtures.entitiesRepository);
+            const testee = createTestee();
             const promise = testee.resolve('/base/global').then(function(result)
             {
                 expect(result).to.be.ok;
@@ -146,8 +140,20 @@ describe(GlobalRepository.className, function()
     {
         it('should resolve "*" to all Entities', function()
         {
-            const testee = new GlobalRepository(global.fixtures.sitesRepository, global.fixtures.categoriesRepository, global.fixtures.entitiesRepository);
+            const testee = createTestee();
             const promise = testee.resolveEntities('*').then(function(result)
+            {
+                expect(result).to.be.ok;
+                expect(result).to.have.length(19);
+                expect(result[0]).to.be.instanceof(EntityAspect);
+            });
+            return promise;
+        });
+
+        it('should resolve "base" to all Entities of a Site', function()
+        {
+            const testee = createTestee();
+            const promise = testee.resolveEntities('base').then(function(result)
             {
                 expect(result).to.be.ok;
                 expect(result).to.have.length(9);
@@ -156,21 +162,9 @@ describe(GlobalRepository.className, function()
             return promise;
         });
 
-        it('should resolve "base" to all Entities of a Site', function()
-        {
-            const testee = new GlobalRepository(global.fixtures.sitesRepository, global.fixtures.categoriesRepository, global.fixtures.entitiesRepository);
-            const promise = testee.resolveEntities('base').then(function(result)
-            {
-                expect(result).to.be.ok;
-                expect(result).to.have.length(8);
-                expect(result[0]).to.be.instanceof(EntityAspect);
-            });
-            return promise;
-        });
-
         it('should resolve "global" to all Entities of a EntityCategory', function()
         {
-            const testee = new GlobalRepository(global.fixtures.sitesRepository, global.fixtures.categoriesRepository, global.fixtures.entitiesRepository);
+            const testee = createTestee();
             const promise = testee.resolveEntities('elements').then(function(result)
             {
                 expect(result).to.be.ok;
@@ -182,7 +176,7 @@ describe(GlobalRepository.className, function()
 
         it('should resolve "m-teaser" to a Entity', function()
         {
-            const testee = new GlobalRepository(global.fixtures.sitesRepository, global.fixtures.categoriesRepository, global.fixtures.entitiesRepository);
+            const testee = createTestee();
             const promise = testee.resolveEntities('m-teaser').then(function(result)
             {
                 expect(result).to.be.ok;
@@ -194,7 +188,7 @@ describe(GlobalRepository.className, function()
 
         it('should resolve "base/modules/m-teaser" to a EntityAspect', function()
         {
-            const testee = new GlobalRepository(global.fixtures.sitesRepository, global.fixtures.categoriesRepository, global.fixtures.entitiesRepository);
+            const testee = createTestee();
             const promise = testee.resolveEntities('base/modules/m-teaser').then(function(result)
             {
                 expect(result).to.be.ok;
@@ -206,7 +200,7 @@ describe(GlobalRepository.className, function()
 
         it('should resolve "base/modules" to all Entities of EntityCategory of a Site', function()
         {
-            const testee = new GlobalRepository(global.fixtures.sitesRepository, global.fixtures.categoriesRepository, global.fixtures.entitiesRepository);
+            const testee = createTestee();
             const promise = testee.resolveEntities('base/modules').then(function(result)
             {
                 expect(result).to.be.ok;
@@ -218,7 +212,7 @@ describe(GlobalRepository.className, function()
 
         it('should ignore trailing slashes like in  "/base/modules"', function()
         {
-            const testee = new GlobalRepository(global.fixtures.sitesRepository, global.fixtures.categoriesRepository, global.fixtures.entitiesRepository);
+            const testee = createTestee();
             const promise = testee.resolveEntities('/base/modules').then(function(result)
             {
                 expect(result).to.be.ok;
@@ -234,7 +228,7 @@ describe(GlobalRepository.className, function()
     {
         it('should resolve to false for a non existing site', function()
         {
-            const testee = new GlobalRepository(global.fixtures.sitesRepository, global.fixtures.categoriesRepository, global.fixtures.entitiesRepository);
+            const testee = createTestee();
             const promise = co(function *()
             {
                 const entity = yield testee.resolveEntity('foo', 'm-teaser');
@@ -245,7 +239,7 @@ describe(GlobalRepository.className, function()
 
         it('should resolve to false for a non existing entity', function()
         {
-            const testee = new GlobalRepository(global.fixtures.sitesRepository, global.fixtures.categoriesRepository, global.fixtures.entitiesRepository);
+            const testee = createTestee();
             const promise = co(function *()
             {
                 const entity = yield testee.resolveEntity('base', 'foo');
@@ -256,7 +250,7 @@ describe(GlobalRepository.className, function()
 
         it('should resolve to a existing entity when given a valid site name and entity name', function()
         {
-            const testee = new GlobalRepository(global.fixtures.sitesRepository, global.fixtures.categoriesRepository, global.fixtures.entitiesRepository);
+            const testee = createTestee();
             const promise = co(function *()
             {
                 const entity = yield testee.resolveEntity('base', 'm-teaser');
@@ -268,7 +262,7 @@ describe(GlobalRepository.className, function()
 
         it('should resolve to a existing entity when given a valid site and a entity name', function()
         {
-            const testee = new GlobalRepository(global.fixtures.sitesRepository, global.fixtures.categoriesRepository, global.fixtures.entitiesRepository);
+            const testee = createTestee();
             const promise = co(function *()
             {
                 const site = yield global.fixtures.sitesRepository.findBy({ '*': 'base' });
@@ -281,7 +275,7 @@ describe(GlobalRepository.className, function()
 
         it('should resolve to a existing entity when given only a entity name', function()
         {
-            const testee = new GlobalRepository(global.fixtures.sitesRepository, global.fixtures.categoriesRepository, global.fixtures.entitiesRepository);
+            const testee = createTestee();
             const promise = co(function *()
             {
                 const entity = yield testee.resolveEntity(undefined, 'm-teaser');
@@ -297,7 +291,7 @@ describe(GlobalRepository.className, function()
     {
         it('should resolve to false for a non existing site', function()
         {
-            const testee = new GlobalRepository(global.fixtures.sitesRepository, global.fixtures.categoriesRepository, global.fixtures.entitiesRepository);
+            const testee = createTestee();
             const promise = co(function *()
             {
                 const macro = yield testee.resolveMacro('foo', 'm_teaser');
@@ -308,7 +302,7 @@ describe(GlobalRepository.className, function()
 
         it('should resolve to false for a non existing macro', function()
         {
-            const testee = new GlobalRepository(global.fixtures.sitesRepository, global.fixtures.categoriesRepository, global.fixtures.entitiesRepository);
+            const testee = createTestee();
             const promise = co(function *()
             {
                 const macro = yield testee.resolveMacro('base', 'foo');
@@ -319,7 +313,7 @@ describe(GlobalRepository.className, function()
 
         it('should resolve to a existing macro when given a valid site name and macro name', function()
         {
-            const testee = new GlobalRepository(global.fixtures.sitesRepository, global.fixtures.categoriesRepository, global.fixtures.entitiesRepository);
+            const testee = createTestee();
             const promise = co(function *()
             {
                 const macro = yield testee.resolveMacro('base', 'm_teaser');
@@ -331,7 +325,7 @@ describe(GlobalRepository.className, function()
 
         it('should resolve to a existing macro when given a valid site and a macro name', function()
         {
-            const testee = new GlobalRepository(global.fixtures.sitesRepository, global.fixtures.categoriesRepository, global.fixtures.entitiesRepository);
+            const testee = createTestee();
             const promise = co(function *()
             {
                 const site = yield global.fixtures.sitesRepository.findBy({ '*': 'base' });
@@ -344,7 +338,7 @@ describe(GlobalRepository.className, function()
 
         it('should resolve to a existing macro when given only a macro name', function()
         {
-            const testee = new GlobalRepository(global.fixtures.sitesRepository, global.fixtures.categoriesRepository, global.fixtures.entitiesRepository);
+            const testee = createTestee();
             const promise = co(function *()
             {
                 const macro = yield testee.resolveMacro(undefined, 'm_teaser');
@@ -360,7 +354,7 @@ describe(GlobalRepository.className, function()
     {
         it('should resolve to false for a non existing site', function()
         {
-            const testee = new GlobalRepository(global.fixtures.sitesRepository, global.fixtures.categoriesRepository, global.fixtures.entitiesRepository);
+            const testee = createTestee();
             const promise = co(function *()
             {
                 const entity = yield testee.resolveEntityForMacro('foo', 'm_teaser');
@@ -371,7 +365,7 @@ describe(GlobalRepository.className, function()
 
         it('should resolve to false for a non existing macro', function()
         {
-            const testee = new GlobalRepository(global.fixtures.sitesRepository, global.fixtures.categoriesRepository, global.fixtures.entitiesRepository);
+            const testee = createTestee();
             const promise = co(function *()
             {
                 const entity = yield testee.resolveEntityForMacro('base', 'foo');
@@ -380,9 +374,9 @@ describe(GlobalRepository.className, function()
             return promise;
         });
 
-        it('should resolve to a existing macro when given a valid site name and macro name', function()
+        it('should resolve to the site entity when given a valid site name and macro name', function()
         {
-            const testee = new GlobalRepository(global.fixtures.sitesRepository, global.fixtures.categoriesRepository, global.fixtures.entitiesRepository);
+            const testee = createTestee();
             const promise = co(function *()
             {
                 const entity = yield testee.resolveEntityForMacro('base', 'm_teaser');
@@ -392,9 +386,9 @@ describe(GlobalRepository.className, function()
             return promise;
         });
 
-        it('should resolve to a existing macro when given a valid site and a macro name', function()
+        it('should resolve to the site entity when given a valid site and a macro name', function()
         {
-            const testee = new GlobalRepository(global.fixtures.sitesRepository, global.fixtures.categoriesRepository, global.fixtures.entitiesRepository);
+            const testee = createTestee();
             const promise = co(function *()
             {
                 const site = yield global.fixtures.sitesRepository.findBy({ '*': 'base' });
@@ -405,14 +399,26 @@ describe(GlobalRepository.className, function()
             return promise;
         });
 
-        it('should resolve to a existing macro when given only a macro name', function()
+        it('should resolve to the first defining entity when given only a macro name', function()
         {
-            const testee = new GlobalRepository(global.fixtures.sitesRepository, global.fixtures.categoriesRepository, global.fixtures.entitiesRepository);
+            const testee = createTestee();
             const promise = co(function *()
             {
-                const entity = yield testee.resolveEntityForMacro(undefined, 'm_teaser');
+                const entity = yield testee.resolveEntityForMacro(undefined, 'e_image');
                 expect(entity).to.be.instanceof(EntityAspect);
-                expect(entity.idString).to.be.equal('m-teaser');
+                expect(entity.pathString).to.be.equal('/base/elements/e-image');
+            });
+            return promise;
+        });
+
+        it('should resolve to the defining entity when given valid site name, a macro name and findDefining = true', function()
+        {
+            const testee = createTestee();
+            const promise = co(function *()
+            {
+                const entity = yield testee.resolveEntityForMacro('extended', 'e_cta', true);
+                expect(entity).to.be.instanceof(EntityAspect);
+                expect(entity.pathString).to.be.equal('/base/elements/e-cta');
             });
             return promise;
         });
