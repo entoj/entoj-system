@@ -265,10 +265,6 @@ class Configuration extends Base
      */
     getMacroConfiguration(macroQuery)
     {
-        if (!macroQuery)
-        {
-            console.trace('No Macro given!');
-        }
         const scope = this;
         const promise = co(function *()
         {
