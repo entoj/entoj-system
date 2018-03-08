@@ -31,7 +31,7 @@ describe(ExportTask.className, function()
         const renderer = new Renderer([new AnyNodeRenderer()]);
         const transformer = new Transformer();
         const exporter = new Exporter(fixture.globalRepository, fixture.buildConfiguration, parser, renderer, transformer);
-        return [fixture.cliLogger, fixture.globalRepository, exporter];
+        return [fixture.cliLogger, fixture.entitiesRepository, fixture.globalRepository, exporter];
     });
 
 
@@ -50,7 +50,7 @@ describe(ExportTask.className, function()
         const renderer = new Renderer([new AnyNodeRenderer()]);
         const transformer = new Transformer();
         const exporter = new Exporter(global.fixtures.globalRepository, global.fixtures.buildConfiguration, parser, renderer, transformer);
-        return new ExportTask(global.fixtures.cliLogger, global.fixtures.globalRepository, exporter);
+        return new ExportTask(global.fixtures.cliLogger, global.fixtures.entitiesRepository, global.fixtures.globalRepository, exporter);
     };
 
     describe('#renderEntity()', function()

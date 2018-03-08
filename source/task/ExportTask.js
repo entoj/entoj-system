@@ -6,10 +6,13 @@
  */
 const EntitiesTask = require('./EntitiesTask.js').EntitiesTask;
 const GlobalRepository = require('../model/GlobalRepository.js').GlobalRepository;
+const EntitiesRepository = require('../model/entity/EntitiesRepository.js').EntitiesRepository;
 const Exporter = require('../export/Exporter.js').Exporter;
 const CliLogger = require('../cli/CliLogger.js').CliLogger;
 const ErrorHandler = require('../error/ErrorHandler.js').ErrorHandler;
 const assertParameter = require('../utils/assert.js').assertParameter;
+const ContentKind = require('../model/ContentKind.js').ContentKind;
+const waitForPromise = require('../utils/synchronize.js').waitForPromise;
 const VinylFile = require('vinyl');
 const co = require('co');
 
@@ -21,18 +24,21 @@ class ExportTask extends EntitiesTask
 {
     /**
      * @param {cli.CliLogger} cliLogger
+     * @param {model.entity.EntitiesRepository} entitiesRepository
      * @param {model.GlobalRepository} globalRepository
      * @param {export.Exporter} exporter
      */
-    constructor(cliLogger, globalRepository, exporter)
+    constructor(cliLogger, entitiesRepository, globalRepository, exporter)
     {
         super(cliLogger, globalRepository);
 
-        //Check params
+        // Check params
+        assertParameter(this, 'entitiesRepository', entitiesRepository, true, EntitiesRepository);
         assertParameter(this, 'exporter', exporter, true, Exporter);
 
         // Assign options
         this._exporter = exporter;
+        this._entitiesRepository = entitiesRepository;
     }
 
 
@@ -41,7 +47,7 @@ class ExportTask extends EntitiesTask
      */
     static get injections()
     {
-        return { 'parameters': [CliLogger, GlobalRepository, Exporter] };
+        return { 'parameters': [CliLogger, EntitiesRepository, GlobalRepository, Exporter] };
     }
 
 
@@ -78,6 +84,32 @@ class ExportTask extends EntitiesTask
     get exporter()
     {
         return this._exporter;
+    }
+
+
+    /**
+     * @inheritDoc
+     */
+    get entitiesRepository()
+    {
+        return this._entitiesRepository;
+    }
+
+
+    /**
+     * @protected
+     * @returns {Promise<Array>}
+     */
+    prepareParameters(buildConfiguration, parameters)
+    {
+        const promise = super.prepareParameters(buildConfiguration, parameters)
+            .then((params) =>
+            {
+                params.query = params.query || '*';
+                params.exportMinimal = params.exportMinimal || false;
+                return params;
+            });
+        return promise;
     }
 
 
@@ -189,6 +221,53 @@ class ExportTask extends EntitiesTask
             }
             return result;
         }).catch(ErrorHandler.handler(scope));
+        return promise;
+    }
+
+
+    /**
+     * @inheritDoc
+     */
+    getEntities(query, buildConfiguration, parameters)
+    {
+        const scope = this;
+        const promise = co(function*()
+        {
+            // Get all entities
+            const allEntities = yield scope.globalRepository.resolveEntities(query);
+            if (!parameters.exportMinimal)
+            {
+                return allEntities;
+            }
+
+            // Filter entities that define their own macros
+            const entityMap = {};
+            const findWithContentKindMacro = (entity) =>
+            {
+                if (!entity)
+                {
+                    return false;
+                }
+                if (!entity.hasOwnContentOfKind(ContentKind.MACRO))
+                {
+                    if (entity.site.extends)
+                    {
+                        return findWithContentKindMacro(waitForPromise(scope.entitiesRepository.getById(entity.id, entity.site.extends)));
+                    }
+                    return false;
+                }
+                return entity;
+            };
+            for (const e of allEntities)
+            {
+                const entity = findWithContentKindMacro(e);
+                if (entity)
+                {
+                    entityMap[entity.pathString] = entity;
+                }
+            }
+            return Object.values(entityMap);
+        });
         return promise;
     }
 }
