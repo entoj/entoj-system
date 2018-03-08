@@ -258,6 +258,7 @@ function createDynamic(configuration)
     result.pathesConfiguration = result.context.di.create(PathesConfiguration);
     result.sitesRepository = result.context.di.create(SitesRepository);
     result.entitiesRepository = result.context.di.create(EntitiesRepository);
+    result.entityCategoriesRepository = result.context.di.create(EntityCategoriesRepository);
     result.viewModelRepository = result.context.di.create(ViewModelRepository);
     result.globalRepository = result.context.di.create(GlobalRepository);
     result.filesRepository = result.context.di.create(FilesRepository);
