@@ -22,6 +22,7 @@ describe(TranslationsLoader.className, function()
     loaderSpec(TranslationsLoader, 'model.translation/TranslationsLoader', function(parameters)
     {
         parameters.unshift(global.fixtures.pathesConfiguration);
+        parameters.unshift(global.fixtures.sitesRepository);
         return parameters;
     });
 
@@ -31,7 +32,7 @@ describe(TranslationsLoader.className, function()
      */
     beforeEach(function()
     {
-        global.fixtures = projectFixture.createStatic();
+        global.fixtures = projectFixture.createDynamic();
     });
 
 
@@ -54,15 +55,34 @@ describe(TranslationsLoader.className, function()
 
     describe('#load', function()
     {
-        it('should resolve to Translation instances that are loaded from a file', function()
+        it('should resolve to Translation instances that are loaded from one file', function()
         {
-            const testee = new TranslationsLoader(global.fixtures.pathesConfiguration, ES_FIXTURES + '/model/TranslationsModel.json');
+            const testee = new TranslationsLoader(global.fixtures.sitesRepository,
+                global.fixtures.pathesConfiguration,
+                ES_FIXTURES + '/model/TranslationsModel.json');
             const promise = co(function *()
             {
                 const items = yield testee.load();
                 expect(items.length).to.be.equal(2);
                 expect(items.find(item => item.name === 'simple')).to.be.ok;
                 expect(items.find(item => item.name === 'variables')).to.be.ok;
+            });
+            return promise;
+        });
+
+        it('should resolve to Translation instances that are loaded from one file per site', function()
+        {
+            const testee = new TranslationsLoader(global.fixtures.sitesRepository,
+                global.fixtures.pathesConfiguration,
+                '${sites}/${site.name.urlify()}/translations.json');
+            const promise = co(function *()
+            {
+                const items = yield testee.load();
+                expect(items.length).to.be.equal(4);
+                expect(items.find(item => item.name === 'base')).to.be.ok;
+                expect(items.find(item => item.name === 'base').site.name).to.be.equal('Base');
+                expect(items.find(item => item.name === 'extended')).to.be.ok;
+                expect(items.find(item => item.name === 'extended').site.name).to.be.equal('Extended');
             });
             return promise;
         });

@@ -35,19 +35,20 @@ class Translation extends ValueObject
 
 
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
     get fields()
     {
         const fields = super.fields;
         fields.name = '';
         fields.value = {};
+        fields.site = false;
         return fields;
     }
 
 
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
     initialize()
     {
@@ -58,7 +59,7 @@ class Translation extends ValueObject
 
 
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
     static get className()
     {
@@ -67,11 +68,27 @@ class Translation extends ValueObject
 
 
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
     get uniqueId()
     {
-        return this._name;
+        return (this.site)
+            ? this.site.name + ':' + this.name
+            : this.name;
+    }
+
+
+    /**
+     * @let {model.site.Site}
+     */
+    get site()
+    {
+        return this._site;
+    }
+
+    set site(value)
+    {
+        this._site = value;
     }
 
 
@@ -104,7 +121,7 @@ class Translation extends ValueObject
 
 
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
     toString()
     {

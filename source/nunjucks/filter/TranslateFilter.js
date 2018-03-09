@@ -75,7 +75,9 @@ class TranslateFilter extends Filter
             }
 
             // Translate
-            const translation = waitForPromise(scope.translationsRepository.findBy({ name: translationKey }));
+            const globals = scope.getGlobals(this);
+            const site = globals.location.site || false;
+            const translation = waitForPromise(scope.translationsRepository.getByNameAndSite(translationKey, site));
             if (!translation)
             {
                 scope.logger.warn('Missing translation for key', value);

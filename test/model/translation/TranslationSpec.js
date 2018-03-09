@@ -26,24 +26,26 @@ describe(Translation.className, function()
 
     describe('#constructor()', function()
     {
-        it('should allow to configure name and value', function()
+        it('should allow to configure name, value and site', function()
         {
-            const testee = new Translation({ name: 'key', value: 'Value' });
+            const testee = new Translation({ name: 'key', value: 'Value', site: { name: 'Base' } });
             expect(testee.name).to.equal('key');
             expect(testee.value).to.equal('Value');
+            expect(testee.site.name).to.equal('Base');
         });
     });
 
 
     describe('#dehydrate', function()
     {
-        it('should allow to update value and name', function()
+        it('should allow to update value, name and site', function()
         {
-            const data = new Translation({ name: 'key', value: 'initial' });
-            const testee = new Translation({ name: 'key', value: 'updated' });
+            const data = new Translation({ name: 'key', value: 'initial', site: { name: 'Base' } });
+            const testee = new Translation({ name: 'key', value: 'updated', site: { name: 'Extended' } });
             testee.dehydrate(data);
             expect(testee.name).to.be.equal(data.name);
             expect(testee.value).to.be.equal(data.value);
+            expect(testee.site.name).to.equal(data.site.name);
         });
     });
 });

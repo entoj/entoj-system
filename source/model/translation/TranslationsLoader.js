@@ -6,6 +6,7 @@
  */
 const Loader = require('../Loader.js').Loader;
 const PathesConfiguration = require('../configuration/PathesConfiguration.js').PathesConfiguration;
+const SitesRepository = require('../site/SitesRepository.js').SitesRepository;
 const Translation = require('./Translation.js').Translation;
 const ErrorHandler = require('../../error/ErrorHandler.js').ErrorHandler;
 const assertParameter = require('../../utils/assert.js').assertParameter;
@@ -23,16 +24,18 @@ class TranslationsLoader extends Loader
     /**
      * @ignore
      */
-    constructor(pathesConfiguration, filename)
+    constructor(sitesRepository, pathesConfiguration, filenameTemplate)
     {
         super();
 
         //Check params
+        assertParameter(this, 'sitesRepository', sitesRepository, true, SitesRepository);
         assertParameter(this, 'pathesConfiguration', pathesConfiguration, true, PathesConfiguration);
 
         // Assign options
+        this._sitesRepository = sitesRepository;
         this._pathesConfiguration = pathesConfiguration;
-        this._filename = filename;
+        this._filenameTemplate = filenameTemplate || '${sites}/${site.name.urlify()}/translations.json';
     }
 
 
@@ -41,7 +44,7 @@ class TranslationsLoader extends Loader
      */
     static get injections()
     {
-        return { 'parameters': [PathesConfiguration, 'model.translation/TranslationsLoader.filename'] };
+        return { 'parameters': [SitesRepository, PathesConfiguration, 'model.translation/TranslationsLoader.filenameTemplate'] };
     }
 
 
@@ -55,11 +58,29 @@ class TranslationsLoader extends Loader
 
 
     /**
-     * @inheritDoc
+     * @type {model.site.SitesRepository}
+     */
+    get sitesRepository()
+    {
+        return this._sitesRepository;
+    }
+
+
+    /**
+     * @type {model.configuration.PathesConfiguration}
      */
     get pathesConfiguration()
     {
         return this._pathesConfiguration;
+    }
+
+
+    /**
+     * @type {String}
+     */
+    get filenameTemplate()
+    {
+        return this._filenameTemplate;
     }
 
 
@@ -73,21 +94,27 @@ class TranslationsLoader extends Loader
         const scope = this;
         const promise = co(function *()
         {
-            if (scope.pathesConfiguration && scope._filename)
+            const sites = yield scope.sitesRepository.getItems();
+            const result = [];
+            const filesProcessed = {};
+            for (const site of sites)
             {
-                const result = [];
-                const filename = yield scope.pathesConfiguration.resolve(scope._filename);
-                const fileExists = yield fs.exists(filename);
-                if (fileExists)
+                const filename = yield scope.pathesConfiguration.resolve(scope.filenameTemplate, { site: site });
+                if (!filesProcessed[filename])
                 {
-                    const translations = JSON.parse(yield fs.readFile(filename));
-                    for (const translation in translations)
+                    const fileExists = yield fs.exists(filename);
+                    if (fileExists)
                     {
-                        result.push(new Translation({ name: translation, value: translations[translation] }));
+                        const translations = JSON.parse(yield fs.readFile(filename));
+                        for (const translation in translations)
+                        {
+                            result.push(new Translation({ name: translation, value: translations[translation], site: site }));
+                        }
                     }
+                    filesProcessed[filename] = true;
                 }
-                return result;
             }
+            return result;
         }).catch(ErrorHandler.handler(scope));
         return promise;
     }

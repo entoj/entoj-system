@@ -27,7 +27,7 @@ describe(TranslateFilter.className, function()
     beforeEach(function()
     {
         global.fixtures = projectFixture.createStatic();
-        global.fixtures.translationsRepository = new TranslationsRepository(new TranslationsLoader(global.fixtures.pathesConfiguration, ES_FIXTURES + '/model/TranslationsModel.json'));
+        global.fixtures.translationsRepository = new TranslationsRepository(new TranslationsLoader(global.fixtures.sitesRepository, global.fixtures.pathesConfiguration, ES_FIXTURES + '/model/TranslationsModel.json'));
     });
 
 
