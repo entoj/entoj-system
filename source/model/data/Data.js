@@ -8,11 +8,11 @@ const ValueObject = require('../ValueObject.js').ValueObject;
 
 
 /**
- * Describes a Translation
+ * Describes a simple site specific data store
  *
- * @memberOf model.translation
+ * @memberOf model.data
  */
-class Translation extends ValueObject
+class Data extends ValueObject
 {
     /**
      * @constant {string}
@@ -62,7 +62,7 @@ class Translation extends ValueObject
      */
     static get className()
     {
-        return 'model.translation/Translation';
+        return 'model.data/Data';
     }
 
 
@@ -119,4 +119,4 @@ class Translation extends ValueObject
  * Exports
  * @ignore
  */
-module.exports.Translation = Translation;
+module.exports.Data = Data;

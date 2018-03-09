@@ -4,17 +4,16 @@
  * Requirements
  * @ignore
  */
-const Repository = require('../Repository.js').Repository;
+const DataRepository = require('../data/DataRepository.js').DataRepository;
 const TranslationsLoader = require('./TranslationsLoader.js').TranslationsLoader;
-const co = require('co');
 
 
 /**
  * @class
- * @memberOf model.Translation
+ * @memberOf model.translation
  * @extends {Base}
  */
-class TranslationsRepository extends Repository
+class TranslationsRepository extends DataRepository
 {
     /**
      * @inheritDoc
@@ -31,33 +30,6 @@ class TranslationsRepository extends Repository
     static get className()
     {
         return 'model.translation/TranslationsRepository';
-    }
-
-
-    /**
-     * @param {String} name
-     * @param {model.site.Site} site
-     * @returns {Promise}
-     */
-    getByNameAndSite(name, site)
-    {
-        const scope = this;
-        const promise = co(function *()
-        {
-            const items = yield scope.getItems();
-            const found = items.find((item) => (!site || item.site.name === site.name));
-            if (found &&
-                typeof found.data[name] !== 'undefined')
-            {
-                return found.data[name];
-            }
-            if (site && site.extends)
-            {
-                return yield scope.getByNameAndSite(name, site.extends);
-            }
-            return undefined;
-        });
-        return promise;
     }
 }
 
