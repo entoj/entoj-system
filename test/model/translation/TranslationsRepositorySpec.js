@@ -38,14 +38,21 @@ describe(TranslationsRepository.className, function()
             const fixture = projectFixture.createStatic();
             const data =
             [
-                new Translation({ name: 'name1',  value: 'value1' }),
-                new Translation({ name: 'name2',  value: 'value2', site: fixture.siteExtended })
+                new Translation(
+                    {
+                        data:
+                        {
+                            'name1' : 'value1',
+                            'name2' : 'value2'
+                        },
+                        site: fixture.siteBase
+                    })
             ];
             const testee = createTestee(data);
             const promise = co(function *()
             {
-                expect(yield testee.getByNameAndSite('name1')).to.have.property('value', 'value1');
-                expect(yield testee.getByNameAndSite('name2')).to.have.property('value', 'value2');
+                expect(yield testee.getByNameAndSite('name1')).to.be.equal('value1');
+                expect(yield testee.getByNameAndSite('name2')).to.be.equal('value2');
             });
             return promise;
         });
@@ -55,13 +62,28 @@ describe(TranslationsRepository.className, function()
             const fixture = projectFixture.createStatic();
             const data =
             [
-                new Translation({ name: 'name1',  value: 'value1' }),
-                new Translation({ name: 'name1',  value: 'value2', site: fixture.siteExtended })
+                new Translation(
+                    {
+                        data:
+                        {
+                            'name1' : 'value1',
+                            'name2' : 'value2'
+                        },
+                        site: fixture.siteBase
+                    }),
+                new Translation(
+                    {
+                        data:
+                        {
+                            'name1' : 'value1ex'
+                        },
+                        site: fixture.siteExtended
+                    })
             ];
             const testee = createTestee(data);
             const promise = co(function *()
             {
-                expect(yield testee.getByNameAndSite('name1', fixture.siteExtended)).to.have.property('value', 'value2');
+                expect(yield testee.getByNameAndSite('name1', fixture.siteExtended)).to.be.equal('value1ex');
             });
             return promise;
         });
@@ -71,13 +93,28 @@ describe(TranslationsRepository.className, function()
             const fixture = projectFixture.createStatic();
             const data =
             [
-                new Translation({ name: 'name1',  value: 'value1' }),
-                new Translation({ name: 'name1',  value: 'value2', site: fixture.siteBase })
+                new Translation(
+                    {
+                        data:
+                        {
+                            'name1' : 'value1',
+                            'name2' : 'value2'
+                        },
+                        site: fixture.siteBase
+                    }),
+                new Translation(
+                    {
+                        data:
+                        {
+                            'name1' : 'value1ex'
+                        },
+                        site: fixture.siteExtended
+                    })
             ];
             const testee = createTestee(data);
             const promise = co(function *()
             {
-                expect(yield testee.getByNameAndSite('name1', fixture.siteExtended)).to.have.property('value', 'value2');
+                expect(yield testee.getByNameAndSite('name2', fixture.siteExtended)).to.be.equal('value2');
             });
             return promise;
         });

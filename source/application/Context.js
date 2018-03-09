@@ -19,6 +19,7 @@ const CompactIdParser = require('../parser/entity/CompactIdParser.js').CompactId
 const SitesRepository = require('../model/site/SitesRepository.js').SitesRepository;
 const SitesLoader = require('../model/site/SitesLoader.js').SitesLoader;
 const FilesRepository = require('../model/file/FilesRepository.js').FilesRepository;
+const TranslationsRepository = require('../model/translation/TranslationsRepository.js').TranslationsRepository;
 const ModelSynchronizer = require('../watch/ModelSynchronizer.js').ModelSynchronizer;
 const Communication = require('./Communication.js').Communication;
 
@@ -307,6 +308,7 @@ class Context extends Base
         this._di.map(EntityCategoriesRepository, EntityCategoriesRepository, true);
         this._di.map(EntitiesRepository, EntitiesRepository, true);
         this._di.map(FilesRepository, FilesRepository, true);
+        this._di.map(TranslationsRepository, TranslationsRepository, true);
 
         // Sites
         this.logger.debug('Setup sites');

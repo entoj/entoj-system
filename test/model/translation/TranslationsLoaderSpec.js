@@ -4,7 +4,6 @@
  * Requirements
  */
 const TranslationsLoader = require(ES_SOURCE + '/model/translation/TranslationsLoader.js').TranslationsLoader;
-const MissingArgumentError = require(ES_SOURCE + '/error/MissingArgumentError.js').MissingArgumentError;
 const loaderSpec = require('../LoaderShared.js').spec;
 const projectFixture = require(ES_FIXTURES + '/project/index.js');
 const co = require('co');
@@ -36,26 +35,9 @@ describe(TranslationsLoader.className, function()
     });
 
 
-    describe('#constructor()', function()
-    {
-        it('should throw a exception when created without a proper pathesConfiguration', function()
-        {
-            expect(function()
-            {
-                new TranslationsLoader();
-            }).to.throw(MissingArgumentError);
-
-            expect(function()
-            {
-                new TranslationsLoader('Pathes');
-            }).to.throw(TypeError);
-        });
-    });
-
-
     describe('#load', function()
     {
-        it('should resolve to Translation instances that are loaded from one file', function()
+        it('should resolve to a Translation instances for the loaded file', function()
         {
             const testee = new TranslationsLoader(global.fixtures.sitesRepository,
                 global.fixtures.pathesConfiguration,
@@ -63,14 +45,13 @@ describe(TranslationsLoader.className, function()
             const promise = co(function *()
             {
                 const items = yield testee.load();
-                expect(items.length).to.be.equal(2);
-                expect(items.find(item => item.name === 'simple')).to.be.ok;
-                expect(items.find(item => item.name === 'variables')).to.be.ok;
+                expect(items.length).to.be.equal(1);
+                expect(items.find(item => item.site.name === 'Base')).to.be.ok;
             });
             return promise;
         });
 
-        it('should resolve to Translation instances that are loaded from one file per site', function()
+        it('should resolve to Translation instances foreach loaded file', function()
         {
             const testee = new TranslationsLoader(global.fixtures.sitesRepository,
                 global.fixtures.pathesConfiguration,
@@ -78,11 +59,9 @@ describe(TranslationsLoader.className, function()
             const promise = co(function *()
             {
                 const items = yield testee.load();
-                expect(items.length).to.be.equal(4);
-                expect(items.find(item => item.name === 'base')).to.be.ok;
-                expect(items.find(item => item.name === 'base').site.name).to.be.equal('Base');
-                expect(items.find(item => item.name === 'extended')).to.be.ok;
-                expect(items.find(item => item.name === 'extended').site.name).to.be.equal('Extended');
+                expect(items.length).to.be.equal(2);
+                expect(items.find(item => item.site.name === 'Base')).to.be.ok;
+                expect(items.find(item => item.site.name === 'Extended')).to.be.ok;
             });
             return promise;
         });

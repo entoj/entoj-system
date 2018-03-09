@@ -18,9 +18,9 @@ class Translation extends ValueObject
      * @constant {string}
      * @static
      */
-    static get NAME()
+    static get SITE()
     {
-        return 'name';
+        return 'site';
     }
 
 
@@ -30,7 +30,7 @@ class Translation extends ValueObject
      */
     static get ANY()
     {
-        return ['name'];
+        return ['site'];
     }
 
 
@@ -40,8 +40,7 @@ class Translation extends ValueObject
     get fields()
     {
         const fields = super.fields;
-        fields.name = '';
-        fields.value = {};
+        fields.data = {};
         fields.site = false;
         return fields;
     }
@@ -53,8 +52,8 @@ class Translation extends ValueObject
     initialize()
     {
         super.initialize();
-        this._name = '';
-        this._value = {};
+        this._site = false;
+        this._data = {};
     }
 
 
@@ -73,8 +72,8 @@ class Translation extends ValueObject
     get uniqueId()
     {
         return (this.site)
-            ? this.site.name + ':' + this.name
-            : this.name;
+            ? this.site.name
+            : '__default__';
     }
 
 
@@ -95,28 +94,14 @@ class Translation extends ValueObject
     /**
      * @let {String}
      */
-    get name()
+    get data()
     {
-        return this._name;
+        return this._data;
     }
 
-    set name(value)
+    set data(value)
     {
-        this._name = value;
-    }
-
-
-    /**
-     * @let {String}
-     */
-    get value()
-    {
-        return this._value;
-    }
-
-    set value(value)
-    {
-        this._value = value;
+        this._data = value;
     }
 
 
@@ -125,7 +110,7 @@ class Translation extends ValueObject
      */
     toString()
     {
-        return `[${this.className} ${this.name}]`;
+        return `[${this.className} ${this.site}]`;
     }
 }
 

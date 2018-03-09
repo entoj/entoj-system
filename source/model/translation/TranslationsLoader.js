@@ -85,6 +85,16 @@ class TranslationsLoader extends Loader
 
 
     /**
+     * Generates a filename for the given site
+     *
+     * @returns {String}
+     */
+    generateFilename(site)
+    {
+        return this.pathesConfiguration.resolve(this.filenameTemplate, { site: site });
+    }
+
+    /**
      * Loads all Translations
      *
      * @returns {Promise.<Array>}
@@ -94,22 +104,21 @@ class TranslationsLoader extends Loader
         const scope = this;
         const promise = co(function *()
         {
-            const sites = yield scope.sitesRepository.getItems();
+            const sites = Array.isArray(changes)
+                ? changes
+                : yield scope.sitesRepository.getItems();
             const result = [];
             const filesProcessed = {};
             for (const site of sites)
             {
-                const filename = yield scope.pathesConfiguration.resolve(scope.filenameTemplate, { site: site });
+                const filename = yield scope.generateFilename(site);
                 if (!filesProcessed[filename])
                 {
                     const fileExists = yield fs.exists(filename);
                     if (fileExists)
                     {
                         const translations = JSON.parse(yield fs.readFile(filename));
-                        for (const translation in translations)
-                        {
-                            result.push(new Translation({ name: translation, value: translations[translation], site: site }));
-                        }
+                        result.push(new Translation({ data: translations, site: site }));
                     }
                     filesProcessed[filename] = true;
                 }

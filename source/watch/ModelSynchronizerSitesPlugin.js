@@ -87,7 +87,7 @@ class ModelSynchronizerSitesPlugin extends ModelSynchronizerPlugin
             if (changes.site)
             {
                 const workSites = scope.cliLogger.work('Invalidating <SitesRepository>');
-                result.site = yield scope.sitesRepository.invalidate();
+                result.site = yield scope.sitesRepository.invalidate(changes.site);
                 scope.cliLogger.end(workSites);
 
                 const workCategories = scope.cliLogger.work('Invalidating <EntitiesRepository>');

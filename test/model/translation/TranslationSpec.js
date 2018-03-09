@@ -22,15 +22,14 @@ describe(Translation.className, function()
     /**
      * Translation Test
      */
-    baseSpec.assertProperty(Translation, ['NAME', 'ANY']);
+    baseSpec.assertProperty(Translation, ['SITE', 'ANY']);
 
     describe('#constructor()', function()
     {
-        it('should allow to configure name, value and site', function()
+        it('should allow to configure data and site', function()
         {
-            const testee = new Translation({ name: 'key', value: 'Value', site: { name: 'Base' } });
-            expect(testee.name).to.equal('key');
-            expect(testee.value).to.equal('Value');
+            const testee = new Translation({ data: 'data', site: { name: 'Base' } });
+            expect(testee.data).to.equal('data');
             expect(testee.site.name).to.equal('Base');
         });
     });
@@ -38,13 +37,12 @@ describe(Translation.className, function()
 
     describe('#dehydrate', function()
     {
-        it('should allow to update value, name and site', function()
+        it('should allow to update data and site', function()
         {
-            const data = new Translation({ name: 'key', value: 'initial', site: { name: 'Base' } });
-            const testee = new Translation({ name: 'key', value: 'updated', site: { name: 'Extended' } });
+            const data = new Translation({ data: 'augmented', site: { name: 'Base' } });
+            const testee = new Translation({ data: 'data', site: { name: 'Extended' } });
             testee.dehydrate(data);
-            expect(testee.name).to.be.equal(data.name);
-            expect(testee.value).to.be.equal(data.value);
+            expect(testee.data).to.be.equal(data.data);
             expect(testee.site.name).to.equal(data.site.name);
         });
     });

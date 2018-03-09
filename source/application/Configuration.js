@@ -312,6 +312,17 @@ class Configuration extends Base
                     filename: this.options.models.settingsFile
                 }));
 
+        // ModelSynchronizer
+        this.mappings.add(require('../watch/index.js').ModelSynchronizer,
+            {
+                '!plugins':
+                [
+                    require('../watch/index.js').ModelSynchronizerTranslationsPlugin,
+                    require('../watch/index.js').ModelSynchronizerEntitiesPlugin,
+                    require('../watch/index.js').ModelSynchronizerSitesPlugin
+                ]
+            });
+
         // Nunjucks filter & tags
         this.mappings.add(require('../nunjucks/index.js').Environment,
             {
@@ -427,8 +438,8 @@ class Configuration extends Base
         );
 
 
-        // Config  
-        this.commands.add(require('../command/index.js').ConfigCommand);      
+        // Config
+        this.commands.add(require('../command/index.js').ConfigCommand);
     }
 
 

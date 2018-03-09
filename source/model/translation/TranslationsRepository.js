@@ -45,16 +45,17 @@ class TranslationsRepository extends Repository
         const promise = co(function *()
         {
             const items = yield scope.getItems();
-            const found = items.find((item) => item.name === name && (!site || item.site.name === site.name));
-            if (found)
+            const found = items.find((item) => (!site || item.site.name === site.name));
+            if (found &&
+                typeof found.data[name] !== 'undefined')
             {
-                return found;
+                return found.data[name];
             }
             if (site && site.extends)
             {
                 return yield scope.getByNameAndSite(name, site.extends);
             }
-            return false;
+            return undefined;
         });
         return promise;
     }

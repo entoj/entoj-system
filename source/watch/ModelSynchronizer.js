@@ -111,8 +111,11 @@ class ModelSynchronizer extends Base
             // Run plugins
             for (const plugin of scope.plugins)
             {
-                const pluginResult = yield plugin.execute(changes);
-                result = merge(result, pluginResult);
+                if (!result.consumed)
+                {
+                    const pluginResult = yield plugin.execute(changes);
+                    result = merge(result, pluginResult);
+                }
             }
 
             // dispatch signal

@@ -39,7 +39,7 @@ class Repository extends Base
 
 
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
     static get className()
     {
@@ -228,16 +228,6 @@ class Repository extends Base
                         existingItems = yield scope.invalidateFind(removeId);
                         for (existingItem of existingItems)
                         {
-                            /*
-                            const index = scope._items.indexOf(existingItem);
-                            console.log('Trying to removeId=', removeId, ', item=', existingItem.toString(), ', index=', index);
-                            if (index > -1)
-                            {
-                                yield scope.invalidateBefore(result, 'remove', existingItem);
-                                scope._items.splice(index, 1);
-                                yield scope.invalidateAfter(result, 'remove', existingItem);
-                            }
-                            */
                             yield scope.invalidateBefore(result, 'remove', existingItem);
                             scope.remove(existingItem);
                             yield scope.invalidateAfter(result, 'remove', existingItem);

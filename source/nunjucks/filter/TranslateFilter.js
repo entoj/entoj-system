@@ -83,7 +83,7 @@ class TranslateFilter extends Filter
                 scope.logger.warn('Missing translation for key', value);
                 return scope.applyCallbacks('', arguments);
             }
-            let result = translation.value;
+            let result = translation;
             if (variables && variables.length)
             {
                 for (let index = 0; index < variables.length; index++)
