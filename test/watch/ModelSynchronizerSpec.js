@@ -4,6 +4,9 @@
  * Requirements
  */
 const ModelSynchronizer = require(ES_SOURCE + '/watch/ModelSynchronizer.js').ModelSynchronizer;
+const ModelSynchronizerPlugin = require(ES_SOURCE + '/watch/ModelSynchronizerPlugin.js').ModelSynchronizerPlugin;
+const ModelSynchronizerSitesPlugin = require(ES_SOURCE + '/watch/ModelSynchronizerSitesPlugin.js').ModelSynchronizerSitesPlugin;
+const ModelSynchronizerEntitiesPlugin = require(ES_SOURCE + '/watch/ModelSynchronizerEntitiesPlugin.js').ModelSynchronizerEntitiesPlugin;
 const FileWatcher = require(ES_SOURCE + '/watch/FileWatcher.js').FileWatcher;
 const CliLogger = require(ES_SOURCE + '/cli/CliLogger.js').CliLogger;
 const baseSpec = require(ES_TEST + '/BaseShared.js').spec;
@@ -22,8 +25,7 @@ describe(ModelSynchronizer.className, function()
      */
     baseSpec(ModelSynchronizer, 'watch/ModelSynchronizer', function(parameters)
     {
-        parameters.unshift(global.fixtures.cliLogger, global.fixtures.fileWatcher,
-            global.fixtures.sitesRepository, global.fixtures.categoriesRepository, global.fixtures.entitiesRepository);
+        parameters.unshift(global.fixtures.cliLogger, global.fixtures.fileWatcher);
         return parameters;
     });
 
@@ -39,74 +41,73 @@ describe(ModelSynchronizer.className, function()
             global.fixtures.categoriesRepository, global.fixtures.entityIdParser, { debounce: 50 });
     });
 
-
-    const createTestee = function()
+    const createTestee = function(plugins)
     {
-        return new ModelSynchronizer(global.fixtures.cliLogger, global.fixtures.fileWatcher,
-            global.fixtures.sitesRepository, global.fixtures.categoriesRepository, global.fixtures.entitiesRepository);
+        return new ModelSynchronizer(global.fixtures.cliLogger, global.fixtures.fileWatcher, plugins);
 
     };
 
 
     describe('#processChanges', function()
     {
-        it('should invalidate sites and entities when given a site change', function()
+        it('should ask each plugin to execute the changes', function()
         {
             const promise = co(function *()
             {
-                const testee = createTestee();
+                const plugin = new ModelSynchronizerPlugin(global.fixtures.cliLogger);
+                const testee = createTestee([plugin]);
+                const input =
+                {
+                };
+                const pluginExecuted = sinon.spy(plugin, 'execute');
+                yield testee.processChanges(input);
+                expect(pluginExecuted.calledOnce).to.be.ok;
+            });
+            return promise;
+        });
+
+        it('should collect all invalidation changes from plugins', function(cb)
+        {
+            co(function *()
+            {
+                const testee = createTestee(
+                    [
+                        new ModelSynchronizerEntitiesPlugin(global.fixtures.cliLogger, global.fixtures.entitiesRepository),
+                        new ModelSynchronizerSitesPlugin(global.fixtures.cliLogger, global.fixtures.sitesRepository, global.fixtures.entitiesRepository)
+                    ]);
                 const input =
                 {
                     site:
                     {
                         add:
                         [
-                            '/foo',
-                            '/baz'
-                        ],
-                        remove:
-                        [
-                            '/bar'
+                            '/foo'
                         ]
-                    }
-                };
-                const sitesInvalidate = sinon.spy(global.fixtures.sitesRepository, 'invalidate');
-                const entitiesInvalidate = sinon.spy(global.fixtures.entitiesRepository, 'invalidate');
-                yield testee.processChanges(input);
-                expect(sitesInvalidate.calledOnce).to.be.ok;
-                expect(entitiesInvalidate.calledOnce).to.be.ok;
-            });
-            return promise;
-        });
-
-        it('should invalidate specific entities when given a entity change', function()
-        {
-            const promise = co(function *()
-            {
-                const testee = createTestee();
-                const input =
-                {
+                    },
                     entity:
                     {
                         add:
                         [
-                            '/default/modules/m002-test'
+                            '/base/modules/m-test'
                         ],
                         remove:
                         [
-                            '/default/modules/m001-gallery'
+                            '/base/elements/e-cta'
                         ]
                     }
                 };
-                const entitiesInvalidate = sinon.spy(global.fixtures.entitiesRepository, 'invalidate');
+                testee.signals.invalidated.add(function(synchronizer, invalidations)
+                {
+                    expect(invalidations).to.be.ok;
+                    expect(invalidations).to.have.property('entity');
+                    expect(invalidations).to.have.property('site');
+                    cb();
+                });
                 yield testee.processChanges(input);
-                expect(entitiesInvalidate.calledOnce).to.be.ok;
-                expect(entitiesInvalidate.calledWith(input.entity)).to.be.ok;
             });
-            return promise;
         });
 
-        it('dispatch a invalidated signal on changes', function(cb)
+        it('should dispatch a invalidated signal with invalidation changes', function(cb)
         {
             co(function *()
             {
@@ -120,59 +121,6 @@ describe(ModelSynchronizer.className, function()
                             '/foo'
                         ]
                     }
-                };
-                testee.signals.invalidated.add(function(synchronizer, invalidations)
-                {
-                    expect(invalidations).to.be.ok;
-                    cb();
-                });
-                yield testee.processChanges(input);
-            });
-        });
-
-        // @todo do we really need this test?
-        xit('should dispatch a object that describes all invalidations', function(cb)
-        {
-            co(function *()
-            {
-                const testee = createTestee();
-                const input =
-                {
-                    entity:
-                    {
-                        add:
-                        [
-                            '/base/modules/m-foo',
-                        ],
-                        remove:
-                        [
-                            '/extended/elements/e-image'
-                        ]
-                    },
-                    site:
-                    {
-                        add:
-                        [
-                            'base',
-                            'extended'
-                        ]
-                    },
-                    extensions:
-                    [
-                        '.js'
-                    ],
-                    files:
-                    [
-                        '/base/modules/m-foo',
-                        '/base/modules/m-foo/js/m-foo.js',
-                        '/extended/elements/e-image/js/e-image.js',
-                        '/extended/elements/e-image'
-                    ],
-                    sites:
-                    [
-                        'base',
-                        'extended'
-                    ]
                 };
                 testee.signals.invalidated.add(function(synchronizer, invalidations)
                 {

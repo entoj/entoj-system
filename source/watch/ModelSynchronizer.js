@@ -8,12 +8,10 @@ const Base = require('../Base.js').Base;
 const ErrorHandler = require('../error/ErrorHandler.js').ErrorHandler;
 const CliLogger = require('../cli/CliLogger.js').CliLogger;
 const FileWatcher = require('./FileWatcher.js').FileWatcher;
-const SitesRepository = require('../model/site/SitesRepository.js').SitesRepository;
-const EntityCategoriesRepository = require('../model/entity/EntityCategoriesRepository.js').EntityCategoriesRepository;
-const EntitiesRepository = require('../model/entity/EntitiesRepository.js').EntitiesRepository;
 const assertParameter = require('../utils/assert.js').assertParameter;
 const co = require('co');
 const signals = require('signals');
+const merge = require('lodash.merge');
 
 
 /**
@@ -23,25 +21,23 @@ class ModelSynchronizer extends Base
 {
     /**
      * @param {CliLogger} cliLogger
-     * @param {EntityCategoriesRepository} entityCategoriesRepository
+     * @param {watch.FileWatcher} fileWatcher
+     * @param {Array} plugins
      */
-    constructor(cliLogger, fileWatcher, sitesRepository, entityCategoriesRepository, entitiesRepository, options)
+    constructor(cliLogger, fileWatcher, plugins)
     {
         super();
 
         //Check params
         assertParameter(this, 'cliLogger', cliLogger, true, CliLogger);
         assertParameter(this, 'fileWatcher', fileWatcher, true, FileWatcher);
-        assertParameter(this, 'sitesRepository', sitesRepository, true, SitesRepository);
-        assertParameter(this, 'entityCategoriesRepository', entityCategoriesRepository, true, EntityCategoriesRepository);
-        assertParameter(this, 'entitiesRepository', entitiesRepository, true, EntitiesRepository);
 
         // Assign options
         this._cliLogger = cliLogger.createPrefixed('modelsynchronizer');
         this._fileWatcher = fileWatcher;
-        this._sitesRepository = sitesRepository;
-        this._entityCategoriesRepository = entityCategoriesRepository;
-        this._entitiesRepository = entitiesRepository;
+        this._plugins = Array.isArray(plugins)
+            ? plugins
+            : [];
         this._signals = {};
 
         // Add signals
@@ -57,12 +53,12 @@ class ModelSynchronizer extends Base
      */
     static get injections()
     {
-        return { 'parameters': [CliLogger, FileWatcher, SitesRepository, EntityCategoriesRepository, EntitiesRepository, 'watch/ModelSynchronizer.options'] };
+        return { 'parameters': [CliLogger, FileWatcher, 'watch/ModelSynchronizer.plugins'] };
     }
 
 
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
     static get className()
     {
@@ -71,11 +67,20 @@ class ModelSynchronizer extends Base
 
 
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
     get signals()
     {
         return this._signals;
+    }
+
+
+    /**
+     * @type {Array}
+     */
+    get plugins()
+    {
+        return this._plugins;
     }
 
 
@@ -96,30 +101,18 @@ class ModelSynchronizer extends Base
         const scope = this;
         const promise = co(function *()
         {
-            let work;
-            const result =
+            // Prepare result
+            let result =
             {
                 files: changes.files,
                 extensions: changes.extensions
             };
 
-            // Apply changes for sites
-            if (changes.site)
+            // Run plugins
+            for (const plugin of scope.plugins)
             {
-                work = scope.cliLogger.work('Invalidating <SitesRepository>');
-                result.site = yield scope._sitesRepository.invalidate();
-                scope.cliLogger.end(work);
-
-                work = scope.cliLogger.work('Invalidating <EntitiesRepository>');
-                result.entityCategory = yield scope._entitiesRepository.invalidate();
-                scope.cliLogger.end(work);
-            }
-            // Apply changes for entities
-            else if (changes.entity)
-            {
-                work = scope.cliLogger.work('Invalidating <EntitiesRepository>');
-                result.entity = yield scope._entitiesRepository.invalidate(changes.entity);
-                scope.cliLogger.end(work);
+                const pluginResult = yield plugin.execute(changes);
+                result = merge(result, pluginResult);
             }
 
             // dispatch signal
