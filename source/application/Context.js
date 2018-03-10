@@ -20,6 +20,7 @@ const SitesRepository = require('../model/site/SitesRepository.js').SitesReposit
 const SitesLoader = require('../model/site/SitesLoader.js').SitesLoader;
 const FilesRepository = require('../model/file/FilesRepository.js').FilesRepository;
 const TranslationsRepository = require('../model/translation/TranslationsRepository.js').TranslationsRepository;
+const SettingsRepository = require('../model/setting/SettingsRepository.js').SettingsRepository;
 const ModelSynchronizer = require('../watch/ModelSynchronizer.js').ModelSynchronizer;
 const Communication = require('./Communication.js').Communication;
 
@@ -309,6 +310,7 @@ class Context extends Base
         this._di.map(EntitiesRepository, EntitiesRepository, true);
         this._di.map(FilesRepository, FilesRepository, true);
         this._di.map(TranslationsRepository, TranslationsRepository, true);
+        this._di.map(SettingsRepository, SettingsRepository, true);
 
         // Sites
         this.logger.debug('Setup sites');
