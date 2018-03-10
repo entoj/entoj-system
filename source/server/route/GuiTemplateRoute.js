@@ -226,14 +226,12 @@ class GuiTemplateRoute extends Route
      */
     renderTemplate(filename, request, model)
     {
-        const work = this.cliLogger.work('Rendering template <' + filename + '>');
         const tpl = fs.readFileSync(filename, { encoding: 'utf8' });
         this.nunjucks.addGlobal('request', request);
         this.nunjucks.addGlobal('global', Object.assign({}, GuiTemplateRoute.model, model));
         this.nunjucks.addGlobal('ContentKind', require('../../model/ContentKind.js').ContentKind);
         this.nunjucks.addGlobal('DocumentationType', require('../../model/documentation/DocumentationType.js').DocumentationType);
         const result = this.nunjucks.renderString(tpl);
-        this.cliLogger.end(work);
         return result;
     }
 
@@ -343,7 +341,8 @@ class GuiTemplateRoute extends Route
 
                 // Render
                 scope.logger.trace('Rendering route ' + route);
-                const work = scope.cliLogger.work('Serving template <' + template + '> for <' + request.url + '>');
+                const templateShort = yield scope.pathesConfiguration.shorten(template);
+                const work = scope.cliLogger.work('Serving template <' + templateShort + '> for <' + request.url + '>');
                 const html = scope.renderTemplate(filename, request, model);
                 response.send(html);
                 scope.cliLogger.end(work);

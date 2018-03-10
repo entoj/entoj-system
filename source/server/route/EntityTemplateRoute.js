@@ -190,7 +190,8 @@ class EntityTemplateRoute extends Route
 
             // Render
             const tpl = yield fs.readFile(filename, { encoding: 'utf8' });
-            const work = scope.cliLogger.work('Rendering template <' + filename + '>');
+            const filenameShort = yield scope.pathesConfiguration.shorten(filename);
+            const work = scope.cliLogger.work('Rendering template <' + filenameShort + '>');
             let html;
             try
             {
