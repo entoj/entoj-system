@@ -4,7 +4,7 @@
  * Requirements
  */
 const SettingsRepository = require(ES_SOURCE + '/model/setting/SettingsRepository.js').SettingsRepository;
-const repositorySpec = require(ES_TEST + '/model/RepositoryShared.js').spec;
+const dataRepositorySpec = require(ES_TEST + '/model/data/DataRepositoryShared.js').spec;
 
 
 /**
@@ -13,7 +13,7 @@ const repositorySpec = require(ES_TEST + '/model/RepositoryShared.js').spec;
 describe(SettingsRepository.className, function()
 {
     /**
-     * Repository Tests
+     * DataRepository Tests
      */
-    repositorySpec(SettingsRepository, 'model.setting/SettingsRepository');
+    dataRepositorySpec(SettingsRepository, 'model.setting/SettingsRepository');
 });

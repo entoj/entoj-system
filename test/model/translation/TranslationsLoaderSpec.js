@@ -9,12 +9,11 @@ const dataLoaderSpec = require('../data/DataLoaderShared.js').spec;
 
 /**
  * Spec
- * @todo Add a way to load categories from the fs via entoj.json
  */
 describe(TranslationsLoader.className, function()
 {
     /**
-     * Loader Test
+     * DataLoader Test
      */
     dataLoaderSpec(TranslationsLoader, 'model.translation/TranslationsLoader', function(parameters)
     {

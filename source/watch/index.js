@@ -9,5 +9,7 @@ module.exports =
     ModelSynchronizerPlugin: require('./ModelSynchronizerPlugin.js').ModelSynchronizerPlugin,
     ModelSynchronizerEntitiesPlugin: require('./ModelSynchronizerEntitiesPlugin.js').ModelSynchronizerEntitiesPlugin,
     ModelSynchronizerSitesPlugin: require('./ModelSynchronizerSitesPlugin.js').ModelSynchronizerSitesPlugin,
-    ModelSynchronizerTranslationsPlugin: require('./ModelSynchronizerTranslationsPlugin.js').ModelSynchronizerTranslationsPlugin
+    ModelSynchronizerDataPlugin: require('./ModelSynchronizerDataPlugin.js').ModelSynchronizerDataPlugin,
+    ModelSynchronizerTranslationsPlugin: require('./ModelSynchronizerTranslationsPlugin.js').ModelSynchronizerTranslationsPlugin,
+    ModelSynchronizerSettingsPlugin: require('./ModelSynchronizerSettingsPlugin.js').ModelSynchronizerSettingsPlugin
 };

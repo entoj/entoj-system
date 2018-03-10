@@ -51,7 +51,7 @@ function spec(type, className, prepareParameters)
             return promise;
         });
 
-        it('should resolve to Data instances foreach loaded file', function()
+        it('should resolve to Data instances for each loaded file from a site', function()
         {
             const testee = createTestee('${sites}/${site.name.urlify()}/translations.json');
             const promise = co(function *()

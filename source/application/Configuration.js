@@ -299,17 +299,17 @@ class Configuration extends Base
             });
 
         // Translations
-        this.mappings.add(require('../model/translation/TranslationsLoader.js').TranslationsLoader,
+        this.mappings.add(require('../model/index.js').translation.TranslationsLoader,
             this.clean(
                 {
-                    filename: this.options.models.translationsFile
+                    filenameTemplate: this.options.models.translationsFile
                 }));
 
         // Settings
-        this.mappings.add(require('../model/setting/SettingsLoader.js').SettingsLoader,
+        this.mappings.add(require('../model/index.js').setting.SettingsLoader,
             this.clean(
                 {
-                    filename: this.options.models.settingsFile
+                    filenameTemplate: this.options.models.settingsFile
                 }));
 
         // ModelSynchronizer
@@ -318,6 +318,7 @@ class Configuration extends Base
                 '!plugins':
                 [
                     require('../watch/index.js').ModelSynchronizerTranslationsPlugin,
+                    require('../watch/index.js').ModelSynchronizerSettingsPlugin,
                     require('../watch/index.js').ModelSynchronizerEntitiesPlugin,
                     require('../watch/index.js').ModelSynchronizerSitesPlugin
                 ]

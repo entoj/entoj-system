@@ -4,16 +4,16 @@
  * Requirements
  * @ignore
  */
-const Repository = require('../Repository.js').Repository;
+const DataRepository = require('../data/DataRepository.js').DataRepository;
 const SettingsLoader = require('./SettingsLoader.js').SettingsLoader;
 
 
 /**
  * @class
- * @memberOf model.setting
+ * @memberOf model.translation
  * @extends {Base}
  */
-class SettingsRepository extends Repository
+class SettingsRepository extends DataRepository
 {
     /**
      * @inheritDoc
@@ -25,7 +25,7 @@ class SettingsRepository extends Repository
 
 
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
     static get className()
     {

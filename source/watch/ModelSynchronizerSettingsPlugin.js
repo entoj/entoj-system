@@ -6,7 +6,7 @@
  */
 const ModelSynchronizerDataPlugin = require('./ModelSynchronizerDataPlugin.js').ModelSynchronizerDataPlugin;
 const SitesRepository = require('../model/site/SitesRepository.js').SitesRepository;
-const TranslationsRepository = require('../model/translation/TranslationsRepository.js').TranslationsRepository;
+const SettingsRepository = require('../model/setting/SettingsRepository.js').SettingsRepository;
 const PathesConfiguration = require('../model/configuration/PathesConfiguration.js').PathesConfiguration;
 const CliLogger = require('../cli/CliLogger.js').CliLogger;
 
@@ -14,17 +14,17 @@ const CliLogger = require('../cli/CliLogger.js').CliLogger;
 /**
  * @memberOf watch
  */
-class ModelSynchronizerTranslationsPlugin extends ModelSynchronizerDataPlugin
+class ModelSynchronizerSettingsPlugin extends ModelSynchronizerDataPlugin
 {
     /**
      * @param {CliLogger} cliLogger
      * @param {model.site.SitesRepository} sitesRepository
-     * @param {model.translations.TranslationsRepository} translationsRepository
+     * @param {model.setting.SettingsRepository} settingsRepository
      * @param {model.configuration.PathesConfiguration} pathesConfiguration
      */
-    constructor(cliLogger, sitesRepository, translationsRepository, pathesConfiguration)
+    constructor(cliLogger, sitesRepository, settingsRepository, pathesConfiguration)
     {
-        super(cliLogger.createPrefixed('modelsynchronizer.translations'), sitesRepository, translationsRepository, pathesConfiguration);
+        super(cliLogger.createPrefixed('modelsynchronizer.settings'), sitesRepository, settingsRepository, pathesConfiguration);
     }
 
 
@@ -33,7 +33,7 @@ class ModelSynchronizerTranslationsPlugin extends ModelSynchronizerDataPlugin
      */
     static get injections()
     {
-        return { 'parameters': [CliLogger, SitesRepository, TranslationsRepository, PathesConfiguration] };
+        return { 'parameters': [CliLogger, SitesRepository, SettingsRepository, PathesConfiguration] };
     }
 
 
@@ -42,7 +42,7 @@ class ModelSynchronizerTranslationsPlugin extends ModelSynchronizerDataPlugin
      */
     static get className()
     {
-        return 'watch/ModelSynchronizerTranslationsPlugin';
+        return 'watch/ModelSynchronizerSettingsPlugin';
     }
 
 
@@ -51,7 +51,7 @@ class ModelSynchronizerTranslationsPlugin extends ModelSynchronizerDataPlugin
      */
     get workName()
     {
-        return 'Invalidating <TranslationsRepository>';
+        return 'Invalidating <ModelSynchronizerSettingsPlugin>';
     }
 
 
@@ -60,7 +60,7 @@ class ModelSynchronizerTranslationsPlugin extends ModelSynchronizerDataPlugin
      */
     get resultName()
     {
-        return 'translation';
+        return 'setting';
     }
 }
 
@@ -69,4 +69,4 @@ class ModelSynchronizerTranslationsPlugin extends ModelSynchronizerDataPlugin
  * Exports
  * @ignore
  */
-module.exports.ModelSynchronizerTranslationsPlugin = ModelSynchronizerTranslationsPlugin;
+module.exports.ModelSynchronizerSettingsPlugin = ModelSynchronizerSettingsPlugin;

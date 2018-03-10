@@ -27,7 +27,7 @@ describe(SettingFilter.className, function()
     beforeEach(function()
     {
         global.fixtures = projectFixture.createStatic();
-        global.fixtures.settingsRepository = new SettingsRepository(new SettingsLoader(global.fixtures.pathesConfiguration, ES_FIXTURES + '/model/SettingsModel.json'));
+        global.fixtures.settingsRepository = new SettingsRepository(new SettingsLoader(global.fixtures.sitesRepository, global.fixtures.pathesConfiguration, ES_FIXTURES + '/model/SettingsModel.json'));
     });
 
 
@@ -43,7 +43,7 @@ describe(SettingFilter.className, function()
         it('should return a existing setting for an existing key', function()
         {
             const testee = new SettingFilter(global.fixtures.settingsRepository).filter();
-            expect(testee('that.is.the.key')).to.be.equal('model');
+            expect(testee('this.is.the.key')).to.be.equal('model');
         });
     });
 });

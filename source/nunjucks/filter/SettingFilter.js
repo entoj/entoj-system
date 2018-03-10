@@ -77,14 +77,16 @@ class SettingFilter extends Filter
             }
 
             // Get Setting
-            const setting = waitForPromise(scope.settingsRepository.findBy({ name: value }));
+            const globals = scope.getGlobals(this);
+            const site = globals.location.site || false;
+            const setting = waitForPromise(scope.settingsRepository.getByNameAndSite(value, site));
             if (!setting)
             {
                 scope.logger.warn('Missing settings for key', value);
                 return scope.applyCallbacks({}, arguments);
             }
 
-            return scope.applyCallbacks(setting.value, arguments);
+            return scope.applyCallbacks(setting, arguments);
         };
     }
 }
