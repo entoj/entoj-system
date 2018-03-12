@@ -3,7 +3,7 @@
 /**
  * Requirements
  */
-const Data = require(ES_SOURCE + '/model/Data/Data.js').Data;
+const Data = require(ES_SOURCE + '/model/data/Data.js').Data;
 const valueObjectSpec = require('../ValueObjectShared.js').spec;
 const baseSpec = require(ES_TEST + '/BaseShared.js').spec;
 
