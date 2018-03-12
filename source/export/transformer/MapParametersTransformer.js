@@ -5,8 +5,9 @@
  * @ignore
  */
 const NodeTransformer = require('./NodeTransformer.js').NodeTransformer;
+const DecorateVariableNameTransformer = require('./DecorateVariableNameTransformer.js').DecorateVariableNameTransformer;
 const co = require('co');
-const metrics = require('../../utils/PerformanceMetrics.js').metrics;
+const metrics = require('../../utils/performance.js').metrics;
 
 
 /**
@@ -34,33 +35,30 @@ class MapParametersTransformer extends NodeTransformer
         {
             metrics.start(scope.className + '::transformNode');
 
-            if (configuration && node.is('VariableNode'))
+            if (configuration && node.is('MacroNode'))
             {
-                scope.logger.debug('transformNode - mapping parameter ' + node.fields.join('.'));
-
-                // Get macro
-                const macro = node.findParent('MacroNode');
-                if (!macro)
-                {
-                    return node;
-                }
-
                 // Get config
-                const macroConfiguration = yield configuration.getMacroConfiguration(macro.name);
+                const macroConfiguration = yield configuration.getMacroConfiguration(node.name);
                 if (!macroConfiguration)
                 {
                     return node;
                 }
-                const variableName = node.fields.join('.');
 
                 // Apply parameter mapping
                 if (macroConfiguration &&
-                    macroConfiguration.parameters &&
-                    macroConfiguration.parameters[variableName] &&
-                    macroConfiguration.parameters[variableName].name)
+                    macroConfiguration.parameters)
                 {
-                    node.fields = macroConfiguration.parameters[variableName].name.split('.');
+                    const mapping = {};
+                    for (const parameterName in macroConfiguration.parameters)
+                    {
+                        mapping[parameterName] = macroConfiguration.parameters[parameterName].name;
+                    }
+
+                    const variablesTransformer = new DecorateVariableNameTransformer({ mapping: mapping });
+                    const renamedNode = yield variablesTransformer.transform(node, configuration);
+                    return renamedNode;
                 }
+
             }
 
             metrics.stop(scope.className + '::transformNode');
