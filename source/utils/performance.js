@@ -161,6 +161,7 @@ class PerformanceMetrics extends Base
     {
         super();
         this._current = new PerformanceMetricScope();
+        this._enabled = false;
     }
 
 
@@ -183,19 +184,58 @@ class PerformanceMetrics extends Base
 
 
     /**
+     * @let {Boolean}
+     */
+    get enabled()
+    {
+        return this._enabled;
+    }
+
+
+    /**
+     * Enables performance metrics
+     */
+    enable(name)
+    {
+        this._enabled = true;
+    }
+
+
+    /**
+     * Enables performance metrics
+     */
+    disable()
+    {
+        this._enabled = false;
+    }
+
+
+    /**
+     * Creates a new logging scope
      *
+     * @param {String} name
      */
     pushScope(name)
     {
+        if (!this.enabled)
+        {
+            return;
+        }
+
         this._current = new PerformanceMetricScope(name, this._current);
     }
 
 
     /**
-     *
+     * Removes the top most logging scope
      */
     popScope()
     {
+        if (!this.enabled)
+        {
+            return;
+        }
+
         this.show();
         this._current = this._current.parent;
     }
@@ -206,8 +246,13 @@ class PerformanceMetrics extends Base
      */
     show()
     {
+        if (!this.enabled)
+        {
+            return;
+        }
+
         /* eslint no-console:0 */
-        this._current.show();
+        this.current.show();
         /* eslint no-console:1 */
     }
 
@@ -219,7 +264,12 @@ class PerformanceMetrics extends Base
      */
     start(name)
     {
-        this._current.start(name);
+        if (!this.enabled)
+        {
+            return;
+        }
+
+        this.current.start(name);
     }
 
 
@@ -230,7 +280,12 @@ class PerformanceMetrics extends Base
      */
     stop(name)
     {
-        this._current.stop(name);
+        if (!this.enabled)
+        {
+            return;
+        }
+
+        this.current.stop(name);
     }
 }
 
