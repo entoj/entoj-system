@@ -96,22 +96,6 @@ class EntityAspect extends Entity
 
 
     /**
-     * Checke if the entity provides it's own content for kind or if it inherits the contents.
-     *
-     * @returns {Boolean}
-     */
-    hasOwnContentOfKind(kind)
-    {
-        const files = this.files.filterBy(
-            {
-                contentKind: kind,
-                site: this.site
-            });
-        return files.length > 0;
-    }
-
-
-    /**
      * @inheritDoc
      */
     toString()
