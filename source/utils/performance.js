@@ -84,7 +84,7 @@ class PerformanceMetricScope extends Base
         {
             const item = this.items[name];
             console.log(chalk.yellow(' ' + item.name));
-            console.log('  count: ' + item.count + ', total: ' + item.total + ', average: ' + item.average.toFixed(2));
+            console.log('  count: ' + item.count + ', average: ' + item.average.toFixed(2) + ', total: ' + item.total);
         }
         /* eslint no-console:1 */
     }

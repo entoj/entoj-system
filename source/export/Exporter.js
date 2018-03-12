@@ -12,7 +12,7 @@ const Configuration = require('./Configuration.js').Configuration;
 const GlobalRepository = require('../model/GlobalRepository.js').GlobalRepository;
 const BuildConfiguration = require('../model/configuration/BuildConfiguration.js').BuildConfiguration;
 const assertParameter = require('../utils/assert.js').assertParameter;
-const metrics = require('../utils/PerformanceMetrics.js').metrics;
+const metrics = require('../utils/performance.js').metrics;
 const co = require('co');
 
 

@@ -6,7 +6,7 @@
  */
 const NodeTransformer = require('./NodeTransformer.js').NodeTransformer;
 const NodeList = require('../ast/NodeList.js').NodeList;
-const metrics = require('../../utils/PerformanceMetrics.js').metrics;
+const metrics = require('../../utils/performance.js').metrics;
 
 
 /**

@@ -9,7 +9,7 @@ module.exports =
     markdown: require('./markdown.js'),
     match: require('./match.js'),
     pathes: require('./pathes.js'),
-    PerformanceMetrics: require('./PerformanceMetrics.js'),
+    performance: require('./performance.js'),
     prototypes: require('./prototypes.js'),
     string: require('./string.js'),
     synchronize: require('./synchronize.js'),

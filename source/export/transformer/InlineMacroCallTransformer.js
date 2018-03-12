@@ -10,7 +10,7 @@ const PreferYieldTransformer = require('./PreferYieldTransformer.js').PreferYiel
 const NodeList = require('../ast/NodeList.js').NodeList;
 const SetNode = require('../ast/SetNode.js').SetNode;
 const VariableNode = require('../ast/VariableNode.js').VariableNode;
-const metrics = require('../../utils/PerformanceMetrics.js').metrics;
+const metrics = require('../../utils/performance.js').metrics;
 const co = require('co');
 
 
