@@ -5,6 +5,7 @@
  * @ignore
  */
 const NodeTransformer = require('./NodeTransformer.js').NodeTransformer;
+const metrics = require('../../utils/PerformanceMetrics.js').metrics;
 
 
 /**
@@ -26,13 +27,17 @@ class RemoveLoadModelTransformer extends NodeTransformer
      */
     transformNode(node, transformer, options)
     {
+        metrics.start(this.className + '::transformNode');
+
         // remove any set's that use the load filter
         if (node.is('SetNode') &&
             node.value.find('FilterNode', { name: 'load' }))
         {
+            metrics.stop(this.className + '::transformNode');
             return Promise.resolve(false);
         }
 
+        metrics.stop(this.className + '::transformNode');
         return Promise.resolve(node);
     }
 }

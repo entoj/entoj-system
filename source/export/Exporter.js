@@ -12,6 +12,7 @@ const Configuration = require('./Configuration.js').Configuration;
 const GlobalRepository = require('../model/GlobalRepository.js').GlobalRepository;
 const BuildConfiguration = require('../model/configuration/BuildConfiguration.js').BuildConfiguration;
 const assertParameter = require('../utils/assert.js').assertParameter;
+const metrics = require('../utils/PerformanceMetrics.js').metrics;
 const co = require('co');
 
 
@@ -188,6 +189,10 @@ class Exporter extends Base
         const scope = this;
         const promise = co(function *()
         {
+            metrics.pushScope(scope.className + '::export');
+            metrics.start(scope.className + '::export');
+
+            // Prepare
             const result =
             {
                 configuration: false,
@@ -195,10 +200,13 @@ class Exporter extends Base
             };
 
             // Create configuration
+            metrics.start(scope.className + '::export - create confguration');
             const configuration = yield scope.createConfiguration(macroQuery, entityQuery, siteQuery, settings);
             result.configuration = yield configuration.getExportConfiguration();
+            metrics.stop(scope.className + '::export - create confguration');
 
-            // Parse macro
+            // Parse jinja
+            metrics.start(scope.className + '::export - parse jinja');
             let rootNode = false;
             if (configuration.macro)
             {
@@ -213,8 +221,10 @@ class Exporter extends Base
                 /* istanbul ignore next */
                 throw new Error(scope.className + '::transform - could not parse macro / template');
             }
+            metrics.stop(scope.className + '::export - parse jinja');
 
             // Transform parsed nodes
+            metrics.start(scope.className + '::export - transform nodes');
             yield scope.transformer.reset(configuration);
             const transformedRootNode = yield scope.transformer.transform(rootNode, configuration);
             if (!transformedRootNode)
@@ -222,10 +232,16 @@ class Exporter extends Base
                 /* istanbul ignore next */
                 throw new Error(scope.className + ':transform - could not transform parsed node');
             }
+            metrics.stop(scope.className + '::export - transform nodes');
 
             // Render transformed nodes
+            metrics.start(scope.className + '::export - render nodes');
             yield scope.renderer.reset(configuration);
             result.contents = yield scope.renderer.render(transformedRootNode, configuration);
+            metrics.stop(scope.className + '::export - render nodes');
+
+            metrics.stop(scope.className + '::export');
+            metrics.popScope();
 
             //Done
             return result;

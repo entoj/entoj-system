@@ -6,6 +6,7 @@
  */
 const NodeTransformer = require('./NodeTransformer.js').NodeTransformer;
 const NodeList = require('../ast/NodeList.js').NodeList;
+const metrics = require('../../utils/PerformanceMetrics.js').metrics;
 
 
 /**
@@ -27,6 +28,8 @@ class PreferYieldTransformer extends NodeTransformer
      */
     transformNode(node, transformer, options)
     {
+        metrics.start(this.className + '::transformNode');
+
         // Remove if caller|notempty then ...
         if (node.is('IfNode') &&
             node.condition.children.length &&
@@ -37,6 +40,7 @@ class PreferYieldTransformer extends NodeTransformer
             node.condition.children[0].value.fields.length === 1 &&
             node.condition.children[0].value.fields[0].startsWith('caller'))
         {
+            metrics.stop(this.className + '::transformNode');
             return Promise.resolve(new NodeList({ children: node.children }));
         }
 
@@ -47,9 +51,11 @@ class PreferYieldTransformer extends NodeTransformer
             node.condition.children[0].fields.length === 1 &&
             node.condition.children[0].fields[0].startsWith('caller'))
         {
+            metrics.stop(this.className + '::transformNode');
             return Promise.resolve(new NodeList({ children: node.children }));
         }
 
+        metrics.stop(this.className + '::transformNode');
         return Promise.resolve(node);
     }
 }

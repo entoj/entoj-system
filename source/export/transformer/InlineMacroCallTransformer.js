@@ -10,6 +10,7 @@ const PreferYieldTransformer = require('./PreferYieldTransformer.js').PreferYiel
 const NodeList = require('../ast/NodeList.js').NodeList;
 const SetNode = require('../ast/SetNode.js').SetNode;
 const VariableNode = require('../ast/VariableNode.js').VariableNode;
+const metrics = require('../../utils/PerformanceMetrics.js').metrics;
 const co = require('co');
 
 
@@ -82,6 +83,8 @@ class InlineMacroCallTransformer extends NodeTransformer
         const scope = this;
         const promise = co(function*()
         {
+            metrics.start(scope.className + '::transformNode');
+
             // inline call nodes
             if (node.is('CallNode') && configuration)
             {
@@ -136,6 +139,8 @@ class InlineMacroCallTransformer extends NodeTransformer
                     return rootNode;
                 }
             }
+
+            metrics.start(scope.className + '::transformNode');
             return node;
         });
         return promise;

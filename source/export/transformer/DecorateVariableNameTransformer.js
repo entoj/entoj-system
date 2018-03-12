@@ -5,6 +5,7 @@
  * @ignore
  */
 const NodeTransformer = require('./NodeTransformer.js').NodeTransformer;
+const metrics = require('../../utils/PerformanceMetrics.js').metrics;
 
 
 /**
@@ -81,6 +82,7 @@ class DecorateVariableNameTransformer extends NodeTransformer
      */
     transformNode(node, configuration)
     {
+        metrics.start(this.className + '::transformNode');
         if (node.is('VariableNode'))
         {
             // See if variable is allowed
@@ -100,6 +102,7 @@ class DecorateVariableNameTransformer extends NodeTransformer
                 node.fields[0] = this.prefix + node.fields[0] + this.suffix;
             }
         }
+        metrics.stop(this.className + '::transformNode');
         return Promise.resolve(node);
     }
 }

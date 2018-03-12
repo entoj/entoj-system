@@ -6,6 +6,7 @@
  */
 const NodeTransformer = require('./NodeTransformer.js').NodeTransformer;
 const co = require('co');
+const metrics = require('../../utils/PerformanceMetrics.js').metrics;
 
 
 /**
@@ -31,6 +32,8 @@ class MapVariablesTransformer extends NodeTransformer
         const scope = this;
         const promise = co(function*()
         {
+            metrics.start(scope.className + '::transformNode');
+
             if (configuration && node.is('VariableNode'))
             {
                 scope.logger.debug('transformNode - mapping variable ' + node.fields.join('.'));
@@ -48,6 +51,8 @@ class MapVariablesTransformer extends NodeTransformer
                     node.fields = macroConfiguration.variables[variableName].split('.');
                 }
             }
+
+            metrics.stop(scope.className + '::transformNode');
             return node;
         });
         return promise;
