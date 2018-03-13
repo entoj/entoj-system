@@ -15,7 +15,7 @@ const Base = require('../Base.js').Base;
 class ContentType extends Base
 {
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
     static get className()
     {
@@ -24,47 +24,52 @@ class ContentType extends Base
 
 
     /**
-     *
+     * Any
      */
     static get ANY()
     {
         return '*';
     }
 
+
     /**
-     *
+     * Sass
      */
     static get SASS()
     {
         return 'sass';
     }
 
+
     /**
-     *
+     * Js
      */
     static get JS()
     {
         return 'js';
     }
 
+
     /**
-     *
+     * Json
      */
     static get JSON()
     {
         return 'json';
     }
 
+
     /**
-     *
+     * Jinja
      */
     static get JINJA()
     {
         return 'jinja';
     }
 
+
     /**
-     *
+     * Markdown
      */
     static get MARKDOWN()
     {

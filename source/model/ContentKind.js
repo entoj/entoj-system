@@ -15,7 +15,7 @@ const Base = require('../Base.js').Base;
 class ContentKind extends Base
 {
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
     static get className()
     {
@@ -24,63 +24,70 @@ class ContentKind extends Base
 
 
     /**
-     *
+     * Unknown kind
      */
     static get UNKNOWN()
     {
         return '*';
     }
 
+
     /**
-     *
+     * CSS
      */
     static get CSS()
     {
         return 'css';
     }
 
+
     /**
-     *
+     * JS
      */
     static get JS()
     {
         return 'js';
     }
 
+
     /**
-     *
+     * Macro
      */
     static get MACRO()
     {
         return 'macro';
     }
 
+
     /**
-     *
+     * Example
      */
     static get EXAMPLE()
     {
         return 'example';
     }
 
+
     /**
-     *
+     * Styleguide
      */
     static get STYLEGUIDE()
     {
         return 'styleguide';
     }
 
+
     /**
-     *
+     * Datamodel
      */
     static get DATAMODEL()
     {
         return 'datamodel';
     }
 
+
     /**
-     *
+     * Text
      */
     static get TEXT()
     {

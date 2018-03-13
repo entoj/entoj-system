@@ -33,7 +33,7 @@ class Entity extends DocumentableValueObject
 
 
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
     initialize()
     {
@@ -43,7 +43,7 @@ class Entity extends DocumentableValueObject
 
 
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
     get fields()
     {
