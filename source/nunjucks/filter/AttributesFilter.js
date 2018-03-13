@@ -15,7 +15,7 @@ const isPlainObject = require('lodash.isplainobject');
 class AttributesFilter extends Filter
 {
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
     constructor()
     {
@@ -25,7 +25,7 @@ class AttributesFilter extends Filter
 
 
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
     static get className()
     {
@@ -34,7 +34,7 @@ class AttributesFilter extends Filter
 
 
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
     filter(value)
     {
@@ -49,7 +49,10 @@ class AttributesFilter extends Filter
             const pref = prefix ? prefix + '-' : '';
             for (const key in value)
             {
-                result += pref + kebabCase(key) + '="' + value[key] + '" ';
+                if (typeof value[key] !== 'undefined')
+                {
+                    result += pref + kebabCase(key) + '="' + value[key] + '" ';
+                }
             }
             return scope.applyCallbacks(result, arguments);
         };
