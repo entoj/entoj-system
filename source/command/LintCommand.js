@@ -8,8 +8,10 @@ const Command = require('./Command.js').Command;
 const Context = require('../application/Context.js').Context;
 const GlobalRepository = require('../model/GlobalRepository.js').GlobalRepository;
 const PathesConfiguration = require('../model/configuration/PathesConfiguration.js').PathesConfiguration;
+const ModelSynchronizer = require('../watch/ModelSynchronizer.js').ModelSynchronizer;
 const Communication = require('../application/Communication.js').Communication;
 const assertParameter = require('../utils/assert.js').assertParameter;
+const waitForPromise = require('../utils/synchronize.js').waitForPromise;
 const ErrorHandler = require('../error/ErrorHandler.js').ErrorHandler;
 const chalk = require('chalk');
 const co = require('co');
@@ -49,7 +51,7 @@ class LintCommand extends Command
 
 
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
     static get className()
     {
@@ -94,32 +96,55 @@ class LintCommand extends Command
 
 
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
     get help()
     {
         const help =
         {
             name: this._name,
-            description: 'Lints files',
-            actions: []
+            description: 'Lints source files of all sites',
+            actions:
+            [
+                {
+                    name: 'lint',
+                    description: 'Runs all linters on the given entities',
+                    options:
+                    [
+                        {
+                            name: 'query',
+                            type: 'inline',
+                            optional: true,
+                            defaultValue: '*',
+                            description: 'Query for entities to use e.g. /base'
+                        }
+                    ]
+                },
+                {
+                    name: 'watch',
+                    description: 'Lints all files an watches for changes',
+                    options:
+                    [
+                    ]
+                }
+            ]
         };
         return help;
     }
 
 
     /**
-     * @inheritDocs
+     * @inheritDoc
      * @returns {Promise<Server>}
      */
-    lint(action, parameters)
+    lint(parameters, doNotExit)
     {
         const scope = this;
         const logger = scope.createLogger('command.lint');
         const promise = co(function *()
         {
             const com = scope.context.di.create(Communication);
-            const query = action || '*';
+            const query = parameters && parameters._ && parameters._[0] || '*';
             const section = logger.section('Linting <' + query + '>');
             const sectionResult =
             {
@@ -209,7 +234,8 @@ class LintCommand extends Command
             {
                 // exit with non-zero for git hooks
                 logger.end(section, true);
-                if (scope.options.exitCodes !== false)
+                if (scope.options.exitCodes !== false &&
+                    doNotExit !== true)
                 {
                     process.exit(1);
                 }
@@ -218,7 +244,8 @@ class LintCommand extends Command
             {
                 // exit with zero
                 logger.end(section, false);
-                if (scope.options.exitCodes !== false)
+                if (scope.options.exitCodes !== false &&
+                    doNotExit !== true)
                 {
                     process.exit(0);
                 }
@@ -230,12 +257,54 @@ class LintCommand extends Command
 
 
     /**
-     * @inheritDocs
+     * Uses watch.ModelSynchronizer to wait for changes on .sass files
+     * to compile them
+     *
+     * @protected
+     * @param {Object} parameters
+     * @returns {Promise}
+     */
+    watch(parameters)
+    {
+        const scope = this;
+        const promise = co(function *()
+        {
+            const logger = scope.createLogger('command.lint.watch');
+            const modelSynchronizer = scope.context.di.create(ModelSynchronizer);
+            yield scope.lint(parameters, true);
+            yield modelSynchronizer.start();
+            /* istanbul ignore next */
+            modelSynchronizer.signals.invalidated.add((synchronizer, invalidations) =>
+            {
+                if (invalidations.entity.update)
+                {
+                    for (const entity of invalidations.entity.update)
+                    {
+                        logger.info('Detected update in <' + entity.pathString + '>');
+                        waitForPromise(scope.lint({ _:[entity.pathString]}, true));
+                    }
+                }
+            });
+        }).catch(ErrorHandler.handler(scope));
+        return promise;
+    }
+
+
+    /**
+     * @inheritDoc
      * @returns {Promise<Server>}
      */
     dispatch(action, parameters)
     {
-        return this.lint(action, parameters);
+        switch((action || '').toLowerCase())
+        {
+            case 'watch':
+                return this.watch(parameters);
+
+            default:
+                parameters._ = [action];
+                return this.lint(parameters);
+        }
     }
 }
 
