@@ -85,6 +85,23 @@ class LinterResultArray extends SearchableArray
 
 
     /**
+     * @type {Boolean}
+     */
+    successForKind(kind)
+    {
+        const linterResult = this.findBy(
+            {
+                contentKind: kind
+            });
+        if (!linterResult)
+        {
+            return true;
+        }
+        return linterResult.success;
+    }
+
+
+    /**
      * @param {Array} data
      */
     import(data)
