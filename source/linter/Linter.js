@@ -5,6 +5,7 @@
  * @ignore
  */
 const Base = require('../Base.js').Base;
+const ContentKind = require('../model/ContentKind.js').ContentKind;
 
 
 /**
@@ -30,6 +31,15 @@ class Linter extends Base
     get name()
     {
         return this.className.split('/').pop();
+    }
+
+
+    /**
+     * @type {String}
+     */
+    get contentKind()
+    {
+        return ContentKind.UNKNOWN;
     }
 
 

@@ -65,6 +65,15 @@ class FileLinter extends Linter
 
 
     /**
+     * @type {String}
+     */
+    get contentKind()
+    {
+        return this.linter.contentKind;
+    }
+
+
+    /**
      * @property {Array}
      */
     get glob()
