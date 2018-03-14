@@ -126,7 +126,6 @@ class LintCommand extends Command
                 errorCount: 0,
                 warningCount: 0
             };
-            const linterResults = [];
 
             // Lint each entity
             const entities = yield scope.globalRepository.resolveEntities(query);
@@ -142,6 +141,7 @@ class LintCommand extends Command
                     files: []
                 };
                 const work = logger.work();
+                const linterResults = [];
                 for (const linter of scope.linters)
                 {
                     const linterResult = yield linter.lint(entityPath);
@@ -151,6 +151,7 @@ class LintCommand extends Command
                         {
                             entity: entity.pathString,
                             linter: linter.name,
+                            contentKind: linter.contentKind,
                             success: linterResult.success,
                             warningCount: linterResult.warningCount,
                             errorCount: linterResult.errorCount,
@@ -170,6 +171,10 @@ class LintCommand extends Command
                     Array.prototype.push.apply(result.files, linterResult.files);
                 }
 
+                // Dispatch lint results
+                yield com.send('lint-results', linterResults);
+
+                // Prepare output
                 if (result.success)
                 {
                     logger.end(work, false, 'Linting <' + entity.id.asString('path') + '>');
@@ -199,9 +204,6 @@ class LintCommand extends Command
                     }
                 }
             }
-
-            // Dispatch lint results
-            yield com.send('lint-results', linterResults);
 
             if (sectionResult.errorCount > 0)
             {
