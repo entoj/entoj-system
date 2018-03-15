@@ -77,18 +77,18 @@ describe(EntityCategory.className, function()
             expect(testee.type).to.equal(EntityCategoryType.GLOBAL);
         });
 
-        it('should automatically assign GLOBAL type to a category named Global', function()
+        it('should automatically assign PAGE type to a category named Page', function()
         {
-            const testee = new EntityCategory({ longName: 'Global' });
+            const testee = new EntityCategory({ longName: 'Page' });
 
-            expect(testee.type).to.equal(EntityCategoryType.GLOBAL);
+            expect(testee.type).to.equal(EntityCategoryType.PAGE);
         });
 
-        it('should automatically assign GLOBAL type to a category named Global', function()
+        it('should automatically assign TEMPLATE type to a category named Template', function()
         {
-            const testee = new EntityCategory({ longName: 'Global' });
+            const testee = new EntityCategory({ longName: 'Template' });
 
-            expect(testee.type).to.equal(EntityCategoryType.GLOBAL);
+            expect(testee.type).to.equal(EntityCategoryType.TEMPLATE);
         });
     });
 

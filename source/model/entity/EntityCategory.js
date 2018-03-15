@@ -204,6 +204,10 @@ class EntityCategory extends DocumentableValueObject
                 case 'template':
                     this.type = EntityCategoryType.TEMPLATE;
                     break;
+
+                case 'global':
+                    this.type = EntityCategoryType.GLOBAL;
+                    break;
             }
         }
     }
