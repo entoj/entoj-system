@@ -58,7 +58,7 @@ class EntityCategoriesLoader extends PluggableLoader
         {
             const item = new EntityCategory(config);
             item.priority = result.length;
-            result.push(item);            
+            result.push(item);
         }
         return Promise.resolve(result);
     }

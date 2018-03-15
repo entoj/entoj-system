@@ -4,6 +4,7 @@
  * Requirements
  */
 const EntityCategory = require(ES_SOURCE + '/model/entity/EntityCategory.js').EntityCategory;
+const EntityCategoryType = require(ES_SOURCE + '/model/entity/EntityCategoryType.js').EntityCategoryType;
 const documentableValueObjectSpec = require('../DocumentableValueObjectShared.js').spec;
 const baseSpec = require(ES_TEST + '/BaseShared.js').spec;
 
@@ -30,13 +31,14 @@ describe(EntityCategory.className, function()
 
     describe('#constructor()', function()
     {
-        it('should allow to configure shortName, longName, pluralName and isGlobal', function()
+        it('should allow to configure shortName, longName, pluralName and type', function()
         {
-            const testee = new EntityCategory({ longName: 'Module', pluralName: 'Modules', shortName: 'm', isGlobal: true });
+            const testee = new EntityCategory({ longName: 'Module', pluralName: 'Modules', shortName: 'm', type: EntityCategoryType.GLOBAL });
 
             expect(testee.longName).to.equal('Module');
             expect(testee.pluralName).to.equal('Modules');
             expect(testee.shortName).to.equal('m');
+            expect(testee.type).to.equal(EntityCategoryType.GLOBAL);
             expect(testee.isGlobal).to.ok;
         });
 
@@ -52,6 +54,41 @@ describe(EntityCategory.className, function()
             const testee = new EntityCategory({ longName: 'Element' });
 
             expect(testee.pluralName).to.equal('Elements');
+        });
+
+        it('should use PATTERN as the default type', function()
+        {
+            const testee = new EntityCategory({ longName: 'Element' });
+
+            expect(testee.type).to.equal(EntityCategoryType.PATTERN);
+        });
+
+        it('should allow to use the deprecated isGlobal configuration', function()
+        {
+            const testee = new EntityCategory({ longName: 'Element', isGlobal: true });
+
+            expect(testee.type).to.equal(EntityCategoryType.GLOBAL);
+        });
+
+        it('should automatically assign GLOBAL type to a category named Global', function()
+        {
+            const testee = new EntityCategory({ longName: 'Global' });
+
+            expect(testee.type).to.equal(EntityCategoryType.GLOBAL);
+        });
+
+        it('should automatically assign GLOBAL type to a category named Global', function()
+        {
+            const testee = new EntityCategory({ longName: 'Global' });
+
+            expect(testee.type).to.equal(EntityCategoryType.GLOBAL);
+        });
+
+        it('should automatically assign GLOBAL type to a category named Global', function()
+        {
+            const testee = new EntityCategory({ longName: 'Global' });
+
+            expect(testee.type).to.equal(EntityCategoryType.GLOBAL);
         });
     });
 

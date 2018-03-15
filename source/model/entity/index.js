@@ -11,6 +11,7 @@ module.exports =
     EntityCategoriesLoader: require('./EntityCategoriesLoader.js').EntityCategoriesLoader,
     EntityCategoriesRepository: require('./EntityCategoriesRepository.js').EntityCategoriesRepository,
     EntityCategory: require('./EntityCategory.js').EntityCategory,
+    EntityCategoryType: require('./EntityCategoryType.js').EntityCategoryType,
     EntityId: require('./EntityId.js').EntityId,
     EntityIdTemplate: require('./EntityIdTemplate.js').EntityIdTemplate,
     EntityInheriter: require('./EntityInheriter.js').EntityInheriter

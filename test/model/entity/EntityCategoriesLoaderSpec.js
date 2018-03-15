@@ -34,8 +34,7 @@ describe(EntityCategoriesLoader.className, function()
                     },
                     {
                         longName: 'Common',
-                        pluralName: 'Common',
-                        isGlobal: true
+                        pluralName: 'Common'
                     }
                 ]);
             const promise = co(function *()

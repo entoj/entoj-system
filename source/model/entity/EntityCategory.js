@@ -5,6 +5,7 @@
  * @ignore
  */
 const DocumentableValueObject = require('../DocumentableValueObject.js').DocumentableValueObject;
+const EntityCategoryType = require('./EntityCategoryType.js').EntityCategoryType;
 
 
 /**
@@ -72,7 +73,7 @@ class EntityCategory extends DocumentableValueObject
         fields.longName = '';
         fields.shortName = '';
         fields.pluralName = '';
-        fields.isGlobal = false;
+        fields.type = EntityCategoryType.PATTERN;
         fields.priority = 0;
         return fields;
     }
@@ -134,19 +135,28 @@ class EntityCategory extends DocumentableValueObject
      */
     get isGlobal()
     {
-        return this._isGlobal;
-    }
-
-    set isGlobal(value)
-    {
-        this._isGlobal = value;
+        return this.type === EntityCategoryType.GLOBAL;
     }
 
 
     /**
-     * The priority of the category. 
+     * @property {String}
+     */
+    get type()
+    {
+        return this._type;
+    }
+
+    set type(value)
+    {
+        this._type = value;
+    }
+
+
+    /**
+     * The priority of the category.
      * Higher priority categories depend on lower priority categories.
-     * 
+     *
      * @property {Bool}
      */
     get priority()
@@ -158,8 +168,8 @@ class EntityCategory extends DocumentableValueObject
     {
         this._priority = value;
     }
-    
-    
+
+
     /**
      * @inheritDocs
      */
@@ -173,6 +183,28 @@ class EntityCategory extends DocumentableValueObject
         if (!this.shortName.length)
         {
             this.shortName = this.longName.substr(0, 1).toLowerCase();
+        }
+        // Support deprecated way of declaring global categories
+        if (values &&
+            typeof values.isGlobal !== 'undefined' &&
+            values.isGlobal === true)
+        {
+            this.type = EntityCategoryType.GLOBAL;
+        }
+        // Add some sane magic categories
+        if (values &&
+            !values.type)
+        {
+            switch(this.longName.toLowerCase())
+            {
+                case 'page':
+                    this.type = EntityCategoryType.PAGE;
+                    break;
+
+                case 'template':
+                    this.type = EntityCategoryType.TEMPLATE;
+                    break;
+            }
         }
     }
 

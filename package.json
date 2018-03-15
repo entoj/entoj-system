@@ -69,7 +69,7 @@
     "through2": "^2.0.3",
     "transliteration": "^1.6.2",
     "vinyl": "^2.1.0",
-    "xregexp": "^4.0.0"
+    "xregexp": "^4.1.1"
   },
   "devDependencies": {
     "coveralls": "^2.13.3",
