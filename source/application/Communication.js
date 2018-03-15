@@ -168,6 +168,7 @@ class Communication extends Base
             {
                 scope.cliLogger.info('Sending command <' + command + '> via broadcast');
                 ipc.server.broadcast('message', { command: command, data: data || false });
+                scope.events.emit(command, data || false);
                 return true;
             }
             else

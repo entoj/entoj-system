@@ -15,7 +15,7 @@ function spec(type, className, fixture, prepareParameters)
     /**
      * Base Test
      */
-    baseSpec(type, className);
+    baseSpec(type, className, prepareParameters);
 
     /**
      * Linter Test

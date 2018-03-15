@@ -17,7 +17,7 @@ function spec(type, className, fixture, prepareParameters)
     /**
      * Linter Test
      */
-    linterSpec(type, className, fixture);
+    linterSpec(type, className, fixture, prepareParameters);
 
 
     /**
@@ -94,6 +94,22 @@ function spec(type, className, fixture, prepareParameters)
                 sinon.spy(testee.linter, 'lint');
                 yield testee.lint(fixture.root);
                 expect(testee.linter.lint.callCount).to.be.equal(fixture.globCount);
+            });
+            return promise;
+        });
+
+        it('should pass options to the underlying linter', function()
+        {
+            const promise = co(function*()
+            {
+                const options =
+                {
+                    glob: fixture.glob
+                };
+                const testee = createTestee([], options);
+                sinon.spy(testee, 'lintFile');
+                yield testee.lint(fixture.root, { some: 'option' });
+                expect(testee.lintFile.getCall(0).args[2]).to.be.deep.equal({ some: 'option' });
             });
             return promise;
         });

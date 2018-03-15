@@ -87,6 +87,10 @@ class Route extends Base
         {
             this.cliLogger.info('Adding static file route <' + route + '> searching in <' + (typeof basePath === 'string' ? basePath : 'function') + '>');
         }
+        if (!basePath)
+        {
+            throw Error(this.className + '::addStaticFileHandler basePath is for ' + route + ' is not defined!');
+        }
         const handler = (request, response, next) =>
         {
             // Check extension

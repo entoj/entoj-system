@@ -120,6 +120,34 @@ class EntityRenderer extends Base
 
 
     /**
+     * @param {String} filename
+     * @param {Object} entity
+     * @param {Object} data
+     * @param {Object} globals
+     * @returns Promise<String>
+     */
+    renderString(content, filename, entity, site, data, globals)
+    {
+        const location =
+        {
+            site: site,
+            entity: entity
+        };
+        this.nunjucks.addGlobal('global', {});
+        this.nunjucks.addGlobal('location', location);
+        if (globals)
+        {
+            for (const key in globals)
+            {
+                this.nunjucks.addGlobal(key, globals[key]);
+            }
+        }
+        const html = this.nunjucks.renderString(content, data, { path: filename });
+        return Promise.resolve(html);
+    }
+
+
+    /**
      * @param {String} path
      * @param {Object} data
      * @param {Object} globals
@@ -147,24 +175,10 @@ class EntityRenderer extends Base
             {
                 filename = match.file.filename;
             }
+
             // Render
-            const tpl = yield fs.readFile(filename, { encoding: 'utf8' });
-            const location =
-            {
-                site: match.site,
-                entity: match.entity,
-                customPath: match.customPath
-            };
-            scope.nunjucks.addGlobal('global', {});
-            scope.nunjucks.addGlobal('location', location);
-            if (globals)
-            {
-                for (const key in globals)
-                {
-                    scope.nunjucks.addGlobal(key, globals[key]);
-                }
-            }
-            const html = scope.nunjucks.renderString(tpl, data, { path: filename });
+            const content = yield fs.readFile(filename, { encoding: 'utf8' });
+            const html = scope.renderString(content, filename, match.entity, match.site, data, globals);
             return html;
         });
         return promise;

@@ -169,7 +169,7 @@ class LintCommand extends Command
                 const linterResults = [];
                 for (const linter of scope.linters)
                 {
-                    const linterResult = yield linter.lint(entityPath);
+                    const linterResult = yield linter.lint(entityPath, { entity: entity });
 
                     // Add linter results
                     linterResults.push(

@@ -37,7 +37,41 @@ class File extends ValueObject
         fields.contentKind = ContentKind.UNKNOWN;
         fields.contents = undefined;
         fields.site = false;
+        fields.updated = 0;
         return fields;
+    }
+
+
+    /**
+     * @inheritDoc
+     */
+    initialize()
+    {
+        super.initialize();
+        this._updated = Date.now();
+    }
+
+
+    /**
+     * @param {*} values
+     * @returns {void}
+     */
+    dehydrate(values)
+    {
+        const result = super.dehydrate(values);
+        this._updated = Date.now();
+        return result;
+    }
+
+
+    /**
+     * Timestamp of last file update
+     *
+     * @property {Number}
+     */
+    get updated()
+    {
+        return this._updated;
     }
 
 

@@ -18,6 +18,7 @@ const co = require('co');
 class FileLinter extends Linter
 {
     /**
+     * @param {object|undefined} rules
      * @param {object|undefined} options
      */
     constructor(rules, options)
@@ -98,15 +99,15 @@ class FileLinter extends Linter
      * @param {model.file.File} file
      * @returns {Promise.<Array>}
      */
-    lintFile(file, filename)
+    lintFile(file, filename, options)
     {
         if (!this._linter)
         {
             /* istanbul ignore next */
             return Promise.resolve({ success: true, warningCount: 0, errorCount: 0, messages: [] });
         }
-
-        return this._linter.lint(file.contents, { filename: filename || file.filename });
+        const opts = Object.assign({}, { filename: filename || file.filename }, options || {});
+        return this._linter.lint(file.contents, opts);
     }
 
 
@@ -146,7 +147,7 @@ class FileLinter extends Linter
                 result.files.push(file);
                 if (file.contents)
                 {
-                    const lintResult = yield scope.lintFile(file, opts.filename);
+                    const lintResult = yield scope.lintFile(file, opts.filename, opts);
                     if (lintResult)
                     {
                         if (!lintResult.success)

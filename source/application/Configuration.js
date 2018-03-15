@@ -405,6 +405,17 @@ class Configuration extends Base
             }
         );
 
+        // Linter
+        this.commands.add(require('../command/index.js').LintCommand,
+            {
+                '!linters':
+                [
+                    {
+                        type: require('../linter/index.js').NunjucksFileLinter
+                    }
+                ]
+            });
+
         // Server
         this.commands.add(require('../command/index.js').ServerCommand,
             {
