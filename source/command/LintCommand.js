@@ -302,8 +302,9 @@ class LintCommand extends Command
                 return this.watch(parameters);
 
             default:
-                parameters._ = [action];
-                return this.lint(parameters);
+                const params = parameters || {};
+                params._ = [action];
+                return this.lint(params);
         }
     }
 }
