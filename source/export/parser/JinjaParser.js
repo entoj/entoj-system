@@ -333,7 +333,7 @@ class JinjaParser extends Parser
                     return this.parseVariable(node);
 
                 case 'Filter':
-                    return this.parseFilter(node);                    
+                    return this.parseFilter(node);
 
                 /* istanbul ignore next */
                 default:
@@ -754,14 +754,14 @@ class JinjaParser extends Parser
     parseTag(node)
     {
         const children = [];
-        if (node.contentArgs && 
+        if (node.contentArgs &&
             Array.isArray(node.contentArgs) &&
             node.contentArgs.length)
         {
             for (const child of node.contentArgs[0].children)
             {
                 children.push(this.parseNode(child));
-            }    
+            }
         }
         return new TagNode(
             {
@@ -769,14 +769,14 @@ class JinjaParser extends Parser
                 arguments: this.parseArguments(node.args),
                 children: children
             });
-    }    
+    }
 
 
     /**
      * [...]
-     * 
+     *
      * @protected
-     * @param {export.ast.Node} 
+     * @param {export.ast.Node}
      */
     parseArray(node)
     {
@@ -893,7 +893,7 @@ class JinjaParser extends Parser
 
             case 'CallExtension':
                 result = this.parseTag(node);
-                break;                
+                break;
 
             case 'Filter':
                 result = this.parseFilter(node);
@@ -973,7 +973,7 @@ class JinjaParser extends Parser
             /* istanbul ignore next */
             if (!template || !template.contents)
             {
-                scope.logger.warn('parseTemplate - could not find template');
+                scope.logger.warn('parseTemplate - could not find template for ' + entity.pathString);
                 return false;
             }
 
