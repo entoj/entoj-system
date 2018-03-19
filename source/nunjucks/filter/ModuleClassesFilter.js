@@ -47,7 +47,8 @@ class ModuleClassesFilter extends Filter
             const types = Array.isArray(value) ? value : [value];
             types.forEach(function (item, index)
             {
-                if (typeof item === 'string' && item !== '')
+                if ((typeof item === 'string' && item !== '') ||
+                    (typeof item === 'number'))
                 {
                     result += ' ' + moduleClass + '--' + item;
                 }
