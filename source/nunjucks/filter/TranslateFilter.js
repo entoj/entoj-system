@@ -6,6 +6,7 @@
  */
 const Filter = require('./Filter.js').Filter;
 const TranslationsRepository = require('../../model/translation/TranslationsRepository.js').TranslationsRepository;
+const SystemModuleConfiguration = require('../../configuration/SystemModuleConfiguration.js').SystemModuleConfiguration;
 const assertParameter = require('../../utils/assert.js').assertParameter;
 const waitForPromise = require('../../utils/synchronize.js').waitForPromise;
 
