@@ -9,6 +9,8 @@ const SitesRepository = require('../model/site/SitesRepository.js').SitesReposit
 const TranslationsRepository = require('../model/translation/TranslationsRepository.js').TranslationsRepository;
 const PathesConfiguration = require('../model/configuration/PathesConfiguration.js').PathesConfiguration;
 const CliLogger = require('../cli/CliLogger.js').CliLogger;
+const ErrorHandler = require('../error/ErrorHandler.js').ErrorHandler;
+const co = require('co');
 
 
 /**
@@ -61,6 +63,32 @@ class ModelSynchronizerTranslationsPlugin extends ModelSynchronizerDataPlugin
     get resultName()
     {
         return 'translation';
+    }
+
+
+    /**
+     * @returns {Promise.<*>}
+     */
+    createFilenames()
+    {
+        const scope = this;
+        const promise = co(function *()
+        {
+            const result = {};
+            const sites = yield scope.sitesRepository.getItems();
+            for (const site of sites)
+            {
+                for (const language of scope.dataRepository.loader.languages)
+                {
+                    const fullFilename = yield scope.dataRepository.loader.generateFilename({ site: site, language: language });
+                    const filename = fullFilename.replace(scope.pathesConfiguration.sites, '');
+                    result[filename] = site;
+                }
+            }
+
+            return result;
+        }).catch(ErrorHandler.handler(scope));
+        return promise;
     }
 }
 

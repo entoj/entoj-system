@@ -108,6 +108,29 @@ class ModelSynchronizerDataPlugin extends ModelSynchronizerPlugin
     /**
      * @returns {Promise.<*>}
      */
+    createFilenames()
+    {
+        const scope = this;
+        const promise = co(function *()
+        {
+            const result = {};
+            const sites = yield scope.sitesRepository.getItems();
+            for (const site of sites)
+            {
+                const fullFilename = yield scope.dataRepository.loader.generateFilename({ site: site });
+                const filename = fullFilename.replace(scope.pathesConfiguration.sites, '');
+                result[filename] = site;
+            }
+
+            return result;
+        }).catch(ErrorHandler.handler(scope));
+        return promise;
+    }
+
+
+    /**
+     * @returns {Promise.<*>}
+     */
     execute(changes)
     {
         const scope = this;
@@ -119,14 +142,7 @@ class ModelSynchronizerDataPlugin extends ModelSynchronizerPlugin
             if (changes.files)
             {
                 // Create list of filenames
-                const filenames = {};
-                const sites = yield scope.sitesRepository.getItems();
-                for (const site of sites)
-                {
-                    const fullFilename = yield scope.dataRepository.loader.generateFilename(site);
-                    const filename = fullFilename.replace(scope.pathesConfiguration.sites, '');
-                    filenames[filename] = site;
-                }
+                const filenames = yield scope.createFilenames();
 
                 // Get changed sites
                 const changesSites =
