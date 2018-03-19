@@ -31,6 +31,7 @@ module.exports =
     base: require('./base/index.js'),
     cli: require('./cli/index.js'),
     command: require('./command/index.js'),
+    configuration: require('./configuration/index.js'),
     configure: configure,
     error: require('./error/index.js'),
     export: require('./export/index.js'),

@@ -21,6 +21,7 @@ const GlobalConfiguration = require(ES_SOURCE + '/model/configuration/GlobalConf
 const BuildConfiguration = require(ES_SOURCE + '/model/configuration/BuildConfiguration.js').BuildConfiguration;
 const GlobalRepository = require(ES_SOURCE + '/model/GlobalRepository.js').GlobalRepository;
 const CompactIdParser = require(ES_SOURCE + '/parser/entity/CompactIdParser.js').CompactIdParser;
+const SystemModuleConfiguration = require(ES_SOURCE + '/configuration/SystemModuleConfiguration.js').SystemModuleConfiguration;
 const File = require(ES_SOURCE + '/model/file/File.js').File;
 const ContentType = require(ES_SOURCE + '/model/ContentType.js').ContentType;
 const Context = require(ES_SOURCE + '/application/Context.js').Context;
@@ -42,6 +43,7 @@ function createStatic(options)
     result.pathToLibraries = testFixture.pathToLibraries;
     result.globalConfiguration = new GlobalConfiguration(opts.settings);
     result.buildConfiguration = new BuildConfiguration(opts.build);
+    result.moduleConfiguration = new SystemModuleConfiguration(result.globalConfiguration, result.buildConfiguration);
     result.pathesConfiguration = new PathesConfiguration(
         merge(
             {

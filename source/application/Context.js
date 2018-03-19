@@ -21,6 +21,7 @@ const SitesLoader = require('../model/site/SitesLoader.js').SitesLoader;
 const FilesRepository = require('../model/file/FilesRepository.js').FilesRepository;
 const TranslationsRepository = require('../model/translation/TranslationsRepository.js').TranslationsRepository;
 const SettingsRepository = require('../model/setting/SettingsRepository.js').SettingsRepository;
+const SystemModuleConfiguration = require('../configuration/SystemModuleConfiguration.js').SystemModuleConfiguration;
 const ModelSynchronizer = require('../watch/ModelSynchronizer.js').ModelSynchronizer;
 const Communication = require('./Communication.js').Communication;
 const metrics = require('../utils/performance.js').metrics;
@@ -307,6 +308,7 @@ class Context extends Base
             this._di.map('model.configuration/BuildConfiguration.environment', this._configuration.parameters.environment);
         }
         this._di.map(BuildConfiguration, BuildConfiguration, true);
+        this._di.map(SystemModuleConfiguration, SystemModuleConfiguration, true);
 
         // Repositories
         this.logger.debug('Setup repositories');
