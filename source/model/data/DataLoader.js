@@ -99,10 +99,11 @@ class DataLoader extends Loader
      *
      * @returns {String}
      */
-    generateFilename(site)
+    generateFilename(data)
     {
-        return this.pathesConfiguration.resolve(this.filenameTemplate, { site: site });
+        return this.pathesConfiguration.resolve(this.filenameTemplate, data);
     }
+
 
     /**
      * Loads all Translations
@@ -121,7 +122,7 @@ class DataLoader extends Loader
             const filesProcessed = {};
             for (const site of sites)
             {
-                const filename = yield scope.generateFilename(site);
+                const filename = yield scope.generateFilename({ site: site });
                 if (!filesProcessed[filename])
                 {
                     const fileExists = yield fs.exists(filename);
