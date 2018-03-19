@@ -67,9 +67,9 @@ class Environment extends BaseMixin(nunjucks.Environment)
         // Add tags
         if (Array.isArray(this._tags))
         {
-            for (const filter of this._tags)
+            for (const tag of this._tags)
             {
-                filter.register(this);
+                tag.register(this);
             }
         }
     }
