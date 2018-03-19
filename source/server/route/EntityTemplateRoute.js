@@ -204,6 +204,7 @@ class EntityTemplateRoute extends Route
                 scope.nunjucks.addGlobal('global', {});
                 scope.nunjucks.addGlobal('location', location);
                 scope.nunjucks.addGlobal('request', request);
+                scope.nunjucks.addGlobal('__configuration__', {});
                 html = scope.nunjucks.renderString(tpl, data, { path: filename });
             }
             catch (e)

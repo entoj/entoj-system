@@ -18,50 +18,70 @@ describe(TranslateFilter.className, function()
     /**
      * Filter Test
      */
-    filterSpec(TranslateFilter, 'nunjucks.filter/TranslateFilter');
+    beforeEach(function()
+    {
+        global.fixtures = projectFixture.createStatic();
+    });
+    function prepareParameters()
+    {
+        const loader = new TranslationsLoader(global.fixtures.sitesRepository, global.fixtures.pathesConfiguration, ES_FIXTURES + '/model/TranslationsModel.json');
+        const translationsRepository = new TranslationsRepository(loader);
+        return [translationsRepository, global.fixtures.moduleConfiguration];
+    }
+    filterSpec(TranslateFilter, 'nunjucks.filter/TranslateFilter', prepareParameters);
 
 
     /**
      * TranslateFilter Test
      */
-    beforeEach(function()
+    function createTestee(language)
     {
-        global.fixtures = projectFixture.createStatic();
-        global.fixtures.translationsRepository = new TranslationsRepository(new TranslationsLoader(global.fixtures.sitesRepository, global.fixtures.pathesConfiguration, ES_FIXTURES + '/model/TranslationsModel.json'));
-    });
-
+        const loader = new TranslationsLoader(global.fixtures.sitesRepository, global.fixtures.pathesConfiguration, ES_FIXTURES + '/model/TranslationsModel-${language}.json', ['en_EN', 'de_DE']);
+        const translationsRepository = new TranslationsRepository(loader);
+        if (language)
+        {
+            global.fixtures.moduleConfiguration.translateLanguage = language;
+        }
+        return new TranslateFilter(translationsRepository, global.fixtures.moduleConfiguration).filter();
+    }
 
     describe('#filter()', function()
     {
         it('should return a empty string for a unknown translation keys', function()
         {
-            const testee = new TranslateFilter(global.fixtures.translationsRepository).filter();
+            const testee = createTestee();
             expect(testee()).to.be.equal('');
             expect(testee(false, false)).to.deep.equal('');
         });
 
         it('should allow to translate based on the filter value', function()
         {
-            const testee = new TranslateFilter(global.fixtures.translationsRepository).filter();
-            expect(testee('simple')).to.be.equal('translation');
+            const testee = createTestee();
+            expect(testee('simple')).to.be.equal('translation en');
         });
 
         it('should allow to translate based on the filter parameter', function()
         {
-            const testee = new TranslateFilter(global.fixtures.translationsRepository).filter();
-            expect(testee(false, 'simple')).to.be.equal('translation');
+            const testee = createTestee();
+            expect(testee(false, 'simple')).to.be.equal('translation en');
+        });
+
+        it('should use trhe configured language translations', function()
+        {
+            const testee = createTestee('de_DE');
+            expect(testee('simple')).to.be.equal('translation de');
         });
 
         it('should return the translation key when not found', function()
         {
-            const testee = new TranslateFilter(global.fixtures.translationsRepository).filter();
-            expect(testee('simple')).to.be.equal('translation');
+            const testee = createTestee();
+            expect(testee('not found')).to.be.equal('not found');
         });
 
         it('should allow to use index based variables in translations', function()
         {
-            const testee = new TranslateFilter(global.fixtures.translationsRepository).filter();
-            expect(testee('variables', '-post', 'pre-')).to.be.equal('pre-translation-post');
+            const testee = createTestee();
+            expect(testee('variables', '-post', 'pre-')).to.be.equal('pre-translation en-post');
         });
     });
 });

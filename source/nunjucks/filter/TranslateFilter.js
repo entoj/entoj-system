@@ -6,6 +6,7 @@
  */
 const Filter = require('./Filter.js').Filter;
 const TranslationsRepository = require('../../model/translation/TranslationsRepository.js').TranslationsRepository;
+const assertParameter = require('../../utils/assert.js').assertParameter;
 const waitForPromise = require('../../utils/synchronize.js').waitForPromise;
 
 
@@ -17,27 +18,32 @@ class TranslateFilter extends Filter
     /**
      * @inheritDocs
      */
-    constructor(translationsRepository)
+    constructor(translationsRepository, moduleConfiguration)
     {
         super();
-        this._name = 'translate';
+
+        // Check params
+        assertParameter(this, 'translationsRepository', translationsRepository, true, TranslationsRepository);
+        assertParameter(this, 'moduleConfiguration', moduleConfiguration, true, SystemModuleConfiguration);
 
         // Assign options
+        this._name = 'translate';
         this._translationsRepository = translationsRepository;
+        this._moduleConfiguration = moduleConfiguration;
     }
 
 
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
     static get injections()
     {
-        return { 'parameters': [TranslationsRepository] };
+        return { 'parameters': [TranslationsRepository, SystemModuleConfiguration] };
     }
 
 
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
     static get className()
     {
@@ -46,11 +52,20 @@ class TranslateFilter extends Filter
 
 
     /**
-     * @inheritDocs
+     * @type {model.translation.TranslationsRepository}
      */
     get translationsRepository()
     {
         return this._translationsRepository;
+    }
+
+
+    /**
+     * @type {configuration.SystemModuleConfiguration}
+     */
+    get moduleConfiguration()
+    {
+        return this._moduleConfiguration;
     }
 
 
@@ -77,11 +92,12 @@ class TranslateFilter extends Filter
             // Translate
             const globals = scope.getGlobals(this);
             const site = globals.location.site || false;
-            const translation = waitForPromise(scope.translationsRepository.getByNameAndSite(translationKey, site));
+            const language = globals.configuration.language || scope.moduleConfiguration.translateLanguage;
+            const translation = waitForPromise(scope.translationsRepository.getByNameSiteAndLanguage(translationKey, site, language));
             if (!translation)
             {
                 scope.logger.warn('Missing translation for key', value);
-                return scope.applyCallbacks('', arguments);
+                return scope.applyCallbacks(value, arguments);
             }
             let result = translation;
             if (variables && variables.length)

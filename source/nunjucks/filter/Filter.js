@@ -123,12 +123,12 @@ class Filter extends Base
             : {};
         const result =
         {
+            configuration: globals.__configuration__ || {},
             location: globals.location || {},
             request: globals.request || false
         };
         return result;
     }
-
 
 
     /**

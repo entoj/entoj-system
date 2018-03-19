@@ -8,7 +8,7 @@ const Base = require('../../Base.js').Base;
 
 
 /**
- * @memberOf nunjucks
+ * @memberOf nunjucks.tag
  */
 class Tag extends Base
 {
@@ -22,8 +22,8 @@ class Tag extends Base
         this._type = this.className.split('/').pop();
         this._hasBody = true;
     }
-    
-    
+
+
     /**
      * The namespaced class name
      *
@@ -70,19 +70,19 @@ class Tag extends Base
     get tags()
     {
         return this.name;
-    }  
+    }
 
 
     /**
      * Single tag or wrapping tag?
-     * 
+     *
      * @type {Boolean}
      * @protected
      */
     get hasBody()
     {
         return this._hasBody;
-    }         
+    }
 
 
     /**
@@ -97,13 +97,13 @@ class Tag extends Base
         // as the second arg is required if there are no parentheses
         const args = parser.parseSignature(null, true);
         parser.advanceAfterBlockEnd(tok.value);
-        
+
         // parse the body
         const body = [];
         if (this.hasBody)
         {
             body.push(parser.parseUntilBlocks('end' + tok.value));
-            parser.advanceAfterBlockEnd();    
+            parser.advanceAfterBlockEnd();
         }
 
         // Call __generate__ on each tag invocation
@@ -124,7 +124,7 @@ class Tag extends Base
         }
         return this.generate(context, params, caller);
     }
-    
+
 
     /**
      * Generate the tag contents
