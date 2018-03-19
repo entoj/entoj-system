@@ -302,7 +302,8 @@ class Configuration extends Base
         this.mappings.add(require('../model/index.js').translation.TranslationsLoader,
             this.clean(
                 {
-                    filenameTemplate: this.options.models.translationsFile
+                    filenameTemplate: this.options.models.translationFileTemplate,
+                    languages: this.options.models.translationLanguages
                 }));
 
         // Settings
@@ -331,6 +332,12 @@ class Configuration extends Base
                 {
                     templatePaths: this.pathes.root + '/sites'
                 },
+                '!tags':
+                    [
+                        {
+                            type: require('../nunjucks/index.js').tag.ConfigurationTag
+                        }
+                    ],
                 '!filters': this.clean(
                     [
                         {
