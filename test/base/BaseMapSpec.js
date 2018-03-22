@@ -108,6 +108,15 @@ describe(BaseMap.className, function()
             expect(testee.getByPath('object.name')).to.be.equal('Object');
             expect(testee.getByPath('very.long.path.to')).to.be.equal('Path');
         });
+
+        it('should overwrite the value at the given path', function()
+        {
+            const testee = new BaseMap();
+            testee.set('object', { name: 'Object' });
+            testee.setByPath('object.name', 'Overwritten');
+
+            expect(testee.getByPath('object.name')).to.be.equal('Overwritten');
+        });
     });
 
 

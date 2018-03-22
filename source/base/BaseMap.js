@@ -110,8 +110,8 @@ class BaseMap extends BaseMixin(Map)
                 current = parent[name];
             }
 
-            // Add value if missing
-            if (!current)
+            // Add value if missing or last
+            if (!current || index == names.length - 1)
             {
                 current = (index < names.length - 1)
                     ? {}
