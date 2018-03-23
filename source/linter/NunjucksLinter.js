@@ -69,7 +69,7 @@ class NunjucksLinter extends Linter
 
 
     /**
-     * @type {eslint}
+     * @type {nunjucks.EntityRenderer}
      */
     get entityRenderer()
     {
