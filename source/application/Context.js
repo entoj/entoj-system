@@ -23,6 +23,7 @@ const TranslationsRepository = require('../model/translation/TranslationsReposit
 const SettingsRepository = require('../model/setting/SettingsRepository.js').SettingsRepository;
 const SystemModuleConfiguration = require('../configuration/SystemModuleConfiguration.js').SystemModuleConfiguration;
 const ModelSynchronizer = require('../watch/ModelSynchronizer.js').ModelSynchronizer;
+const FileWatcher = require('../watch/FileWatcher.js').FileWatcher;
 const Communication = require('./Communication.js').Communication;
 const metrics = require('../utils/performance.js').metrics;
 
@@ -290,6 +291,7 @@ class Context extends Base
 
         // Globals
         this._di.map('cli/CliLogger.options', {});
+        this._di.map(FileWatcher, FileWatcher, true);
         this._di.map(ModelSynchronizer, ModelSynchronizer, true);
         this._di.map(Communication, Communication, true);
 
