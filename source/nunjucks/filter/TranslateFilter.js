@@ -93,7 +93,9 @@ class TranslateFilter extends Filter
             // Translate
             const globals = scope.getGlobals(this);
             const site = globals.location.site || false;
-            const language = globals.configuration.getByPath('filters.translateLanguage') || scope.moduleConfiguration.translateLanguage;
+            const language = (globals.configuration && typeof globals.configuration.getByPath == 'function')
+                ? globals.configuration.getByPath('filters.translateLanguage', scope.moduleConfiguration.translateLanguage)
+                : scope.moduleConfiguration.translateLanguage;
             const translation = waitForPromise(scope.translationsRepository.getByNameSiteAndLanguage(translationKey, site, language));
             if (!translation)
             {
