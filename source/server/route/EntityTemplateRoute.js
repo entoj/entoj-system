@@ -6,6 +6,7 @@
  */
 const Route = require('./Route.js').Route;
 const CliLogger = require('../../cli/CliLogger.js').CliLogger;
+const BaseMap = require('../../base/BaseMap.js').BaseMap;
 const ErrorHandler = require('../../error/ErrorHandler.js').ErrorHandler;
 const UrlsConfiguration = require('../../model/configuration/UrlsConfiguration.js').UrlsConfiguration;
 const Environment = require('../../nunjucks/Environment.js').Environment;
@@ -204,7 +205,7 @@ class EntityTemplateRoute extends Route
                 scope.nunjucks.addGlobal('global', {});
                 scope.nunjucks.addGlobal('location', location);
                 scope.nunjucks.addGlobal('request', request);
-                scope.nunjucks.addGlobal('__configuration__', {});
+                scope.nunjucks.addGlobal('__configuration__', new BaseMap());
                 html = scope.nunjucks.renderString(tpl, data, { path: filename });
             }
             catch (e)

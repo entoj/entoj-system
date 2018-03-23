@@ -5,6 +5,7 @@
  * @ignore
  */
 const Base = require('../Base.js').Base;
+const BaseMap = require('../base/BaseMap.js').BaseMap;
 const UrlsConfiguration = require('../model/configuration/UrlsConfiguration.js').UrlsConfiguration;
 const Environment = require('./Environment.js').Environment;
 const PathesConfiguration = require('../model/configuration/PathesConfiguration.js').PathesConfiguration;
@@ -126,7 +127,7 @@ class EntityRenderer extends Base
      * @param {Object} globals
      * @returns Promise<String>
      */
-    renderString(content, filename, entity, site, data, globals)
+    renderString(content, filename, entity, site, data, configuration, globals)
     {
         const location =
         {
@@ -135,6 +136,7 @@ class EntityRenderer extends Base
         };
         this.nunjucks.addGlobal('global', {});
         this.nunjucks.addGlobal('location', location);
+        this.nunjucks.addGlobal('__configuration__', new BaseMap(configuration));
         if (globals)
         {
             for (const key in globals)
@@ -153,7 +155,7 @@ class EntityRenderer extends Base
      * @param {Object} globals
      * @returns Promise<String>
      */
-    renderForUrl(path, data, globals)
+    renderForUrl(path, data, configuration, globals)
     {
         const scope = this;
         const promise = co(function *()
@@ -178,7 +180,7 @@ class EntityRenderer extends Base
 
             // Render
             const content = yield fs.readFile(filename, { encoding: 'utf8' });
-            const html = scope.renderString(content, filename, match.entity, match.site, data, globals);
+            const html = scope.renderString(content, filename, match.entity, match.site, data, configuration, globals);
             return html;
         });
         return promise;

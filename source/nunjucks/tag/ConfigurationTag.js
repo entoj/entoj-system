@@ -5,6 +5,7 @@
  * @ignore
  */
 const Tag = require('./Tag.js').Tag;
+const BaseMap = require('../../base/BaseMap.js').BaseMap;
 
 
 /**
@@ -50,10 +51,11 @@ class ConfigurationTag extends Tag
         {
             return '';
         }
-        const configuration = (context.env.globals && context.env.globals.__configuration__)
-            ? context.env.globals.__configuration__
-            : {};
-        configuration[params.name] = params.value;
+        if (!context.env.globals.__configuration__)
+        {
+            context.env.globals.__configuration__ = new BaseMap();
+        }
+        context.env.globals.__configuration__.setByPath(params.name, params.value);
         return '';
     }
 }
