@@ -97,7 +97,7 @@ class TranslateFilter extends Filter
                 ? globals.configuration.getByPath('filters.translateLanguage', scope.moduleConfiguration.translateLanguage)
                 : scope.moduleConfiguration.translateLanguage;
             const translation = waitForPromise(scope.translationsRepository.getByNameSiteAndLanguage(translationKey, site, language));
-            if (!translation)
+            if (typeof translation == 'undefined')
             {
                 scope.logger.warn('Missing translation for key', value);
                 return scope.applyCallbacks(value, arguments);

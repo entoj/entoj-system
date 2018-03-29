@@ -18,6 +18,7 @@ describe(TranslationsLoader.className, function()
      */
     function prepareParameters(parameters)
     {
+        parameters.unshift(global.fixtures.globalConfiguration);
         parameters.unshift(global.fixtures.pathesConfiguration);
         parameters.unshift(global.fixtures.sitesRepository);
         return parameters;
@@ -42,12 +43,13 @@ describe(TranslationsLoader.className, function()
     {
         it('should resolve to Translation instances for each loaded language file', function()
         {
-            const testee = createTestee(ES_FIXTURES + '/model/TranslationsModel-${language}.json', ['en_EN', 'de_DE']);
+            global.fixtures.globalConfiguration.set('languages.list', ['en_US', 'de_DE']);
+            const testee = createTestee(ES_FIXTURES + '/model/TranslationsModel-${language}.json');
             const promise = co(function *()
             {
                 const items = yield testee.load();
                 expect(items.length).to.be.equal(2);
-                expect(items.find(item => item.language === 'en_EN')).to.be.ok;
+                expect(items.find(item => item.language === 'en_US')).to.be.ok;
                 expect(items.find(item => item.language === 'de_DE')).to.be.ok;
             });
             return promise;

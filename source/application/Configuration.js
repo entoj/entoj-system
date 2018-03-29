@@ -302,8 +302,7 @@ class Configuration extends Base
         this.mappings.add(require('../model/index.js').translation.TranslationsLoader,
             this.clean(
                 {
-                    filenameTemplate: this.options.models.translationFileTemplate || this.options.models.translationsFile,
-                    languages: this.options.models.translationLanguages
+                    filenameTemplate: this.options.models.translationFileTemplate || this.options.models.translationsFile
                 }));
 
         // Settings

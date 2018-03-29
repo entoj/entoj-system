@@ -6,11 +6,13 @@
  */
 const DataLoader = require('../data/DataLoader.js').DataLoader;
 const PathesConfiguration = require('../configuration/PathesConfiguration.js').PathesConfiguration;
+const GlobalConfiguration = require('../configuration/GlobalConfiguration.js').GlobalConfiguration;
 const SitesRepository = require('../site/SitesRepository.js').SitesRepository;
 const Translation = require('./Translation.js').Translation;
 const ErrorHandler = require('../../error/ErrorHandler.js').ErrorHandler;
 const co = require('co');
 const fs = require('co-fs-extra');
+const assertParameter = require('../../utils/assert.js').assertParameter;
 
 
 /**
@@ -23,14 +25,17 @@ class TranslationsLoader extends DataLoader
     /**
      * @ignore
      */
-    constructor(sitesRepository, pathesConfiguration, filenameTemplate, languages)
+    constructor(sitesRepository, pathesConfiguration, globalConfiguration, filenameTemplate)
     {
         super(sitesRepository, pathesConfiguration, filenameTemplate);
 
+        // Check params
+        assertParameter(this, 'globalConfiguration', globalConfiguration, true, GlobalConfiguration);
+
         // Assign options
+        this._globalConfiguration = globalConfiguration;
         this._filenameTemplate = filenameTemplate || '${sites}/${site.name.urlify()}/translations.json';
         this._dataClass = Translation;
-        this._languages = languages || ['en_EN'];
     }
 
 
@@ -39,7 +44,7 @@ class TranslationsLoader extends DataLoader
      */
     static get injections()
     {
-        return { 'parameters': [SitesRepository, PathesConfiguration, 'model.translation/TranslationsLoader.filenameTemplate', 'model.translation/TranslationsLoader.languages'] };
+        return { 'parameters': [SitesRepository, PathesConfiguration, GlobalConfiguration, 'model.translation/TranslationsLoader.filenameTemplate'] };
     }
 
 
@@ -55,9 +60,9 @@ class TranslationsLoader extends DataLoader
     /**
      * @type {Array}
      */
-    get languages()
+    get globalConfiguration()
     {
-        return this._languages;
+        return this._globalConfiguration;
     }
 
 
@@ -72,11 +77,12 @@ class TranslationsLoader extends DataLoader
             const sites = Array.isArray(changes)
                 ? changes
                 : yield scope.sitesRepository.getItems();
+            const languages = scope.globalConfiguration.get('languages.list', []);
             const result = [];
             const filesProcessed = {};
             for (const site of sites)
             {
-                for (const language of scope.languages)
+                for (const language of languages)
                 {
                     const filename = yield scope.generateFilename({ site: site, language: language });
                     if (!filesProcessed[filename])

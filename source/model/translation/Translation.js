@@ -28,7 +28,7 @@ class Translation extends Data
     get fields()
     {
         const fields = super.fields;
-        fields.language = 'en_EN';
+        fields.language = 'en_US';
         return fields;
     }
 
@@ -39,7 +39,7 @@ class Translation extends Data
     initialize()
     {
         super.initialize();
-        this._language = 'en_EN';
+        this._language = 'en_US';
     }
 
 

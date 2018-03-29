@@ -66,7 +66,11 @@ class GlobalConfiguration extends Base
                 date: 'YYYY-MM-DD',
                 number: '0.000'
             },
-            language: undefined,
+            languages:
+            {
+                list: ['en_US'],
+                active: 'en_US'
+            },
             breakpoints:
             {
                 application:
@@ -161,6 +165,15 @@ class GlobalConfiguration extends Base
             throw new Error('Could not find settings for ' + name);
         }
         return result;
+    }
+
+
+    /**
+     * @inheritDoc
+     */
+    set(name, value)
+    {
+        const result = this._values.setByPath(name, value);
     }
 }
 
