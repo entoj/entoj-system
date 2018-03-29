@@ -21,7 +21,7 @@ describe(ModelSynchronizerTranslationsPlugin.className, function()
     dataPluginSpec(ModelSynchronizerTranslationsPlugin, 'watch/ModelSynchronizerTranslationsPlugin', function(parameters, fileTemplate)
     {
         const fixture = projectFixture.createDynamic();
-        const dataLoader = new TranslationsLoader(fixture.sitesRepository, fixture.pathesConfiguration, fileTemplate);
+        const dataLoader = new TranslationsLoader(fixture.sitesRepository, fixture.pathesConfiguration, fixture.globalConfiguration, fileTemplate);
         const dataRepository = new TranslationsRepository(dataLoader);
         return [fixture.cliLogger, fixture.sitesRepository, dataRepository, fixture.pathesConfiguration];
     });

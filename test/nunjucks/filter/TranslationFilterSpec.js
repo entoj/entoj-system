@@ -24,7 +24,8 @@ describe(TranslateFilter.className, function()
     });
     function prepareParameters()
     {
-        const loader = new TranslationsLoader(global.fixtures.sitesRepository, global.fixtures.pathesConfiguration, ES_FIXTURES + '/model/TranslationsModel.json');
+        const loader = new TranslationsLoader(global.fixtures.sitesRepository, global.fixtures.pathesConfiguration,
+            global.fixtures.globalConfiguration, ES_FIXTURES + '/model/TranslationsModel.json');
         const translationsRepository = new TranslationsRepository(loader);
         return [translationsRepository, global.fixtures.moduleConfiguration];
     }
@@ -36,7 +37,9 @@ describe(TranslateFilter.className, function()
      */
     function createTestee(language)
     {
-        const loader = new TranslationsLoader(global.fixtures.sitesRepository, global.fixtures.pathesConfiguration, ES_FIXTURES + '/model/TranslationsModel-${language}.json', ['en_EN', 'de_DE']);
+        global.fixtures.globalConfiguration.set('languages.list', ['en_US', 'de_DE']);
+        const loader = new TranslationsLoader(global.fixtures.sitesRepository, global.fixtures.pathesConfiguration,
+            global.fixtures.globalConfiguration, ES_FIXTURES + '/model/TranslationsModel-${language}.json');
         const translationsRepository = new TranslationsRepository(loader);
         if (language)
         {
