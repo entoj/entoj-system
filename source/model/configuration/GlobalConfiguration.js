@@ -173,7 +173,7 @@ class GlobalConfiguration extends Base
      */
     set(name, value)
     {
-        const result = this._values.setByPath(name, value);
+        this._values.setByPath(name, value);
     }
 }
 
