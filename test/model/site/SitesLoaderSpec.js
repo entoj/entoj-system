@@ -69,7 +69,7 @@ describe(SitesLoader.className, function()
 
         it('should allow to extend a Site via the extends property in package.json', function()
         {
-            const testee = new SitesLoader(global.fixtures.pathesConfiguration, [new PackagePlugin(global.fixtures.pathesConfiguration)]);
+            const testee = new SitesLoader(global.fixtures.pathesConfiguration, [new PackagePlugin(global.fixtures.pathesConfiguration, global.fixtures.globalConfiguration)]);
             const promise = co(function *()
             {
                 const items = yield testee.load();

@@ -6,11 +6,13 @@
  */
 const LoaderPlugin = require('../LoaderPlugin.js').LoaderPlugin;
 const PathesConfiguration = require('../../configuration/PathesConfiguration.js').PathesConfiguration;
+const GlobalConfiguration = require('../../configuration/GlobalConfiguration.js').GlobalConfiguration;
 const Entity = require('../../entity/Entity.js').Entity;
 const Site = require('../../site/Site.js').Site;
 const assertParameter = require('../../../utils/assert.js').assertParameter;
 const co = require('co');
 const fs = require('co-fs-extra');
+
 
 /**
  * Reads the entity specific configuration file
@@ -19,18 +21,21 @@ class PackagePlugin extends LoaderPlugin
 {
     /**
      * @param {configuration.PathesConfiguration} pathesConfiguration
+     * @param {configuration.GlobalConfiguration} globalConfiguration
      * @param {object|undefined} options
      */
-    constructor(pathesConfiguration, options)
+    constructor(pathesConfiguration, globalConfiguration, options)
     {
         super();
 
         //Check params
         assertParameter(this, 'pathesConfiguration', pathesConfiguration, true, PathesConfiguration);
+        assertParameter(this, 'globalConfiguration', globalConfiguration, true, GlobalConfiguration);
 
         // Assign options
         const opts = options || {};
         this._pathesConfiguration = pathesConfiguration;
+        this._globalConfiguration = globalConfiguration;
         this._filename = opts.filename || '/entity.json';
     }
 
@@ -40,7 +45,7 @@ class PackagePlugin extends LoaderPlugin
      */
     static get injections()
     {
-        return { 'parameters': [PathesConfiguration, 'model.loader.documentation/PackagePlugin.options'] };
+        return { 'parameters': [PathesConfiguration, GlobalConfiguration, 'model.loader.documentation/PackagePlugin.options'] };
     }
 
 
@@ -63,7 +68,53 @@ class PackagePlugin extends LoaderPlugin
 
 
     /**
-     * @param {DocumentableValueObject} item
+     * @property {configuration.PathesConfiguration}
+     */
+    get pathesConfiguration()
+    {
+        return this._pathesConfiguration;
+    }
+
+
+    /**
+     * @property {configuration.GlobalConfiguration}
+     */
+    get globalConfiguration()
+    {
+        return this._globalConfiguration;
+    }
+
+
+    /**
+     * @param {String} content
+     */
+    parse(content)
+    {
+        const result = JSON.parse(content);
+
+        // Enhance example settings
+        if (result && result.examples && result.examples.settings)
+        {
+            for (const setting of result.examples.settings)
+            {
+                if (setting.type == 'language')
+                {
+                    setting.name = setting.name || 'language';
+                    setting.label = setting.label || 'Language';
+                    setting.type = 'select';
+                    setting.items = this.globalConfiguration.get('languages.list', []);
+                    setting.default = this.globalConfiguration.get('languages.active', 'en_US');
+                }
+            }
+        }
+
+        return Promise.resolve(result);
+    }
+
+
+    /**
+     * @param {model.entity.Entity} item
+     * @param {model.site.Site} site
      */
     executeFor(item, site)
     {
@@ -107,7 +158,7 @@ class PackagePlugin extends LoaderPlugin
             let data = false;
             try
             {
-                data = JSON.parse(content);
+                data = yield scope.parse(content);
             }
             catch(e)
             {
