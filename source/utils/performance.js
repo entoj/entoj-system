@@ -78,15 +78,16 @@ class PerformanceMetricScope extends Base
      */
     show()
     {
-        /* eslint no-console:0 */
+        // eslint-disable-next-line no-console
         console.log(chalk.bold('\n' + this.name + ' Timers:'));
         for (const name in this.items)
         {
             const item = this.items[name];
+            // eslint-disable-next-line no-console
             console.log(chalk.yellow(' ' + item.name));
+            // eslint-disable-next-line no-console
             console.log('  count: ' + item.count + ', average: ' + item.average.toFixed(2) + ', total: ' + item.total);
         }
-        /* eslint no-console:1 */
     }
 
 
