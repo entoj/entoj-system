@@ -67,6 +67,15 @@ class TranslationsLoader extends DataLoader
 
 
     /**
+     * @type {Array}
+     */
+    get languages()
+    {
+        return this.globalConfiguration.get('languages.list', []);
+    }
+
+
+    /**
      * @inheritDoc
      */
     load(changes)
@@ -77,12 +86,11 @@ class TranslationsLoader extends DataLoader
             const sites = Array.isArray(changes)
                 ? changes
                 : yield scope.sitesRepository.getItems();
-            const languages = scope.globalConfiguration.get('languages.list', []);
             const result = [];
             const filesProcessed = {};
             for (const site of sites)
             {
-                for (const language of languages)
+                for (const language of scope.languages)
                 {
                     const filename = yield scope.generateFilename({ site: site, language: language });
                     if (!filesProcessed[filename])
