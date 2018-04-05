@@ -59,6 +59,16 @@ class DataRepository extends Repository
         });
         return promise;
     }
+
+
+    /**
+     * @param {String} name
+     * @returns {Promise}
+     */
+    getByName(name)
+    {
+        return this.getByNameAndSite(name);
+    }
 }
 
 /**
