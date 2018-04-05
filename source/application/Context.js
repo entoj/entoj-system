@@ -147,8 +147,19 @@ class Context extends Base
             return;
         }
 
+        // Preserve singleton state
+        let isSingleton = singleton;
+        if (typeof singleton == 'undefined')
+        {
+            const typeKey = this.di.getKeyForType(type);
+            if (this.di.mappings.has(typeKey))
+            {
+                isSingleton = this._di.mappings.get(typeKey).isSingleton;
+            }
+        }
+
         // Map type
-        this._di.map(type, (typeof configuration === 'function') ? configuration : configuration.type, singleton);
+        this._di.map(type, (typeof configuration === 'function') ? configuration : configuration.type, isSingleton);
 
         // Map options
         if (typeof configuration !== 'function')
