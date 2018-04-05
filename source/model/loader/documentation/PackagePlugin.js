@@ -7,9 +7,11 @@
 const LoaderPlugin = require('../LoaderPlugin.js').LoaderPlugin;
 const PathesConfiguration = require('../../configuration/PathesConfiguration.js').PathesConfiguration;
 const GlobalConfiguration = require('../../configuration/GlobalConfiguration.js').GlobalConfiguration;
+const SettingsRepository = require('../../setting/SettingsRepository.js').SettingsRepository;
 const Entity = require('../../entity/Entity.js').Entity;
 const Site = require('../../site/Site.js').Site;
 const assertParameter = require('../../../utils/assert.js').assertParameter;
+const waitForPromise = require('../../../utils/synchronize.js').waitForPromise;
 const co = require('co');
 const fs = require('co-fs-extra');
 
@@ -20,22 +22,25 @@ const fs = require('co-fs-extra');
 class PackagePlugin extends LoaderPlugin
 {
     /**
-     * @param {configuration.PathesConfiguration} pathesConfiguration
-     * @param {configuration.GlobalConfiguration} globalConfiguration
+     * @param {model.configuration.PathesConfiguration} pathesConfiguration
+     * @param {model.configuration.GlobalConfiguration} globalConfiguration
+     * @param {model.setting.SettingsRepository} settingsRepository
      * @param {object|undefined} options
      */
-    constructor(pathesConfiguration, globalConfiguration, options)
+    constructor(pathesConfiguration, globalConfiguration, settingsRepository, options)
     {
         super();
 
         //Check params
         assertParameter(this, 'pathesConfiguration', pathesConfiguration, true, PathesConfiguration);
         assertParameter(this, 'globalConfiguration', globalConfiguration, true, GlobalConfiguration);
+        assertParameter(this, 'settingsRepository', settingsRepository, true, SettingsRepository);
 
         // Assign options
         const opts = options || {};
         this._pathesConfiguration = pathesConfiguration;
         this._globalConfiguration = globalConfiguration;
+        this._settingsRepository = settingsRepository;
         this._filename = opts.filename || '/entity.json';
     }
 
@@ -45,7 +50,7 @@ class PackagePlugin extends LoaderPlugin
      */
     static get injections()
     {
-        return { 'parameters': [PathesConfiguration, GlobalConfiguration, 'model.loader.documentation/PackagePlugin.options'] };
+        return { 'parameters': [PathesConfiguration, GlobalConfiguration, SettingsRepository, 'model.loader.documentation/PackagePlugin.options'] };
     }
 
 
@@ -68,7 +73,7 @@ class PackagePlugin extends LoaderPlugin
 
 
     /**
-     * @property {configuration.PathesConfiguration}
+     * @property {model.configuration.PathesConfiguration}
      */
     get pathesConfiguration()
     {
@@ -77,11 +82,20 @@ class PackagePlugin extends LoaderPlugin
 
 
     /**
-     * @property {configuration.GlobalConfiguration}
+     * @property {model.configuration.GlobalConfiguration}
      */
     get globalConfiguration()
     {
         return this._globalConfiguration;
+    }
+
+
+    /**
+     * @property {model.setting.SettingsRepository}
+     */
+    get settingsRepository()
+    {
+        return this._settingsRepository;
     }
 
 
@@ -104,6 +118,21 @@ class PackagePlugin extends LoaderPlugin
                     setting.type = 'select';
                     setting.items = this.globalConfiguration.get('languages.list', []);
                     setting.default = this.globalConfiguration.get('languages.active', 'en_US');
+                }
+                if (setting.type == 'locale')
+                {
+                    setting.name = setting.name || 'locale';
+                    setting.label = setting.label || 'Locale';
+                    setting.type = 'select';
+                    setting.items = this.globalConfiguration.get('languages.list', []);
+                    setting.default = this.globalConfiguration.get('languages.active', 'en_US');
+                }
+                if (setting.type == 'settings')
+                {
+                    setting.name = setting.name || 'settings';
+                    setting.label = setting.label || setting.name;
+                    setting.type = 'autocomplete';
+                    setting.items = waitForPromise(this.settingsRepository.getByName(setting.key));
                 }
             }
         }
