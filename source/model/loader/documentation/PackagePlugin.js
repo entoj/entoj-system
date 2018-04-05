@@ -122,15 +122,6 @@ class PackagePlugin extends LoaderPlugin
                     setting.items = this.globalConfiguration.get('languages.list', []);
                     setting.default = this.globalConfiguration.get('languages.active', 'en_US');
                 }
-                /*
-                if (setting.type == 'settings')
-                {
-                    setting.name = setting.name || 'settings';
-                    setting.label = setting.label || setting.name;
-                    setting.type = 'autocomplete';
-                    setting.items = waitForPromise(this.settingsRepository.getByName(setting.key));
-                }
-                */
             }
         }
 
