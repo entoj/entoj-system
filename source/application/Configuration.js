@@ -294,7 +294,8 @@ class Configuration extends Base
                 [
                     require('../model/index.js').viewmodel.plugin.ViewModelImportPlugin,
                     require('../model/index.js').viewmodel.plugin.ViewModelLipsumPlugin,
-                    require('../model/index.js').viewmodel.plugin.ViewModelLipsumHtmlPlugin
+                    require('../model/index.js').viewmodel.plugin.ViewModelLipsumHtmlPlugin,
+                    require('../model/index.js').viewmodel.plugin.ViewModelTranslatePlugin
                 ]
             });
 

@@ -18,17 +18,17 @@ const lorem = require('lorem-ipsum');
 class ViewModelLipsumPlugin extends ViewModelPlugin
 {
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
     constructor()
     {
         super();
-        this.name = ['lipsum'];
+        this._name = ['lipsum'];
     }
 
 
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
     static get className()
     {
@@ -37,7 +37,7 @@ class ViewModelLipsumPlugin extends ViewModelPlugin
 
 
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
     doExecute(repository, site, useStaticContent, name, parameters)
     {

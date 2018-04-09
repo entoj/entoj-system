@@ -22,7 +22,7 @@ class ViewModelLipsumHtmlPlugin extends ViewModelLipsumPlugin
     constructor()
     {
         super();
-        this.name = ['lipsum-html', 'lipsum-inline'];
+        this._name = ['lipsum-html', 'lipsum-inline'];
     }
 
 

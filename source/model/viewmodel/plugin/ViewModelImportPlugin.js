@@ -15,17 +15,17 @@ const ViewModelPlugin = require('../ViewModelPlugin.js').ViewModelPlugin;
 class ViewModelImportPlugin extends ViewModelPlugin
 {
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
     constructor()
     {
         super();
-        this.name = ['import', 'include'];
+        this._name = ['import', 'include'];
     }
 
 
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
     static get className()
     {
@@ -34,7 +34,7 @@ class ViewModelImportPlugin extends ViewModelPlugin
 
 
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
     doExecute(repository, site, useStaticContent, name, parameters)
     {
