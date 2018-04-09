@@ -99,9 +99,12 @@ class LoadFilter extends Filter
 
             // Load internal models
             const globals = scope.getGlobals(this);
+            const language = (globals.configuration && typeof globals.configuration.getByPath == 'function')
+                ? globals.configuration.getByPath('language', false)
+                : false;
             const site = globals.location.site || false;
             const useStaticContent = scope.useStaticContent(globals.request);
-            const viewModel = synchronize.execute(scope.viewModelRepository, 'getByPath', [value, site, useStaticContent]);
+            const viewModel = synchronize.execute(scope.viewModelRepository, 'getByPath', [value, site, useStaticContent, { language: language }]);
             return viewModel.data;
         };
     }
