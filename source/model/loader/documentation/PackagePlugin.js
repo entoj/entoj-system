@@ -106,21 +106,14 @@ class PackagePlugin extends LoaderPlugin
         {
             for (const setting of result.examples.settings)
             {
-                if (setting.type == 'language')
-                {
-                    setting.name = setting.name || 'language';
-                    setting.label = setting.label || 'Language';
-                    setting.type = 'select';
-                    setting.items = this.globalConfiguration.get('languages.list', []);
-                    setting.default = this.globalConfiguration.get('languages.active', 'en_US');
-                }
                 if (setting.type == 'locale')
                 {
                     setting.name = setting.name || 'locale';
                     setting.label = setting.label || 'Locale';
                     setting.type = 'select';
                     setting.items = this.globalConfiguration.get('languages.list', []);
-                    setting.default = this.globalConfiguration.get('languages.active', 'en_US');
+                    setting.default = '';
+                    setting.allowEmpty = true;
                 }
             }
         }
