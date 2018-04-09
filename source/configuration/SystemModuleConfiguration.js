@@ -29,7 +29,7 @@ class SystemModuleConfiguration extends Base
         assertParameter(this, 'buildConfiguration', buildConfiguration, true, BuildConfiguration);
 
         // Create configuration
-        this._translateLanguage = buildConfiguration.get('filters.translateLanguage', globalConfiguration.get('languages.active', 'en_US'));
+        this._language = buildConfiguration.get('language', globalConfiguration.get('language', 'en_US'));
     }
 
 
@@ -54,14 +54,14 @@ class SystemModuleConfiguration extends Base
     /**
      * @type {String}
      */
-    get translateLanguage()
+    get language()
     {
-        return this._translateLanguage;
+        return this._language;
     }
 
-    set translateLanguage(value)
+    set language(value)
     {
-        this._translateLanguage = value;
+        this._language = value;
     }
 }
 

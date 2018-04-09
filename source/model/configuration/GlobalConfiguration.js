@@ -66,11 +66,8 @@ class GlobalConfiguration extends Base
                 date: 'YYYY-MM-DD',
                 number: '0.000'
             },
-            languages:
-            {
-                list: ['en_US'],
-                active: 'en_US'
-            },
+            languages: ['en_US'],
+            language: 'en_US',
             breakpoints:
             {
                 application:

@@ -71,7 +71,7 @@ class TranslationsLoader extends DataLoader
      */
     get languages()
     {
-        return this.globalConfiguration.get('languages.list', []);
+        return this.globalConfiguration.get('languages', []);
     }
 
 
