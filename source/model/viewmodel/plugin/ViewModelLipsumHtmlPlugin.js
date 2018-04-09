@@ -38,7 +38,7 @@ class ViewModelLipsumHtmlPlugin extends ViewModelLipsumPlugin
     /**
      * @inheritDoc
      */
-    doExecute(repository, site, useStaticContent, name, parameters)
+    doExecute(repository, site, useStaticContent, name, parameters, options)
     {
         const random = createRandomNumberGenerator(useStaticContent);
         const tags =

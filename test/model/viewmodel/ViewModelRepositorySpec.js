@@ -37,10 +37,12 @@ describe(ViewModelRepository.className, function()
             super();
             this.result = result;
             this.name = name;
+            this.options = false;
         }
 
-        doExecute(repository, site, useStaticContent, name, parameters)
+        doExecute(repository, site, useStaticContent, name, parameters, options)
         {
+            this.options = options;
             return Promise.resolve(this.result);
         }
     }
@@ -131,6 +133,20 @@ describe(ViewModelRepository.className, function()
                 const viewModel = yield testee.getByPath('e-image/default', global.fixtures.siteBase);
                 expect(viewModel).to.be.instanceof(ViewModel);
                 expect(viewModel.data.alt).to.be.equal('lorem ipsum');
+            });
+            return promise;
+        });
+
+        it('should pass options down to each plugin', function()
+        {
+            const promise = co(function *()
+            {
+                const testee = new ViewModelRepository(global.fixtures.entitiesRepository, global.fixtures.pathesConfiguration);
+                const plugin = new TestPlugin('lipsum', 'lorem ipsum');
+                testee.plugins.push(plugin);
+                yield testee.getByPath('m-teaser/default', global.fixtures.siteBase, false, { option: 'value' });
+                expect(plugin.options).to.be.ok;
+                expect(plugin.options.option).to.be.equal('value');
             });
             return promise;
         });

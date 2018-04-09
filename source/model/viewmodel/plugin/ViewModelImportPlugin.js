@@ -36,7 +36,7 @@ class ViewModelImportPlugin extends ViewModelPlugin
     /**
      * @inheritDoc
      */
-    doExecute(repository, site, useStaticContent, name, parameters)
+    doExecute(repository, site, useStaticContent, name, parameters, options)
     {
         return repository.load(parameters, site, useStaticContent);
     }

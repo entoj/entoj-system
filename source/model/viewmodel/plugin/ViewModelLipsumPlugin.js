@@ -39,10 +39,10 @@ class ViewModelLipsumPlugin extends ViewModelPlugin
     /**
      * @inheritDoc
      */
-    doExecute(repository, site, useStaticContent, name, parameters)
+    doExecute(repository, site, useStaticContent, name, parameters, options)
     {
         // Prepare
-        const options =
+        const lipsumOptions =
         {
             units: 'words',
             count: 1,
@@ -65,11 +65,11 @@ class ViewModelLipsumPlugin extends ViewModelPlugin
                 const unitsShort = params.shift();
                 if (unitsShort == 's')
                 {
-                    options.units = 'sentences';
+                    lipsumOptions.units = 'sentences';
                 }
                 if (unitsShort == 'p')
                 {
-                    options.units = 'paragraphs';
+                    lipsumOptions.units = 'paragraphs';
                 }
             }
 
@@ -84,12 +84,12 @@ class ViewModelLipsumPlugin extends ViewModelPlugin
                 max = parseInt(params[1], 10);
             }
         }
-        options.count = useStaticContent
+        lipsumOptions.count = useStaticContent
             ? max
             : min + ((max - min) * Math.random());
 
         // Go
-        return Promise.resolve(uppercaseFirst(lorem(options)));
+        return Promise.resolve(uppercaseFirst(lorem(lipsumOptions)));
     }
 }
 

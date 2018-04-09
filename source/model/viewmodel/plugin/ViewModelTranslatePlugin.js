@@ -76,12 +76,15 @@ class ViewModelTranslatePlugin extends ViewModelPlugin
     /**
      * @inheritDoc
      */
-    doExecute(repository, site, useStaticContent, name, parameters)
+    doExecute(repository, site, useStaticContent, name, parameters, options)
     {
         const scope = this;
         const promise = co(function*()
         {
-            const translation = yield scope.translationsRepository.getByNameSiteAndLanguage(parameters, site, scope.moduleConfiguration.translateLanguage);
+            const language = options && options.language
+                ? options.language
+                : scope.moduleConfiguration.language;
+            const translation = yield scope.translationsRepository.getByNameSiteAndLanguage(parameters, site, language);
             if (typeof translation == 'undefined')
             {
                 return parameters;

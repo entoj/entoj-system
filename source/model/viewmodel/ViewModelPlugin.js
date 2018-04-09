@@ -15,7 +15,7 @@ const Base = require('../../Base.js').Base;
 class ViewModelPlugin extends Base
 {
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
     constructor()
     {
@@ -27,7 +27,7 @@ class ViewModelPlugin extends Base
 
 
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
     static get className()
     {
@@ -55,9 +55,10 @@ class ViewModelPlugin extends Base
      * @param {model.site.Site} site
      * @param {Boolean} useStaticContent - Should we use static or random contents?
      * @param {Object} parameters
+     * @param {Object} options
      * @returns {Promise}
      */
-    doExecute(repository, site, useStaticContent, name, parameters)
+    doExecute(repository, site, useStaticContent, name, parameters, options)
     {
         return Promise.resolve();
     }
@@ -68,15 +69,16 @@ class ViewModelPlugin extends Base
      * @param {model.site.Site} site
      * @param {Boolean} useStaticContent - Should we use static or random contents?
      * @param {Object} parameters
+     * @param {Object} options
      * @returns {Promise}
      */
-    execute(repository, site, useStaticContent, name, parameters)
+    execute(repository, site, useStaticContent, name, parameters, options)
     {
         if (this.name.length && this.name.indexOf(name) === -1)
         {
             return Promise.resolve();
         }
-        return this.doExecute(repository, site, useStaticContent, name, parameters);
+        return this.doExecute(repository, site, useStaticContent, name, parameters, options);
     }
 }
 

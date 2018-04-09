@@ -86,8 +86,9 @@ class ViewModelRepository extends Base
      * @param {*} data
      * @param {mode.site.Site} site
      * @param {Boolean} useStaticContent - Should we use static or random contents?
+     * @param {Object} options
      */
-    process(data, site, useStaticContent)
+    process(data, site, useStaticContent, options)
     {
         const scope = this;
         const promise = co(function*()
@@ -98,7 +99,7 @@ class ViewModelRepository extends Base
                 const result = [];
                 for (const item of data)
                 {
-                    const value = yield scope.process(item, site, useStaticContent);
+                    const value = yield scope.process(item, site, useStaticContent, options);
                     result.push(value);
                 }
                 return result;
@@ -111,7 +112,7 @@ class ViewModelRepository extends Base
                 const result = {};
                 for (const key of keys)
                 {
-                    const value = yield scope.process(data[key], site, useStaticContent);
+                    const value = yield scope.process(data[key], site, useStaticContent, options);
                     result[key] = value;
                 }
                 return result;
@@ -128,7 +129,7 @@ class ViewModelRepository extends Base
                     const parameters = macro[2] || '';
                     for (const plugin of scope._plugins)
                     {
-                        const result = yield plugin.execute(scope, site, useStaticContent, name, parameters);
+                        const result = yield plugin.execute(scope, site, useStaticContent, name, parameters, options);
                         if (typeof result !== 'undefined')
                         {
                             return result;
@@ -151,15 +152,16 @@ class ViewModelRepository extends Base
      * @param {String} filename - The filesystem path to a model json
      * @param {model.site.Site} site - The site context
      * @param {Boolean} useStaticContent - Should we use static or random contents?
+     * @param {Object} options
      */
-    loadFile(filename, site, useStaticContent)
+    loadFile(filename, site, useStaticContent, options)
     {
         const scope = this;
         const promise = co(function*()
         {
             const fileContents = yield fs.readFile(filename, { encoding: 'utf8' });
             const rawData = JSON.parse(fileContents);
-            const data = yield scope.process(rawData, site, useStaticContent);
+            const data = yield scope.process(rawData, site, useStaticContent, options);
             return data;
         }).catch(ErrorHandler.handler(scope));
         return promise;
@@ -174,8 +176,9 @@ class ViewModelRepository extends Base
      * @param {String} pth - The model path in the form of entity/modelName
      * @param {model.site.Site} site - The site context
      * @param {Boolean} useStaticContent - Should we use static or random contents?
+     * @param {Object} options
      */
-    load(pth, site, useStaticContent)
+    load(pth, site, useStaticContent, options)
     {
         const scope = this;
         const promise = co(function*()
@@ -189,7 +192,7 @@ class ViewModelRepository extends Base
             const fileExists = yield fs.exists(filename);
             if (fileExists)
             {
-                const model = yield scope.loadFile(filename, site, useStaticContent);
+                const model = yield scope.loadFile(filename, site, useStaticContent, options);
                 return model;
             }
 
@@ -210,7 +213,7 @@ class ViewModelRepository extends Base
                 const fileExists = yield fs.exists(filename);
                 if (fileExists)
                 {
-                    const model = yield scope.loadFile(filename, site, useStaticContent);
+                    const model = yield scope.loadFile(filename, site, useStaticContent, options);
                     return model;
                 }
 
@@ -222,7 +225,7 @@ class ViewModelRepository extends Base
                     const fileExists = yield fs.exists(filename);
                     if (fileExists)
                     {
-                        const model = yield scope.loadFile(filename, site, useStaticContent);
+                        const model = yield scope.loadFile(filename, site, useStaticContent, options);
                         return model;
                     }
                 }
@@ -244,9 +247,10 @@ class ViewModelRepository extends Base
      * @param {String} path - The model path in the form of entity/modelName
      * @param {model.site.Site} site - The site context
      * @param {Boolean} useStaticContent - Should we use static or random contents?
+     * @param {Object} options
      * @returns {Promise<ViewModel>}
      */
-    getByPath(path, site, useStaticContent)
+    getByPath(path, site, useStaticContent, options)
     {
         if (!path)
         {
@@ -255,7 +259,7 @@ class ViewModelRepository extends Base
         const scope = this;
         const promise = co(function*()
         {
-            const data = yield scope.load(path, site, useStaticContent);
+            const data = yield scope.load(path, site, useStaticContent, options);
             return new ViewModel({ data: data });
         }).catch(ErrorHandler.handler(scope));
         return promise;
