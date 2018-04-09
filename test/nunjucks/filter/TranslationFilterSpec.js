@@ -37,13 +37,13 @@ describe(TranslateFilter.className, function()
      */
     function createTestee(language)
     {
-        global.fixtures.globalConfiguration.set('languages.list', ['en_US', 'de_DE']);
+        global.fixtures.globalConfiguration.set('languages', ['en_US', 'de_DE']);
         const loader = new TranslationsLoader(global.fixtures.sitesRepository, global.fixtures.pathesConfiguration,
             global.fixtures.globalConfiguration, ES_FIXTURES + '/model/TranslationsModel-${language}.json');
         const translationsRepository = new TranslationsRepository(loader);
         if (language)
         {
-            global.fixtures.moduleConfiguration.translateLanguage = language;
+            global.fixtures.moduleConfiguration.language = language;
         }
         return new TranslateFilter(translationsRepository, global.fixtures.moduleConfiguration).filter();
     }
@@ -69,7 +69,7 @@ describe(TranslateFilter.className, function()
             expect(testee(false, 'simple')).to.be.equal('translation en');
         });
 
-        it('should use trhe configured language translations', function()
+        it('should use the configured language translations', function()
         {
             const testee = createTestee('de_DE');
             expect(testee('simple')).to.be.equal('translation de');

@@ -43,7 +43,7 @@ describe(TranslationsLoader.className, function()
     {
         it('should resolve to Translation instances for each loaded language file', function()
         {
-            global.fixtures.globalConfiguration.set('languages.list', ['en_US', 'de_DE']);
+            global.fixtures.globalConfiguration.set('languages', ['en_US', 'de_DE']);
             const testee = createTestee(ES_FIXTURES + '/model/TranslationsModel-${language}.json');
             const promise = co(function *()
             {
