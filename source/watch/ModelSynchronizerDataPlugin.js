@@ -38,7 +38,6 @@ class ModelSynchronizerDataPlugin extends ModelSynchronizerPlugin
         this._sitesRepository = sitesRepository;
         this._dataRepository = dataRepository;
         this._pathesConfiguration = pathesConfiguration;
-
     }
 
 

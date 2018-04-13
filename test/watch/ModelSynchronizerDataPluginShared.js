@@ -6,7 +6,7 @@
 const baseSpec = require(ES_TEST + '/BaseShared.js').spec;
 const co = require('co');
 const sinon = require('sinon');
-const DIRECTORY_DELIMITER = require('path').delimiter;
+const DIRECTORY_DELIMITER = require('path').sep;
 
 
 /**
