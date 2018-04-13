@@ -6,6 +6,7 @@
 const baseSpec = require(ES_TEST + '/BaseShared.js').spec;
 const co = require('co');
 const sinon = require('sinon');
+const DIRECTORY_DELIMITER = require('path').delimiter;
 
 
 /**
@@ -42,7 +43,7 @@ function spec(type, className, prepareParameters)
                 const testee = createTestee('${sites}/${site.name.urlify()}/data.json');
                 const input =
                 {
-                    files: ['/base/data.json']
+                    files: [DIRECTORY_DELIMITER + 'base' + DIRECTORY_DELIMITER + 'data.json']
                 };
                 const invalidate = sinon.spy(testee.dataRepository, 'invalidate');
                 yield testee.execute(input);
@@ -58,7 +59,7 @@ function spec(type, className, prepareParameters)
                 const testee = createTestee('${sites}/${site.name.urlify()}/data.json');
                 const input =
                 {
-                    files: ['/base/foo.json']
+                    files: [DIRECTORY_DELIMITER + 'base'+ DIRECTORY_DELIMITER + 'foo.json']
                 };
                 const invalidate = sinon.spy(testee.dataRepository, 'invalidate');
                 yield testee.execute(input);
