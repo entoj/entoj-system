@@ -30,6 +30,7 @@ class SystemModuleConfiguration extends Base
 
         // Create configuration
         this._language = buildConfiguration.get('language', globalConfiguration.get('language', 'en_US'));
+        this._languages = buildConfiguration.get('languages', globalConfiguration.get('languages', ['en_US']));
     }
 
 
@@ -48,6 +49,15 @@ class SystemModuleConfiguration extends Base
     static get className()
     {
         return 'configuration/SystemModuleConfiguration';
+    }
+
+
+    /**
+     * @type {Array}
+     */
+    get languages()
+    {
+        return this._languages;
     }
 
 
