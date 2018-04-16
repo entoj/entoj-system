@@ -44,7 +44,7 @@ class ServerCommand extends Command
 
 
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
     static get className()
     {
@@ -71,7 +71,7 @@ class ServerCommand extends Command
 
 
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
     get help()
     {
@@ -93,7 +93,7 @@ class ServerCommand extends Command
 
 
     /**
-     *
+     * @inheritDoc
      */
     importLinterResults(lintResults)
     {
@@ -205,7 +205,7 @@ class ServerCommand extends Command
 
 
     /**
-     * @inheritDocs
+     * @inheritDoc
      * @returns {Promise<Server>}
      */
     dispatch(action, parameters)
