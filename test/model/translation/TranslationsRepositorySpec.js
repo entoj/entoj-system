@@ -176,4 +176,71 @@ describe(TranslationsRepository.className, function()
             return promise;
         });
     });
+
+    describe('#getByQuerySiteAndLanguage', function()
+    {
+        it('should get items that start with the given query', function()
+        {
+            const fixture = projectFixture.createStatic();
+            const data =
+            [
+                new Translation(
+                    {
+                        data:
+                        {
+                            'group1.name1' : 'value1.1',
+                            'group1.name2' : 'value1.2',
+                            'group2.name1' : 'value2.1'
+                        },
+                        site: fixture.siteBase,
+                        language: 'de_DE'
+                    })
+            ];
+            const testee = new TranslationsRepository();
+            testee._items = data;
+            const promise = co(function *()
+            {
+                const items = yield testee.getByQuerySiteAndLanguage('group1');
+                const keys = Object.keys(items);
+                expect(keys).to.have.length(2);
+                expect(keys).to.contain('group1.name1');
+                expect(keys).to.contain('group1.name2');
+                expect(items['group1.name1']).to.be.equal('value1.1');
+                expect(items['group1.name2']).to.be.equal('value1.2');
+            });
+            return promise;
+        });
+
+        it('should get items that match a wildcard query', function()
+        {
+            const fixture = projectFixture.createStatic();
+            const data =
+            [
+                new Translation(
+                    {
+                        data:
+                        {
+                            'group1.name1' : 'value1.1',
+                            'group1.name2' : 'value1.2',
+                            'group2.name1' : 'value2.1'
+                        },
+                        site: fixture.siteBase,
+                        language: 'de_DE'
+                    })
+            ];
+            const testee = new TranslationsRepository();
+            testee._items = data;
+            const promise = co(function *()
+            {
+                const items = yield testee.getByQuerySiteAndLanguage('group*.name1');
+                const keys = Object.keys(items);
+                expect(keys).to.have.length(2);
+                expect(keys).to.contain('group1.name1');
+                expect(keys).to.contain('group2.name1');
+                expect(items['group1.name1']).to.be.equal('value1.1');
+                expect(items['group2.name1']).to.be.equal('value2.1');
+            });
+            return promise;
+        });
+    });
 });

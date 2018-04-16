@@ -406,6 +406,9 @@ class Configuration extends Base
                             type: require('../nunjucks/index.js').filter.TranslateFilter
                         },
                         {
+                            type: require('../nunjucks/index.js').filter.TranslationsFilter
+                        },
+                        {
                             type: require('../nunjucks/index.js').filter.UniqueFilter
                         }
                     ])

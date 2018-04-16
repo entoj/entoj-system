@@ -1,4 +1,8 @@
 {
     "simple": "translation en",
-    "variables": "{1}translation en{0}"
+    "variables": "{1}translation en{0}",
+    "group1.value1": "en-g1-v1",
+    "group1.value2": "en-g1-v2",
+    "group2.value1": "en-g2-v1",
+    "group2.value2": "en-g2-v2"
 }
