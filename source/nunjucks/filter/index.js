@@ -26,5 +26,6 @@ module.exports =
     SvgUrlFilter: require('./SvgUrlFilter.js').SvgUrlFilter,
     SvgViewBoxFilter: require('./SvgViewBoxFilter.js').SvgViewBoxFilter,
     TranslateFilter: require('./TranslateFilter.js').TranslateFilter,
+    TranslationsFilter: require('./TranslationsFilter.js').TranslationsFilter,
     UniqueFilter: require('./UniqueFilter.js').UniqueFilter
 };
