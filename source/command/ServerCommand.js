@@ -108,7 +108,7 @@ class ServerCommand extends Command
             for (const lintResult of lintResults)
             {
                 const entityAspect = yield entityRepository.getById(lintResult.entity);
-                if (entityAspect)
+                if (entityAspect && entityAspect.entity)
                 {
                     lintResult.site = entityAspect.id.site;
                     entityAspect.entity.lintResults.import(lintResult);
