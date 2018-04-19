@@ -92,13 +92,11 @@ class TranslationsFilter extends Filter
                 ? value
                 : [value];
             const result = {};
-console.log('Items', waitForPromise(scope.translationsRepository.getItems()));
             for (const language of languages)
             {
                 for (const query of queries)
                 {
                     const translations = waitForPromise(scope.translationsRepository.getByQuerySiteAndLanguage(query, site, language)) || {};
-console.log(language, translations);
                     result[language] = result[language] || {};
                     Object.assign(result[language], translations);
                 }
