@@ -88,10 +88,20 @@ class TranslationsFilter extends Filter
                 : scope.moduleConfiguration.languages;
 
             // Get translations
+            const queries = Array.isArray(value)
+                ? value
+                : [value];
             const result = {};
+console.log('Items', waitForPromise(scope.translationsRepository.getItems()));
             for (const language of languages)
             {
-                result[language] = waitForPromise(scope.translationsRepository.getByQuerySiteAndLanguage(value, site, language)) || {};
+                for (const query of queries)
+                {
+                    const translations = waitForPromise(scope.translationsRepository.getByQuerySiteAndLanguage(query, site, language)) || {};
+console.log(language, translations);
+                    result[language] = result[language] || {};
+                    Object.assign(result[language], translations);
+                }
             }
             return scope.applyCallbacks(result, arguments);
         };

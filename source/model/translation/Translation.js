@@ -44,6 +44,15 @@ class Translation extends Data
 
 
     /**
+     * @property {*}
+     */
+    get uniqueId()
+    {
+        return this.language;
+    }
+
+
+    /**
      * The translation language
      *
      * @property {model.site.Site}
