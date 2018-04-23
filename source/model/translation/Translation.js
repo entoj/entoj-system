@@ -48,7 +48,9 @@ class Translation extends Data
      */
     get uniqueId()
     {
-        return this.language;
+        return (this.site)
+            ? this.site.name + ':' + this.language
+            : '__default__' + ':' + this.language;
     }
 
 
