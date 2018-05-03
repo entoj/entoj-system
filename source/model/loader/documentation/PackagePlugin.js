@@ -111,8 +111,8 @@ class PackagePlugin extends LoaderPlugin
                     setting.name = setting.name || 'locale';
                     setting.label = setting.label || 'Locale';
                     setting.type = 'select';
-                    setting.items = this.globalConfiguration.get('languages.list', []);
-                    setting.default = '';
+                    setting.items = this.globalConfiguration.get('languages', []);
+                    setting.default = setting.default || this.globalConfiguration.get('language', '');
                     setting.allowEmpty = true;
                 }
             }
