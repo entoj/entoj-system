@@ -389,6 +389,9 @@ class Configuration extends Base
                             type: require('../nunjucks/index.js').filter.NotEmptyFilter
                         },
                         {
+                            type: require('../nunjucks/index.js').filter.GetFilter
+                        },
+                        {
                             type: require('../nunjucks/index.js').filter.SetFilter
                         },
                         {
