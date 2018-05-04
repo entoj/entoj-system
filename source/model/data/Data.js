@@ -5,6 +5,7 @@
  * @ignore
  */
 const ValueObject = require('../ValueObject.js').ValueObject;
+const Site = require('../site/Site.js').Site;
 
 
 /**
@@ -43,6 +44,19 @@ class Data extends ValueObject
         fields.data = {};
         fields.site = false;
         return fields;
+    }
+
+
+    /**
+     * @inheritDoc
+     */
+    shouldDehydrate(item)
+    {
+        if (item instanceof Site)
+        {
+            return false;
+        }
+        return true;
     }
 
 
@@ -104,6 +118,16 @@ class Data extends ValueObject
         this._data = value;
     }
 
+
+    /**
+     * @param {*} values
+     * @returns {void}
+     */
+    dehydrate(values)
+    {
+        super.dehydrate(values);
+        this._site = values.site || false;
+    }
 
     /**
      * @inheritDoc
