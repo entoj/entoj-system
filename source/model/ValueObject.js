@@ -60,6 +60,15 @@ class ValueObject extends Base
 
 
     /**
+     * @returns {Boolean}
+     */
+    shouldDehydrate(item)
+    {
+        return true;
+    }
+
+
+    /**
      * Called right after instanciation.
      * Use this tmeplate method to setup properties.
      *
@@ -102,7 +111,7 @@ class ValueObject extends Base
                     {
                         this[name] = new defaultValue();
                         // Prefill VO
-                        if (this[name] instanceof ValueObject)
+                        if (this[name] instanceof ValueObject && this.shouldDehydrate(this[name]))
                         {
                             this[name].dehydrate({});
                         }
@@ -127,7 +136,7 @@ class ValueObject extends Base
                 {
                     this[name].load(importValue, true);
                 }
-                else if (this[name] instanceof ValueObject)
+                else if (this[name] instanceof ValueObject && this.shouldDehydrate(this[name]))
                 {
                     this[name].dehydrate(importValue);
                 }
