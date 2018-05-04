@@ -126,7 +126,9 @@ class Data extends ValueObject
     dehydrate(values)
     {
         super.dehydrate(values);
-        this._site = values.site || false;
+        this._site = values
+            ? values.site || false
+            : false;
     }
 
     /**
