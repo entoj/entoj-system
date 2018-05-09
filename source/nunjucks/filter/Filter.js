@@ -5,6 +5,7 @@
  * @ignore
  */
 const Base = require('../../Base.js').Base;
+const BaseMap = require('../../base/BaseMap.js').BaseMap;
 
 
 /**
@@ -120,10 +121,11 @@ class Filter extends Base
     {
         const globals = (context && context.env && context.env.globals)
             ? context.env.globals
-            : {};
+            : this.environment.globals || {};
         const result =
         {
-            configuration: globals.__configuration__ || {},
+            global: globals.global || {},
+            configuration: globals.__configuration__ || new BaseMap({}),
             location: globals.location || {},
             request: globals.request || false
         };
