@@ -87,10 +87,6 @@ class TranslationsFilter extends Filter
             {
                 return scope.applyCallbacks(value, arguments);
             }
-            if (!value)
-            {
-                return scope.applyCallbacks({}, arguments);
-            }
 
             // Site
             const globals = scope.getGlobals(this);
@@ -104,7 +100,7 @@ class TranslationsFilter extends Filter
                     ? [globals.configuration.getByPath('language', scope.moduleConfiguration.language)]
                     : [scope.moduleConfiguration.language];
             }
-            else
+            else if (languages)
             {
                 langs = Array.isArray(languages)
                     ? languages
