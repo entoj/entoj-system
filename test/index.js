@@ -49,6 +49,11 @@ module.exports =
     },
     model:
     {
+        data:
+        {
+            DataLoaderShared: require('./model/data/DataLoaderShared.js').spec,
+            DataRepositoryShared: require('./model/data/DataRepositoryShared.js').spec
+        },
         loader:
         {
             LoaderPluginShared: require('./model/loader/LoaderPluginShared.js').spec

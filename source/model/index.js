@@ -13,6 +13,7 @@ module.exports =
     GlobalRepository: require('./GlobalRepository.js').GlobalRepository,
     configuration: require('./configuration/index.js'),
     content: require('./content/index.js'),
+    data: require('./data/index.js'),
     documentation: require('./documentation/index.js'),
     entity: require('./entity/index.js'),
     file: require('./file/index.js'),

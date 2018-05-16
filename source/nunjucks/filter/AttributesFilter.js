@@ -7,6 +7,7 @@
 const Filter = require('./Filter.js').Filter;
 const kebabCase = require('lodash.kebabcase');
 const isPlainObject = require('lodash.isplainobject');
+const htmlEncode = require('htmlencode').htmlEncode;
 
 
 /**
@@ -51,7 +52,8 @@ class AttributesFilter extends Filter
             {
                 if (typeof value[key] !== 'undefined')
                 {
-                    result += pref + kebabCase(key) + '="' + value[key] + '" ';
+                    const escapedValue = htmlEncode(value[key].toString());
+                    result += pref + kebabCase(key) + '="' + escapedValue + '" ';
                 }
             }
             return scope.applyCallbacks(result, arguments);

@@ -363,6 +363,9 @@ class Configuration extends Base
                             type: require('../nunjucks/index.js').filter.HyphenateFilter
                         },
                         {
+                            type: require('../nunjucks/index.js').filter.JsonEncodeFilter
+                        },
+                        {
                             type: require('../nunjucks/index.js').filter.LinkUrlFilter,
                             dataProperties: this.options.filters.linkProperties
                         },

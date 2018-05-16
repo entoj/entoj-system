@@ -13,6 +13,7 @@ module.exports =
     FormatNumberFilter: require('./FormatNumberFilter.js').FormatNumberFilter,
     GetFilter: require('./GetFilter.js').GetFilter,
     HyphenateFilter: require('./HyphenateFilter.js').HyphenateFilter,
+    JsonEncodeFilter: require('./JsonEncodeFilter.js').JsonEncodeFilter,
     LinkUrlFilter: require('./LinkUrlFilter.js').LinkUrlFilter,
     LipsumFilter: require('./LipsumFilter.js').LipsumFilter,
     LoadFilter: require('./LoadFilter.js').LoadFilter,
