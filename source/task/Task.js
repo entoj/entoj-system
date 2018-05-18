@@ -202,7 +202,8 @@ class Task extends Base
      */
     pipeIf(task, condition)
     {
-        if (condition) {
+        if (condition)
+        {
             return this.pipe(task);
         }
         return this;
