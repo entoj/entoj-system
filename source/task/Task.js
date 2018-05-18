@@ -191,6 +191,23 @@ class Task extends Base
         return task;
     }
 
+    /**
+     * Conditionally Connects another task to this task so
+     * that it will be executed after this task.
+     * This will call pipe only if the condition is true
+     *
+     * @param {task.Task} task
+     * @param {Bool} condition
+     * @returns {task.Task}
+     */
+    pipeIf(task, condition)
+    {
+        if (condition)
+        {
+            return this.pipe(task);
+        }
+        return this;
+    }
 
     /**
      * Runs the task chain by starting with
