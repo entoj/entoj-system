@@ -66,6 +66,63 @@ function spec(type, className, prepareParameters, options)
         });
     });
 
+    describe('#pipeIf()', function()
+    {
+        it('should return the piped Task if condition is true', function()
+        {
+            const testee = createTestee();
+            const pipedTestee = createTestee();
+            const result = testee.pipeIf(pipedTestee, true);
+            expect(result).to.be.equal(pipedTestee);
+            return result;
+        });
+
+        it('should return the unchanged pipe if condition is false', function()
+        {
+            const testee = createTestee();
+            const pipedTestee = createTestee();
+            const result = testee.pipeIf(pipedTestee, false);
+            expect(result).to.be.equal(testee);
+            return result;
+        });
+
+        it('should set previousTask on the piped task if condition is true', function()
+        {
+            const testee = createTestee();
+            const pipedTestee = createTestee();
+            const result = testee.pipeIf(pipedTestee, true);
+            expect(pipedTestee.previousTask).to.be.equal(testee);
+            return result;
+        });
+
+        it('should return no previousTask on the piped task if condition is false', function()
+        {
+            const testee = createTestee();
+            const pipedTestee = createTestee();
+            const result = testee.pipeIf(pipedTestee, false);
+            expect(pipedTestee.previousTask).to.be.equal(false);
+            return result;
+        });
+
+        it('should set nextTask on the task if condition is true', function()
+        {
+            const testee = createTestee();
+            const pipedTestee = createTestee();
+            const result = testee.pipeIf(pipedTestee, true);
+            expect(testee.nextTask).to.be.equal(pipedTestee);
+            return result;
+        });
+
+        it('should not set nextTask on the task if condition is false', function()
+        {
+            const testee = createTestee();
+            const pipedTestee = createTestee();
+            const result = testee.pipeIf(pipedTestee, false);
+            expect(testee.nextTask).to.be.equal(false);
+            return result;
+        });
+    });
+
 
     describe('#stream()', function()
     {
