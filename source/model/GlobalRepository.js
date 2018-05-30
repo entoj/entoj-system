@@ -14,6 +14,7 @@ const ContentType = require('./ContentType.js').ContentType;
 const assertParameter = require('../utils/assert.js').assertParameter;
 const trimSlashesLeft = require('../utils/string.js').trimSlashesLeft;
 const co = require('co');
+const metrics = require('../utils/performance.js').__metrics;
 
 
 /**
@@ -140,6 +141,8 @@ class GlobalRepository extends Base
         const scope = this;
         const promise = co(function*()
         {
+            metrics.start(scope.className + '::resolveEntity');
+
             // Get site
             let site = (siteQuery instanceof Site) ? siteQuery : yield scope._sitesRepository.findBy({ '*': siteQuery });
             if (!site && !siteQuery)
@@ -148,6 +151,7 @@ class GlobalRepository extends Base
             }
             if (!site)
             {
+                metrics.stop(scope.className + '::resolveEntity');
                 /* istanbul ignore next */
                 scope.logger.debug('resolveEntity - could not determine site', siteQuery);
                 return false;
@@ -167,10 +171,12 @@ class GlobalRepository extends Base
             /* istanbul ignore next */
             if (!result)
             {
+                metrics.stop(scope.className + '::resolveEntity');
                 scope.logger.debug('resolveEntity - could not find entity', entityQuery);
                 return false;
             }
 
+            metrics.stop(scope.className + '::resolveEntity');
             return result;
         });
         return promise;
@@ -244,10 +250,11 @@ class GlobalRepository extends Base
         {
             return Promise.resolve(false);
         }
-
         const scope = this;
         const promise = co(function*()
         {
+            metrics.start(scope.className + '::resolveMacro');
+
             // Get site
             let site = (siteQuery instanceof Site) ? siteQuery : yield scope._sitesRepository.findBy({ '*': siteQuery });
             if (!site && !siteQuery)
@@ -256,13 +263,16 @@ class GlobalRepository extends Base
             }
             if (!site)
             {
+                metrics.stop(scope.className + '::resolveMacro');
                 /* istanbul ignore next */
                 scope.logger.debug('resolveMacro - could not determine site', siteQuery);
                 return false;
             }
 
             // Get entities
+            metrics.start(scope.className + '::resolveMacro - get entities');
             const entities = yield scope._entitiesRepository.getBySite(site);
+            metrics.stop(scope.className + '::resolveMacro - get entities');
 
             // Find macro
             for (const entity of entities)
@@ -274,12 +284,14 @@ class GlobalRepository extends Base
                 });
                 if (macro)
                 {
+                    metrics.stop(scope.className + '::resolveMacro');
                     return macro;
                 }
             }
 
             /* istanbul ignore next */
             scope.logger.debug('resolveMacro - could not find macro', macroQuery);
+            metrics.stop(scope.className + '::resolveMacro');
             return false;
         });
         return promise;

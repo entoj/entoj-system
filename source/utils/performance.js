@@ -6,8 +6,8 @@
  */
 const Base = require('../Base.js').Base;
 const chalk = require('chalk');
-
-
+const minimatch = require('minimatch');
+const fs = require('fs');
 
 /**
  * @class
@@ -38,7 +38,7 @@ class PerformanceMetricScope extends Base
 
 
     /**
-     * @let {PerformanceMetrics}
+     * @let {String}
      */
     get name()
     {
@@ -76,18 +76,54 @@ class PerformanceMetricScope extends Base
     /**
      * Renders all recorded timers to the console
      */
-    show()
+    show(patterns)
     {
         // eslint-disable-next-line no-console
         console.log(chalk.bold('\n' + this.name + ' Timers:'));
         for (const name in this.items)
         {
             const item = this.items[name];
-            // eslint-disable-next-line no-console
-            console.log(chalk.yellow(' ' + item.name));
-            // eslint-disable-next-line no-console
-            console.log('  count: ' + item.count + ', average: ' + item.average.toFixed(2) + ', total: ' + item.total);
+            let display = true;
+            if (patterns)
+            {
+                display = false;
+                for (const pattern of patterns)
+                {
+                    if (item.name.includes(pattern) || minimatch(item.name, pattern))
+                    {
+                        display = true;
+                    }
+                }
+            }
+            if (display)
+            {
+                // eslint-disable-next-line no-console
+                console.log(chalk.yellow(' ' + item.name));
+                // eslint-disable-next-line no-console
+                console.log('  count: ' + item.count + ', average: ' + item.average.toFixed(2) + ', total: ' + item.total);
+            }
         }
+    }
+
+
+    /**
+     * Saves all recorded timers to a json file.
+     * If the file exists the timers will be appended
+     */
+    save(filename, label)
+    {
+        let data = [];
+        if (fs.existsSync(filename))
+        {
+            data = JSON.parse(fs.readFileSync(filename, { encoding: 'utf8' }));
+        }
+        data.push(
+            {
+                date: Date.now(),
+                label: label,
+                timers: this.items
+            });
+        fs.writeFileSync(filename, JSON.stringify(data, null, 4), { encoding: 'utf8' });
     }
 
 
@@ -98,10 +134,6 @@ class PerformanceMetricScope extends Base
      */
     start(name)
     {
-        if (this.parent)
-        {
-            this.parent.start(name);
-        }
         if (!this.items[name])
         {
             this.items[name] =
@@ -116,6 +148,10 @@ class PerformanceMetricScope extends Base
             };
         }
         this.stop(name);
+        if (this.parent)
+        {
+            this.parent.start(name);
+        }
         const item = this.items[name];
         item.current = Date.now();
     }
@@ -237,7 +273,6 @@ class PerformanceMetrics extends Base
             return;
         }
 
-        this.show();
         this._current = this._current.parent;
     }
 
@@ -245,16 +280,26 @@ class PerformanceMetrics extends Base
     /**
      * Renders all recorded timers to the console
      */
-    show()
+    show(patterns)
     {
         if (!this.enabled)
         {
             return;
         }
+        this.current.show(patterns);
+    }
 
-        /* eslint no-console:0 */
-        this.current.show();
-        /* eslint no-console:1 */
+
+    /**
+     * Renders all recorded timers to the console
+     */
+    save(filename, label)
+    {
+        if (!this.enabled)
+        {
+            return;
+        }
+        this.current.save(filename, label);
     }
 
 
@@ -298,3 +343,4 @@ class PerformanceMetrics extends Base
 module.exports.PerformanceMetricScope = PerformanceMetricScope;
 module.exports.PerformanceMetrics = PerformanceMetrics;
 module.exports.metrics = new PerformanceMetrics();
+module.exports.__metrics = new PerformanceMetrics();

@@ -13,6 +13,7 @@ const Parser = require('./Parser.js').Parser;
 const Renderer = require('./Renderer.js').Renderer;
 const Transformer = require('./Transformer.js').Transformer;
 const assertParameter = require('../utils/assert.js').assertParameter;
+const metrics = require('../utils/performance.js').__metrics;
 const co = require('co');
 const merge = require('lodash.merge');
 const omit = require('lodash.omit');
@@ -268,23 +269,33 @@ class Configuration extends Base
         const scope = this;
         const promise = co(function *()
         {
+            metrics.start(scope.className + '::getMacroConfiguration');
+
             // Get macro
+            metrics.start(scope.className + '::getMacroConfiguration - get macro');
             const macro = yield scope.getMacro(macroQuery);
+            metrics.stop(scope.className + '::getMacroConfiguration - get macro');
             if (!macro || !(macro instanceof DocumentationCallable))
             {
                 /* istanbul ignore next */
                 scope.logger.warn('getMacroConfiguration - could not find macro ' + macroQuery);
+                metrics.stop(scope.className + '::getMacroConfiguration');
                 return false;
             }
 
             // Get Entity
+            metrics.start(scope.className + '::getMacroConfiguration - get entity');
             const entity = yield scope.getMacroEntity(macro);
+            metrics.stop(scope.className + '::getMacroConfiguration - get entity');
             if (!entity)
             {
                 /* istanbul ignore next */
                 scope.logger.warn('getMacroConfiguration - could not find entity for macro ' + macroQuery);
+                metrics.stop(scope.className + '::getMacroConfiguration');
                 return false;
             }
+
+            metrics.start(scope.className + '::getMacroConfiguration - work');
 
             // Basic configuration
             const basics = {};
@@ -299,12 +310,17 @@ class Configuration extends Base
             configurations.push(basics);
 
             // Add defaults
+            metrics.start(scope.className + '::getMacroConfiguration - get defaults');
             configurations.push(yield scope.getDefaultConfiguration(basics));
+            metrics.stop(scope.className + '::getMacroConfiguration - get defaults');
 
             // Add global settings
+            metrics.start(scope.className + '::getMacroConfiguration - add global settings');
             configurations.push(omit(basics.entity.properties.getByPath('export.settings.' + scope.identifier, {}), ['macros']));
+            metrics.stop(scope.className + '::getMacroConfiguration - add global settings');
 
             // Add global macro settings
+            metrics.start(scope.className + '::getMacroConfiguration - add global macro settings');
             const globalMacros = basics.entity.properties.getByPath('export.settings.' + scope.identifier + '.macros', {});
             for (const match in globalMacros)
             {
@@ -313,8 +329,10 @@ class Configuration extends Base
                     configurations.push(globalMacros[match]);
                 }
             }
+            metrics.stop(scope.className + '::getMacroConfiguration - add global macro settings');
 
             // Add local macro settings
+            metrics.start(scope.className + '::getMacroConfiguration - add local macro settings');
             const localMacros = scope.settings.settings
                 ? scope.settings.settings
                 : {};
@@ -325,18 +343,28 @@ class Configuration extends Base
                     configurations.push(localMacros[match]);
                 }
             }
+            metrics.stop(scope.className + '::getMacroConfiguration - add local macro settings');
 
             // Add local settings
+            metrics.start(scope.className + '::getMacroConfiguration - add local settings');
             if (scope.macro && scope.macro.name === macro.name)
             {
                 configurations.push(omit(scope.settings, ['macros', 'macro']));
             }
+            metrics.stop(scope.className + '::getMacroConfiguration - add local settings');
 
             // Merge
+            metrics.start(scope.className + '::getMacroConfiguration - merge configurations');
             const configuration = merge(...configurations);
+            metrics.stop(scope.className + '::getMacroConfiguration - merge configurations');
 
             // Refine
+            metrics.start(scope.className + '::getMacroConfiguration - refine configuration');
             const result = yield scope.refineConfiguration(configuration);
+            metrics.stop(scope.className + '::getMacroConfiguration - refine configuration');
+
+            metrics.stop(scope.className + '::getMacroConfiguration - work');
+            metrics.stop(scope.className + '::getMacroConfiguration');
 
             // Okay
             return result;

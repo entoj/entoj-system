@@ -14,7 +14,20 @@ const EntityTestSuitesInheriter = require('./inheriter/EntityTestSuitesInheriter
 const EntityLintResultsInheriter = require('./inheriter/EntityLintResultsInheriter.js').EntityLintResultsInheriter;
 const EntityTextInheriter = require('./inheriter/EntityTextInheriter.js').EntityTextInheriter;
 const assertParameter = require('../../utils/assert.js').assertParameter;
+const metrics = require('../../utils/performance.js').metrics;
 
+
+/**
+ * Default Inherites
+ */
+const defaultInheriterList = [
+    new EntityPropertiesInheriter(),
+    new EntityFilesInheriter(),
+    new EntityTextInheriter(),
+    new EntityExamplesInheriter(),
+    new EntityMacrosInheriter(),
+    new EntityTestSuitesInheriter(),
+    new EntityLintResultsInheriter()];
 
 /**
  * @namespace model.entity
@@ -28,6 +41,7 @@ class EntityAspect extends Entity
     constructor(entity, site, inheriters)
     {
         super();
+        metrics.start(this.className + '::constructor');
 
         //Check params
         assertParameter(this, 'entity', entity, true, Entity);
@@ -49,22 +63,27 @@ class EntityAspect extends Entity
             currentSite = currentSite.extends;
         }
 
-        // Defaults
-        // @todo find a smarter solution
-        new EntityPropertiesInheriter().inherit(sites, entity, this);
-        new EntityFilesInheriter().inherit(sites, entity, this);
-        new EntityTextInheriter().inherit(sites, entity, this);
-        new EntityExamplesInheriter().inherit(sites, entity, this);
-        new EntityMacrosInheriter().inherit(sites, entity, this);
-        new EntityTestSuitesInheriter().inherit(sites, entity, this);
-        new EntityLintResultsInheriter().inherit(sites, entity, this);
+        metrics.start(this.className + '::constructor - inheriters');
+
+        // Defaults Inheriters
+        for (const inheriter of defaultInheriterList)
+        {
+            metrics.start(this.className + '::constructor - ' + inheriter.className);
+            inheriter.inherit(sites, entity, this);
+            metrics.stop(this.className + '::constructor - ' + inheriter.className);
+        }
 
         // Inheriters
         const inheriterList = inheriters || [];
         for (const inheriter of inheriterList)
         {
+            metrics.start(this.className + '::constructor - ' + inheriter.className);
             inheriter.inherit(sites, entity, this);
+            metrics.stop(this.className + '::constructor - ' + inheriter.className);
         }
+        metrics.stop(this.className + '::constructor - inheriters');
+
+        metrics.stop(this.className + '::constructor');
     }
 
 

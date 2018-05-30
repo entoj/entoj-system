@@ -7,6 +7,7 @@
 const Base = require('../Base.js').Base;
 const ErrorHandler = require('../error/ErrorHandler.js').ErrorHandler;
 const matchObject = require('../utils/match.js').matchObject;
+const metrics = require('../utils/performance.js').metrics;
 const signals = require('signals');
 const co = require('co');
 
@@ -118,19 +119,28 @@ class Repository extends Base
      */
     getItems()
     {
+        metrics.start(this.className + '::getItems');
         if (this._isLoaded || !this._loader)
         {
+            metrics.stop(this.className + '::getItems');
             return Promise.resolve(this._items);
         }
         const scope = this;
         const promise = co(function* ()
         {
+            metrics.start(scope.className + '::getItems - load');
             const data = yield scope._loader.load();
             const loadedItems = Array.isArray(data) ? data : [];
             scope._items = loadedItems;
             scope._isLoaded = true;
+            metrics.stop(scope.className + '::getItems - load');
+            metrics.start(scope.className + '::getItems - loadAfter');
             yield scope.loadAfter(scope._items);
+            metrics.stop(scope.className + '::getItems - loadAfter');
+            metrics.start(scope.className + '::getItems - updatedItems');
             yield scope.updatedItems();
+            metrics.stop(scope.className + '::getItems - updatedItems');
+            metrics.stop(scope.className + '::getItems');
             return scope._items;
         });
         return promise;

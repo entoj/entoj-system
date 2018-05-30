@@ -267,24 +267,25 @@ class Context extends Base
         const intel = require('intel');
         const logger = intel.getLogger('entoj');
 
-        if (this.parameters.v)
+        if (this.parameters.performance)
         {
             metrics.enable();
+        }
+
+        if (this.parameters.v)
+        {
             logger.setLevel(intel.WARN);
         }
         if (this.parameters.vv)
         {
-            metrics.enable();
             logger.setLevel(intel.INFO);
         }
         if (this.parameters.vvv)
         {
-            metrics.enable();
             logger.setLevel(intel.DEBUG);
         }
         if (this.parameters.vvvv)
         {
-            metrics.enable();
             logger.setLevel(intel.TRACE);
         }
     }

@@ -12,6 +12,7 @@ const Entity = require('./Entity.js').Entity;
 const EntityAspect = require('./EntityAspect.js').EntityAspect;
 const Site = require('../site/Site.js').Site;
 const assertParameter = require('../../utils/assert.js').assertParameter;
+const metrics = require('../../utils/performance.js').__metrics;
 const co = require('co');
 
 
@@ -31,15 +32,20 @@ const entityAspectCache = {};
  */
 function createEntityAspect(entity, site)
 {
+    metrics.start('EntitiesRepository::createEntityAspect');
     if (!entityAspectCacheEnabled)
     {
+        metrics.stop('EntitiesRepository::createEntityAspect');
         return new EntityAspect(entity, site);
     }
+    metrics.start('EntitiesRepository::createEntityAspect - key');
     const key = site.name + '::' + entity.idString;
+    metrics.stop('EntitiesRepository::createEntityAspect - key');
     if (!entityAspectCacheEnabled || !entityAspectCache[key])
     {
         entityAspectCache[key] = new EntityAspect(entity, site);
     }
+    metrics.stop('EntitiesRepository::createEntityAspect');
     return entityAspectCache[key];
 }
 
@@ -155,12 +161,15 @@ class EntitiesRepository extends Repository
      */
     filterEntities(site, entityCategory, item)
     {
+        metrics.start(this.className + '::filterEntities');
         if (!item)
         {
+            metrics.stop(this.className + '::filterEntities');
             return false;
         }
         if (site && (item.id.site !== site) && (item.usedBy.indexOf(site) == -1))
         {
+            metrics.stop(this.className + '::filterEntities');
             return false;
         }
         if (site && (item.id.site !== site) && Array.isArray(site.extendExcludes))
@@ -169,18 +178,22 @@ class EntitiesRepository extends Repository
             {
                 if (item.id.category.longName.toLowerCase() === exclude.toLowerCase())
                 {
+                    metrics.stop(this.className + '::filterEntities');
                     return false;
                 }
                 if (item.id.category.pluralName.toLowerCase() === exclude.toLowerCase())
                 {
+                    metrics.stop(this.className + '::filterEntities');
                     return false;
                 }
             }
         }
         if (entityCategory && (item.id.category !== entityCategory))
         {
+            metrics.stop(this.className + '::filterEntities');
             return false;
         }
+        metrics.stop(this.className + '::filterEntities');
         return true;
     }
 
@@ -198,10 +211,14 @@ class EntitiesRepository extends Repository
         const scope = this;
         const promise = co(function *()
         {
+            metrics.start(scope.className + '::getBySite');
+            metrics.start(scope.className + '::getBySite - getItems');
             const entities = yield scope.getItems();
+            metrics.stop(scope.className + '::getBySite - getItems');
             const result = entities
                 .filter(scope.filterEntities.bind(scope, site, false))
                 .map(item => createEntityAspect(item, site));
+            metrics.stop(scope.className + '::getBySite');
             return result;
         });
         return promise;

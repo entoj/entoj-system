@@ -9,6 +9,7 @@ const GlobalRepository = require('../model/GlobalRepository.js').GlobalRepositor
 const CliLogger = require('../cli/CliLogger.js').CliLogger;
 const assertParameter = require('../utils/assert.js').assertParameter;
 const ErrorHandler = require('../error/ErrorHandler.js').ErrorHandler;
+const metrics = require('../utils/performance.js').metrics;
 const through2 = require('through2');
 const co = require('co');
 
@@ -133,21 +134,33 @@ class EntitiesTask extends Task
         const scope = this;
         const promise = co(function *()
         {
+            metrics.pushScope(scope.className + '::processEntities');
+            metrics.start(scope.className + '::processEntities');
+
             // Prepare
+            metrics.start(scope.className + '::processEntities - prepareParameters');
             const params = yield scope.prepareParameters(buildConfiguration, parameters);
+            metrics.stop(scope.className + '::processEntities - prepareParameters');
 
             // Process each entity
             const result = [];
+            metrics.start(scope.className + '::processEntities - getEntities');
             const entities = yield scope.getEntities(params.query, buildConfiguration, params);
+            metrics.stop(scope.className + '::processEntities - getEntities');
             for (const entity of entities)
             {
                 // Render entity
+                metrics.start(scope.className + '::processEntities - processEntity');
                 const entityResult = yield scope.processEntity(entity, buildConfiguration, parameters);
+                metrics.stop(scope.className + '::processEntities - processEntity');
                 if (Array.isArray(entityResult))
                 {
                     result.push(...entityResult);
                 }
             }
+
+            metrics.stop(scope.className + '::processEntities');
+            metrics.popScope();
 
             // Done
             return result;
