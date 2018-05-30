@@ -7,7 +7,9 @@
 const Base = require('../Base.js').Base;
 const Context = require('../application/Context.js').Context;
 const CliLogger = require('../cli/CliLogger.js').CliLogger;
+const PathesConfiguration = require('../model/configuration/PathesConfiguration.js').PathesConfiguration;
 const assertParameter = require('../utils/assert.js').assertParameter;
+const metrics = require('../utils/performance.js').metrics;
 const co = require('co');
 const chalk = require('chalk');
 
@@ -211,6 +213,19 @@ class Runner extends Base
                 {
                     handled = true;
                 }
+            }
+            if (typeof scope.context.parameters.performance != 'undefined')
+            {
+                let patterns = undefined;
+                if (typeof scope.context.parameters.performance == 'string')
+                {
+                    patterns = scope.context.parameters.performance.split(',');
+                }
+                metrics.show(patterns);
+
+                const pathesConfiguration = scope.context.di.create(PathesConfiguration);
+                const filename = yield pathesConfiguration.resolveCache('/performance-metrics.json');
+                metrics.save(filename, scope.context.parameters.performanceLabel || false);
             }
             if (!handled)
             {
