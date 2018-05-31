@@ -200,6 +200,7 @@ class Runner extends Base
     run()
     {
         const scope = this;
+        metrics.start(scope.className + '::run');
         let handled = false;
         this._context.parameters._ = this._context.parameters._ || [];
         this._context.parameters.command = this._context.parameters._.length ? this._context.parameters._.shift() : false;
@@ -224,14 +225,16 @@ class Runner extends Base
                 metrics.show(patterns);
 
                 const pathesConfiguration = scope.context.di.create(PathesConfiguration);
-                const filename = yield pathesConfiguration.resolveCache('/performance-metrics.json');
-                metrics.save(filename, scope.context.parameters.performanceLabel || false);
+                const performanceLabel = scope.context.parameters.performanceLabel || '';
+                const filename = yield pathesConfiguration.resolveCache('/metrics/performance-' + performanceLabel.urlify() + '-' + Date.now() + '.json');
+                metrics.save(filename, performanceLabel);
             }
             if (!handled)
             {
                 scope.cliLogger.error('No command handled request');
                 scope.help();
             }
+            metrics.stop(scope.className + '::run');
             return true;
 
         }).catch(function(error)
