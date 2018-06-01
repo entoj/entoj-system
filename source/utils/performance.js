@@ -8,6 +8,8 @@ const Base = require('../Base.js').Base;
 const chalk = require('chalk');
 const minimatch = require('minimatch');
 const fs = require('fs');
+const now = require('performance-now');
+
 
 /**
  * @class
@@ -142,9 +144,9 @@ class PerformanceMetricScope extends Base
                 current: 0,
                 count: 0,
                 total: 0,
-                min: 0,
+                min: Number.MAX_VALUE,
                 max: 0,
-                average: 0
+                average: 0,
             };
         }
         this.stop(name);
@@ -153,7 +155,7 @@ class PerformanceMetricScope extends Base
             this.parent.start(name);
         }
         const item = this.items[name];
-        item.current = Date.now();
+        item.current = now();
     }
 
 
@@ -173,7 +175,7 @@ class PerformanceMetricScope extends Base
         {
             return;
         }
-        const time = (Date.now() - item.current);
+        const time = (now() - item.current);
         item.total+= time;
         item.count++;
         item.current = 0;
