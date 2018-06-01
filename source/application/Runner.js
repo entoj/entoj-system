@@ -215,6 +215,12 @@ class Runner extends Base
                     handled = true;
                 }
             }
+            if (!handled)
+            {
+                scope.cliLogger.error('No command handled request');
+                scope.help();
+            }
+            metrics.stop(scope.className + '::run');
             if (typeof scope.context.parameters.performance != 'undefined')
             {
                 let patterns = undefined;
@@ -229,16 +235,11 @@ class Runner extends Base
                 const filename = yield pathesConfiguration.resolveCache('/metrics/performance-' + performanceLabel.urlify() + '-' + Date.now() + '.json');
                 metrics.save(filename, performanceLabel);
             }
-            if (!handled)
-            {
-                scope.cliLogger.error('No command handled request');
-                scope.help();
-            }
-            metrics.stop(scope.className + '::run');
             return true;
 
         }).catch(function(error)
         {
+            metrics.stop(scope.className + '::run');
             scope.cliLogger.error(error);
         });
         return promise;

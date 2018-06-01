@@ -140,7 +140,7 @@ class InlineMacroCallTransformer extends NodeTransformer
                 }
             }
 
-            metrics.start(scope.className + '::transformNode');
+            metrics.stop(scope.className + '::transformNode');
             return node;
         });
         return promise;
