@@ -199,9 +199,9 @@ function activateEnvironment(content, environment)
     };
 
     let result = content;
-    result = doActivateEnvironment(result, environment, '<!--\\s+\\+environment:\\s+([\\w\\s!,]+)\\s*-->', '<!--\\s+\\-environment\\s*-->');
-    result = doActivateEnvironment(result, environment, '\\{#\\s+\\+environment:\\s+([\\w\\s!,]+)\\s*#\\}', '\\{#\\s+\\-environment\\s*#\\}');
-    result = doActivateEnvironment(result, environment, '\\/\\*\\s*\\s+\\+environment:\\s+([\\w\\s!,]+)\\s*\\*\\/', '\\/\\*\\s*\\s+\\-environment\\s*\\*\\/');
+    result = doActivateEnvironment(result, environment, '<!--\\s+\\+environment:\\s+([\\w\\s!,-]+)\\s*-->', '<!--\\s+\\-environment\\s*-->');
+    result = doActivateEnvironment(result, environment, '\\{#\\s+\\+environment:\\s+([\\w\\s!,-]+)\\s*#\\}', '\\{#\\s+\\-environment\\s*#\\}');
+    result = doActivateEnvironment(result, environment, '\\/\\*\\s*\\s+\\+environment:\\s+([\\w\\s!,-]+)\\s*\\*\\/', '\\/\\*\\s*\\s+\\-environment\\s*\\*\\/');
     return result;
 }
 
