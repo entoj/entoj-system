@@ -129,6 +129,33 @@ class GlobalRepository extends Base
 
 
     /**
+     * @inheritDoc
+     */
+    resolveSites(query)
+    {
+        const scope = this;
+        const promise = co(function*()
+        {
+            // Check *
+            if (query === '*')
+            {
+                return yield scope._sitesRepository.getItems();
+            }
+
+            // Check site
+            const site = yield scope._sitesRepository.findBy({ '*': query });
+            if (site)
+            {
+                return [site];
+            }
+
+            return [];
+        });
+        return promise;
+    }
+
+
+    /**
      * @returns {Promise<Object>}
      */
     resolveEntity(siteQuery, entityQuery)

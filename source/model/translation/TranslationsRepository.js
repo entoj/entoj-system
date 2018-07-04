@@ -37,6 +37,17 @@ class TranslationsRepository extends DataRepository
 
 
     /**
+     * @param {model.site.Site} site
+     * @param {String} language
+     * @returns {Promise}
+     */
+    getBySiteAndLanguage(site, language)
+    {
+        return this.findBy({ site: site, language: language });
+    }
+
+
+    /**
      * @param {String} name
      * @param {model.site.Site} site
      * @param {String} language
