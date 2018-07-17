@@ -204,6 +204,12 @@ class Template extends Base
             }
         }
 
+        // Memorize call
+        if (location.entity)
+        {
+            this._calls[location.entity.pathString] = this._calls[location.entity.pathString] || [];
+        }
+
         // Get macros
         const macros = synchronize.execute(this._callParser, 'parse', [content]);
 
