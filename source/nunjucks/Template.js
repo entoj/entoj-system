@@ -205,7 +205,7 @@ class Template extends Base
         }
 
         // Memorize call
-        if (location.entity)
+        if (location && location.entity)
         {
             this._calls[location.entity.pathString] = this._calls[location.entity.pathString] || [];
         }
