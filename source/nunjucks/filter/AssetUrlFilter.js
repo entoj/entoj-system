@@ -6,6 +6,7 @@
  */
 const Filter = require('./Filter.js').Filter;
 const urls = require('../../utils/urls.js');
+const templateString = require('es6-template-strings');
 
 
 /**
@@ -47,16 +48,17 @@ class AssetUrlFilter extends Filter
 
 
     /**
-     * @type {String}
+     * @returns {String}
      */
-    get baseUrl()
+    getBaseUrl(globals)
     {
+        let result = this._baseUrl;
         if (this.environment &&
             this.environment.buildConfiguration)
         {
-            return this.environment.buildConfiguration.get('filters.assetUrl', this._baseUrl);
+            result = this.environment.buildConfiguration.get('filters.assetUrl', this._baseUrl);
         }
-        return this._baseUrl;
+        return templateString(result, globals.location || {});
     }
 
 
@@ -68,7 +70,8 @@ class AssetUrlFilter extends Filter
         const scope = this;
         return function(value)
         {
-            const result = urls.concat(scope.baseUrl, value);
+            const globals = scope.getGlobals(this);
+            const result = urls.concat(scope.getBaseUrl(globals), value);
             return scope.applyCallbacks(result, arguments, { asset: value });
         };
     }
