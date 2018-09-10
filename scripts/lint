@@ -7,10 +7,19 @@ set -e
 # Prepare pathes
 SELF=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 ESLINT=$SELF/../node_modules/.bin/eslint
+PRETTIER=$SELF/../node_modules/.bin/prettier
 
 # Doit
+echo "Formatting files in ./source/$1"
+$PRETTIER --write "./source/$1/*.js"
+$PRETTIER --write "./source/$1/**/*.js"
+
 echo "Linting files in ./source/$1"
-$ESLINT ./source/$1
+$ESLINT ./source/$1 --fix
+
+echo "Formatting files in ./test/$1"
+$PRETTIER --write "./test/$1/*.js"
+$PRETTIER --write "./test/$1/**/*.js"
 
 echo "Linting files in ./test/$1"
-$ESLINT ./test/$1
+$ESLINT ./test/$1 --fix
