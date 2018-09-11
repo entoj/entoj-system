@@ -48,7 +48,7 @@ describe(EntityTemplateRoute.className, function() {
                 new Filters.ModuleClassesFilter(),
                 new Filters.EmptyFilter(),
                 new Filters.NotEmptyFilter(),
-                new Filters.MediaQueryFilter(global.fixtures.globalConfiguration)
+                new Filters.MediaQueryFilter(global.fixtures.moduleConfiguration)
             ],
             [],
             { templatePaths: global.fixtures.pathesConfiguration.sites }

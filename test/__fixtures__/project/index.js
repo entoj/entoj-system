@@ -279,7 +279,7 @@ function createDynamic(configuration) {
 
     // create global instances
     result.pathToLibraries = testFixture.pathToLibraries;
-    result.systemConfiguration = result.context.di.create(SystemModuleConfiguration);
+    result.moduleConfiguration = result.context.di.create(SystemModuleConfiguration);
     result.pathesConfiguration = result.context.di.create(PathesConfiguration);
     result.sitesRepository = result.context.di.create(SitesRepository);
     result.entitiesRepository = result.context.di.create(EntitiesRepository);
