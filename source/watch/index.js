@@ -10,6 +10,5 @@ module.exports =
     ModelSynchronizerEntitiesPlugin: require('./ModelSynchronizerEntitiesPlugin.js').ModelSynchronizerEntitiesPlugin,
     ModelSynchronizerSitesPlugin: require('./ModelSynchronizerSitesPlugin.js').ModelSynchronizerSitesPlugin,
     ModelSynchronizerDataPlugin: require('./ModelSynchronizerDataPlugin.js').ModelSynchronizerDataPlugin,
-    ModelSynchronizerTranslationsPlugin: require('./ModelSynchronizerTranslationsPlugin.js').ModelSynchronizerTranslationsPlugin,
     ModelSynchronizerSettingsPlugin: require('./ModelSynchronizerSettingsPlugin.js').ModelSynchronizerSettingsPlugin
 };

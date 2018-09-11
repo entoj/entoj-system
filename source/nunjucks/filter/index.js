@@ -9,8 +9,6 @@ module.exports =
     DebugFilter: require('./DebugFilter.js').DebugFilter,
     EmptyFilter: require('./EmptyFilter.js').EmptyFilter,
     Filter: require('./Filter.js').Filter,
-    FormatDateFilter: require('./FormatDateFilter.js').FormatDateFilter,
-    FormatNumberFilter: require('./FormatNumberFilter.js').FormatNumberFilter,
     GetFilter: require('./GetFilter.js').GetFilter,
     HyphenateFilter: require('./HyphenateFilter.js').HyphenateFilter,
     JsonEncodeFilter: require('./JsonEncodeFilter.js').JsonEncodeFilter,
@@ -26,7 +24,5 @@ module.exports =
     SettingFilter: require('./SettingFilter.js').SettingFilter,
     SvgUrlFilter: require('./SvgUrlFilter.js').SvgUrlFilter,
     SvgViewBoxFilter: require('./SvgViewBoxFilter.js').SvgViewBoxFilter,
-    TranslateFilter: require('./TranslateFilter.js').TranslateFilter,
-    TranslationsFilter: require('./TranslationsFilter.js').TranslationsFilter,
     UniqueFilter: require('./UniqueFilter.js').UniqueFilter
 };

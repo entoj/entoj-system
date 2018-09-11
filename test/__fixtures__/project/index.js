@@ -22,8 +22,6 @@ const BuildConfiguration = require(ES_SOURCE + '/model/configuration/BuildConfig
 const GlobalRepository = require(ES_SOURCE + '/model/GlobalRepository.js').GlobalRepository;
 const CompactIdParser = require(ES_SOURCE + '/parser/entity/CompactIdParser.js').CompactIdParser;
 const SystemModuleConfiguration = require(ES_SOURCE + '/configuration/SystemModuleConfiguration.js').SystemModuleConfiguration;
-const TranslationsLoader = require(ES_SOURCE + '/model/translation/TranslationsLoader.js').TranslationsLoader;
-const TranslationsRepository = require(ES_SOURCE + '/model/translation/TranslationsRepository.js').TranslationsRepository;
 const File = require(ES_SOURCE + '/model/file/File.js').File;
 const ContentType = require(ES_SOURCE + '/model/ContentType.js').ContentType;
 const Context = require(ES_SOURCE + '/application/Context.js').Context;
@@ -92,7 +90,6 @@ function createStatic(options)
         result.entityIdParser, result.pathesConfiguration);
     result.viewModelRepository = new ViewModelRepository(result.entitiesRepository, result.pathesConfiguration);
     result.filesRepository = new FilesRepository(result.entitiesRepository);
-    result.translationsRepository = new TranslationsRepository(new TranslationsLoader(result.sitesRepository, result.pathesConfiguration, result.globalConfiguration));
     result.cliLogger = new CliLogger('', { muted: true });
 
     result.createEntity = function(idPath)
@@ -269,7 +266,6 @@ function createDynamic(configuration)
     result.viewModelRepository = result.context.di.create(ViewModelRepository);
     result.globalRepository = result.context.di.create(GlobalRepository);
     result.filesRepository = result.context.di.create(FilesRepository);
-    result.translationsRepository = result.context.di.create(TranslationsRepository);
     result.buildConfiguration = result.context.di.create(BuildConfiguration);
     result.urlsConfiguration = result.context.di.create(UrlsConfiguration);
     result.globalConfiguration = result.context.di.create(GlobalConfiguration);
