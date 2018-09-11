@@ -23,9 +23,6 @@ class GlobalConfiguration extends Base {
         this._values = new BaseMap();
         this._values.load(this.defaults);
         this._values.load(options);
-
-        // Create media queries
-        this.generateMediaQueries();
     }
 
     /**
@@ -57,40 +54,6 @@ class GlobalConfiguration extends Base {
             tests: []
         };
         return result;
-    }
-
-    /**
-     * Generates a list of media queries based on the configured breakpoints
-     *
-     * @protected
-     * @todo make this a plugin?
-     */
-    generateMediaQueries() {
-        const mediaQueries = {};
-        const breakpoints = this.get('breakpoints');
-        for (const breakpointName in breakpoints) {
-            const breakpoint = breakpoints[breakpointName];
-            if (breakpoint.maxWidth) {
-                mediaQueries[breakpointName + 'AndBelow'] =
-                    '(max-width: ' + breakpoint.maxWidth + ')';
-            }
-            if (breakpoint.minWidth) {
-                mediaQueries[breakpointName + 'AndAbove'] =
-                    '(min-width: ' + breakpoint.minWidth + ')';
-            }
-            mediaQueries[breakpointName] = '';
-            if (breakpoint.minWidth) {
-                mediaQueries[breakpointName] += '(min-width: ' + breakpoint.minWidth + ')';
-            }
-            if (breakpoint.maxWidth) {
-                mediaQueries[breakpointName] +=
-                    (mediaQueries[breakpointName].length ? ' and ' : '') +
-                    '(max-width: ' +
-                    breakpoint.maxWidth +
-                    ')';
-            }
-        }
-        this._values.set('mediaQueries', mediaQueries);
     }
 
     /**

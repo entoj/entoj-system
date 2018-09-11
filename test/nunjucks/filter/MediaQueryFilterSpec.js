@@ -16,7 +16,7 @@ describe(MediaQueryFilter.className, function() {
      * Filter Test
      */
     filterSpec(MediaQueryFilter, 'nunjucks.filter/MediaQueryFilter', function(parameters) {
-        return [global.fixtures.globalConfiguration];
+        return [global.fixtures.moduleConfiguration];
     });
 
     /**
@@ -28,28 +28,28 @@ describe(MediaQueryFilter.className, function() {
 
     describe('#filter()', function() {
         it('should return a empty string for a unknown breakpoint', function() {
-            const testee = new MediaQueryFilter(global.fixtures.globalConfiguration).filter();
+            const testee = new MediaQueryFilter(global.fixtures.moduleConfiguration).filter();
             expect(testee()).to.be.equal('');
             expect(testee({ hi: 'ho' })).to.be.equal('');
         });
 
         it('should return a media query for a breakpoint', function() {
             // This relies on the default breapoints of GlobalConfiguration
-            const testee = new MediaQueryFilter(global.fixtures.globalConfiguration).filter();
+            const testee = new MediaQueryFilter(global.fixtures.moduleConfiguration).filter();
             expect(testee('mobile')).to.be.equal('(max-width: 375px)');
             expect(testee('tablet')).to.be.equal('(min-width: 1024px) and (max-width: 1024px)');
         });
 
         it('should return a media query for a breakpoint AndAbove', function() {
             // This relies on the default breapoints of GlobalConfiguration
-            const testee = new MediaQueryFilter(global.fixtures.globalConfiguration).filter();
+            const testee = new MediaQueryFilter(global.fixtures.moduleConfiguration).filter();
             expect(testee('mobileAndAbove')).to.be.equal('');
             expect(testee('tabletAndAbove')).to.be.equal('(min-width: 1024px)');
         });
 
         it('should return a media query for a breakpoint AndBelow', function() {
             // This relies on the default breapoints of GlobalConfiguration
-            const testee = new MediaQueryFilter(global.fixtures.globalConfiguration).filter();
+            const testee = new MediaQueryFilter(global.fixtures.moduleConfiguration).filter();
             expect(testee('mobileAndBelow')).to.be.equal('(max-width: 375px)');
             expect(testee('tabletAndBelow')).to.be.equal('(max-width: 1024px)');
         });

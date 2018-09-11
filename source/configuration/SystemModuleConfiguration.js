@@ -108,6 +108,20 @@ class SystemModuleConfiguration extends ModuleConfiguration {
         }
         return mediaQueries;
     }
+
+    /**
+     * @type {Object}
+     */
+    get breakpoints() {
+        return this._breakpoints;
+    }
+
+    /**
+     * @type {Object}
+     */
+    get mediaQueries() {
+        return this._mediaQueries;
+    }
 }
 
 /**

@@ -5,8 +5,8 @@
  * @ignore
  */
 const Filter = require('./Filter.js').Filter;
-const GlobalConfiguration = require('../../model/configuration/GlobalConfiguration.js')
-    .GlobalConfiguration;
+const SystemModuleConfiguration = require('../../configuration/SystemModuleConfiguration.js')
+    .SystemModuleConfiguration;
 const assertParameter = require('../../utils/assert.js').assertParameter;
 
 /**
@@ -20,28 +20,28 @@ class MediaQueryFilter extends Filter {
     /**
      * @inheritDoc
      */
-    constructor(globalConfiguration) {
+    constructor(moduleConfiguration) {
         super();
         this._name = 'mediaQuery';
 
         // Check params
         assertParameter(
             this,
-            'globalConfiguration',
-            globalConfiguration,
+            'moduleConfiguration',
+            moduleConfiguration,
             true,
-            GlobalConfiguration
+            SystemModuleConfiguration
         );
 
         // Assign options
-        this._mediaQueries = globalConfiguration.get('mediaQueries');
+        this._moduleConfiguration = moduleConfiguration;
     }
 
     /**
      * @inheritDoc
      */
     static get injections() {
-        return { parameters: [GlobalConfiguration] };
+        return { parameters: [SystemModuleConfiguration] };
     }
 
     /**
@@ -54,10 +54,20 @@ class MediaQueryFilter extends Filter {
     /**
      * @inheritDoc
      */
+    get moduleConfiguration() {
+        return this._moduleConfiguration;
+    }
+
+    /**
+     * @inheritDoc
+     */
     filter() {
         const scope = this;
         return function(value) {
-            return scope.applyCallbacks(scope._mediaQueries[value] || '', arguments);
+            return scope.applyCallbacks(
+                scope.moduleConfiguration.mediaQueries[value] || '',
+                arguments
+            );
         };
     }
 }
