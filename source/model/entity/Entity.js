@@ -7,63 +7,50 @@
 const DocumentableValueObject = require('../DocumentableValueObject.js').DocumentableValueObject;
 const EntityId = require('./EntityId.js').EntityId;
 
-
 /**
  * @namespace model.entity
  */
-class Entity extends DocumentableValueObject
-{
-
+class Entity extends DocumentableValueObject {
     /**
      * @inheritDoc
      */
-    static get injections()
-    {
-        return { 'parameters': [EntityId] };
+    static get injections() {
+        return { parameters: [EntityId] };
     }
 
-
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'model.entity/Entity';
     }
 
-
     /**
      * @inheritDoc
      */
-    initialize()
-    {
+    initialize() {
         super.initialize();
         this._usedBy = [];
     }
 
-
     /**
      * @inheritDoc
      */
-    get fields()
-    {
+    get fields() {
         const fields = super.fields;
         fields.id = false;
         return fields;
     }
 
-
     /**
      * @param {*} values
      * @returns {void}
      */
-    dehydrate(values)
-    {
+    dehydrate(values) {
         super.dehydrate(values);
         this._sitesChain = [];
         let currentSite = this.site;
-        while (currentSite)
-        {
+        while (currentSite) {
             this._sitesChain.push(currentSite);
             currentSite = currentSite.extends;
         }
@@ -72,107 +59,85 @@ class Entity extends DocumentableValueObject
     /**
      * @property {*}
      */
-    get uniqueId()
-    {
+    get uniqueId() {
         return this.id.pathString;
     }
-
 
     /**
      * @property {entity.EntityId}
      */
-    get id()
-    {
+    get id() {
         return this._id;
     }
 
-    set id(value)
-    {
+    set id(value) {
         this._id = value;
     }
 
-
     /**
      * @returns {String}
      */
-    get idString()
-    {
+    get idString() {
         return this.id.idString;
     }
 
-
     /**
      * @returns {String}
      */
-    get pathString()
-    {
+    get pathString() {
         return this.id.pathString;
     }
-
 
     /**
      * @property {Array}
      */
-    get usedBy()
-    {
+    get usedBy() {
         return this._usedBy;
     }
-
 
     /**
      * @property {Bool}
      */
-    get isGlobal()
-    {
+    get isGlobal() {
         return this.id ? this.id.isGlobal : false;
     }
-
 
     /**
      * @property {Site}
      */
-    get site()
-    {
+    get site() {
         return this.id.site;
     }
-
 
     /**
      * Returns the site and all sites that it extends from.
      *
      * @property {Array<Site>}
      */
-    get sitesChain()
-    {
+    get sitesChain() {
         return this._sitesChain;
     }
-
 
     /**
      * Checke if the entity provides it's own content for kind or if it inherits the contents.
      *
      * @returns {Boolean}
      */
-    hasOwnContentOfKind(kind)
-    {
-        const files = this.files.filterBy(
-            {
-                contentKind: kind,
-                site: this.site
-            });
+    hasOwnContentOfKind(kind) {
+        const files = this.files.filterBy({
+            contentKind: kind,
+            site: this.site
+        });
         return files.length > 0;
     }
-
 
     /**
      * @inheritDoc
      */
-    toString()
-    {
+    toString() {
         return `[${this.className} ${this.pathString}]`;
     }
 }
-
 
 /**
  * Exports

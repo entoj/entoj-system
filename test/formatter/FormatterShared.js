@@ -6,12 +6,10 @@
  */
 const baseSpec = require(ES_TEST + '/BaseShared.js').spec;
 
-
 /**
  * Shared Formatter spec
  */
-function spec(type, className, prepareParameters)
-{
+function spec(type, className, prepareParameters) {
     /**
      * Base Test
      */
@@ -22,20 +20,16 @@ function spec(type, className, prepareParameters)
      */
 
     // create a testee
-    const createTestee = function()
-    {
+    const createTestee = function() {
         let parameters = Array.from(arguments);
-        if (prepareParameters)
-        {
+        if (prepareParameters) {
             parameters = prepareParameters(parameters);
         }
         return new type(...parameters);
     };
 
-    describe('#format', function()
-    {
-        it('should return a promise', function()
-        {
+    describe('#format', function() {
+        it('should return a promise', function() {
             const testee = createTestee();
             expect(testee.format()).to.be.instanceof(Promise);
         });

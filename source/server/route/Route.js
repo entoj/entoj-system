@@ -10,17 +10,14 @@ const assertParameter = require('../../utils/assert.js').assertParameter;
 const path = require('path');
 const fs = require('fs');
 
-
 /**
  * @memberOf server.routes
  */
-class Route extends Base
-{
+class Route extends Base {
     /**
      * @param {cli.CliLogger} cliLogger
      */
-    constructor(cliLogger)
-    {
+    constructor(cliLogger) {
         super();
 
         // Check params
@@ -31,42 +28,33 @@ class Route extends Base
         this._server = undefined;
     }
 
-
     /**
      * @inheritDocs
      */
-    static get injections()
-    {
-        return { 'parameters': [CliLogger] };
+    static get injections() {
+        return { parameters: [CliLogger] };
     }
 
-
     /**
      * @inheritDocs
      */
-    static get className()
-    {
+    static get className() {
         return 'server.route/Route';
     }
-
 
     /**
      * @type {cli.CliLogger}
      */
-    get cliLogger()
-    {
+    get cliLogger() {
         return this._cliLogger;
     }
-
 
     /**
      * @type {express}
      */
-    get server()
-    {
+    get server() {
         return this._server;
     }
-
 
     /**
      * Adds a route to static files located at basePath
@@ -77,28 +65,39 @@ class Route extends Base
      * @param {Array} allowedExtensions
      * @param {Function} pathTransformer
      */
-    addStaticFileHandler(route, basePath, allowedExtensions, pathTransformer)
-    {
-        if (allowedExtensions && allowedExtensions.length)
-        {
-            this.cliLogger.info('Adding static file route <' + route + '> searching for [' + allowedExtensions.join(', ') + '] in <' + (typeof basePath === 'string' ? basePath : 'function') + '>');
+    addStaticFileHandler(route, basePath, allowedExtensions, pathTransformer) {
+        if (allowedExtensions && allowedExtensions.length) {
+            this.cliLogger.info(
+                'Adding static file route <' +
+                    route +
+                    '> searching for [' +
+                    allowedExtensions.join(', ') +
+                    '] in <' +
+                    (typeof basePath === 'string' ? basePath : 'function') +
+                    '>'
+            );
+        } else {
+            this.cliLogger.info(
+                'Adding static file route <' +
+                    route +
+                    '> searching in <' +
+                    (typeof basePath === 'string' ? basePath : 'function') +
+                    '>'
+            );
         }
-        else
-        {
-            this.cliLogger.info('Adding static file route <' + route + '> searching in <' + (typeof basePath === 'string' ? basePath : 'function') + '>');
+        if (!basePath) {
+            throw Error(
+                this.className +
+                    '::addStaticFileHandler basePath is for ' +
+                    route +
+                    ' is not defined!'
+            );
         }
-        if (!basePath)
-        {
-            throw Error(this.className + '::addStaticFileHandler basePath is for ' + route + ' is not defined!');
-        }
-        const handler = (request, response, next) =>
-        {
+        const handler = (request, response, next) => {
             // Check extension
-            if (Array.isArray(allowedExtensions))
-            {
+            if (Array.isArray(allowedExtensions)) {
                 const extension = path.extname(request.path);
-                if (allowedExtensions.indexOf(extension) === -1)
-                {
+                if (allowedExtensions.indexOf(extension) === -1) {
                     this.logger.debug('Extension not matching', request.path);
                     next();
                     return;
@@ -106,27 +105,27 @@ class Route extends Base
             }
 
             // Check if file exists
-            const filename = (typeof basePath === 'string')
-                ? path.join(basePath, request.path)
-                : basePath(request.path, request);
-            if (!filename || !fs.existsSync(filename))
-            {
+            const filename =
+                typeof basePath === 'string'
+                    ? path.join(basePath, request.path)
+                    : basePath(request.path, request);
+            if (!filename || !fs.existsSync(filename)) {
                 this.logger.debug('File not found', request.path);
                 next();
                 return;
             }
 
             // Serve it
-            const work = this.cliLogger.work('Serving <' + request.path + '> from <' + filename + '>');
+            const work = this.cliLogger.work(
+                'Serving <' + request.path + '> from <' + filename + '>'
+            );
             response.sendFile(filename);
             this.cliLogger.end(work);
         };
-        if (this.server)
-        {
+        if (this.server) {
             this.server.express.all(route, handler);
         }
     }
-
 
     /**
      * Register the route on teh given espress instance
@@ -134,13 +133,11 @@ class Route extends Base
      * @param {Express}
      * @return {Promise}
      */
-    register(server)
-    {
+    register(server) {
         this._server = server;
         return Promise.resolve();
     }
 }
-
 
 /**
  * Exports

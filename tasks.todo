@@ -1,0 +1,2 @@
+- Add PackagePlugin example settings helper via JsonLoader
+- Move model loader plugins to loader/plugins

@@ -7,16 +7,12 @@ const FilterNode = require(ES_SOURCE + '/export/ast/FilterNode.js').FilterNode;
 const callableNodeSpec = require('./CallableNodeShared.js').spec;
 const valueNodeSpec = require('./ValueNodeShared.js').spec;
 
-
 /**
  * Spec
  */
-describe(FilterNode.className, function()
-{
-    const fixture =
-    {
-        serialized:
-        {
+describe(FilterNode.className, function() {
+    const fixture = {
+        serialized: {
             type: 'FilterNode',
             children: [],
             arguments: [],

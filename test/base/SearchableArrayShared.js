@@ -6,35 +6,28 @@
  */
 const baseArraySpec = require(ES_TEST + '/base/BaseArrayShared.js').spec;
 
-
 /**
  * Shared SearchableArray spec
  */
-function spec(type, className, prepareParameters)
-{
+function spec(type, className, prepareParameters) {
     /**
      * BaseArray Test
      */
     baseArraySpec(type, className, prepareParameters);
 
-
     /**
      * SearchableArray Test
      */
-    const createTestee = function()
-    {
+    const createTestee = function() {
         let parameters = [];
-        if (prepareParameters)
-        {
+        if (prepareParameters) {
             parameters = prepareParameters(parameters);
         }
         return new type(...parameters);
     };
 
-    describe('#findBy', function()
-    {
-        it('should find the first item that matches the query', function()
-        {
+    describe('#findBy', function() {
+        it('should find the first item that matches the query', function() {
             const testee = createTestee();
             const item1 = { name: 'Jeff', age: 10, male: true };
             const item2 = { name: 'Joe', age: 10, male: true };
@@ -43,10 +36,8 @@ function spec(type, className, prepareParameters)
         });
     });
 
-    describe('#filterBy', function()
-    {
-        it('should find all items that matches the query', function()
-        {
+    describe('#filterBy', function() {
+        it('should find all items that matches the query', function() {
             const testee = createTestee();
             const item1 = { name: 'Jeff', age: 10, male: true };
             const item2 = { name: 'Joe', age: 10, male: true };

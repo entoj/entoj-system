@@ -6,36 +6,28 @@
  */
 const baseSpec = require(ES_TEST + '/BaseShared.js').spec;
 
-
 /**
  * Shared Loader spec
  */
-function spec(type, className, prepareParameters)
-{
+function spec(type, className, prepareParameters) {
     /**
      * Base Test
      */
     baseSpec(type, className, prepareParameters);
 
-
     /**
      * Loader Test
      */
-    const createTestee = function()
-    {
+    const createTestee = function() {
         let parameters = Array.from(arguments);
-        if (prepareParameters)
-        {
+        if (prepareParameters) {
             parameters = prepareParameters(parameters);
         }
         return new type(...parameters);
     };
 
-
-    describe('#load', function()
-    {
-        it('should return a Promise', function()
-        {
+    describe('#load', function() {
+        it('should return a Promise', function() {
             const testee = createTestee();
             const promise = testee.load();
             expect(promise).to.be.instanceof(Promise);

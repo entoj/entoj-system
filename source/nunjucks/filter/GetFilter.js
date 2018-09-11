@@ -6,49 +6,39 @@
  */
 const Filter = require('./Filter.js').Filter;
 
-
 /**
  * @memberOf nunjucks.filter
  */
-class GetFilter extends Filter
-{
+class GetFilter extends Filter {
     /**
      * @inheritDoc
      */
-    constructor()
-    {
+    constructor() {
         super();
         this._name = ['get', 'getProperty'];
     }
 
-
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'nunjucks.filter/GetFilter';
     }
 
-
     /**
      * @inheritDoc
      */
-    filter(value)
-    {
+    filter(value) {
         const scope = this;
-        return function(value, key)
-        {
+        return function(value, key) {
             let result = undefined;
-            if (value && typeof key !== 'undefined')
-            {
+            if (value && typeof key !== 'undefined') {
                 result = value[key];
             }
             return scope.applyCallbacks(result, arguments);
         };
     }
 }
-
 
 /**
  * Exports

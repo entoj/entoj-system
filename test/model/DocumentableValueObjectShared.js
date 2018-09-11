@@ -6,31 +6,27 @@
  */
 const baseSpec = require('../BaseShared.js').spec;
 const valueObjectSpec = require('./ValueObjectShared.js').spec;
-const DocumentationArray = require(ES_SOURCE + '/model/documentation/DocumentationArray.js').DocumentationArray;
+const DocumentationArray = require(ES_SOURCE + '/model/documentation/DocumentationArray.js')
+    .DocumentationArray;
 const BaseArray = require(ES_SOURCE + '/base/BaseArray.js').BaseArray;
 const BaseMap = require(ES_SOURCE + '/base/BaseMap.js').BaseMap;
 const TestSuiteArray = require(ES_SOURCE + '/model/test/TestSuiteArray.js').TestSuiteArray;
 
-
 /**
  * Shared DocumentableValueObject spec
  */
-function spec(type, className, prepareParameters)
-{
+function spec(type, className, prepareParameters) {
     /**
      * ValueObject Test
      */
     valueObjectSpec(type, className, prepareParameters);
 
-
     /**
      * DocumentableValueObject Test
      */
-    const createTestee = function()
-    {
+    const createTestee = function() {
         let parameters = Array.from(arguments);
-        if (prepareParameters)
-        {
+        if (prepareParameters) {
             parameters = prepareParameters(parameters);
         }
         return new type(...parameters);
@@ -42,28 +38,15 @@ function spec(type, className, prepareParameters)
     baseSpec.assertProperty(createTestee(), ['files'], undefined, BaseArray);
     baseSpec.assertProperty(createTestee(), ['testSuites'], undefined, TestSuiteArray);
 
-    describe('#dehydrate', function()
-    {
-        it('should allow to update properties, documentation and files with a object', function()
-        {
-            const data =
-            {
-                properties:
-                {
+    describe('#dehydrate', function() {
+        it('should allow to update properties, documentation and files with a object', function() {
+            const data = {
+                properties: {
                     foo: 'bar'
                 },
-                documentation:
-                [
-                    'foo'
-                ],
-                files:
-                [
-                    'bar'
-                ],
-                testSuites:
-                [
-                    'boom'
-                ]
+                documentation: ['foo'],
+                files: ['bar'],
+                testSuites: ['boom']
             };
             const testee = createTestee();
 
@@ -74,8 +57,7 @@ function spec(type, className, prepareParameters)
             expect(testee.testSuites).to.include('boom');
         });
 
-        it('should allow to update properties, documentation and files with another ValueObject', function()
-        {
+        it('should allow to update properties, documentation and files with another ValueObject', function() {
             const data = createTestee();
             data.properties.set('foo', 'bar');
             data.documentation.push('foo');

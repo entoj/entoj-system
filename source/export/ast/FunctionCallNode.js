@@ -6,21 +6,17 @@
  */
 const CallableNode = require('./CallableNode.js').CallableNode;
 
-
 /**
  * A function call
  */
-class FunctionCallNode extends CallableNode
-{
+class FunctionCallNode extends CallableNode {
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'export.ast/FunctionCallNode';
     }
 }
-
 
 /**
  * Exports

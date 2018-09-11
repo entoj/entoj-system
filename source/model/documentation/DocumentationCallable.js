@@ -7,37 +7,30 @@
 const DocumentationCode = require('./DocumentationCode.js').DocumentationCode;
 const SearchableArray = require('../../base/SearchableArray.js').SearchableArray;
 
-
 /**
  * @memberOf model.documentation
  */
-class DocumentationCallable extends DocumentationCode
-{
+class DocumentationCallable extends DocumentationCode {
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'model.documentation/DocumentationCallable';
     }
 
-
     /**
      * @inheritDoc
      */
-    initialize()
-    {
+    initialize() {
         super.initialize();
-        this._parameters = new SearchableArray();        
+        this._parameters = new SearchableArray();
         this._dependencies = new SearchableArray();
     }
-
 
     /**
      * @inheritDocs
      */
-    get fields()
-    {
+    get fields() {
         const fields = super.fields;
         fields.dependencies = SearchableArray;
         fields.parameters = SearchableArray;
@@ -45,49 +38,39 @@ class DocumentationCallable extends DocumentationCode
         return fields;
     }
 
-
     /**
      * @property {Array<model.documentation.Dependency>}
      */
-    get dependencies()
-    {
+    get dependencies() {
         return this._dependencies;
     }
 
-    set dependencies(value)
-    {
+    set dependencies(value) {
         this._dependencies = value;
     }
-
 
     /**
      * @property {Array}
      */
-    get parameters()
-    {
+    get parameters() {
         return this._parameters;
     }
 
-    set parameters(value)
-    {
+    set parameters(value) {
         this._parameters = value;
     }
-
 
     /**
      * @property {String}
      */
-    get returns()
-    {
+    get returns() {
         return this._returns;
     }
 
-    set returns(value)
-    {
+    set returns(value) {
         this._returns = value;
     }
 }
-
 
 /**
  * Exports

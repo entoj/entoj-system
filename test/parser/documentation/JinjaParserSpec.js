@@ -5,35 +5,30 @@
  */
 const parserSpec = require(ES_TEST + '/parser/ParserShared.js').spec;
 const JinjaParser = require(ES_SOURCE + '/parser/documentation/JinjaParser.js').JinjaParser;
-const DocumentationCallable = require(ES_SOURCE + '/model/documentation/DocumentationCallable.js').DocumentationCallable;
+const DocumentationCallable = require(ES_SOURCE + '/model/documentation/DocumentationCallable.js')
+    .DocumentationCallable;
 const Dependency = require(ES_SOURCE + '/model/documentation/Dependency.js').Dependency;
-
 
 /**
  * Spec
  */
-describe(JinjaParser.className, function()
-{
+describe(JinjaParser.className, function() {
     /**
      * Parser Test
      */
     parserSpec(JinjaParser, 'parser.documentation/JinjaParser');
 
-
     /**
      * JinjaParser Test
      */
-    describe('#parse()', function()
-    {
-        it('should parse macros without a valid docblock', function()
-        {
+    describe('#parse()', function() {
+        it('should parse macros without a valid docblock', function() {
             const testee = new JinjaParser();
             const docblock = '{% macro one(name=\'unnamed\', id = 5) %}{% endmacro %}';
 
-            const promise = testee.parse(docblock).then(function(documentation)
-            {
+            const promise = testee.parse(docblock).then(function(documentation) {
                 expect(documentation).to.have.length(1);
-                const macro = documentation.find(doc => doc.name == 'one');
+                const macro = documentation.find((doc) => doc.name == 'one');
                 expect(macro.parameters).to.have.length(2);
                 expect(macro.parameters[0]).to.be.ok;
                 expect(macro.parameters[0].defaultValue).to.be.equal('\'unnamed\'');
@@ -43,8 +38,7 @@ describe(JinjaParser.className, function()
             return promise;
         });
 
-        it('should parse macros with a valid docblock', function()
-        {
+        it('should parse macros with a valid docblock', function() {
             const testee = new JinjaParser();
             const docblock = `
             {##
@@ -53,10 +47,9 @@ describe(JinjaParser.className, function()
              #}
             {% macro one(name, id) %}{% endmacro %}`;
 
-            const promise = testee.parse(docblock).then(function(documentation)
-            {
+            const promise = testee.parse(docblock).then(function(documentation) {
                 expect(documentation).to.have.length(1);
-                const macro = documentation.find(doc => doc.name == 'one');
+                const macro = documentation.find((doc) => doc.name == 'one');
                 expect(macro.parameters).to.have.length(2);
                 expect(macro.parameters[0]).to.be.ok;
                 expect(macro.parameters[0].type).to.contain('String');
@@ -66,8 +59,7 @@ describe(JinjaParser.className, function()
             return promise;
         });
 
-        it('should use arguments order from the macro definition', function()
-        {
+        it('should use arguments order from the macro definition', function() {
             const testee = new JinjaParser();
             const docblock = `
             {##
@@ -76,19 +68,17 @@ describe(JinjaParser.className, function()
              #}
             {% macro one(name, id) %}{% endmacro %}`;
 
-            const promise = testee.parse(docblock).then(function(documentation)
-            {
+            const promise = testee.parse(docblock).then(function(documentation) {
                 expect(documentation).to.have.length(1);
-                const macro = documentation.find(doc => doc.name == 'one');
+                const macro = documentation.find((doc) => doc.name == 'one');
                 expect(macro.parameters).to.have.length(2);
-                expect(macro.parameters[0].name).to.be.equal('name');                
+                expect(macro.parameters[0].name).to.be.equal('name');
                 expect(macro.parameters[1].name).to.be.equal('id');
             });
             return promise;
-        });        
+        });
 
-        it('should parse macros with mixed identation', function()
-        {
+        it('should parse macros with mixed identation', function() {
             const testee = new JinjaParser();
             const docblock = `
             {##
@@ -102,17 +92,15 @@ describe(JinjaParser.className, function()
         {% macro two(name) %}{% endmacro %}
                 `;
 
-            const promise = testee.parse(docblock).then(function(documentation)
-            {
+            const promise = testee.parse(docblock).then(function(documentation) {
                 expect(documentation).to.have.length(2);
-                expect(documentation.find(doc => doc.name == 'one')).to.be.ok;
-                expect(documentation.find(doc => doc.name == 'two')).to.be.ok;
+                expect(documentation.find((doc) => doc.name == 'one')).to.be.ok;
+                expect(documentation.find((doc) => doc.name == 'two')).to.be.ok;
             });
             return promise;
         });
 
-        it('should enhance infos from docblock with macro infos', function()
-        {
+        it('should enhance infos from docblock with macro infos', function() {
             const testee = new JinjaParser();
             const docblock = `
             {##
@@ -121,25 +109,33 @@ describe(JinjaParser.className, function()
              #}
             {% macro one(name, id = 1, class = 'one') %}{% endmacro %}`;
 
-            const promise = testee.parse(docblock).then(function(documentation)
-            {
+            const promise = testee.parse(docblock).then(function(documentation) {
                 expect(documentation).to.have.length(1);
-                const macro = documentation.find(doc => doc.name == 'one');
+                const macro = documentation.find((doc) => doc.name == 'one');
                 expect(macro.parameters).to.have.length(3);
-                expect(macro.parameters.find(param => param.name == 'name')).to.be.ok;
-                expect(macro.parameters.find(param => param.name == 'name').type).to.contain('String');
-                expect(macro.parameters.find(param => param.name == 'id')).to.be.ok;
-                expect(macro.parameters.find(param => param.name == 'id').type).to.contain('Number');
-                expect(macro.parameters.find(param => param.name == 'id').defaultValue).to.be.equal('1');
-                expect(macro.parameters.find(param => param.name == 'class')).to.be.ok;
-                expect(macro.parameters.find(param => param.name == 'class').type).to.contain('*');
-                expect(macro.parameters.find(param => param.name == 'class').defaultValue).to.be.equal('\'one\'');
+                expect(macro.parameters.find((param) => param.name == 'name')).to.be.ok;
+                expect(macro.parameters.find((param) => param.name == 'name').type).to.contain(
+                    'String'
+                );
+                expect(macro.parameters.find((param) => param.name == 'id')).to.be.ok;
+                expect(macro.parameters.find((param) => param.name == 'id').type).to.contain(
+                    'Number'
+                );
+                expect(
+                    macro.parameters.find((param) => param.name == 'id').defaultValue
+                ).to.be.equal('1');
+                expect(macro.parameters.find((param) => param.name == 'class')).to.be.ok;
+                expect(macro.parameters.find((param) => param.name == 'class').type).to.contain(
+                    '*'
+                );
+                expect(
+                    macro.parameters.find((param) => param.name == 'class').defaultValue
+                ).to.be.equal('\'one\'');
             });
             return promise;
         });
 
-        it('should allow to document maps/objects', function()
-        {
+        it('should allow to document maps/objects', function() {
             const testee = new JinjaParser();
             const docblock = `
             {##
@@ -150,17 +146,15 @@ describe(JinjaParser.className, function()
             {%  endmacro %}
             `;
 
-            const promise = testee.parse(docblock).then(function(documentation)
-            {
+            const promise = testee.parse(docblock).then(function(documentation) {
                 expect(documentation).to.have.length(1);
-                const macro = documentation.find(doc => doc.name == 'e001_link');
+                const macro = documentation.find((doc) => doc.name == 'e001_link');
                 expect(macro.parameters).to.have.length(1);
             });
             return promise;
         });
 
-        it('should always parse macros as callables', function()
-        {
+        it('should always parse macros as callables', function() {
             const testee = new JinjaParser();
             const docblock = `
             {##
@@ -168,16 +162,16 @@ describe(JinjaParser.className, function()
              #}
             {% macro one(name, id) %}{% endmacro %}`;
 
-            const promise = testee.parse(docblock).then(function(documentation)
-            {
+            const promise = testee.parse(docblock).then(function(documentation) {
                 expect(documentation).to.have.length(1);
-                expect(documentation.find(doc => doc.name == 'one')).to.be.instanceof(DocumentationCallable);
+                expect(documentation.find((doc) => doc.name == 'one')).to.be.instanceof(
+                    DocumentationCallable
+                );
             });
             return promise;
         });
 
-        it('should allow markdown in the docblock', function()
-        {
+        it('should allow markdown in the docblock', function() {
             const testee = new JinjaParser();
             const docblock = `
             {##
@@ -187,24 +181,20 @@ describe(JinjaParser.className, function()
                 * List 2
              #}
             {% macro one(name, id) %}{% endmacro %}`;
-            const expected =
-`# Headline
+            const expected = `# Headline
 * List 1
   * List 1.1
 * List 2`;
 
-            const promise = testee.parse(docblock).then(function(documentation)
-            {
+            const promise = testee.parse(docblock).then(function(documentation) {
                 expect(documentation).to.have.length(1);
-                const macro = documentation.find(doc => doc.name == 'one');
+                const macro = documentation.find((doc) => doc.name == 'one');
                 expect(macro.description).to.be.equal(expected);
             });
             return promise;
         });
 
-
-        it('should allow comment within macro', function()
-        {
+        it('should allow comment within macro', function() {
             const testee = new JinjaParser();
             const docblock = `
             {##
@@ -216,15 +206,13 @@ describe(JinjaParser.className, function()
             {%  endmacro %}
             `;
 
-            const promise = testee.parse(docblock).then(function(documentation)
-            {
+            const promise = testee.parse(docblock).then(function(documentation) {
                 expect(documentation).to.have.length(1);
             });
             return promise;
         });
 
-        it('should generate a list of dependencies', function()
-        {
+        it('should generate a list of dependencies', function() {
             const testee = new JinjaParser();
             const docblock = `
             {% macro e001_link() %}
@@ -234,18 +222,20 @@ describe(JinjaParser.className, function()
             {% endmacro %}
             `;
 
-            const promise = testee.parse(docblock).then(function(documentation)
-            {
+            const promise = testee.parse(docblock).then(function(documentation) {
                 const doc = documentation[0];
                 expect(doc.dependencies).to.have.length(2);
-                expect(doc.dependencies.find(dep => dep.name == 'e002_text')).to.be.instanceof(Dependency);
-                expect(doc.dependencies.find(dep => dep.name == 'e003_rte')).to.be.instanceof(Dependency);                
+                expect(doc.dependencies.find((dep) => dep.name == 'e002_text')).to.be.instanceof(
+                    Dependency
+                );
+                expect(doc.dependencies.find((dep) => dep.name == 'e003_rte')).to.be.instanceof(
+                    Dependency
+                );
             });
             return promise;
-        });   
-        
-        it('should add dependencies only once', function()
-        {
+        });
+
+        it('should add dependencies only once', function() {
             const testee = new JinjaParser();
             const docblock = `
             {% macro e001_link() %}
@@ -255,21 +245,19 @@ describe(JinjaParser.className, function()
             {% endmacro %}
             `;
 
-            const promise = testee.parse(docblock).then(function(documentation)
-            {
+            const promise = testee.parse(docblock).then(function(documentation) {
                 const doc = documentation[0];
                 expect(doc.dependencies).to.have.length(1);
-                expect(doc.dependencies.find(dep => dep.name == 'e002_text')).to.be.instanceof(Dependency);
+                expect(doc.dependencies.find((dep) => dep.name == 'e002_text')).to.be.instanceof(
+                    Dependency
+                );
             });
             return promise;
-        });         
+        });
     });
 
-
-    describe('performance', function()
-    {
-        it('should parse a macro within 20ms', function()
-        {
+    describe('performance', function() {
+        it('should parse a macro within 20ms', function() {
             const testee = new JinjaParser();
             const docblock = `
 
@@ -283,19 +271,15 @@ describe(JinjaParser.className, function()
             `;
 
             this.timeout(20);
-            const promise = testee.parse(docblock).then(function(documentation)
-            {
+            const promise = testee.parse(docblock).then(function(documentation) {
                 expect(documentation).to.have.length(1);
             });
             return promise;
         });
     });
 
-
-    describe('bugs', function()
-    {
-        it('should not get stuck when comment is in wrong place', function()
-        {
+    describe('bugs', function() {
+        it('should not get stuck when comment is in wrong place', function() {
             const testee = new JinjaParser();
             const docblock = `
             {##
@@ -308,8 +292,7 @@ describe(JinjaParser.className, function()
             {% macro one(name, id = 1, mode = 'one', ignore=false) %}{% endmacro %}
             `;
 
-            const promise = testee.parse(docblock).then(function(documentation)
-            {
+            const promise = testee.parse(docblock).then(function(documentation) {
                 expect(documentation).to.have.length(1);
             });
             return promise;

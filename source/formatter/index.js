@@ -1,7 +1,6 @@
 /**
  * @namespace formatter
  */
-module.exports =
-{
+module.exports = {
     Formatter: require('./Formatter.js').Formatter
 };

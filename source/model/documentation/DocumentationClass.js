@@ -9,17 +9,14 @@ const DocumentationCode = require('./DocumentationCode.js').DocumentationCode;
 /**
  * @memberOf model.documentation
  */
-class DocumentationClass extends DocumentationCode
-{
+class DocumentationClass extends DocumentationCode {
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'model.documentation/DocumentationClass';
     }
 }
-
 
 /**
  * Exports

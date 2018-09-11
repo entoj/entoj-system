@@ -13,19 +13,16 @@ const co = require('co');
 const signals = require('signals');
 const merge = require('lodash.merge');
 
-
 /**
  * @memberOf watch
  */
-class ModelSynchronizer extends Base
-{
+class ModelSynchronizer extends Base {
     /**
      * @param {CliLogger} cliLogger
      * @param {watch.FileWatcher} fileWatcher
      * @param {Array} plugins
      */
-    constructor(cliLogger, fileWatcher, plugins)
-    {
+    constructor(cliLogger, fileWatcher, plugins) {
         super();
 
         //Check params
@@ -35,9 +32,7 @@ class ModelSynchronizer extends Base
         // Assign options
         this._cliLogger = cliLogger.createPrefixed('modelsynchronizer');
         this._fileWatcher = fileWatcher;
-        this._plugins = Array.isArray(plugins)
-            ? plugins
-            : [];
+        this._plugins = Array.isArray(plugins) ? plugins : [];
         this._signals = {};
 
         // Add signals
@@ -47,72 +42,56 @@ class ModelSynchronizer extends Base
         this._fileWatcherListener = (watcher, changes) => this.processChanges(changes);
     }
 
-
     /**
      * @inheritDoc
      */
-    static get injections()
-    {
-        return { 'parameters': [CliLogger, FileWatcher, 'watch/ModelSynchronizer.plugins'] };
+    static get injections() {
+        return { parameters: [CliLogger, FileWatcher, 'watch/ModelSynchronizer.plugins'] };
     }
 
-
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'watch/ModelSynchronizer';
     }
 
-
     /**
      * @inheritDoc
      */
-    get signals()
-    {
+    get signals() {
         return this._signals;
     }
-
 
     /**
      * @type {Array}
      */
-    get plugins()
-    {
+    get plugins() {
         return this._plugins;
     }
-
 
     /**
      * @type {cli.CliLogger}
      */
-    get cliLogger()
-    {
+    get cliLogger() {
         return this._cliLogger;
     }
-
 
     /**
      * @returns {Promise.<*>}
      */
-    processChanges(changes)
-    {
+    processChanges(changes) {
         const scope = this;
-        const promise = co(function *()
-        {
+        const promise = co(function*() {
             // Prepare result
-            let result =
-            {
+            let result = {
                 files: changes.files,
                 extensions: changes.extensions
             };
 
             // Run plugins
-            for (const plugin of scope.plugins)
-            {
-                if (!result.consumed)
-                {
+            for (const plugin of scope.plugins) {
+                if (!result.consumed) {
                     const pluginResult = yield plugin.execute(changes);
                     result = merge(result, pluginResult);
                 }
@@ -126,27 +105,22 @@ class ModelSynchronizer extends Base
         return promise;
     }
 
-
     /**
      * @returns {Promise.<*>}
      */
-    start()
-    {
+    start() {
         this._fileWatcher.signals.changed.add(this._fileWatcherListener);
         return this._fileWatcher.start();
     }
 
-
     /**
      * @returns {Promise.<*>}
      */
-    stop()
-    {
+    stop() {
         this._fileWatcher.signals.changed.remove(this._fileWatcherListener);
         return this._fileWatcher.stop();
     }
 }
-
 
 /**
  * Exports

@@ -11,12 +11,10 @@ const through2 = require('through2');
 const VinylFile = require('vinyl');
 const fs = require('co-fs-extra');
 
-
 /**
  * Spec
  */
-describe(WriteFilesTask.className, function()
-{
+describe(WriteFilesTask.className, function() {
     /**
      * BaseTask Test
      */
@@ -24,44 +22,38 @@ describe(WriteFilesTask.className, function()
 
     /**
      */
-    function prepareParameters(parameters)
-    {
+    function prepareParameters(parameters) {
         parameters.unshift(global.fixtures.cliLogger);
         return parameters;
     }
 
-
     /**
      * WriteFilesTask Test
      */
-    beforeEach(function()
-    {
+    beforeEach(function() {
         global.fixtures.cliLogger = new CliLogger();
         global.fixtures.cliLogger.muted = true;
         global.fixtures.path = pathes.concat(global.ES_FIXTURES, '/temp');
         fs.emptyDirSync(global.fixtures.path);
     });
 
-
-    describe('#stream()', function()
-    {
-        it('should write files to the filesystem', function(cb)
-        {
-            const sourceStream = through2(
-                {
-                    objectMode: true
-                });
-            sourceStream.write(new VinylFile(
-                {
+    describe('#stream()', function() {
+        it('should write files to the filesystem', function(cb) {
+            const sourceStream = through2({
+                objectMode: true
+            });
+            sourceStream.write(
+                new VinylFile({
                     path: 'test.css',
                     contents: new Buffer('test')
-                }));
+                })
+            );
             sourceStream.end();
 
             const testee = new WriteFilesTask(global.fixtures.cliLogger);
-            testee.stream(sourceStream, undefined, { path: global.fixtures.path })
-                .on('finish', () =>
-                {
+            testee
+                .stream(sourceStream, undefined, { path: global.fixtures.path })
+                .on('finish', () => {
                     expect(fs.existsSync(pathes.concat(global.fixtures.path, 'test.css'))).to.be.ok;
                     cb();
                 });

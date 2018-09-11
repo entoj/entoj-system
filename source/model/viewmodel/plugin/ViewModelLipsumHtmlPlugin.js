@@ -8,46 +8,37 @@ const ViewModelLipsumPlugin = require('./ViewModelLipsumPlugin.js').ViewModelLip
 const htmlify = require('../../../utils/string.js').htmlify;
 const createRandomNumberGenerator = require('../../../utils/random.js').createRandomNumberGenerator;
 
-
 /**
  * @class
  * @memberOf model.viewmodel.plugin
  * @extends {Base}
  */
-class ViewModelLipsumHtmlPlugin extends ViewModelLipsumPlugin
-{
+class ViewModelLipsumHtmlPlugin extends ViewModelLipsumPlugin {
     /**
      * @inheritDoc
      */
-    constructor()
-    {
+    constructor() {
         super();
         this._name = ['lipsum-html', 'lipsum-inline'];
     }
 
-
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'model.viewmodel.plugin/ViewModelLipsumHtmlPlugin';
     }
 
-
     /**
      * @inheritDoc
      */
-    doExecute(repository, site, useStaticContent, name, parameters, options)
-    {
+    doExecute(repository, site, useStaticContent, name, parameters, options) {
         const random = createRandomNumberGenerator(useStaticContent);
-        const tags =
-        [
+        const tags = [
             {
                 name: 'a',
                 probability: 0.2,
-                attributes:
-                {
+                attributes: {
                     href: 'JavaScript:;'
                 }
             },
@@ -56,8 +47,7 @@ class ViewModelLipsumHtmlPlugin extends ViewModelLipsumPlugin
                 probability: 0.2
             }
         ];
-        if (name == 'lipsum-html')
-        {
+        if (name == 'lipsum-html') {
             tags.push(
                 {
                     name: 'h1',
@@ -69,7 +59,8 @@ class ViewModelLipsumHtmlPlugin extends ViewModelLipsumPlugin
                 }
             );
         }
-        const promise = super.doExecute(repository, site, useStaticContent, name, parameters)
+        const promise = super
+            .doExecute(repository, site, useStaticContent, name, parameters)
             .then((text) => htmlify(text, { random: random, tags: tags }));
         return promise;
     }

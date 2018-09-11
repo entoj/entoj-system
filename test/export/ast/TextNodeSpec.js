@@ -6,12 +6,10 @@
 const TextNode = require(ES_SOURCE + '/export/ast/TextNode.js').TextNode;
 const valueNodeSpec = require('./ValueNodeShared.js').spec;
 
-
 /**
  * Spec
  */
-describe(TextNode.className, function()
-{
+describe(TextNode.className, function() {
     /**
      * ValueNode Test
      */

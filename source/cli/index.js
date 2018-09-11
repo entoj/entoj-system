@@ -1,8 +1,6 @@
-
 /**
  * @namespace cli
  */
-module.exports =
-{
+module.exports = {
     CliLogger: require('./CliLogger.js').CliLogger
 };

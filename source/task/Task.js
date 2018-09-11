@@ -10,7 +10,6 @@ const assertParameter = require('../utils/assert.js').assertParameter;
 const through2 = require('through2');
 const VinylFile = require('vinyl');
 
-
 /**
  * Base class for a stream based task system similar to gulp.
  * In fact gulp plugins are easy to integrate.
@@ -18,31 +17,25 @@ const VinylFile = require('vinyl');
  * @extends Base
  * @memberOf task
  */
-class Task extends Base
-{
+class Task extends Base {
     /**
      * A transforming task
      */
-    static get TRANSFORM()
-    {
+    static get TRANSFORM() {
         return 'transform';
     }
-
 
     /**
      * A generating task
      */
-    static get GENERATE()
-    {
+    static get GENERATE() {
         return 'generate';
     }
-
 
     /**
      * @param {cli.CliLogger} cliLogger
      */
-    constructor(cliLogger)
-    {
+    constructor(cliLogger) {
         super();
 
         //Check params
@@ -55,33 +48,26 @@ class Task extends Base
         this._type = Task.GENERATE;
     }
 
-
     /**
      * @inheritDoc
      */
-    static get injections()
-    {
-        return { 'parameters': [CliLogger] };
+    static get injections() {
+        return { parameters: [CliLogger] };
     }
-
 
     /**
      * @see Base#className
      */
-    static get className()
-    {
+    static get className() {
         return 'task/Task';
     }
-
 
     /**
      * @type cli.CliLogger
      */
-    get cliLogger()
-    {
+    get cliLogger() {
         return this._cliLogger;
     }
-
 
     /**
      * The task type - can be one of
@@ -91,11 +77,9 @@ class Task extends Base
      * @public
      * @type {String}
      */
-    get type()
-    {
+    get type() {
         return this._type;
     }
-
 
     /**
      * References the next task in the chain
@@ -104,11 +88,9 @@ class Task extends Base
      * @protected
      * @type {task.Task}
      */
-    get nextTask()
-    {
+    get nextTask() {
         return this._nextTask;
     }
-
 
     /**
      * References the prebous task in the chain
@@ -117,11 +99,9 @@ class Task extends Base
      * @protected
      * @type {task.Task}
      */
-    get previousTask()
-    {
+    get previousTask() {
         return this._previousTask;
     }
-
 
     /**
      * Prepares the given parameters before running a task by making
@@ -132,11 +112,9 @@ class Task extends Base
      * @param {Object} parameters
      * @returns {Promise.<Object>}
      */
-    prepareParameters(buildConfiguration, parameters)
-    {
+    prepareParameters(buildConfiguration, parameters) {
         return Promise.resolve(parameters || {});
     }
-
 
     /**
      * The streaming interface of the task.
@@ -150,31 +128,29 @@ class Task extends Base
      * @param {Object} parameters
      * @returns {Stream}
      */
-    stream(stream, buildConfiguration, parameters)
-    {
-        if (!stream && this.type == Task.TRANSFORM)
-        {
-            throw new TypeError(this.className + '::stream - Transforming tasks need a source stream');
+    stream(stream, buildConfiguration, parameters) {
+        if (!stream && this.type == Task.TRANSFORM) {
+            throw new TypeError(
+                this.className + '::stream - Transforming tasks need a source stream'
+            );
         }
 
         let resultStream = stream;
-        if (!resultStream)
-        {
-            resultStream = through2(
-                {
-                    objectMode: true
-                });
+        if (!resultStream) {
+            resultStream = through2({
+                objectMode: true
+            });
             // this helps testing when stream is not implemented
-            resultStream.write(new VinylFile(
-                {
-                    path:'test',
+            resultStream.write(
+                new VinylFile({
+                    path: 'test',
                     contents: new Buffer('')
-                }));
+                })
+            );
             resultStream.end();
         }
         return resultStream;
     }
-
 
     /**
      * Connects another task to this task so
@@ -184,8 +160,7 @@ class Task extends Base
      * @param {task.Task} task
      * @returns {task.Task}
      */
-    pipe(task)
-    {
+    pipe(task) {
         this._nextTask = task;
         task._previousTask = this;
         return task;
@@ -200,10 +175,8 @@ class Task extends Base
      * @param {Bool} condition
      * @returns {task.Task}
      */
-    pipeIf(task, condition)
-    {
-        if (condition)
-        {
+    pipeIf(task, condition) {
+        if (condition) {
             return this.pipe(task);
         }
         return this;
@@ -218,44 +191,35 @@ class Task extends Base
      * @param {Object} parameters
      * @returns {Promise}
      */
-    run(buildConfiguration, parameters)
-    {
+    run(buildConfiguration, parameters) {
         // Part of a chain?
-        if (this.previousTask)
-        {
+        if (this.previousTask) {
             return this.previousTask.run(buildConfiguration, parameters);
         }
 
         // Start the task
-        const promise = new Promise((resolve) =>
-        {
+        const promise = new Promise((resolve) => {
             const work = this.cliLogger.section('Running task ' + this.className);
             const result = [];
             let stream = this.stream(undefined, buildConfiguration, parameters);
 
             // Handle chain
             let currentTask = this.nextTask;
-            while (currentTask)
-            {
+            while (currentTask) {
                 stream = currentTask.stream(stream, buildConfiguration, parameters);
                 currentTask = currentTask.nextTask;
             }
 
             // Collect result
-            stream.on('data', (item) =>
-            {
+            stream.on('data', (item) => {
                 result.push(item);
             });
 
             // Wait for stream end
-            if (stream._readableState && stream._readableState.ended)
-            {
+            if (stream._readableState && stream._readableState.ended) {
                 resolve(result);
-            }
-            else
-            {
-                stream.on('finish', () =>
-                {
+            } else {
+                stream.on('finish', () => {
                     this.cliLogger.end(work);
                     resolve(result);
                 });
@@ -264,7 +228,6 @@ class Task extends Base
         return promise;
     }
 }
-
 
 /**
  * Exports

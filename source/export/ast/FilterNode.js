@@ -7,21 +7,17 @@
 const CallableNode = require('./CallableNode.js').CallableNode;
 const ValueNodeMixin = require('./ValueNode.js').ValueNodeMixin;
 
-
 /**
  * A view helper / filter node
  */
-class FilterNode extends ValueNodeMixin(CallableNode)
-{
+class FilterNode extends ValueNodeMixin(CallableNode) {
     /**
      * @inheritDocs
      */
-    static get className()
-    {
+    static get className() {
         return 'export.ast/FilterNode';
     }
 }
-
 
 /**
  * Exports

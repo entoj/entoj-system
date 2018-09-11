@@ -3,17 +3,19 @@
 /**
  * Requirements
  */
-const DocumentationParameter = require(ES_SOURCE + '/model/documentation/DocumentationParameter.js').DocumentationParameter;
+const DocumentationParameter = require(ES_SOURCE + '/model/documentation/DocumentationParameter.js')
+    .DocumentationParameter;
 const documentationParameterSpec = require('./DocumentationParameterShared.js').spec;
-
 
 /**
  * Spec
  */
-describe(DocumentationParameter.className, function()
-{
+describe(DocumentationParameter.className, function() {
     /**
      * DocumentationParameter Test
      */
-    documentationParameterSpec(DocumentationParameter, 'model.documentation/DocumentationParameter');
+    documentationParameterSpec(
+        DocumentationParameter,
+        'model.documentation/DocumentationParameter'
+    );
 });

@@ -1,9 +1,7 @@
-
 /**
  * @namespace parser
  */
-module.exports =
-{
+module.exports = {
     Parser: require('./Parser.js').Parser,
     FileParser: require('./FileParser.js').FileParser,
     documentation: require('./documentation/index.js'),

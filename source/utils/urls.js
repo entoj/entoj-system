@@ -2,134 +2,111 @@
 
 const tr = require('transliteration').transliterate;
 
-
 /**
  * Makes a valid ascii only url
  *
  * @memberOf utils
  */
-function urlify(value, whitespace)
-{
-    return tr(value).toLowerCase().replace(/\s/g, whitespace || '-');
+function urlify(value, whitespace) {
+    return tr(value)
+        .toLowerCase()
+        .replace(/\s/g, whitespace || '-');
 }
-
 
 /**
  * Replaces any path seperator to /
  *
  * @memberof utils
  */
-function normalizePathSeparators(path)
-{
+function normalizePathSeparators(path) {
     return path.replace(/\\|\//g, '/');
 }
-
 
 /**
  * Removes a leading slash
  *
  * @memberof utils
  */
-function trimLeadingSlash(path)
-{
+function trimLeadingSlash(path) {
     let result = normalizePathSeparators(path);
-    if (result.substr(0, 1) === '/')
-    {
+    if (result.substr(0, 1) === '/') {
         result = result.substr(1);
     }
     return result;
 }
-
 
 /**
  * Removes a trailing slash
  *
  * @memberof utils
  */
-function trimTrailingSlash(path)
-{
+function trimTrailingSlash(path) {
     let result = normalizePathSeparators(path);
-    if (result.substr(result.length - 1, 1) === '/')
-    {
+    if (result.substr(result.length - 1, 1) === '/') {
         result = result.substr(0, result.length - 1);
     }
     return result;
 }
-
 
 /**
  * Ensures a trailing slash
  *
  * @memberof utils
  */
-function ensureTrailingSlash(path)
-{
+function ensureTrailingSlash(path) {
     let result = normalizePathSeparators(path);
-    if (result.substr(result.length - 1, 1) !== '/')
-    {
-        result+= '/';
+    if (result.substr(result.length - 1, 1) !== '/') {
+        result += '/';
     }
     return result;
 }
-
 
 /**
  * Makes the given string a valid url
  *
  * @memberof utils
  */
-function normalize(path)
-{
+function normalize(path) {
     let result = path || '';
     result = result.replace(/\\|\//g, '/');
-    if (!result.startsWith('/'))
-    {
+    if (!result.startsWith('/')) {
         result = '/' + result;
     }
-    if (result.endsWith('/'))
-    {
+    if (result.endsWith('/')) {
         result = result.substr(0, result.length - 1);
     }
     return result;
 }
-
 
 /**
  * Removes the first part of a path
  *
  * @memberof utils
  */
-function shift(path)
-{
+function shift(path) {
     const parts = normalize(path).split('/');
-    if (parts.length > 0 && parts[0] === '')
-    {
+    if (parts.length > 0 && parts[0] === '') {
         parts.shift();
     }
     parts.shift();
     return normalize(parts.join('/'));
 }
 
-
 /**
  * Adds all given strings to a full url
  *
  * @memberof utils
  */
-function concat(root, ...urls)
-{
+function concat(root, ...urls) {
     let result = normalize(root);
-    for (const u of urls)
-    {
+    for (const u of urls) {
         const url = trimTrailingSlash(trimLeadingSlash(normalizePathSeparators(u)));
-        if (url.length)
-        {
-            result+= '/' + url;
+        if (url.length) {
+            result += '/' + url;
         }
     }
     return normalize(result);
 }
-
 
 /**
  * Exports

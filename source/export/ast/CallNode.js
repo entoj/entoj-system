@@ -6,21 +6,17 @@
  */
 const CallableNode = require('./CallableNode.js').CallableNode;
 
-
 /**
  * A macro render call
  */
-class CallNode extends CallableNode
-{
+class CallNode extends CallableNode {
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'export.ast/CallNode';
     }
 }
-
 
 /**
  * Exports

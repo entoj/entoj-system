@@ -9,57 +9,46 @@ const DocumentationVariable = require('./DocumentationVariable.js').Documentatio
 /**
  * @memberOf model.documentation
  */
-class DocumentationParameter extends DocumentationVariable
-{
+class DocumentationParameter extends DocumentationVariable {
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'model.documentation/DocumentationParameter';
     }
-
 
     /**
      * @inheritDocs
      */
-    get fields()
-    {
+    get fields() {
         const fields = super.fields;
         fields.defaultValue = undefined;
         fields.isOptional = false;
         return fields;
     }
 
-
     /**
      * @property {String}
      */
-    get defaultValue()
-    {
+    get defaultValue() {
         return this._defaultValue;
     }
 
-    set defaultValue(value)
-    {
+    set defaultValue(value) {
         this._defaultValue = value;
     }
-
 
     /**
      * @property {Boolean}
      */
-    get isOptional()
-    {
+    get isOptional() {
         return this._isOptional === true;
     }
 
-    set isOptional(value)
-    {
+    set isOptional(value) {
         this._isOptional = value === true;
     }
 }
-
 
 /**
  * Exports

@@ -1,15 +1,14 @@
-
 /**
  * @namespace model.entity
  */
-module.exports =
-{
+module.exports = {
     EntitiesLoader: require('./EntitiesLoader.js').EntitiesLoader,
     EntitiesRepository: require('./EntitiesRepository.js').EntitiesRepository,
     Entity: require('./Entity.js').Entity,
     EntityAspect: require('./EntityAspect.js').EntityAspect,
     EntityCategoriesLoader: require('./EntityCategoriesLoader.js').EntityCategoriesLoader,
-    EntityCategoriesRepository: require('./EntityCategoriesRepository.js').EntityCategoriesRepository,
+    EntityCategoriesRepository: require('./EntityCategoriesRepository.js')
+        .EntityCategoriesRepository,
     EntityCategory: require('./EntityCategory.js').EntityCategory,
     EntityCategoryType: require('./EntityCategoryType.js').EntityCategoryType,
     EntityId: require('./EntityId.js').EntityId,

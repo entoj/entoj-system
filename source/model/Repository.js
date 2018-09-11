@@ -11,19 +11,16 @@ const metrics = require('../utils/performance.js').metrics;
 const signals = require('signals');
 const co = require('co');
 
-
 /**
  * @class
  * @memberOf model
  * @extends {Base}
  */
-class Repository extends Base
-{
+class Repository extends Base {
     /**
      * @ignore
      */
-    constructor(loader)
-    {
+    constructor(loader) {
         super();
 
         // Assign
@@ -38,96 +35,79 @@ class Repository extends Base
         this.signals.replaced = new signals.Signal();
     }
 
-
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'model/Repository';
     }
-
 
     /**
      * @property {*}
      */
-    get signals()
-    {
+    get signals() {
         return this._signals;
     }
-
 
     /**
      * @property {Loader}
      */
-    get loader()
-    {
+    get loader() {
         return this._loader;
     }
 
-
     /**
      * @protected
      * @returns {Promise.<Array>}
      */
-    invalidateFind(query)
-    {
-        const queryId = (typeof query.uniqueId !== 'undefined') ? query.uniqueId : query;
-        return Promise.resolve(this._items.filter(function(item)
-        {
-            const itemId = (typeof item.uniqueId !== 'undefined') ? item.uniqueId : item;
-            return (itemId === queryId);
-        }));
+    invalidateFind(query) {
+        const queryId = typeof query.uniqueId !== 'undefined' ? query.uniqueId : query;
+        return Promise.resolve(
+            this._items.filter(function(item) {
+                const itemId = typeof item.uniqueId !== 'undefined' ? item.uniqueId : item;
+                return itemId === queryId;
+            })
+        );
     }
 
-
     /**
      * @protected
      * @returns {Promise.<Array>}
      */
-    invalidateBefore(result, action, item)
-    {
+    invalidateBefore(result, action, item) {
         result[action] = result[action] || [];
         result[action].push(item);
         return Promise.resolve();
     }
 
-
     /**
      * @protected
      * @returns {Promise.<Array>}
      */
-    invalidateAfter(result, action, item)
-    {
+    invalidateAfter(result, action, item) {
         result[action] = result[action] || [];
         return Promise.resolve();
     }
-
 
     /**
      * @protected
      * @returns {Promise}
      */
-    loadAfter(items)
-    {
+    loadAfter(items) {
         return Promise.resolve();
     }
-
 
     /**
      * @returns {Promise.<array>}
      */
-    getItems()
-    {
+    getItems() {
         metrics.start(this.className + '::getItems');
-        if (this._isLoaded || !this._loader)
-        {
+        if (this._isLoaded || !this._loader) {
             metrics.stop(this.className + '::getItems');
             return Promise.resolve(this._items);
         }
         const scope = this;
-        const promise = co(function* ()
-        {
+        const promise = co(function*() {
             metrics.start(scope.className + '::getItems - load');
             const data = yield scope._loader.load();
             const loadedItems = Array.isArray(data) ? data : [];
@@ -146,7 +126,6 @@ class Repository extends Base
         return promise;
     }
 
-
     /**
      * Called whenever any item has changed.
      * This is done automatically when invalidating the repository.
@@ -154,11 +133,9 @@ class Repository extends Base
      *
      * @returns {Promise}
      */
-    updatedItems()
-    {
+    updatedItems() {
         return Promise.resolve(true);
     }
-
 
     /**
      * Reload all or specific items from the underlying loader
@@ -166,63 +143,55 @@ class Repository extends Base
      * @param {Object} changes
      * @returns {Promise}
      */
-    invalidate(changes)
-    {
+    invalidate(changes) {
         const scope = this;
-        const promise = co(function* ()
-        {
+        const promise = co(function*() {
             const result = {};
 
             // Check if we need to load all items
-            if (!changes || !scope._isLoaded || !scope._items)
-            {
+            if (!changes || !scope._isLoaded || !scope._items) {
                 scope.logger.debug('invalidate: load all items');
 
-                if (scope._loader)
-                {
+                if (scope._loader) {
                     scope._items = yield scope._loader.load();
                     scope._isLoaded = true;
-                    for (const loadedItem of scope._items)
-                    {
+                    for (const loadedItem of scope._items) {
                         yield scope.invalidateBefore(result, 'add', loadedItem);
                         yield scope.invalidateAfter(result, 'add', loadedItem);
                     }
                 }
             }
             // Synchronize specific items
-            else
-            {
+            else {
                 let items = [];
                 let existingItems;
                 let existingItem;
 
                 // Load updates
-                if (changes.add)
-                {
+                if (changes.add) {
                     scope.logger.debug('invalidate: load updated items', changes.add);
                     items = yield scope._loader.load(changes.add);
                     scope.logger.debug('invalidate: loaded items', items);
                 }
 
                 // Apply updates
-                for (const item of items)
-                {
+                for (const item of items) {
                     existingItems = yield scope.invalidateFind(item);
 
                     // Update
-                    if (existingItems.length > 0)
-                    {
-                        for (existingItem of existingItems)
-                        {
-                            scope.logger.debug('invalidate: updating existing item', existingItem.pathString);
+                    if (existingItems.length > 0) {
+                        for (existingItem of existingItems) {
+                            scope.logger.debug(
+                                'invalidate: updating existing item',
+                                existingItem.pathString
+                            );
                             yield scope.invalidateBefore(result, 'update', existingItem);
                             existingItem.dehydrate(item);
                             yield scope.invalidateAfter(result, 'update', existingItem);
                         }
                     }
                     // Add
-                    else
-                    {
+                    else {
                         scope.logger.debug('invalidate: adding new item', item.pathString);
                         yield scope.invalidateBefore(result, 'add', item);
                         scope._items.push(item);
@@ -231,13 +200,10 @@ class Repository extends Base
                 }
 
                 // Remove items
-                if (changes.remove)
-                {
-                    for (const removeId of changes.remove)
-                    {
+                if (changes.remove) {
+                    for (const removeId of changes.remove) {
                         existingItems = yield scope.invalidateFind(removeId);
-                        for (existingItem of existingItems)
-                        {
+                        for (existingItem of existingItems) {
                             yield scope.invalidateBefore(result, 'remove', existingItem);
                             scope.remove(existingItem);
                             yield scope.invalidateAfter(result, 'remove', existingItem);
@@ -253,18 +219,15 @@ class Repository extends Base
         return promise;
     }
 
-
     /**
      * Adds all given items.
      *
      * @returns {Promise.<Boolean>}
      */
-    add()
-    {
+    add() {
         const scope = this;
         const items = Array.from(arguments);
-        const promise = this.getItems().then(function(data)
-        {
+        const promise = this.getItems().then(function(data) {
             Array.prototype.push.apply(data, items);
             scope.signals.added.dispatch(scope, items);
             return scope.updatedItems();
@@ -272,41 +235,34 @@ class Repository extends Base
         return promise;
     }
 
-
     /**
      * Removes items by their uniqueId's or the actual value's.
      *
      * @returns {Promise.<Boolean>}
      */
-    remove()
-    {
+    remove() {
         const scope = this;
         const items = Array.from(arguments);
-        const promise = this.getItems().then(function(data)
-        {
+        const promise = this.getItems().then(function(data) {
             const removeItems = [];
-            for (const item of items)
-            {
+            for (const item of items) {
                 // Get uniqueId
-                const uniqueId = (typeof item.uniqueId !== 'undefined') ? item.uniqueId : item;
+                const uniqueId = typeof item.uniqueId !== 'undefined' ? item.uniqueId : item;
 
                 // Find items
-                for (const dataItem of data)
-                {
-                    const dataItemUniqueId = (typeof dataItem.uniqueId !== 'undefined') ? dataItem.uniqueId : dataItem;
-                    if (uniqueId === dataItemUniqueId)
-                    {
+                for (const dataItem of data) {
+                    const dataItemUniqueId =
+                        typeof dataItem.uniqueId !== 'undefined' ? dataItem.uniqueId : dataItem;
+                    if (uniqueId === dataItemUniqueId) {
                         removeItems.push(dataItem);
                     }
                 }
             }
 
             // Remove em
-            for (const removeItem of removeItems)
-            {
+            for (const removeItem of removeItems) {
                 const index = data.indexOf(removeItem);
-                if (index > -1)
-                {
+                if (index > -1) {
                     data.splice(index, 1);
                 }
             }
@@ -317,18 +273,15 @@ class Repository extends Base
         return promise;
     }
 
-
     /**
      * Replace items by their uniqueId's or the actual value's.
      *
      * @returns {Promise.<Boolean>}
      */
-    replace()
-    {
+    replace() {
         const scope = this;
         const items = Array.from(arguments);
-        const promise = co(function* ()
-        {
+        const promise = co(function*() {
             yield scope.remove.apply(scope, items);
             yield scope.add.apply(scope, items);
             scope.signals.replaced.dispatch(scope, items);
@@ -337,37 +290,30 @@ class Repository extends Base
         return promise;
     }
 
-
     /**
      * Get a list of a specific property of all items.
      *
      * @param {string} property
      * @returns {Promise.<array>}
      */
-    getPropertyList(property)
-    {
-        const promise = this.getItems().then(function(data)
-        {
-            return Promise.resolve(data.map(item => item[property]));
+    getPropertyList(property) {
+        const promise = this.getItems().then(function(data) {
+            return Promise.resolve(data.map((item) => item[property]));
         });
         return promise;
     }
-
 
     /**
      * Get the first item.
      *
      * @returns {Promise.<*>}
      */
-    getFirst()
-    {
-        const promise = this.getItems().then(function(data)
-        {
+    getFirst() {
+        const promise = this.getItems().then(function(data) {
             return Promise.resolve(data[0] || false);
         });
         return promise;
     }
-
 
     /**
      * Find item by property queries
@@ -376,15 +322,12 @@ class Repository extends Base
      * @param {Function} [compare] function that returns true if both values provided are equal
      * @returns {Promise.<*>}
      */
-    findBy(properties, compare)
-    {
-        const promise = this.getItems().then(function(data)
-        {
+    findBy(properties, compare) {
+        const promise = this.getItems().then(function(data) {
             return Promise.resolve(data.find((item) => matchObject(item, properties, compare)));
         });
         return promise;
     }
-
 
     /**
      * Filter items by property queries.
@@ -393,16 +336,13 @@ class Repository extends Base
      * @param {Function} [compare] function that returns true if both values provided are equal
      * @returns {Promise.<Array>}
      */
-    filterBy(properties, compare)
-    {
-        const promise = this.getItems().then(function(data)
-        {
+    filterBy(properties, compare) {
+        const promise = this.getItems().then(function(data) {
             return Promise.resolve(data.filter((item) => matchObject(item, properties, compare)));
         });
         return promise;
     }
 }
-
 
 /**
  * Exports

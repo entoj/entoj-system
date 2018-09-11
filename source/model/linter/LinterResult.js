@@ -8,27 +8,22 @@ const ValueObject = require('../ValueObject.js').ValueObject;
 const ContentType = require('../ContentType.js').ContentType;
 const ContentKind = require('../ContentKind.js').ContentKind;
 
-
 /**
  * @memberOf model.linter
  * @extends {model.ValueObject}
  */
-class LinterResult extends ValueObject
-{
+class LinterResult extends ValueObject {
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'model.linter/LinterResult';
     }
 
-
     /**
      * @inheritDoc
      */
-    get fields()
-    {
+    get fields() {
         const fields = super.fields;
         fields.site = false;
         fields.linter = '';
@@ -41,129 +36,102 @@ class LinterResult extends ValueObject
         return fields;
     }
 
-
     /**
      * @property {model.site.Site}
      */
-    get site()
-    {
+    get site() {
         return this._site;
     }
 
-    set site(value)
-    {
+    set site(value) {
         this._site = value;
     }
-
 
     /**
      * @property {String}
      */
-    get linter()
-    {
-        return this._linter ;
+    get linter() {
+        return this._linter;
     }
 
-    set linter(value)
-    {
+    set linter(value) {
         this._linter = value;
     }
-
 
     /**
      * @type {String}
      */
-    get contentType()
-    {
+    get contentType() {
         return this._contentType;
     }
 
-    set contentType(value)
-    {
+    set contentType(value) {
         this._contentType = value;
     }
-
 
     /**
      * @type {String}
      * @see model.ContentType
      */
-    get contentKind()
-    {
+    get contentKind() {
         return this._contentKind;
     }
 
-    set contentKind(value)
-    {
+    set contentKind(value) {
         this._contentKind = value;
     }
-
 
     /**
      * @type {Boolean}
      */
-    get success()
-    {
+    get success() {
         return this._success;
     }
 
-    set success(value)
-    {
+    set success(value) {
         this._success = value;
     }
 
-
     /**
      * @type {Number}
      */
-    get warningCount()
-    {
+    get warningCount() {
         return this._warningCount;
     }
 
-    set warningCount(value)
-    {
+    set warningCount(value) {
         this._warningCount = value;
     }
-
 
     /**
      * @type {Number}
      */
-    get errorCount()
-    {
+    get errorCount() {
         return this._errorCount;
     }
 
-    set errorCount(value)
-    {
+    set errorCount(value) {
         this._errorCount = value;
     }
-
 
     /**
      * @type {Array}
      */
-    get messages()
-    {
+    get messages() {
         return this._messages;
     }
 
-    set messages(value)
-    {
+    set messages(value) {
         this._messages = value;
     }
-
 
     /**
      * @inheritDoc
      */
-    toString()
-    {
+    toString() {
         return `[${this.className} ${this.linter}]`;
     }
 }
-
 
 /**
  * Exports

@@ -8,59 +8,45 @@ const Task = require('./Task.js').Task;
 const CliLogger = require('../cli/CliLogger.js').CliLogger;
 const Stream = require('stream');
 
-
 /**
  * @memberOf task
  * @extends task.Task
  */
-class TransformingTask extends Task
-{
+class TransformingTask extends Task {
     /**
      * @inheritDocs
      */
-    static get injections()
-    {
-        return { 'parameters': [CliLogger] };
+    static get injections() {
+        return { parameters: [CliLogger] };
     }
 
-
     /**
      * @inheritDocs
      */
-    static get className()
-    {
+    static get className() {
         return 'task/TransformingTask';
     }
-
 
     /**
      * The section name is used for logging when the task is started
      *
      * @type {String}
      */
-    get sectionName()
-    {
+    get sectionName() {
         return 'TransformingTask';
     }
 
+    /**
+     * @inheritDoc
+     * @returns {void}
+     */
+    prepare(buildConfiguration, parameters) {}
 
     /**
      * @inheritDoc
      * @returns {void}
      */
-    prepare(buildConfiguration, parameters)
-    {
-    }
-
-
-    /**
-     * @inheritDoc
-     * @returns {void}
-     */
-    finalize(buildConfiguration, parameters)
-    {
-    }
-
+    finalize(buildConfiguration, parameters) {}
 
     /**
      * Allows to make last minute additions to the underlying stream.
@@ -68,11 +54,9 @@ class TransformingTask extends Task
      * @param {Stream} strem
      * @returns {Promise}
      */
-    flush(stream)
-    {
+    flush(stream) {
         return Promise.resolve();
     }
-
 
     /**
      * Applies the tasks work on a file. This is calles for each
@@ -83,19 +67,15 @@ class TransformingTask extends Task
      * @param {Object} parameters
      * @returns {Promise<VinylFile>}
      */
-    processFile(file, buildConfiguration, parameters)
-    {
+    processFile(file, buildConfiguration, parameters) {
         return Promise.resolve(file);
     }
-
 
     /**
      * @inheritDocs
      */
-    stream(stream, buildConfiguration, parameters)
-    {
-        if (!stream)
-        {
+    stream(stream, buildConfiguration, parameters) {
+        if (!stream) {
             return super.stream(stream, buildConfiguration, parameters);
         }
         const section = this.cliLogger.section(this.sectionName);
@@ -103,33 +83,27 @@ class TransformingTask extends Task
 
         // Render stream
         const resultStream = new Stream.Transform({ objectMode: true });
-        resultStream._transform = (file, encoding, callback) =>
-        {
+        resultStream._transform = (file, encoding, callback) => {
             this.processFile(file, buildConfiguration, parameters)
-                .then((resultFile) =>
-                {
-                    if (resultFile)
-                    {
+                .then((resultFile) => {
+                    if (resultFile) {
                         resultStream.push(resultFile);
                     }
                     callback();
                 })
-                .catch((error) =>
-                {
+                .catch((error) => {
                     /* istanbul ignore next */
                     this.logger.error(error);
                     /* istanbul ignore next */
                     callback();
                 });
         };
-        resultStream._flush = (callback) =>
-        {
+        resultStream._flush = (callback) => {
             this.flush(resultStream).then(callback);
         };
 
         // Wait for stream
-        resultStream.on('finish', () =>
-        {
+        resultStream.on('finish', () => {
             this.finalize(buildConfiguration, parameters);
             this.cliLogger.end(section);
         });
@@ -137,7 +111,6 @@ class TransformingTask extends Task
         return stream.pipe(resultStream);
     }
 }
-
 
 /**
  * Exports

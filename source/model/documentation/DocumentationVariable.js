@@ -9,22 +9,18 @@ const DocumentationCode = require('./DocumentationCode.js').DocumentationCode;
 /**
  * @memberOf model.documentation
  */
-class DocumentationVariable extends DocumentationCode
-{
+class DocumentationVariable extends DocumentationCode {
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'model.documentation/DocumentationVariable';
     }
-
 
     /**
      * @inheritDocs
      */
-    get fields()
-    {
+    get fields() {
         const fields = super.fields;
         fields.enumeration = [];
         fields.type = [];
@@ -32,49 +28,39 @@ class DocumentationVariable extends DocumentationCode
         return fields;
     }
 
-
     /**
      * @property {Array}
      */
-    get type()
-    {
+    get type() {
         return this._type;
     }
 
-    set type(value)
-    {
+    set type(value) {
         this._type = value;
     }
-
 
     /**
      * @property {Array}
      */
-    get enumeration()
-    {
+    get enumeration() {
         return this._enumeration;
     }
 
-    set enumeration(value)
-    {
+    set enumeration(value) {
         this._enumeration = value;
     }
-
 
     /**
      * @property {*}
      */
-    get value()
-    {
+    get value() {
         return this._value;
     }
 
-    set value(value)
-    {
+    set value(value) {
         this._value = value;
     }
 }
-
 
 /**
  * Exports

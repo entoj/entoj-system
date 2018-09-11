@@ -1,7 +1,4 @@
-
 /**
  * @namespace model.content
  */
-module.exports =
-{
-};
+module.exports = {};

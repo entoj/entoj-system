@@ -13,87 +13,71 @@ const co = require('co');
 const fs = require('fs');
 const path = require('path');
 
-
 // Returns preconfigured test utils
-function configure(options)
-{
+function configure(options) {
     // Prepare options
     const opts = options || {};
-    const configurationClass = opts.configurationClass
-        ? opts.configurationClass
-        : Configuration;
-    const rendererClass = opts.rendererClass
-        ? opts.renderer
-        : Renderer;
-    const transformerClass = opts.transformerClass
-        ? opts.transformerClass
-        : Transformer;
-    const parserClass = opts.parserClass
-        ? opts.parserClass
-        : JinjaParser;
+    const configurationClass = opts.configurationClass ? opts.configurationClass : Configuration;
+    const rendererClass = opts.rendererClass ? opts.renderer : Renderer;
+    const transformerClass = opts.transformerClass ? opts.transformerClass : Transformer;
+    const parserClass = opts.parserClass ? opts.parserClass : JinjaParser;
     const fixtureInputPath = opts.fixtureInputPath
         ? opts.fixtureInputPath
         : opts.basePath || ES_FIXTURES + '/export';
     const fixtureExpectedPath = opts.fixtureExpectedPath
         ? opts.fixtureExpectedPath
         : opts.basePath || ES_FIXTURES + '/export';
-    const resultExtension = opts.resultExtension
-        ? opts.resultExtension
-        : '.html';
+    const resultExtension = opts.resultExtension ? opts.resultExtension : '.html';
 
     // Create a export configuration
-    function createConfiguration(entityPath, macroName, settings, parser, renderer, transformer)
-    {
-        const promise = co(function*()
-        {
+    function createConfiguration(entityPath, macroName, settings, parser, renderer, transformer) {
+        const promise = co(function*() {
             const entity = yield global.fixtures.globalRepository.resolve(entityPath);
-            if (!entity)
-            {
+            if (!entity) {
                 throw new Error('Could not find entity ' + entityPath);
             }
-            const macro = yield global.fixtures.globalRepository.resolveMacro(entity.entity.site, macroName);
+            const macro = yield global.fixtures.globalRepository.resolveMacro(
+                entity.entity.site,
+                macroName
+            );
             let config;
-            if (opts.configurationCreator)
-            {
-                config = opts.configurationCreator(entity.entity,
+            if (opts.configurationCreator) {
+                config = opts.configurationCreator(
+                    entity.entity,
                     macro,
                     settings || {},
                     parser || new parserClass(),
                     renderer || new rendererClass(),
                     transformer || new transformerClass(),
                     global.fixtures.globalRepository,
-                    global.fixtures.buildConfiguration);
-            }
-            else
-            {
-                config = new configurationClass(entity.entity,
+                    global.fixtures.buildConfiguration
+                );
+            } else {
+                config = new configurationClass(
+                    entity.entity,
                     macro,
                     settings || {},
                     parser || new parserClass(),
                     renderer || new rendererClass(),
                     transformer || new transformerClass(),
                     global.fixtures.globalRepository,
-                    global.fixtures.buildConfiguration);
+                    global.fixtures.buildConfiguration
+                );
             }
             return config;
         }).catch(ErrorHandler.handler());
         return promise;
     }
 
-
     // Loads a fixture from file
-    function loadFixture(filename, type)
-    {
-        const promise = co(function *()
-        {
+    function loadFixture(filename, type) {
+        const promise = co(function*() {
             const source = fs.readFileSync(filename, { encoding: 'utf8' }).replace(/\r/g, '');
             let result = source;
-            if (type === 'json')
-            {
+            if (type === 'json') {
                 result = JSON.parse(result);
             }
-            if (type === 'ast')
-            {
+            if (type === 'ast') {
                 const parser = new JinjaParser();
                 result = yield parser.parseString(source);
             }
@@ -102,32 +86,25 @@ function configure(options)
         return promise;
     }
 
-
-    function loadInputFixture(filename, type)
-    {
+    function loadInputFixture(filename, type) {
         return loadFixture(path.join(fixtureInputPath, filename), type);
     }
 
-
-    function loadExpectedFixture(filename, type)
-    {
+    function loadExpectedFixture(filename, type) {
         return loadFixture(path.join(fixtureExpectedPath, filename), type);
     }
 
-
     // Tests a node against a fixture
-    function testNodeFixture(name, node)
-    {
-        const promise = co(function *()
-        {
+    function testNodeFixture(name, node) {
+        const promise = co(function*() {
             const testee = JSON.parse(JSON.stringify(node.serialize()));
-            const expected = yield loadFixture(path.join(fixtureExpectedPath, '/' + name + '.expected.json'), 'json');
-            try
-            {
+            const expected = yield loadFixture(
+                path.join(fixtureExpectedPath, '/' + name + '.expected.json'),
+                'json'
+            );
+            try {
                 expect(testee).to.be.deep.equal(expected);
-            }
-            catch(e)
-            {
+            } catch (e) {
                 /* eslint no-console: "off" */
                 console.log('Testee:');
                 console.log(JSON.stringify(testee, null, 4));
@@ -139,7 +116,6 @@ function configure(options)
         return promise;
     }
 
-
     // Runs a simple testfixture
     function testRendererFixture(name, renderer, settings)
     {
@@ -149,13 +125,10 @@ function configure(options)
             const expected = yield loadFixture(path.join(fixtureExpectedPath, '/' + name + '.expected' + resultExtension));
             const configuration = yield createConfiguration('base/elements/e-cta', 'e_cta', settings, undefined, renderer);
             let result = '';
-            try
-            {
+            try {
                 result = yield renderer.render(ast, configuration);
                 expect(result.trim()).to.be.deep.equal(expected.trim());
-            }
-            catch(e)
-            {
+            } catch (e) {
                 /* eslint no-console: "off" */
                 console.log('Testee:');
                 console.log(result);
@@ -167,7 +140,6 @@ function configure(options)
         return promise;
     }
 
-
     const exports = {};
     exports.opts = opts;
     exports.createConfiguration = createConfiguration;
@@ -178,7 +150,6 @@ function configure(options)
     exports.testRendererFixture = testRendererFixture;
     return exports;
 }
-
 
 /**
  * Exports

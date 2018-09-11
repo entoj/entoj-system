@@ -8,20 +8,16 @@ const ArgumentNode = require(ES_SOURCE + '/export/ast/ArgumentNode.js').Argument
 const nodeListSpec = require(ES_TEST + '/export/ast/NodeListShared.js').spec;
 const baseSpec = require(ES_TEST + '/BaseShared.js').spec;
 
-
 /**
  * Shared CallableNode spec
  */
-function spec(type, className, fixture, prepareParameters)
-{
+function spec(type, className, fixture, prepareParameters) {
     /**
      * NodeList Test
      */
     const nodeName = className.split('/').pop();
-    const defaultFixture =
-    {
-        serialized:
-        {
+    const defaultFixture = {
+        serialized: {
             type: nodeName,
             name: undefined,
             arguments: [],
@@ -30,16 +26,13 @@ function spec(type, className, fixture, prepareParameters)
     };
     nodeListSpec(type, className, fixture || defaultFixture, prepareParameters);
 
-
     /**
      * CallableNode tests
      */
     baseSpec.assertProperty(new type(), ['name'], 'name', undefined);
 
-    describe('#constructor', function()
-    {
-        it('should allow to prepopulate name and parameters', function()
-        {
+    describe('#constructor', function() {
+        it('should allow to prepopulate name and parameters', function() {
             const argument = new ArgumentNode();
             const testee = new type({ name: 'name', arguments: [argument] });
             expect(testee.name).to.be.equal('name');
@@ -47,10 +40,8 @@ function spec(type, className, fixture, prepareParameters)
         });
     });
 
-    describe('#arguments', function()
-    {
-        it('should set parent', function()
-        {
+    describe('#arguments', function() {
+        it('should set parent', function() {
             const testee = new type();
             const argument = new ArgumentNode();
             testee.arguments.push(argument);

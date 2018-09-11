@@ -6,12 +6,10 @@
 const Renderer = require(ES_SOURCE + '/export/Renderer.js').Renderer;
 const rendererSpec = require('./RendererShared.js').spec;
 
-
 /**
  * Spec
  */
-describe(Renderer.className, function()
-{
+describe(Renderer.className, function() {
     /**
      * Renderer Test
      */

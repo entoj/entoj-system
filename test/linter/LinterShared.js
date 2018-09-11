@@ -6,12 +6,10 @@
  */
 const baseSpec = require(ES_TEST + '/BaseShared.js').spec;
 
-
 /**
  * Shared Linter spec
  */
-function spec(type, className, fixture, prepareParameters)
-{
+function spec(type, className, fixture, prepareParameters) {
     /**
      * Base Test
      */
@@ -20,31 +18,25 @@ function spec(type, className, fixture, prepareParameters)
     /**
      * Linter Test
      */
-    const createTestee = function()
-    {
+    const createTestee = function() {
         let parameters = Array.from(arguments);
-        if (prepareParameters)
-        {
+        if (prepareParameters) {
             parameters = prepareParameters(parameters);
         }
         return new type(...parameters);
     };
 
-    describe('#lint()', function()
-    {
-        it('should return a promise', function()
-        {
+    describe('#lint()', function() {
+        it('should return a promise', function() {
             const testee = createTestee();
             const promise = testee.lint();
             expect(promise).to.be.instanceof(Promise);
             return promise;
         });
 
-        it('should resolve to an object with a success flag and the linting results', function()
-        {
+        it('should resolve to an object with a success flag and the linting results', function() {
             const testee = createTestee();
-            const promise = testee.lint().then(function(result)
-            {
+            const promise = testee.lint().then(function(result) {
                 expect(result.success).to.exist;
                 expect(result.errorCount).to.exist;
                 expect(result.warningCount).to.exist;
@@ -53,13 +45,10 @@ function spec(type, className, fixture, prepareParameters)
             return promise;
         });
 
-        if (fixture && fixture.source)
-        {
-            it('should apply no rules per default', function()
-            {
+        if (fixture && fixture.source) {
+            it('should apply no rules per default', function() {
                 const testee = createTestee();
-                const promise = testee.lint(fixture.source).then(function(result)
-                {
+                const promise = testee.lint(fixture.source).then(function(result) {
                     expect(result.success).to.be.ok;
                     expect(result.errorCount).to.equal(0);
                     expect(result.warningCount).to.equal(0);
@@ -69,13 +58,10 @@ function spec(type, className, fixture, prepareParameters)
             });
         }
 
-        if (fixture && fixture.source && fixture.warningRules)
-        {
-            it('should apply the rules configured via the constructor', function()
-            {
+        if (fixture && fixture.source && fixture.warningRules) {
+            it('should apply the rules configured via the constructor', function() {
                 const testee = createTestee(fixture.warningRules);
-                const promise = testee.lint(fixture.source).then(function(result)
-                {
+                const promise = testee.lint(fixture.source).then(function(result) {
                     expect(result.success).to.be.false;
                     expect(result.errorCount).to.be.equal(0);
                     expect(result.warningCount).to.be.equal(fixture.warningCount);
@@ -84,24 +70,24 @@ function spec(type, className, fixture, prepareParameters)
                 return promise;
             });
 
-            it('should allow to specify a filename via options', function()
-            {
+            it('should allow to specify a filename via options', function() {
                 const testee = createTestee(fixture.warningRules);
-                const promise = testee.lint(fixture.source, { filename: 'filename.ext' }).then(function(result)
-                {
-                    expect(result.messages.length).to.be.above(0);
-                    expect(result.messages[0].filename).to.be.equal('filename.ext');
-                });
+                const promise = testee
+                    .lint(fixture.source, { filename: 'filename.ext' })
+                    .then(function(result) {
+                        expect(result.messages.length).to.be.above(0);
+                        expect(result.messages[0].filename).to.be.equal('filename.ext');
+                    });
                 return promise;
             });
 
-            it('should add the linter type to each message', function()
-            {
+            it('should add the linter type to each message', function() {
                 const testee = createTestee(fixture.warningRules);
-                const promise = testee.lint(fixture.source).then(function(result)
-                {
+                const promise = testee.lint(fixture.source).then(function(result) {
                     expect(result.messages.length).to.be.above(0);
-                    expect(result.messages[0].linter).to.be.equal(fixture.linterClassName || className);
+                    expect(result.messages[0].linter).to.be.equal(
+                        fixture.linterClassName || className
+                    );
                 });
                 return promise;
             });

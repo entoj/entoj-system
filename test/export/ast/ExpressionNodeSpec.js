@@ -9,17 +9,14 @@ const nodeListSpec = require('./NodeListShared.js').spec;
 /**
  * Spec
  */
-describe(ExpressionNode.className, function()
-{
+describe(ExpressionNode.className, function() {
     /**
      * NodeList Test
      */
-    nodeListSpec(ExpressionNode, 'export.ast/ExpressionNode',
-        {
-            serialized:
-            {
-                type: 'ExpressionNode',
-                children: []
-            }
-        });
+    nodeListSpec(ExpressionNode, 'export.ast/ExpressionNode', {
+        serialized: {
+            type: 'ExpressionNode',
+            children: []
+        }
+    });
 });

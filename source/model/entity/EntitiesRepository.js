@@ -15,13 +15,11 @@ const assertParameter = require('../../utils/assert.js').assertParameter;
 const metrics = require('../../utils/performance.js').__metrics;
 const co = require('co');
 
-
 /**
  * EntityAspect cache
  */
 let entityAspectCacheEnabled = false;
 const entityAspectCache = {};
-
 
 /**
  * Creates a EntityAspect and caches it if enabled
@@ -30,56 +28,46 @@ const entityAspectCache = {};
  * @param {model.site.Site} site
  * @return {model.entity.EntityAspect}
  */
-function createEntityAspect(entity, site)
-{
+function createEntityAspect(entity, site) {
     metrics.start('EntitiesRepository::createEntityAspect');
-    if (!entityAspectCacheEnabled)
-    {
+    if (!entityAspectCacheEnabled) {
         metrics.stop('EntitiesRepository::createEntityAspect');
         return new EntityAspect(entity, site);
     }
     metrics.start('EntitiesRepository::createEntityAspect - key');
     const key = site.name + '::' + entity.idString;
     metrics.stop('EntitiesRepository::createEntityAspect - key');
-    if (!entityAspectCacheEnabled || !entityAspectCache[key])
-    {
+    if (!entityAspectCacheEnabled || !entityAspectCache[key]) {
         entityAspectCache[key] = new EntityAspect(entity, site);
     }
     metrics.stop('EntitiesRepository::createEntityAspect');
     return entityAspectCache[key];
 }
 
-
 /**
  * Enables the EntityAspect cache
  */
-function enableEntityAspectCache()
-{
+function enableEntityAspectCache() {
     entityAspectCacheEnabled = true;
 }
-
 
 /**
  * Disables the EntityAspect cache
  */
-function disableEntityAspectCache()
-{
+function disableEntityAspectCache() {
     entityAspectCacheEnabled = false;
 }
-
 
 /**
  * @class
  * @memberOf model.entity
  * @extends {Base}
  */
-class EntitiesRepository extends Repository
-{
+class EntitiesRepository extends Repository {
     /**
      * @param {EntityIdParser} entityIdParser
      */
-    constructor(entityIdParser, loader)
-    {
+    constructor(entityIdParser, loader) {
         super(loader);
 
         // Check params
@@ -90,62 +78,46 @@ class EntitiesRepository extends Repository
         this._entityIdTemplate = this._entityIdParser.idTemplate;
     }
 
-
     /**
      * @inheritDoc
      */
-    static get injections()
-    {
-        return { 'parameters': [IdParser, EntitiesLoader] };
+    static get injections() {
+        return { parameters: [IdParser, EntitiesLoader] };
     }
-
 
     /**
      * @inheritDocs
      */
-    static get className()
-    {
+    static get className() {
         return 'model.entity/EntitiesRepository';
     }
-
 
     /**
      * @property {EntityIdParser}
      */
-    get entityIdParser()
-    {
+    get entityIdParser() {
         return this._entityIdParser;
     }
-
 
     /**
      * @protected
      * @returns {Promise.<Array>}
      */
-    invalidateFind(query)
-    {
+    invalidateFind(query) {
         const scope = this;
-        const promise = co(function *()
-        {
+        const promise = co(function*() {
             let result = [];
-            if (typeof query == 'string')
-            {
+            if (typeof query == 'string') {
                 const entity = yield scope.getById(query);
-                if (entity)
-                {
+                if (entity) {
                     result.push(entity);
                 }
-            }
-            else if (query instanceof Entity)
-            {
+            } else if (query instanceof Entity) {
                 const entity = yield scope.getById(query.id);
-                if (entity)
-                {
+                if (entity) {
                     result.push(entity instanceof EntityAspect ? entity.entity : entity);
                 }
-            }
-            else
-            {
+            } else {
                 result = yield Repository.prototype.invalidateFind.apply(scope, [query]);
             }
             return result;
@@ -153,43 +125,34 @@ class EntitiesRepository extends Repository
         return promise;
     }
 
-
     /**
      * @param {Entity}
      * @param {Site}
      * @returns {Promise.<Array>}
      */
-    filterEntities(site, entityCategory, item)
-    {
+    filterEntities(site, entityCategory, item) {
         metrics.start(this.className + '::filterEntities');
-        if (!item)
-        {
+        if (!item) {
             metrics.stop(this.className + '::filterEntities');
             return false;
         }
-        if (site && (item.id.site !== site) && (item.usedBy.indexOf(site) == -1))
-        {
+        if (site && item.id.site !== site && item.usedBy.indexOf(site) == -1) {
             metrics.stop(this.className + '::filterEntities');
             return false;
         }
-        if (site && (item.id.site !== site) && Array.isArray(site.extendExcludes))
-        {
-            for (const exclude of site.extendExcludes)
-            {
-                if (item.id.category.longName.toLowerCase() === exclude.toLowerCase())
-                {
+        if (site && item.id.site !== site && Array.isArray(site.extendExcludes)) {
+            for (const exclude of site.extendExcludes) {
+                if (item.id.category.longName.toLowerCase() === exclude.toLowerCase()) {
                     metrics.stop(this.className + '::filterEntities');
                     return false;
                 }
-                if (item.id.category.pluralName.toLowerCase() === exclude.toLowerCase())
-                {
+                if (item.id.category.pluralName.toLowerCase() === exclude.toLowerCase()) {
                     metrics.stop(this.className + '::filterEntities');
                     return false;
                 }
             }
         }
-        if (entityCategory && (item.id.category !== entityCategory))
-        {
+        if (entityCategory && item.id.category !== entityCategory) {
             metrics.stop(this.className + '::filterEntities');
             return false;
         }
@@ -197,109 +160,91 @@ class EntitiesRepository extends Repository
         return true;
     }
 
-
     /**
      * @param {Site}
      * @returns {Promise.<Array>}
      */
-    getBySite(site)
-    {
+    getBySite(site) {
         // Check params
         assertParameter(this, 'site', site, true, Site);
 
         // Find
         const scope = this;
-        const promise = co(function *()
-        {
+        const promise = co(function*() {
             metrics.start(scope.className + '::getBySite');
             metrics.start(scope.className + '::getBySite - getItems');
             const entities = yield scope.getItems();
             metrics.stop(scope.className + '::getBySite - getItems');
             const result = entities
                 .filter(scope.filterEntities.bind(scope, site, false))
-                .map(item => createEntityAspect(item, site));
+                .map((item) => createEntityAspect(item, site));
             metrics.stop(scope.className + '::getBySite');
             return result;
         });
         return promise;
     }
 
-
     /**
      * @param {EntityCategory}
      * @returns {Promise.<Array>}
      */
-    getByCategory(entityCategory)
-    {
+    getByCategory(entityCategory) {
         // Check params
         assertParameter(this, 'entityCategory', entityCategory, true, EntityCategory);
 
         // Find
         const scope = this;
-        const promise = this.getItems().then(function(data)
-        {
+        const promise = this.getItems().then(function(data) {
             return data.filter(scope.filterEntities.bind(scope, false, entityCategory));
         });
         return promise;
     }
-
 
     /**
      * @param {Site}
      * @param {EntityCategory}
      * @returns {Promise.<Array>}
      */
-    getBySiteAndCategory(site, entityCategory)
-    {
+    getBySiteAndCategory(site, entityCategory) {
         // Check params
         assertParameter(this, 'site', site, true, Site);
         assertParameter(this, 'entityCategory', entityCategory, true, EntityCategory);
 
         // Find
         const scope = this;
-        const promise = this.getItems().then(function(data)
-        {
+        const promise = this.getItems().then(function(data) {
             const result = data
                 .filter(scope.filterEntities.bind(scope, site, entityCategory))
-                .map(item => createEntityAspect(item, site));
+                .map((item) => createEntityAspect(item, site));
             return result;
         });
         return promise;
     }
-
 
     /**
      * @param {string|EntityId}
      * @param [{Site}]
      * @returns {Promise.<Entity>}
      */
-    getById(entityId, site)
-    {
+    getById(entityId, site) {
         const scope = this;
-        const promise = co(function *()
-        {
+        const promise = co(function*() {
             const data = yield scope.getItems();
             let id = entityId;
-            if (typeof entityId === 'string')
-            {
+            if (typeof entityId === 'string') {
                 const parsedId = yield scope.entityIdParser.parse(entityId);
                 id = parsedId.entityId;
-                if (!id)
-                {
+                if (!id) {
                     return false;
                 }
-            }
-            else
-            {
+            } else {
                 id = entityId.clone();
             }
-            if (site)
-            {
+            if (site) {
                 id.site = site;
             }
-            const entity = data.find(item => item.id.isEqualTo(id, true));
-            if (entity && id && id.site)
-            {
+            const entity = data.find((item) => item.id.isEqualTo(id, true));
+            if (entity && id && id.site) {
                 return createEntityAspect(entity, id.site);
             }
 

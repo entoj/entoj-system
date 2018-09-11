@@ -6,21 +6,17 @@
  */
 const CallableNode = require('./CallableNode.js').CallableNode;
 
-
 /**
  * A custom tag call
  */
-class TagNode extends CallableNode
-{
+class TagNode extends CallableNode {
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'export.ast/TagNode';
     }
 }
-
 
 /**
  * Exports

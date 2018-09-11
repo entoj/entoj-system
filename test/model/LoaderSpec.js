@@ -9,7 +9,6 @@ const loaderSpec = require('./LoaderShared.js').spec;
 /**
  * Spec
  */
-describe(Loader.className, function()
-{
+describe(Loader.className, function() {
     loaderSpec(Loader, 'model/Loader');
 });

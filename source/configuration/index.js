@@ -1,8 +1,6 @@
-
 /**
  * @namespace configuration
  */
-module.exports =
-{
+module.exports = {
     SystemModuleConfiguration: require('./SystemModuleConfiguration.js').SystemModuleConfiguration
 };

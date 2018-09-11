@@ -9,17 +9,14 @@ const ContentKind = require(ES_SOURCE + '/model/ContentKind.js').ContentKind;
 const baseSpec = require('../../BaseShared.js').spec;
 const valueObjectSpec = require('../ValueObjectShared.js').spec;
 
-
 /**
  * Spec
  */
-describe(LinterResult.className, function()
-{
+describe(LinterResult.className, function() {
     /**
      * Base Test
      */
     valueObjectSpec(LinterResult, 'model.linter/LinterResult');
-
 
     /**
      * LinterResult Test
@@ -28,7 +25,12 @@ describe(LinterResult.className, function()
     // Simple properties
     baseSpec.assertProperty(new LinterResult(), ['linter'], 'TestLinter', '');
     baseSpec.assertProperty(new LinterResult(), ['contentType'], ContentType.SASS, ContentType.ANY);
-    baseSpec.assertProperty(new LinterResult(), ['contentKind'], ContentKind.CSS, ContentKind.UNKOWN);
+    baseSpec.assertProperty(
+        new LinterResult(),
+        ['contentKind'],
+        ContentKind.CSS,
+        ContentKind.UNKOWN
+    );
     baseSpec.assertProperty(new LinterResult(), ['success'], true, false);
     baseSpec.assertProperty(new LinterResult(), ['warningCount'], 10, 0);
     baseSpec.assertProperty(new LinterResult(), ['errorCount'], 5, 0);

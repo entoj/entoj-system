@@ -7,8 +7,10 @@
 const Base = require('../Base.js').Base;
 const ErrorHandler = require('../error/ErrorHandler.js').ErrorHandler;
 const CliLogger = require('../cli/CliLogger.js').CliLogger;
-const PathesConfiguration = require('../model/configuration/PathesConfiguration.js').PathesConfiguration;
-const EntityCategoriesRepository = require('../model/entity/EntityCategoriesRepository.js').EntityCategoriesRepository;
+const PathesConfiguration = require('../model/configuration/PathesConfiguration.js')
+    .PathesConfiguration;
+const EntityCategoriesRepository = require('../model/entity/EntityCategoriesRepository.js')
+    .EntityCategoriesRepository;
 const IdParser = require('../parser/entity/IdParser.js').IdParser;
 const assertParameter = require('../utils/assert.js').assertParameter;
 const urlify = require('../utils/urls.js').urlify;
@@ -21,12 +23,10 @@ const clone = require('lodash.clone');
 const signals = require('signals');
 const path = require('path');
 
-
 /**
  * @memberOf watch
  */
-class FileWatcher extends Base
-{
+class FileWatcher extends Base {
     /**
      * @param {CliLogger} cliLogger
      * @param {PathesConfiguration} pathesConfiguration
@@ -34,14 +34,31 @@ class FileWatcher extends Base
      * @param {IdParser} entityIdParser
      * @param {*} options
      */
-    constructor(cliLogger, pathesConfiguration, entityCategoriesRepository, entityIdParser, options)
-    {
+    constructor(
+        cliLogger,
+        pathesConfiguration,
+        entityCategoriesRepository,
+        entityIdParser,
+        options
+    ) {
         super();
 
         //Check params
         assertParameter(this, 'cliLogger', cliLogger, true, CliLogger);
-        assertParameter(this, 'pathesConfiguration', pathesConfiguration, true, PathesConfiguration);
-        assertParameter(this, 'entityCategoriesRepository', entityCategoriesRepository, true, EntityCategoriesRepository);
+        assertParameter(
+            this,
+            'pathesConfiguration',
+            pathesConfiguration,
+            true,
+            PathesConfiguration
+        );
+        assertParameter(
+            this,
+            'entityCategoriesRepository',
+            entityCategoriesRepository,
+            true,
+            EntityCategoriesRepository
+        );
         assertParameter(this, 'entityIdParser', entityIdParser, true, IdParser);
 
         // Assign options
@@ -58,77 +75,69 @@ class FileWatcher extends Base
         this.signals.changed = new signals.Signal();
 
         // Add debounced handler
-        this._processEventsDebounced = debounce(function()
-        {
+        this._processEventsDebounced = debounce(function() {
             scope.processEvents(clone(this._events));
         }, opts.debounce || 250);
     }
 
-
     /**
      * @inheritDoc
      */
-    static get injections()
-    {
-        return { 'parameters': [CliLogger, PathesConfiguration, EntityCategoriesRepository, IdParser, 'watch/FileWatcher.options'] };
+    static get injections() {
+        return {
+            parameters: [
+                CliLogger,
+                PathesConfiguration,
+                EntityCategoriesRepository,
+                IdParser,
+                'watch/FileWatcher.options'
+            ]
+        };
     }
-
 
     /**
      * @inheritDocs
      */
-    static get className()
-    {
+    static get className() {
         return 'watch/FileWatcher';
     }
 
-
     /**
      * @inheritDocs
      */
-    get signals()
-    {
+    get signals() {
         return this._signals;
     }
-
 
     /**
      * @type {cli.CliLogger}
      */
-    get cliLogger()
-    {
+    get cliLogger() {
         return this._cliLogger;
     }
-
 
     /**
      * @returns {Promise.<*>}
      */
-    processEvents(events)
-    {
+    processEvents(events) {
         /* eslint-disable complexity */
         this._events = [];
         const scope = this;
-        const promise = co(function *()
-        {
-            const result =
-            {
+        const promise = co(function*() {
+            const result = {
                 files: [],
                 extensions: [],
                 sites: []
             };
 
-            const compare = function(value1, value2)
-            {
-                return (value1 === value2) || (urlify(value1) === urlify(value2));
+            const compare = function(value1, value2) {
+                return value1 === value2 || urlify(value1) === urlify(value2);
             };
 
-            for (const event of events)
-            {
+            for (const event of events) {
                 // Add path & extension
                 result.files.push(event.path);
-                if (path.extname(event.path) != '')
-                {
+                if (path.extname(event.path) != '') {
                     result.extensions.push(path.extname(event.path));
                 }
 
@@ -141,26 +150,28 @@ class FileWatcher extends Base
 
                 // Get category
                 let entityCategory;
-                if (entityCategoryName)
-                {
-                    entityCategory = yield scope._entityCategoriesRepository.findBy({ '*': entityCategoryName }, compare);
+                if (entityCategoryName) {
+                    entityCategory = yield scope._entityCategoriesRepository.findBy(
+                        { '*': entityCategoryName },
+                        compare
+                    );
                 }
 
                 // Get entity id
                 let entityId;
-                if (entityName)
-                {
+                if (entityName) {
                     entityId = yield scope._entityIdParser.parse(entityName);
                 }
 
                 // Site
-                if (siteName)
-                {
+                if (siteName) {
                     result.sites.push(siteName);
-                    if (!entityCategory && (!entityCategoryName || entityCategoryName.indexOf('.') !== -1) && !entityId)
-                    {
-                        if (parts.length > 2)
-                        {
+                    if (
+                        !entityCategory &&
+                        (!entityCategoryName || entityCategoryName.indexOf('.') !== -1) &&
+                        !entityId
+                    ) {
+                        if (parts.length > 2) {
                             eventName = 'add';
                         }
                         result.site = result.site || {};
@@ -168,87 +179,78 @@ class FileWatcher extends Base
                         result.site[eventName].push('/' + siteName);
 
                         const sitePath = '/' + siteName;
-                        if (result.site[eventName].indexOf(sitePath) === -1)
-                        {
+                        if (result.site[eventName].indexOf(sitePath) === -1) {
                             result.site[eventName].push(sitePath);
                         }
                     }
                 }
 
                 // EntityCategory
-                if (siteName && entityCategory && !entityCategory.isGlobal && !entityId)
-                {
-                    if (parts.length > 3)
-                    {
+                if (siteName && entityCategory && !entityCategory.isGlobal && !entityId) {
+                    if (parts.length > 3) {
                         eventName = 'add';
                     }
                     result.entityCategory = result.entityCategory || {};
                     result.entityCategory[eventName] = result.entityCategory[eventName] || [];
 
                     const entityCategoryPath = '/' + siteName + '/' + entityCategoryName;
-                    if (result.entityCategory[eventName].indexOf(entityCategoryPath) === -1)
-                    {
+                    if (result.entityCategory[eventName].indexOf(entityCategoryPath) === -1) {
                         result.entityCategory[eventName].push(entityCategoryPath);
                     }
                 }
 
                 // Global EntityCategory
-                if (siteName && entityCategory && entityCategory.isGlobal && !entityId)
-                {
-                    if (parts.length > 3)
-                    {
+                if (siteName && entityCategory && entityCategory.isGlobal && !entityId) {
+                    if (parts.length > 3) {
                         eventName = 'add';
                     }
                     result.entity = result.entity || {};
                     result.entity[eventName] = result.entity[eventName] || [];
 
                     const entityPath = '/' + siteName + '/' + entityCategoryName;
-                    if (result.entity[eventName].indexOf(entityPath) === -1)
-                    {
+                    if (result.entity[eventName].indexOf(entityPath) === -1) {
                         result.entity[eventName].push(entityPath);
                     }
                 }
 
                 // Entity
-                if (siteName && entityCategory && entityId)
-                {
-                    if (parts.length > 4)
-                    {
+                if (siteName && entityCategory && entityId) {
+                    if (parts.length > 4) {
                         eventName = 'add';
                     }
                     result.entity = result.entity || {};
                     result.entity[eventName] = result.entity[eventName] || [];
 
                     const entityPath = '/' + siteName + '/' + entityCategoryName + '/' + entityName;
-                    if (result.entity[eventName].indexOf(entityPath) === -1)
-                    {
+                    if (result.entity[eventName].indexOf(entityPath) === -1) {
                         result.entity[eventName].push(entityPath);
                     }
                 }
             }
 
             // Remove has higher priority than add
-            if (result.site && result.site.add && result.site.remove)
-            {
+            if (result.site && result.site.add && result.site.remove) {
                 result.site.add = difference(result.site.add, result.site.remove);
-                if (!result.site.add.length)
-                {
+                if (!result.site.add.length) {
                     delete result.site.add;
                 }
             }
-            if (result.entityCategory && result.entityCategory.add && result.entityCategory.remove)
-            {
-                result.entityCategory.add = difference(result.entityCategory.add, result.entityCategory.remove);
-                if (!result.entityCategory.add.length)
-                {
+            if (
+                result.entityCategory &&
+                result.entityCategory.add &&
+                result.entityCategory.remove
+            ) {
+                result.entityCategory.add = difference(
+                    result.entityCategory.add,
+                    result.entityCategory.remove
+                );
+                if (!result.entityCategory.add.length) {
                     delete result.entityCategory.add;
                 }
             }
-            if (result.entity && result.entity.add && result.entity.remove)
-            {
+            if (result.entity && result.entity.add && result.entity.remove) {
                 result.entity.add = difference(result.entity.add, result.entity.remove);
-                if (!result.entity.add.length)
-                {
+                if (!result.entity.add.length) {
                     delete result.entity.add;
                 }
             }
@@ -260,21 +262,16 @@ class FileWatcher extends Base
 
             // Done
             scope.cliLogger.info('Detected changes:');
-            for (const file of result.files)
-            {
+            for (const file of result.files) {
                 scope.cliLogger.info('  - File <' + file + '>');
             }
-            if (result.entity && result.entity.add)
-            {
-                for (const entity of result.entity.add)
-                {
+            if (result.entity && result.entity.add) {
+                for (const entity of result.entity.add) {
                     scope.cliLogger.info('  - Add Entity <' + entity.toString() + '>');
                 }
             }
-            if (result.entity && result.entity.remove)
-            {
-                for (const entity of result.entity.remove)
-                {
+            if (result.entity && result.entity.remove) {
+                for (const entity of result.entity.remove) {
                     scope.cliLogger.info('  - Remove Entity <' + entity.toString() + '>');
                 }
             }
@@ -286,23 +283,16 @@ class FileWatcher extends Base
         /* eslint-enable complexity */
     }
 
-
     /**
      * @returns {void}
      */
-    addEvent(type, path)
-    {
-        if (type !== 'error' &&
-            type !== 'ready' &&
-            type !== 'raw')
-        {
-            const event =
-            {
+    addEvent(type, path) {
+        if (type !== 'error' && type !== 'ready' && type !== 'raw') {
+            const event = {
                 name: 'add',
                 path: '/' + path
             };
-            if (type === 'unlink' || type === 'unlinkDir')
-            {
+            if (type === 'unlink' || type === 'unlinkDir') {
                 event.name = 'remove';
             }
             this._events.push(event);
@@ -310,42 +300,36 @@ class FileWatcher extends Base
         this._processEventsDebounced();
     }
 
-
     /**
      * @returns {Promise.<*>}
      */
-    start()
-    {
+    start() {
         const scope = this;
-        const promise = new Promise(function(resolve)
-        {
-            scope.cliLogger.info('Watching for file changes in <' + scope._pathesConfiguration.sites + '>');
-            scope._watcher = chokidar.watch(scope._pathesConfiguration.sites + '/**',
-                {
-                    ignored: /[/\\]\./,
-                    ignoreInitial: true,
-                    cwd: scope._pathesConfiguration.sites
-                });
+        const promise = new Promise(function(resolve) {
+            scope.cliLogger.info(
+                'Watching for file changes in <' + scope._pathesConfiguration.sites + '>'
+            );
+            scope._watcher = chokidar.watch(scope._pathesConfiguration.sites + '/**', {
+                ignored: /[/\\]\./,
+                ignoreInitial: true,
+                cwd: scope._pathesConfiguration.sites
+            });
             scope._watcher.on('all', scope.addEvent.bind(scope));
             scope._watcher.on('ready', resolve);
         });
         return promise;
     }
 
-
     /**
      * @returns {Promise.<*>}
      */
-    stop()
-    {
-        if (this._watcher)
-        {
+    stop() {
+        if (this._watcher) {
             this._watcher.close();
         }
         return Promise.resolve();
     }
 }
-
 
 /**
  * Exports

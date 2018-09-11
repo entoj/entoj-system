@@ -14,18 +14,15 @@ const EntitiesRepository = require('../model/entity/EntitiesRepository.js').Enti
 const ErrorHandler = require('../error/ErrorHandler.js').ErrorHandler;
 const co = require('co');
 
-
 /**
  * @memberOf command
  */
-class ServerCommand extends Command
-{
+class ServerCommand extends Command {
     /**
      * @param {application.Context} context
      * @param {Object} options
      */
-    constructor(context, options)
-    {
+    constructor(context, options) {
         super(context);
 
         this._name = 'server';
@@ -33,54 +30,42 @@ class ServerCommand extends Command
         this._server = false;
     }
 
-
     /**
      * @inheritDoc
      */
-    static get injections()
-    {
-        return { 'parameters': [Context, 'command/ServerCommand.options'] };
+    static get injections() {
+        return { parameters: [Context, 'command/ServerCommand.options'] };
     }
 
-
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'command/ServerCommand';
     }
-
 
     /**
      * @type {server.Server}
      */
-    get server()
-    {
+    get server() {
         return this._server;
     }
-
 
     /**
      * @type {Object}
      */
-    get options()
-    {
+    get options() {
         return this._options;
     }
-
 
     /**
      * @inheritDoc
      */
-    get help()
-    {
-        const help =
-        {
+    get help() {
+        const help = {
             name: this._name,
             description: 'Provides the development server',
-            actions:
-            [
+            actions: [
                 {
                     name: 'start',
                     options: [],
@@ -91,25 +76,19 @@ class ServerCommand extends Command
         return help;
     }
 
-
     /**
      * @inheritDoc
      */
-    importLinterResults(lintResults)
-    {
-        if (!lintResults)
-        {
+    importLinterResults(lintResults) {
+        if (!lintResults) {
             return;
         }
         const scope = this;
-        co(function *()
-        {
+        co(function*() {
             const entityRepository = scope.context.di.create(EntitiesRepository);
-            for (const lintResult of lintResults)
-            {
+            for (const lintResult of lintResults) {
                 const entityAspect = yield entityRepository.getById(lintResult.entity);
-                if (entityAspect && entityAspect.entity)
-                {
+                if (entityAspect && entityAspect.entity) {
                     lintResult.site = entityAspect.id.site;
                     entityAspect.entity.lintResults.import(lintResult);
                 }
@@ -117,31 +96,24 @@ class ServerCommand extends Command
         });
     }
 
-
     /**
      * @returns {Promise<server.Server>}
      */
-    start(parameters)
-    {
+    start(parameters) {
         const scope = this;
-        const promise = co(function*()
-        {
-            if (!scope.server)
-            {
+        const promise = co(function*() {
+            if (!scope.server) {
                 const logger = scope.createLogger('command.server');
 
                 // Start ipc communication
                 logger.info('Starting IPC server');
                 const com = scope.context.di.create(Communication);
-                com.events.on('find-server', () =>
-                {
-                    if (scope.server && scope.server.baseUrl)
-                    {
+                com.events.on('find-server', () => {
+                    if (scope.server && scope.server.baseUrl) {
                         com.send('found-server', scope.server.baseUrl);
                     }
                 });
-                com.events.on('lint-results', (data) =>
-                {
+                com.events.on('lint-results', (data) => {
                     scope.importLinterResults(data);
                 });
                 com.serve();
@@ -149,24 +121,21 @@ class ServerCommand extends Command
                 // prepare routes
                 const configure = logger.section('Configuring routes');
                 const routes = [];
-                if (Array.isArray(scope.options.routes))
-                {
-                    for (const route of scope.options.routes)
-                    {
-                        const work = logger.work('Configuring route <' + route.type.className + '>');
+                if (Array.isArray(scope.options.routes)) {
+                    for (const route of scope.options.routes) {
+                        const work = logger.work(
+                            'Configuring route <' + route.type.className + '>'
+                        );
                         const type = route.type;
                         const mappings = new Map();
-                        for (const key in route)
-                        {
-                            if (key !== 'type')
-                            {
+                        for (const key in route) {
+                            if (key !== 'type') {
                                 mappings.set(type.className + '.' + key, route[key]);
                             }
                         }
                         mappings.set(CliLogger, logger);
                         const routeInstance = scope.context.di.create(type, mappings);
-                        if (!routeInstance)
-                        {
+                        if (!routeInstance) {
                             throw new Error('Could not get instance of ' + type.className);
                         }
                         routes.push(routeInstance);
@@ -177,12 +146,9 @@ class ServerCommand extends Command
 
                 // create server
                 const start = logger.section('Starting server');
-                try
-                {
+                try {
                     scope._server = new Server(logger, routes, scope.options);
-                }
-                catch(error)
-                {
+                } catch (error) {
                     ErrorHandler.error(scope, error);
                     logger.end(start, true);
                 }
@@ -203,17 +169,14 @@ class ServerCommand extends Command
         return promise;
     }
 
-
     /**
      * @inheritDoc
      * @returns {Promise<Server>}
      */
-    dispatch(action, parameters)
-    {
+    dispatch(action, parameters) {
         return this.start();
     }
 }
-
 
 /**
  * Exports

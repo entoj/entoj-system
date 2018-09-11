@@ -11,18 +11,15 @@ const CliLogger = require('../cli/CliLogger.js').CliLogger;
 const assertParameter = require('../utils/assert.js').assertParameter;
 const co = require('co');
 
-
 /**
  * @memberOf watch
  */
-class ModelSynchronizerEntitiesPlugin extends ModelSynchronizerPlugin
-{
+class ModelSynchronizerEntitiesPlugin extends ModelSynchronizerPlugin {
     /**
      * @param {CliLogger} cliLogger
      * @param {model.entity.EntitiesRepository} entityCategoriesRepository
      */
-    constructor(cliLogger, entitiesRepository)
-    {
+    constructor(cliLogger, entitiesRepository) {
         super(cliLogger.createPrefixed('modelsynchronizer.entities'));
 
         //Check params
@@ -32,46 +29,36 @@ class ModelSynchronizerEntitiesPlugin extends ModelSynchronizerPlugin
         this._entitiesRepository = entitiesRepository;
     }
 
-
     /**
      * @inheritDoc
      */
-    static get injections()
-    {
-        return { 'parameters': [CliLogger, EntitiesRepository] };
+    static get injections() {
+        return { parameters: [CliLogger, EntitiesRepository] };
     }
 
-
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'watch/ModelSynchronizerEntitiesPlugin';
     }
-
 
     /**
      * @type {model.entity.EntitiesRepository}
      */
-    get entitiesRepository()
-    {
+    get entitiesRepository() {
         return this._entitiesRepository;
     }
-
 
     /**
      * @returns {Promise.<*>}
      */
-    execute(changes)
-    {
+    execute(changes) {
         const scope = this;
-        const promise = co(function *()
-        {
+        const promise = co(function*() {
             const result = {};
 
-            if (changes.entity)
-            {
+            if (changes.entity) {
                 const work = scope.cliLogger.work('Invalidating <EntitiesRepository>');
                 result.entity = yield scope.entitiesRepository.invalidate(changes.entity);
                 scope.cliLogger.end(work);
@@ -82,7 +69,6 @@ class ModelSynchronizerEntitiesPlugin extends ModelSynchronizerPlugin
         return promise;
     }
 }
-
 
 /**
  * Exports

@@ -7,59 +7,47 @@
 const Tag = require('./Tag.js').Tag;
 const BaseMap = require('../../base/BaseMap.js').BaseMap;
 
-
 /**
  * @memberOf nunjucks.tag
  */
-class ConfigurationTag extends Tag
-{
+class ConfigurationTag extends Tag {
     /**
      */
-    constructor()
-    {
+    constructor() {
         super();
 
         // Assign options
         this._hasBody = false;
     }
 
-
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'nunjucks.tag/ConfigurationTag';
     }
 
-
     /**
      * @inheritDoc
      */
-    get name()
-    {
+    get name() {
         return ['configuration'];
     }
 
-
     /**
      * @inheritDoc
      */
-    generate(context, params, caller)
-    {
-        if (!params.value || !params.name)
-        {
+    generate(context, params, caller) {
+        if (!params.value || !params.name) {
             return '';
         }
-        if (!context.env.globals.__configuration__)
-        {
+        if (!context.env.globals.__configuration__) {
             context.env.globals.__configuration__ = new BaseMap();
         }
         context.env.globals.__configuration__.setByPath(params.name, params.value);
         return '';
     }
 }
-
 
 /**
  * Exports

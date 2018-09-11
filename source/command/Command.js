@@ -10,19 +10,16 @@ const BaseMap = require('../base/BaseMap.js').BaseMap;
 const CliLogger = require('../cli/CliLogger.js').CliLogger;
 const assertParameter = require('../utils/assert.js').assertParameter;
 
-
 /**
  * @memberOf command
  * @extends Base
  */
-class Command extends Base
-{
+class Command extends Base {
     /**
      * @param {String} name
      * @param {application.Context} context
      */
-    constructor(context)
-    {
+    constructor(context) {
         super();
 
         //Check params
@@ -33,69 +30,55 @@ class Command extends Base
         this._context = context;
     }
 
-
     /**
      * @inheritDoc
      */
-    static get injections()
-    {
-        return { 'parameters': [Context] };
+    static get injections() {
+        return { parameters: [Context] };
     }
 
-
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'command/Command';
     }
-
 
     /**
      * @param {object} parameters
      */
-    createLogger(prefix)
-    {
+    createLogger(prefix) {
         return this.context.di.create(CliLogger, new BaseMap({ 'cli/CliLogger.prefix': prefix }));
     }
-
 
     /**
      * The command name(s)
      *
      * @type {Array}
      */
-    set name(value)
-    {
+    set name(value) {
         this._name = Array.isArray(value) ? value : [value];
     }
 
-    get name()
-    {
+    get name() {
         return this._name;
     }
-
 
     /**
      * @type {application.Context}
      */
-    get context()
-    {
+    get context() {
         return this._context;
     }
-
 
     /**
      * Returns a object describing the command and it's parameters
      *
      * @type {Object}
      */
-    get help()
-    {
+    get help() {
         return { name: this._name };
     }
-
 
     /**
      * Dispatches the command action
@@ -105,11 +88,9 @@ class Command extends Base
      * @param {Object} parameters
      * @returns {Promise<Boolean>}
      */
-    dispatch(action, parameters)
-    {
+    dispatch(action, parameters) {
         return Promise.resolve(true);
     }
-
 
     /**
      * Executes the command and resolves to a Boolean
@@ -118,16 +99,13 @@ class Command extends Base
      * @param {Object} parameters
      * @returns {Promise<Boolean>}
      */
-    execute(parameters)
-    {
-        if (parameters && this._name.indexOf(parameters.command) > -1)
-        {
+    execute(parameters) {
+        if (parameters && this._name.indexOf(parameters.command) > -1) {
             return this.dispatch(parameters.action, parameters);
         }
         return Promise.resolve(false);
     }
 }
-
 
 /**
  * Exports

@@ -9,8 +9,7 @@ const valueNodeSpec = require('./ValueNodeShared.js').spec;
 /**
  * Spec
  */
-describe(OperandNode.className, function()
-{
+describe(OperandNode.className, function() {
     /**
      * ValueNode Test
      */

@@ -6,20 +6,16 @@
  */
 const Base = require('../../Base.js').Base;
 
-
 /**
  * @namespace model.entity
  */
-class EntityInheriter extends Base
-{
+class EntityInheriter extends Base {
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'model.entity/EntityInheriter';
     }
-
 
     /**
      * Inherit data from entity to entityAspect honoring
@@ -30,11 +26,8 @@ class EntityInheriter extends Base
      * @param  {model.entity.EntityAspect} entityAspect
      * @return {void}
      */
-    inherit(sites, entity, entityAspect)
-    {
-    }
+    inherit(sites, entity, entityAspect) {}
 }
-
 
 /**
  * Exports

@@ -6,12 +6,10 @@
 const TestSuite = require(ES_SOURCE + '/model/test/TestSuite.js').TestSuite;
 const testSuiteSpec = require('./TestSuiteShared.js').spec;
 
-
 /**
  * Spec
  */
-describe(TestSuite.className, function()
-{
+describe(TestSuite.className, function() {
     /**
      * Test TestSuite
      */

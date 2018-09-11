@@ -8,38 +8,29 @@ const linterSpec = require(ES_TEST + '/linter/LinterShared.js').spec;
 const co = require('co');
 const sinon = require('sinon');
 
-
 /**
  * Shared FileLinter spec
  */
-function spec(type, className, fixture, prepareParameters)
-{
+function spec(type, className, fixture, prepareParameters) {
     /**
      * Linter Test
      */
     linterSpec(type, className, fixture, prepareParameters);
 
-
     /**
      * FileLinter Test
      */
-    const createTestee = function()
-    {
+    const createTestee = function() {
         let parameters = Array.from(arguments);
-        if (prepareParameters)
-        {
+        if (prepareParameters) {
             parameters = prepareParameters(parameters);
         }
         return new type(...parameters);
     };
 
-
-    describe('#constructor', function()
-    {
-        it('should allow to configure glob via options', function()
-        {
-            const options =
-            {
+    describe('#constructor', function() {
+        it('should allow to configure glob via options', function() {
+            const options = {
                 glob: fixture.glob
             };
             const testee = createTestee({}, options);
@@ -47,15 +38,10 @@ function spec(type, className, fixture, prepareParameters)
         });
     });
 
-
-    describe('#lint', function()
-    {
-        it('should resolve to an object containing all parsed files', function()
-        {
-            const promise = co(function*()
-            {
-                const options =
-                {
+    describe('#lint', function() {
+        it('should resolve to an object containing all parsed files', function() {
+            const promise = co(function*() {
+                const options = {
                     glob: fixture.glob
                 };
                 const testee = createTestee({}, options);
@@ -66,12 +52,9 @@ function spec(type, className, fixture, prepareParameters)
             return promise;
         });
 
-        it('should lint each file that is matched by the given glob and root path', function()
-        {
-            const promise = co(function*()
-            {
-                const options =
-                {
+        it('should lint each file that is matched by the given glob and root path', function() {
+            const promise = co(function*() {
+                const options = {
                     glob: fixture.glob
                 };
                 const testee = createTestee([], options);
@@ -82,12 +65,9 @@ function spec(type, className, fixture, prepareParameters)
             return promise;
         });
 
-        it('should invoke the linter for each file that is matched by the given glob and root path', function()
-        {
-            const promise = co(function*()
-            {
-                const options =
-                {
+        it('should invoke the linter for each file that is matched by the given glob and root path', function() {
+            const promise = co(function*() {
+                const options = {
                     glob: fixture.glob
                 };
                 const testee = createTestee([], options);
@@ -98,12 +78,9 @@ function spec(type, className, fixture, prepareParameters)
             return promise;
         });
 
-        it('should pass options to the underlying linter', function()
-        {
-            const promise = co(function*()
-            {
-                const options =
-                {
+        it('should pass options to the underlying linter', function() {
+            const promise = co(function*() {
+                const options = {
                     glob: fixture.glob
                 };
                 const testee = createTestee([], options);
@@ -114,12 +91,9 @@ function spec(type, className, fixture, prepareParameters)
             return promise;
         });
 
-        it('should allow to override the glob per lint call', function()
-        {
-            const promise = co(function*()
-            {
-                const options =
-                {
+        it('should allow to override the glob per lint call', function() {
+            const promise = co(function*() {
+                const options = {
                     glob: fixture.glob
                 };
                 const testee = createTestee();

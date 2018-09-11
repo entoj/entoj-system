@@ -10,34 +10,28 @@ const EntityIdTemplate = require('./EntityIdTemplate.js').EntityIdTemplate;
 const Site = require('./../site/Site.js').Site;
 const assertParameter = require('../../utils/assert.js').assertParameter;
 
-
 /**
  *
  */
-class EntityId extends Base
-{
+class EntityId extends Base {
     /**
      * @inheritDoc
      */
-    static get ID()
-    {
+    static get ID() {
         return 'id';
     }
 
     /**
      * @inheritDoc
      */
-    static get PATH()
-    {
+    static get PATH() {
         return 'path';
     }
-
 
     /**
      *
      */
-    constructor(category, name, number, site, entityIdTemplate)
-    {
+    constructor(category, name, number, site, entityIdTemplate) {
         super();
 
         //Check params
@@ -53,121 +47,102 @@ class EntityId extends Base
         this._entityIdTemplate = entityIdTemplate || false;
     }
 
-
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'model.entity/EntityId';
     }
-
 
     /**
      * @property {entity.EntityCategory}
      */
-    get category()
-    {
+    get category() {
         return this._category;
     }
 
-    set category(value)
-    {
+    set category(value) {
         this._category = value;
     }
-
 
     /**
      * @property {Bool}
      */
-    get isGlobal()
-    {
+    get isGlobal() {
         return this._category ? this._category.isGlobal : false;
     }
-
 
     /**
      * @property {number}
      */
-    get number()
-    {
+    get number() {
         return this._number;
     }
 
-    set number(value)
-    {
+    set number(value) {
         this._number = value || 0;
     }
-
 
     /**
      * @property {string}
      */
-    get name()
-    {
+    get name() {
         return this._name;
     }
 
-    set name(value)
-    {
+    set name(value) {
         this._name = value;
     }
-
 
     /**
      * @property {site.Site}
      */
-    get site()
-    {
+    get site() {
         return this._site;
     }
 
-    set site(value)
-    {
+    set site(value) {
         this._site = value;
     }
 
-
     /**
      * @returns {String}
      */
-    get idString()
-    {
+    get idString() {
         return this._entityIdTemplate.id(this);
     }
 
-
     /**
      * @returns {String}
      */
-    get pathString()
-    {
+    get pathString() {
         return this._entityIdTemplate.path(this);
     }
-
 
     /**
      * @param {EntityId} other
      * @param {Bool} lazy
      * @returns {Bool}
      */
-    clone()
-    {
-        const result = new EntityId(this._category, this._name, this._number, this._site, this._entityIdTemplate);
+    clone() {
+        const result = new EntityId(
+            this._category,
+            this._name,
+            this._number,
+            this._site,
+            this._entityIdTemplate
+        );
         return result;
     }
-
 
     /**
      * @param {String} type (PATH, ID)
      * @returns {Bool}
      */
-    asString(type)
-    {
+    asString(type) {
         let result = '';
         const typeName = type || EntityId.ID;
-        switch(typeName.toLowerCase())
-        {
+        switch (typeName.toLowerCase()) {
             case EntityId.PATH:
                 result = this._entityIdTemplate.path(this);
                 break;
@@ -179,36 +154,27 @@ class EntityId extends Base
         return result;
     }
 
-
     /**
      * @param {EntityId} other
      * @param {Bool} lazy
      * @returns {Bool}
      */
-    isEqualTo(other, lazy)
-    {
-        if (other instanceof EntityId)
-        {
+    isEqualTo(other, lazy) {
+        if (other instanceof EntityId) {
             let isEqual = this.number === other.number && this.name === other.name;
-            if (!lazy && isEqual && other.site && !this.site.isEqualTo(other.site))
-            {
+            if (!lazy && isEqual && other.site && !this.site.isEqualTo(other.site)) {
                 isEqual = false;
             }
-            if (isEqual && other.category && !this.category.isEqualTo(other.category))
-            {
+            if (isEqual && other.category && !this.category.isEqualTo(other.category)) {
                 isEqual = false;
             }
             return isEqual;
-        }
-        else if (typeof other === 'string')
-        {
+        } else if (typeof other === 'string') {
             let isEqual = false;
-            if (this.name === other)
-            {
+            if (this.name === other) {
                 isEqual = true;
             }
-            if (this.idString === other)
-            {
+            if (this.idString === other) {
                 isEqual = true;
             }
             return isEqual;
@@ -217,16 +183,13 @@ class EntityId extends Base
         return false;
     }
 
-
     /**
      * @inheritDoc
      */
-    toString()
-    {
+    toString() {
         return `[${this.className} ${this.category.longName} ${this.name}]`;
     }
 }
-
 
 /**
  * Exports

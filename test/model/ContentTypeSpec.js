@@ -6,12 +6,10 @@
 const ContentType = require(ES_SOURCE + '/model/ContentType.js').ContentType;
 const baseSpec = require(ES_TEST + '/BaseShared.js').spec;
 
-
 /**
  * Spec
  */
-describe(ContentType.className, function()
-{
+describe(ContentType.className, function() {
     /**
      * Base Tests
      */

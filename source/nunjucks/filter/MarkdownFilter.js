@@ -5,141 +5,119 @@
  * @ignore
  */
 const Filter = require('./Filter.js').Filter;
-const DocumentationTextSection = require('../../model/documentation/DocumentationTextSection.js').DocumentationTextSection;
-const DocumentationText = require('../../model/documentation/DocumentationText.js').DocumentationText;
+const DocumentationTextSection = require('../../model/documentation/DocumentationTextSection.js')
+    .DocumentationTextSection;
+const DocumentationText = require('../../model/documentation/DocumentationText.js')
+    .DocumentationText;
 const marked = require('marked');
-
 
 /**
  * @memberOf nunjucks.filter
  */
-class MarkdownFilter extends Filter
-{
+class MarkdownFilter extends Filter {
     /**
      * @inheritDoc
      */
-    constructor()
-    {
+    constructor() {
         super();
         this._name = 'markdown';
     }
 
-
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'nunjucks.filter/MarkdownFilter';
     }
 
-
     /**
      * @inheritDoc
      */
-    filter()
-    {
-        return function (value, headlineOffset)
-        {
-            if (!value)
-            {
+    filter() {
+        return function(value, headlineOffset) {
+            if (!value) {
                 return '';
             }
 
             let tokens = false;
 
             // Markdown
-            if (typeof value == 'string')
-            {
+            if (typeof value == 'string') {
                 tokens = marked.lexer(value);
             }
 
             // Array
-            if (Array.isArray(value) && value.length > 0)
-            {
+            if (Array.isArray(value) && value.length > 0) {
                 // Array of sections
-                if (value[0] instanceof DocumentationTextSection)
-                {
+                if (value[0] instanceof DocumentationTextSection) {
                     tokens = [];
                     const links = {};
-                    for (const section of value)
-                    {
+                    for (const section of value) {
                         tokens = tokens.concat(section.tokens);
-                        for (const link in section.tokens.links)
-                        {
+                        for (const link in section.tokens.links) {
                             links[link] = section.tokens.links[link];
                         }
                     }
                     tokens.links = links;
                 }
                 // Array of tokens
-                else
-                {
+                else {
                     tokens = value;
                 }
             }
 
             // Section
-            if (value instanceof DocumentationTextSection)
-            {
+            if (value instanceof DocumentationTextSection) {
                 tokens = value.getTokens();
-                if (!tokens.links)
-                {
+                if (!tokens.links) {
                     tokens.links = {};
                 }
             }
 
             // Text
-            if (value instanceof DocumentationText)
-            {
+            if (value instanceof DocumentationText) {
                 tokens = value.getTokens();
-                if (!tokens.links)
-                {
+                if (!tokens.links) {
                     tokens.links = {};
                 }
             }
 
             // Render
-            if (!tokens || !tokens.links)
-            {
+            if (!tokens || !tokens.links) {
                 return '';
             }
 
             // Options
-            const options =
-            {
+            const options = {
                 renderer: new marked.Renderer()
             };
 
             // Add table classes
-            options.renderer.table = function(header, body)
-            {
-                return '<table class="ui celled padded table">\n'
-                    + '<thead>\n'
-                    + header
-                    + '</thead>\n'
-                    + '<tbody>\n'
-                    + body
-                    + '</tbody>\n'
-                    + '</table>\n';
+            options.renderer.table = function(header, body) {
+                return (
+                    '<table class="ui celled padded table">\n' +
+                    '<thead>\n' +
+                    header +
+                    '</thead>\n' +
+                    '<tbody>\n' +
+                    body +
+                    '</tbody>\n' +
+                    '</table>\n'
+                );
             };
-            options.renderer.tablerow = function(content)
-            {
+            options.renderer.tablerow = function(content) {
                 return '<tr class="top aligned">\n' + content + '</tr>\n';
             };
 
             // Add list classes
-            options.renderer.list = function(body, ordered)
-            {
+            options.renderer.list = function(body, ordered) {
                 const type = ordered ? 'ol' : 'ul';
                 return '<' + type + ' class="ui list">\n' + body + '</' + type + '>\n';
             };
 
             // Prepare headline offset
-            if (headlineOffset && headlineOffset != 0)
-            {
-                options.renderer.heading = function(text, level)
-                {
+            if (headlineOffset && headlineOffset != 0) {
+                options.renderer.heading = function(text, level) {
                     const h = Math.min(5, Math.max(1, level + headlineOffset));
                     return '<h' + h + '>' + text + '</h' + h + '>';
                 };

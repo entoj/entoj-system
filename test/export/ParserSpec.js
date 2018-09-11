@@ -9,8 +9,7 @@ const parserSpec = require('./ParserShared.js').spec;
 /**
  * Spec
  */
-describe(Parser.className, function()
-{
+describe(Parser.className, function() {
     /**
      * Parser Test
      */

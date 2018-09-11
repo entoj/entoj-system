@@ -11,28 +11,23 @@ const LinterResultArray = require('./linter/LinterResultArray.js').LinterResultA
 const SearchableArray = require('../base/SearchableArray.js').SearchableArray;
 const BaseMap = require('../base/BaseMap.js').BaseMap;
 
-
 /**
  * @class
  * @memberOf model
  * @extends {Base}
  */
-class DocumentableValueObject extends ValueObject
-{
+class DocumentableValueObject extends ValueObject {
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'model/DocumentableValueObject';
     }
 
-
     /**
      * @inheritDoc
      */
-    initialize()
-    {
+    initialize() {
         super.initialize();
         this._properties = new BaseMap();
         this._documentation = new DocumentationArray();
@@ -41,12 +36,10 @@ class DocumentableValueObject extends ValueObject
         this._lintResults = new LinterResultArray();
     }
 
-
     /**
      * @inheritDoc
      */
-    get fields()
-    {
+    get fields() {
         return {
             properties: BaseMap,
             documentation: DocumentationArray,
@@ -55,52 +48,41 @@ class DocumentableValueObject extends ValueObject
         };
     }
 
-
     /**
      * @property {Map}
      */
-    get properties()
-    {
+    get properties() {
         return this._properties;
     }
 
-
     /**
      * @property {Array}
      */
-    get documentation()
-    {
+    get documentation() {
         return this._documentation;
     }
 
-
     /**
      * @property {Array}
      */
-    get files()
-    {
+    get files() {
         return this._files;
     }
 
-
     /**
      * @property {Array}
      */
-    get testSuites()
-    {
+    get testSuites() {
         return this._testSuites;
     }
 
-
     /**
      * @property {Array}
      */
-    get lintResults()
-    {
+    get lintResults() {
         return this._lintResults;
     }
 }
-
 
 /**
  * Exports

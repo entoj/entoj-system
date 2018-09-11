@@ -9,19 +9,16 @@ const NunjucksLinter = require('./NunjucksLinter.js').NunjucksLinter;
 const EntityRenderer = require('../nunjucks/EntityRenderer.js').EntityRenderer;
 const assertParameter = require('../utils/assert.js').assertParameter;
 
-
 /**
  * A nunjucks file linter
  */
-class NunjucksFileLinter extends FileLinter
-{
+class NunjucksFileLinter extends FileLinter {
     /**
      * @param {object|undefined} rules
      * @param {object|undefined} options
      * @param {nunjucks.EntityRenderer} entityRenderer
      */
-    constructor(rules, options, entityRenderer)
-    {
+    constructor(rules, options, entityRenderer) {
         super(rules, options);
 
         // Check params
@@ -33,25 +30,26 @@ class NunjucksFileLinter extends FileLinter
         this._glob = opts.glob || ['/*.j2', '/examples/*.j2'];
     }
 
-
     /**
      * @inheritDoc
      */
-    static get injections()
-    {
-        return { 'parameters': ['linter/NunjucksFileLinter.rules', 'linter/NunjucksFileLinter.options', EntityRenderer] };
+    static get injections() {
+        return {
+            parameters: [
+                'linter/NunjucksFileLinter.rules',
+                'linter/NunjucksFileLinter.options',
+                EntityRenderer
+            ]
+        };
     }
 
-
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'linter/NunjucksFileLinter';
     }
 }
-
 
 /**
  * Exports

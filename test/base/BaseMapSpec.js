@@ -6,66 +6,54 @@
 const BaseMap = require(ES_SOURCE + '/base/BaseMap.js').BaseMap;
 const baseSpec = require(ES_TEST + '/BaseShared.js').spec;
 
-
 /**
  * Spec
  */
-describe(BaseMap.className, function()
-{
+describe(BaseMap.className, function() {
     /**
      * Base Test
      */
     baseSpec(BaseMap, 'base/BaseMap');
 
-
     /**
      * BaseMap Test
      */
-    describe('#constructor', function()
-    {
-        it('should allow to initilize map with a iterable', function()
-        {
+    describe('#constructor', function() {
+        it('should allow to initilize map with a iterable', function() {
             const testee = new BaseMap({ foo: 'bar' });
 
             expect(testee.get('foo')).to.be.equal('bar');
         });
     });
 
-
-    describe('#getByPath', function()
-    {
-        it('should return defaultValue when no path is given', function()
-        {
+    describe('#getByPath', function() {
+        it('should return defaultValue when no path is given', function() {
             const testee = new BaseMap();
 
             expect(testee.getByPath(false, 'not found')).to.be.equal('not found');
         });
 
-        it('should return defaultValue when path is not found', function()
-        {
+        it('should return defaultValue when path is not found', function() {
             const testee = new BaseMap();
 
             expect(testee.getByPath('simple', 'not found')).to.be.equal('not found');
         });
 
-        it('should allow to get a value by path', function()
-        {
+        it('should allow to get a value by path', function() {
             const testee = new BaseMap();
             testee.set('simple', 'simple');
 
             expect(testee.getByPath('simple')).to.be.equal('simple');
         });
 
-        it('should support objects', function()
-        {
+        it('should support objects', function() {
             const testee = new BaseMap();
             testee.set('object', { path: { to: 'object' } });
 
             expect(testee.getByPath('object.path.to')).to.be.equal('object');
         });
 
-        it('should support maps', function()
-        {
+        it('should support maps', function() {
             const testee = new BaseMap();
             const map1 = new Map();
             const map2 = new Map();
@@ -76,27 +64,22 @@ describe(BaseMap.className, function()
             expect(testee.getByPath('map.path.to')).to.be.equal('map');
         });
 
-        it('should return undefined when path is not found and no defaultValue given', function()
-        {
+        it('should return undefined when path is not found and no defaultValue given', function() {
             const testee = new BaseMap();
             testee.set('object', { path: { to: 'object' } });
 
             expect(testee.getByPath('object.path.from')).to.be.equal(undefined);
         });
 
-        it('should return the defaultValue when path is not found', function()
-        {
+        it('should return the defaultValue when path is not found', function() {
             const testee = new BaseMap();
 
             expect(testee.getByPath('object.path.to', 'Default')).to.be.equal('Default');
         });
     });
 
-
-    describe('#setByPath', function()
-    {
-        it('should set the value at the given path', function()
-        {
+    describe('#setByPath', function() {
+        it('should set the value at the given path', function() {
             const testee = new BaseMap();
             testee.set('map', new Map());
             testee.set('object', {});
@@ -109,8 +92,7 @@ describe(BaseMap.className, function()
             expect(testee.getByPath('very.long.path.to')).to.be.equal('Path');
         });
 
-        it('should overwrite the value at the given path', function()
-        {
+        it('should overwrite the value at the given path', function() {
             const testee = new BaseMap();
             testee.set('object', { name: 'Object' });
             testee.setByPath('object.name', 'Overwritten');
@@ -119,11 +101,8 @@ describe(BaseMap.className, function()
         });
     });
 
-
-    describe('#load', function()
-    {
-        it('should allow to import a Map', function()
-        {
+    describe('#load', function() {
+        it('should allow to import a Map', function() {
             const testee = new BaseMap();
             const data = new Map();
             data.set('foo', 'bar');
@@ -132,8 +111,7 @@ describe(BaseMap.className, function()
             expect(testee.get('foo')).to.be.equal('bar');
         });
 
-        it('should allow to import a BaseMap', function()
-        {
+        it('should allow to import a BaseMap', function() {
             const testee = new BaseMap();
             const data = new BaseMap();
             data.set('foo', 'bar');
@@ -142,11 +120,9 @@ describe(BaseMap.className, function()
             expect(testee.get('foo')).to.be.equal('bar');
         });
 
-        it('should allow to import a Object', function()
-        {
+        it('should allow to import a Object', function() {
             const testee = new BaseMap();
-            const data =
-            {
+            const data = {
                 foo: 'bar'
             };
 
@@ -154,12 +130,10 @@ describe(BaseMap.className, function()
             expect(testee.get('foo')).to.be.equal('bar');
         });
 
-        it('should preserve existing items', function()
-        {
+        it('should preserve existing items', function() {
             const testee = new BaseMap();
             testee.set('bar', 'foo');
-            const data =
-            {
+            const data = {
                 foo: 'bar'
             };
 
@@ -168,12 +142,10 @@ describe(BaseMap.className, function()
             expect(testee.get('bar')).to.be.equal('foo');
         });
 
-        it('should allow to clear items before loading', function()
-        {
+        it('should allow to clear items before loading', function() {
             const testee = new BaseMap();
             testee.set('bar', 'foo');
-            const data =
-            {
+            const data = {
                 foo: 'bar'
             };
 
@@ -182,8 +154,7 @@ describe(BaseMap.className, function()
             expect(testee.get('bar')).to.be.not.ok;
         });
 
-        it('should do nothing when given non iterable data', function()
-        {
+        it('should do nothing when given non iterable data', function() {
             const testee = new BaseMap();
 
             testee.load(undefined);
@@ -191,19 +162,15 @@ describe(BaseMap.className, function()
         });
     });
 
-
-    describe('#merge', function()
-    {
-        it('should just swallow falsy values', function()
-        {
+    describe('#merge', function() {
+        it('should just swallow falsy values', function() {
             const testee = new BaseMap();
             testee.merge();
             testee.merge(null);
             testee.merge(false);
         });
 
-        it('should allow to merge a Map', function()
-        {
+        it('should allow to merge a Map', function() {
             const testee = new BaseMap();
             testee.set('foo', { value: 'bar', version: 1 });
             const data = new Map();
@@ -214,8 +181,7 @@ describe(BaseMap.className, function()
             expect(testee.getByPath('foo.version')).to.be.equal(2);
         });
 
-        it('should allow to merge a BaseMap', function()
-        {
+        it('should allow to merge a BaseMap', function() {
             const testee = new BaseMap();
             testee.set('foo', { value: 'bar', version: 1 });
             const data = new BaseMap();
@@ -226,14 +192,11 @@ describe(BaseMap.className, function()
             expect(testee.getByPath('foo.version')).to.be.equal(2);
         });
 
-        it('should allow to merge a Object', function()
-        {
+        it('should allow to merge a Object', function() {
             const testee = new BaseMap();
             testee.set('foo', { value: 'bar', version: 1 });
-            const data =
-            {
-                foo:
-                {
+            const data = {
+                foo: {
                     version: 2
                 }
             };

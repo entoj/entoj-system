@@ -15,14 +15,12 @@ const co = require('co');
  * @memberOf linter
  * @extends linter.Linter
  */
-class FileLinter extends Linter
-{
+class FileLinter extends Linter {
     /**
      * @param {object|undefined} rules
      * @param {object|undefined} options
      */
-    constructor(rules, options)
-    {
+    constructor(rules, options) {
         super();
 
         // Assign options
@@ -31,66 +29,52 @@ class FileLinter extends Linter
         this._glob = opts.glob || [];
 
         // Add linter
-        if (!this._linter)
-        {
+        if (!this._linter) {
             this._linter = new Linter();
         }
     }
 
-
     /**
      * @inheritDoc
      */
-    static get injections()
-    {
-        return { 'parameters': ['linter/FileLinter.rules', 'linter/FileLinter.options'] };
+    static get injections() {
+        return { parameters: ['linter/FileLinter.rules', 'linter/FileLinter.options'] };
     }
 
-
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'linter/FileLinter';
     }
 
-
     /**
      * @type {String}
      */
-    get name()
-    {
+    get name() {
         return this.linter.name;
     }
 
-
     /**
      * @type {String}
      */
-    get contentKind()
-    {
+    get contentKind() {
         return this.linter.contentKind;
     }
-
 
     /**
      * @property {Array}
      */
-    get glob()
-    {
+    get glob() {
         return this._glob;
     }
-
 
     /**
      * @property {linter.Linter}
      */
-    get linter()
-    {
+    get linter() {
         return this._linter;
     }
-
 
     /**
      * Lints a file
@@ -99,10 +83,8 @@ class FileLinter extends Linter
      * @param {model.file.File} file
      * @returns {Promise.<Array>}
      */
-    lintFile(file, filename, options)
-    {
-        if (!this._linter)
-        {
+    lintFile(file, filename, options) {
+        if (!this._linter) {
             /* istanbul ignore next */
             return Promise.resolve({ success: true, warningCount: 0, errorCount: 0, messages: [] });
         }
@@ -110,17 +92,13 @@ class FileLinter extends Linter
         return this._linter.lint(file.contents, opts);
     }
 
-
     /**
      * @inheritDocs
      */
-    lint(content, options)
-    {
+    lint(content, options) {
         const scope = this;
-        const promise = co(function*()
-        {
-            const result =
-            {
+        const promise = co(function*() {
+            const result = {
                 success: true,
                 warningCount: 0,
                 errorCount: 0,
@@ -135,27 +113,22 @@ class FileLinter extends Linter
             const root = content || '/';
             const globs = opts.glob || scope.glob || [];
             const files = yield glob(globs, { root: root });
-            if (!files || !files.length)
-            {
+            if (!files || !files.length) {
                 return result;
             }
 
             // Read & lint
-            for (const filename of files)
-            {
+            for (const filename of files) {
                 const file = new File({ filename: filename });
                 result.files.push(file);
-                if (file.contents)
-                {
+                if (file.contents) {
                     const lintResult = yield scope.lintFile(file, opts.filename, opts);
-                    if (lintResult)
-                    {
-                        if (!lintResult.success)
-                        {
+                    if (lintResult) {
+                        if (!lintResult.success) {
                             result.success = false;
                         }
-                        result.warningCount+= lintResult.warningCount;
-                        result.errorCount+= lintResult.errorCount;
+                        result.warningCount += lintResult.warningCount;
+                        result.errorCount += lintResult.errorCount;
                         Array.prototype.push.apply(result.messages, lintResult.messages);
                     }
                 }
@@ -166,7 +139,6 @@ class FileLinter extends Linter
         return promise;
     }
 }
-
 
 /**
  * Exports

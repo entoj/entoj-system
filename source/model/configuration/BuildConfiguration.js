@@ -7,93 +7,80 @@
 const Base = require('../../Base.js').Base;
 const BaseMap = require('../../base/BaseMap.js').BaseMap;
 
-
 /**
  * Holds all build related configuration.
  *
  * @memberOf model.configuration
  */
-class BuildConfiguration extends Base
-{
+class BuildConfiguration extends Base {
     /**
      * @param {object} options
      */
-    constructor(options, environment)
-    {
+    constructor(options, environment) {
         super();
 
         const opts = options || {};
         this._environment = environment || opts.default || 'development';
         this._values = new BaseMap();
         opts.environments = opts.environments || {};
-        for (const environment of Object.keys(opts.environments))
-        {
+        for (const environment of Object.keys(opts.environments)) {
             this._values.set(environment, opts.environments[environment]);
         }
     }
 
-
     /**
      * @inheritDoc
      */
-    static get injections()
-    {
-        return { 'parameters': ['model.configuration/BuildConfiguration.options', 'model.configuration/BuildConfiguration.environment'] };
+    static get injections() {
+        return {
+            parameters: [
+                'model.configuration/BuildConfiguration.options',
+                'model.configuration/BuildConfiguration.environment'
+            ]
+        };
     }
 
-
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'model.configuration/BuildConfiguration';
     }
 
-
     /**
      * @inheritDoc
      */
-    get environment()
-    {
+    get environment() {
         return this._environment;
     }
 
-
     /**
      * @inheritDoc
      */
-    set environment(value)
-    {
+    set environment(value) {
         this._environment = value;
     }
 
-
     /**
      * @inheritDoc
      */
-    get(name, defaultValue)
-    {
+    get(name, defaultValue) {
         const path = this._environment + '.' + name;
         return this._values.getByPath(path, defaultValue);
     }
 
-
     /**
      * @inheritDoc
      */
-    set(name, value)
-    {
+    set(name, value) {
         const path = this._environment + '.' + name;
         return this._values.setByPath(path, value);
     }
 
-
     /**
      * @inheritDoc
      */
-    toString()
-    {
+    toString() {
         return `[${this.className} ${this.root}`;
     }
 }

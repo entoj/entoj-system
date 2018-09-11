@@ -12,46 +12,37 @@ const Filter = require('./Filter.js').Filter;
  */
 let uniqueId = 0;
 
-
 /**
  * @memberOf nunjucks.filter
  */
-class UniqueFilter extends Filter
-{
+class UniqueFilter extends Filter {
     /**
      * @inheritDoc
      */
-    constructor()
-    {
+    constructor() {
         super();
         this._name = 'unique';
     }
 
-
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'nunjucks.filter/UniqueFilter';
     }
 
-
     /**
      * @inheritDoc
      */
-    filter()
-    {
+    filter() {
         const scope = this;
-        return function(value, separator)
-        {
+        return function(value, separator) {
             const sep = typeof separator === 'undefined' ? '-' : separator;
             uniqueId = (uniqueId + 1) % Number.MAX_SAFE_INTEGER;
             return scope.applyCallbacks(String(value) + sep + uniqueId, arguments);
         };
     }
 }
-
 
 /**
  * Exports

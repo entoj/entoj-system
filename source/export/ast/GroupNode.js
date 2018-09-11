@@ -6,21 +6,17 @@
  */
 const NodeList = require('./NodeList.js').NodeList;
 
-
 /**
  * A group of expressions (....)
  */
-class GroupNode extends NodeList
-{
+class GroupNode extends NodeList {
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'export.ast/GroupNode';
     }
 }
-
 
 /**
  * Exports

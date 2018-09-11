@@ -8,17 +8,14 @@ const Filter = require('./Filter.js').Filter;
 const SettingsRepository = require('../../model/setting/SettingsRepository.js').SettingsRepository;
 const waitForPromise = require('../../utils/synchronize.js').waitForPromise;
 
-
 /**
  * @memberOf nunjucks.filter
  */
-class SettingFilter extends Filter
-{
+class SettingFilter extends Filter {
     /**
      * @inheritDoc
      */
-    constructor(settingsRepository)
-    {
+    constructor(settingsRepository) {
         super();
         this._name = 'settings';
 
@@ -26,52 +23,41 @@ class SettingFilter extends Filter
         this._settingsRepository = settingsRepository;
     }
 
-
     /**
      * @inheritDoc
      */
-    static get injections()
-    {
-        return { 'parameters': [SettingsRepository] };
+    static get injections() {
+        return { parameters: [SettingsRepository] };
     }
 
-
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'nunjucks.filter/SettingFilter';
     }
-
 
     /**
      * @type {model.setting.SettingsRepository}
      */
-    get settingsRepository()
-    {
+    get settingsRepository() {
         return this._settingsRepository;
     }
-
 
     /**
      * @inheritDoc
      */
-    filter()
-    {
+    filter() {
         const scope = this;
-        return function (value, context)
-        {
+        return function(value, context) {
             // Check for repo
-            if (!scope.settingsRepository)
-            {
+            if (!scope.settingsRepository) {
                 scope.logger.warn('Missing settingsRepository');
                 return scope.applyCallbacks({}, arguments);
             }
 
             // Use value or key for settings
-            if (!value || typeof value !== 'string')
-            {
+            if (!value || typeof value !== 'string') {
                 scope.logger.warn('Missing key for settings', value);
                 return scope.applyCallbacks({}, arguments);
             }
@@ -80,8 +66,7 @@ class SettingFilter extends Filter
             const globals = scope.getGlobals(this);
             const site = globals.location.site || false;
             const setting = waitForPromise(scope.settingsRepository.getByNameAndSite(value, site));
-            if (!setting)
-            {
+            if (!setting) {
                 scope.logger.warn('Missing settings for key', value);
                 return scope.applyCallbacks({}, arguments);
             }
@@ -90,7 +75,6 @@ class SettingFilter extends Filter
         };
     }
 }
-
 
 /**
  * Exports

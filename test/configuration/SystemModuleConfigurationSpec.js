@@ -3,25 +3,26 @@
 /**
  * Requirements
  */
-const SystemModuleConfiguration = require(ES_SOURCE + '/configuration/SystemModuleConfiguration.js').SystemModuleConfiguration;
-const BuildConfiguration = require(ES_SOURCE + '/model/configuration/BuildConfiguration.js').BuildConfiguration;
-const GlobalConfiguration = require(ES_SOURCE + '/model/configuration/GlobalConfiguration.js').GlobalConfiguration;
+const SystemModuleConfiguration = require(ES_SOURCE + '/configuration/SystemModuleConfiguration.js')
+    .SystemModuleConfiguration;
+const BuildConfiguration = require(ES_SOURCE + '/model/configuration/BuildConfiguration.js')
+    .BuildConfiguration;
+const GlobalConfiguration = require(ES_SOURCE + '/model/configuration/GlobalConfiguration.js')
+    .GlobalConfiguration;
 const baseSpec = require(ES_TEST + '/BaseShared.js').spec;
-
 
 /**
  * Spec
  */
-describe(SystemModuleConfiguration.className, function()
-{
+describe(SystemModuleConfiguration.className, function() {
     /**
      * Base Test
      */
-    baseSpec(SystemModuleConfiguration, 'configuration/SystemModuleConfiguration', function(parameters)
-    {
+    baseSpec(SystemModuleConfiguration, 'configuration/SystemModuleConfiguration', function(
+        parameters
+    ) {
         return [new GlobalConfiguration(), new BuildConfiguration()];
     });
-
 
     /**
      * SystemModuleConfiguration Test
@@ -53,5 +54,4 @@ describe(SystemModuleConfiguration.className, function()
         baseSpec.assertProperty(createTestee(undefined, { language: 'de_DE' }), ['language'], 'en_GB', 'de_DE');
     });
     */
-
 });

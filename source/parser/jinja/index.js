@@ -1,8 +1,6 @@
-
 /**
  * @namespace parser.jinja
  */
-module.exports =
-{
+module.exports = {
     CallParser: require('./CallParser.js').CallParser
 };

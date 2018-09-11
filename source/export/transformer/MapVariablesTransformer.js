@@ -8,34 +8,27 @@ const NodeTransformer = require('./NodeTransformer.js').NodeTransformer;
 const co = require('co');
 const metrics = require('../../utils/performance.js').metrics;
 
-
 /**
  * Maps variables to specified variable names.
  * The mapping is configured via export.settings.[exporter].parameterMapping
  */
-class MapVariablesTransformer extends NodeTransformer
-{
+class MapVariablesTransformer extends NodeTransformer {
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'export.transformer/MapVariablesTransformer';
     }
 
-
     /**
      * @inheritDoc
      */
-    transformNode(node, configuration)
-    {
+    transformNode(node, configuration) {
         const scope = this;
-        const promise = co(function*()
-        {
+        const promise = co(function*() {
             metrics.start(scope.className + '::transformNode');
 
-            if (configuration && node.is('VariableNode'))
-            {
+            if (configuration && node.is('VariableNode')) {
                 scope.logger.debug('transformNode - mapping variable ' + node.fields.join('.'));
 
                 // Get config
@@ -44,10 +37,11 @@ class MapVariablesTransformer extends NodeTransformer
                 const variableName = node.fields.join('.');
 
                 // Apply parameter mapping
-                if (macroConfiguration &&
+                if (
+                    macroConfiguration &&
                     macroConfiguration.variables &&
-                    macroConfiguration.variables[variableName])
-                {
+                    macroConfiguration.variables[variableName]
+                ) {
                     node.fields = macroConfiguration.variables[variableName].split('.');
                 }
             }

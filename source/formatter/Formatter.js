@@ -6,32 +6,26 @@
  */
 const Base = require('../Base.js').Base;
 
-
 /**
  * Base class for Formatters.
  */
-class Formatter extends Base
-{
+class Formatter extends Base {
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'formatter/Formatter';
     }
-
 
     /**
      * @param {*} content
      * @param {string} options
      * @returns {Promise<Object>}
      */
-    format(content, options)
-    {
+    format(content, options) {
         return Promise.resolve(content);
     }
 }
-
 
 /**
  * Exports

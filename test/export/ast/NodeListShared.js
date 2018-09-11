@@ -7,48 +7,37 @@
 const Node = require(ES_SOURCE + '/export/ast/Node.js').Node;
 const nodeSpec = require(ES_TEST + '/export/ast/NodeShared.js').spec;
 
-
 /**
  * Shared Node spec
  */
-function spec(type, className, fixture, prepareParameters)
-{
+function spec(type, className, fixture, prepareParameters) {
     /**
      * Node Test
      */
     nodeSpec(type, className, fixture, prepareParameters);
 
-
     /**
      * NodeList Test
      */
-    const createTestee = function()
-    {
+    const createTestee = function() {
         let parameters = Array.from(arguments);
-        if (prepareParameters)
-        {
+        if (prepareParameters) {
             parameters = prepareParameters(parameters);
         }
         return new type(...parameters);
     };
 
-
-    describe('#constructor', function()
-    {
-        it('should allow to prepopulate children', function()
-        {
+    describe('#constructor', function() {
+        it('should allow to prepopulate children', function() {
             const node1 = new Node();
-            const testee = createTestee({ children: [node1]});
+            const testee = createTestee({ children: [node1] });
             expect(testee.children).to.have.length(1);
             expect(testee.children).to.include.members([node1]);
         });
     });
 
-
-    describe('#children', function()
-    {
-        it('should set parent of all added nodes to itself', function()
-        {
+    describe('#children', function() {
+        it('should set parent of all added nodes to itself', function() {
             const testee = createTestee();
             const node1 = new Node();
             const node2 = new Node();
@@ -58,22 +47,16 @@ function spec(type, className, fixture, prepareParameters)
         });
     });
 
-
-    describe('#find', function()
-    {
-        it('should return a matching child node', function()
-        {
+    describe('#find', function() {
+        it('should return a matching child node', function() {
             const testee = createTestee();
             testee.children.push(new Node());
             expect(testee.find('Node')).to.be.equal(testee.children[0]);
         });
     });
 
-
-    describe('#filter', function()
-    {
-        it('should return matching child nodes', function()
-        {
+    describe('#filter', function() {
+        it('should return matching child nodes', function() {
             const testee = createTestee();
             const node1 = new Node();
             const node2 = new Node();
@@ -84,11 +67,8 @@ function spec(type, className, fixture, prepareParameters)
         });
     });
 
-
-    describe('#remove', function()
-    {
-        it('should remove a existing node', function()
-        {
+    describe('#remove', function() {
+        it('should remove a existing node', function() {
             const testee = createTestee();
             const node1 = new Node();
             const node2 = new Node();
@@ -99,8 +79,7 @@ function spec(type, className, fixture, prepareParameters)
             expect(testee.children).to.include.members([node2]);
         });
 
-        it('should remove nodes from whole tree', function()
-        {
+        it('should remove nodes from whole tree', function() {
             const testee = createTestee();
             const node1 = createTestee();
             const node1_1 = new Node();
@@ -114,11 +93,8 @@ function spec(type, className, fixture, prepareParameters)
         });
     });
 
-
-    describe('#replace', function()
-    {
-        it('should replace a existing node', function()
-        {
+    describe('#replace', function() {
+        it('should replace a existing node', function() {
             const testee = createTestee();
             const node1 = new Node();
             const node2 = new Node();
@@ -129,8 +105,7 @@ function spec(type, className, fixture, prepareParameters)
             expect(testee.children).to.include.members([node2]);
         });
 
-        it('should replace nodes in the whole tree', function()
-        {
+        it('should replace nodes in the whole tree', function() {
             const testee = createTestee();
             const node1 = createTestee();
             const node1_1 = new Node();

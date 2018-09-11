@@ -9,56 +9,46 @@ const Documentation = require('./Documentation.js').Documentation;
 /**
  * @memberOf model.documentation
  */
-class DocumentationCode extends Documentation
-{
+class DocumentationCode extends Documentation {
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'model.documentation/DocumentationCode';
     }
-
 
     /**
      * @inheritDocs
      */
-    get fields()
-    {
+    get fields() {
         const fields = super.fields;
         fields.visibility = 'public';
         fields.namespace = '';
         return fields;
     }
 
-
     /**
      * @property {String}
      */
-    get namespace()
-    {
+    get namespace() {
         return this._namespace;
     }
 
-    set namespace(value)
-    {
+    set namespace(value) {
         this._namespace = value || '';
     }
 
     /**
      * @property {String}
      */
-    get visibility()
-    {
+    get visibility() {
         return this._visibility;
     }
 
-    set visibility(value)
-    {
+    set visibility(value) {
         this._visibility = value || '';
     }
 }
-
 
 /**
  * Exports

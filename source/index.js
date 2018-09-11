@@ -3,29 +3,24 @@
 /**
  * Creates the application base config
  */
-function configure(options, localConfiguration)
-{
+function configure(options, localConfiguration) {
     const Configuration = require('./application/Configuration.js').Configuration;
     return new Configuration(options, localConfiguration);
 }
 
-
 /**
  * Sets the log level of the internal intel logger
  */
-function setLogLevel(level)
-{
+function setLogLevel(level) {
     const intel = require('intel');
     const logger = intel.getLogger('entoj');
     logger.setLevel(level);
 }
 
-
 /**
  * API
  */
-module.exports =
-{
+module.exports = {
     Base: require('./Base.js').Base,
     application: require('./application/index.js'),
     base: require('./base/index.js'),

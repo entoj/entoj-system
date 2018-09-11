@@ -6,23 +6,19 @@
  */
 const Base = require('../../Base.js').Base;
 
-
 /**
  * Base Node renderer
  *
  * @memberOf export.renderer
  * @extends Base
  */
-class NodeRenderer extends Base
-{
+class NodeRenderer extends Base {
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'export.renderer/NodeRenderer';
     }
-
 
     /**
      * Returns a array of additional VinylFiles needed for this renderer.
@@ -31,11 +27,9 @@ class NodeRenderer extends Base
      * @param {String} stage
      * @return {Promise<Array>}
      */
-    createAdditionalFiles(configuration, stage)
-    {
+    createAdditionalFiles(configuration, stage) {
         return Promise.resolve([]);
     }
-
 
     /**
      * Resolve to true when the renderer want's to render the given node.
@@ -44,11 +38,9 @@ class NodeRenderer extends Base
      * @param {export.Configuration} configuration
      * @return {Promise<Boolean>}
      */
-    willRender(node, configuration)
-    {
+    willRender(node, configuration) {
         return Promise.resolve(false);
     }
-
 
     /**
      * Resolve to true when no other renderer should be
@@ -58,11 +50,9 @@ class NodeRenderer extends Base
      * @param {export.Configuration} configuration
      * @return {Promise<Boolean>}
      */
-    shouldStopRendering(node, configuration)
-    {
+    shouldStopRendering(node, configuration) {
         return this.willRender(node, configuration);
     }
-
 
     /**
      * Render the given node to a string.
@@ -71,23 +61,19 @@ class NodeRenderer extends Base
      * @param {export.Configuration} configuration
      * @return {Promise<String>}
      */
-    render(node, configuration)
-    {
+    render(node, configuration) {
         return Promise.resolve('');
     }
-
 
     /**
      * Reset's the state of the renderer
      *
      * @param {export.Configuration} configuration
      */
-    reset(configuration)
-    {
+    reset(configuration) {
         return Promise.resolve();
     }
 }
-
 
 /**
  * Exports

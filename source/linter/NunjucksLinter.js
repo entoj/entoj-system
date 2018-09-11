@@ -10,18 +10,15 @@ const EntityRenderer = require('../nunjucks/EntityRenderer.js').EntityRenderer;
 const assertParameter = require('../utils/assert.js').assertParameter;
 const co = require('co');
 
-
 /**
  * A very simple nunjucks linter.
  * It actually only tests if the template contains errors.
  */
-class NunjucksLinter extends Linter
-{
+class NunjucksLinter extends Linter {
     /**
      * @param {Object} options
      */
-    constructor(entityRenderer)
-    {
+    constructor(entityRenderer) {
         super();
 
         // Check params
@@ -31,62 +28,48 @@ class NunjucksLinter extends Linter
         this._entityRenderer = entityRenderer;
     }
 
-
     /**
      * @inheritDoc
      */
-    static get injections()
-    {
-        return { 'parameters': [EntityRenderer] };
+    static get injections() {
+        return { parameters: [EntityRenderer] };
     }
 
-
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'linter/NunjucksLinter';
     }
 
-
     /**
      * @type {String}
      */
-    get name()
-    {
+    get name() {
         return 'TEMPLATE';
     }
 
-
     /**
      * @type {String}
      */
-    get contentKind()
-    {
+    get contentKind() {
         return ContentKind.MACRO;
     }
-
 
     /**
      * @type {nunjucks.EntityRenderer}
      */
-    get entityRenderer()
-    {
+    get entityRenderer() {
         return this._entityRenderer;
     }
-
 
     /**
      * @inheritDoc
      */
-    lint(content, options)
-    {
+    lint(content, options) {
         const scope = this;
-        const promise = co(function *()
-        {
-            const result =
-            {
+        const promise = co(function*() {
+            const result = {
                 success: true,
                 errorCount: 0,
                 warningCount: 0,
@@ -95,33 +78,31 @@ class NunjucksLinter extends Linter
 
             // Check
             const opts = options || {};
-            if (!content || content.trim() === '' || !opts.entity)
-            {
+            if (!content || content.trim() === '' || !opts.entity) {
                 return result;
             }
 
             // try to render
-            try
-            {
-                yield scope.entityRenderer.renderString(content, false, options.entity, options.entity.id.site);
-            }
-            catch (e)
-            {
+            try {
+                yield scope.entityRenderer.renderString(
+                    content,
+                    false,
+                    options.entity,
+                    options.entity.id.site
+                );
+            } catch (e) {
                 result.success = false;
                 result.errorCount = 1;
-                result.messages.push(
-                    {
-                        message: e.message.replace(/\n/g, '').substr(-100),
-                        severity: 1,
-                        line: 0
-                    });
+                result.messages.push({
+                    message: e.message.replace(/\n/g, '').substr(-100),
+                    severity: 1,
+                    line: 0
+                });
             }
 
             // Massage messages
-            result.messages = result.messages.map(function(message)
-            {
-                if (opts.filename)
-                {
+            result.messages = result.messages.map(function(message) {
+                if (opts.filename) {
                     message.filename = opts.filename;
                 }
                 message.linter = scope.className;
@@ -133,7 +114,6 @@ class NunjucksLinter extends Linter
         return promise;
     }
 }
-
 
 /**
  * Exports

@@ -6,16 +6,13 @@
  */
 const Base = require('../../Base.js').Base;
 
-
 /**
  * @memberOf nunjucks.tag
  */
-class Tag extends Base
-{
+class Tag extends Base {
     /**
      */
-    constructor()
-    {
+    constructor() {
         super();
 
         // Assign options
@@ -23,55 +20,44 @@ class Tag extends Base
         this._hasBody = true;
     }
 
-
     /**
      * The namespaced class name
      *
      * @type {string}
      * @static
      */
-    static get className()
-    {
+    static get className() {
         return 'nunjucks.tag/Tag';
     }
-
 
     /**
      * @property {String}
      */
-    get type()
-    {
+    get type() {
         return this._type;
     }
-
 
     /**
      * @property {model.configuration.BuildConfiguration}
      */
-    get environment()
-    {
+    get environment() {
         return this._environment;
     }
-
 
     /**
      * @type {Array}
      */
-    get name()
-    {
+    get name() {
         return ['tag'];
     }
-
 
     /**
      * @type {Array}
      * @protected
      */
-    get tags()
-    {
+    get tags() {
         return this.name;
     }
-
 
     /**
      * Single tag or wrapping tag?
@@ -79,17 +65,14 @@ class Tag extends Base
      * @type {Boolean}
      * @protected
      */
-    get hasBody()
-    {
+    get hasBody() {
         return this._hasBody;
     }
-
 
     /**
      * @returns {Boolean|String}
      */
-    parse(parser, nodes, lexer)
-    {
+    parse(parser, nodes, lexer) {
         // get the tag token
         const tok = parser.nextToken();
 
@@ -100,8 +83,7 @@ class Tag extends Base
 
         // parse the body
         const body = [];
-        if (this.hasBody)
-        {
+        if (this.hasBody) {
             body.push(parser.parseUntilBlocks('end' + tok.value));
             parser.advanceAfterBlockEnd();
         }
@@ -111,29 +93,23 @@ class Tag extends Base
         return result;
     }
 
-
     /**
      * Normalizes generate params
      * @protected
      */
-    __generate__(context, params, caller)
-    {
-        if (typeof params === 'function')
-        {
+    __generate__(context, params, caller) {
+        if (typeof params === 'function') {
             return this.generate(context, {}, params);
         }
         return this.generate(context, params, caller);
     }
 
-
     /**
      * Generate the tag contents
      */
-    generate(context, params, caller)
-    {
+    generate(context, params, caller) {
         return '';
     }
-
 
     /**
      * Registers the tag with a nunjucks environent.
@@ -141,22 +117,18 @@ class Tag extends Base
      * @param {nunjucks.Environment} environment
      * @returns {Boolean}
      */
-    register(environment)
-    {
-        if (!environment)
-        {
+    register(environment) {
+        if (!environment) {
             return false;
         }
 
-        for (const name of this.name)
-        {
+        for (const name of this.name) {
             environment.addExtension(name, this);
         }
         this._environment = environment;
         return true;
     }
 }
-
 
 /**
  * Exports

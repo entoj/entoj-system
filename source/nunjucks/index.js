@@ -1,9 +1,7 @@
-
 /**
  * @namespace nunjucks
  */
-module.exports =
-{
+module.exports = {
     Environment: require('./Environment.js').Environment,
     Template: require('./Template.js').Template,
     filter: require('./filter/index.js'),

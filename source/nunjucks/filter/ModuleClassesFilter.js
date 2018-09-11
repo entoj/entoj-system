@@ -6,50 +6,38 @@
  */
 const Filter = require('./Filter.js').Filter;
 
-
 /**
  * @memberOf nunjucks.filter
  */
-class ModuleClassesFilter extends Filter
-{
+class ModuleClassesFilter extends Filter {
     /**
      * @inheritDoc
      */
-    constructor()
-    {
+    constructor() {
         super();
         this._name = 'moduleClasses';
     }
 
-
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'nunjucks.filter/ModuleClassesFilter';
     }
-
 
     /**
      * @inheritDocs
      */
-    filter()
-    {
+    filter() {
         const scope = this;
-        return function(value, moduleClass)
-        {
-            if (!value || !moduleClass)
-            {
+        return function(value, moduleClass) {
+            if (!value || !moduleClass) {
                 return moduleClass || '';
             }
             let result = moduleClass;
             const types = Array.isArray(value) ? value : [value];
-            types.forEach(function (item, index)
-            {
-                if ((typeof item === 'string' && item !== '') ||
-                    (typeof item === 'number'))
-                {
+            types.forEach(function(item, index) {
+                if ((typeof item === 'string' && item !== '') || typeof item === 'number') {
                     result += ' ' + moduleClass + '--' + item;
                 }
             });
@@ -57,7 +45,6 @@ class ModuleClassesFilter extends Filter
         };
     }
 }
-
 
 /**
  * Exports

@@ -13,24 +13,27 @@ const assertParameter = require('../../utils/assert.js').assertParameter;
 const co = require('co');
 const fs = require('co-fs-extra');
 
-
 /**
  * @class
  * @memberOf mode.data
  * @extends {model.Loader}
  */
-class DataLoader extends Loader
-{
+class DataLoader extends Loader {
     /**
      * @ignore
      */
-    constructor(sitesRepository, pathesConfiguration, filenameTemplate)
-    {
+    constructor(sitesRepository, pathesConfiguration, filenameTemplate) {
         super();
 
         //Check params
         assertParameter(this, 'sitesRepository', sitesRepository, true, SitesRepository);
-        assertParameter(this, 'pathesConfiguration', pathesConfiguration, true, PathesConfiguration);
+        assertParameter(
+            this,
+            'pathesConfiguration',
+            pathesConfiguration,
+            true,
+            PathesConfiguration
+        );
 
         // Assign options
         this._sitesRepository = sitesRepository;
@@ -39,95 +42,79 @@ class DataLoader extends Loader
         this._dataClass = Data;
     }
 
-
     /**
      * @inheritDoc
      */
-    static get injections()
-    {
-        return { 'parameters': [SitesRepository, PathesConfiguration, 'model.data/DataLoader.filenameTemplate'] };
+    static get injections() {
+        return {
+            parameters: [
+                SitesRepository,
+                PathesConfiguration,
+                'model.data/DataLoader.filenameTemplate'
+            ]
+        };
     }
 
-
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'model.data/DataLoader';
     }
-
 
     /**
      * @type {model.site.SitesRepository}
      */
-    get sitesRepository()
-    {
+    get sitesRepository() {
         return this._sitesRepository;
     }
-
 
     /**
      * @type {model.configuration.PathesConfiguration}
      */
-    get pathesConfiguration()
-    {
+    get pathesConfiguration() {
         return this._pathesConfiguration;
     }
-
 
     /**
      * @type {String}
      */
-    get filenameTemplate()
-    {
+    get filenameTemplate() {
         return this._filenameTemplate;
     }
-
 
     /**
      * @type {model.data.Data}
      */
-    get dataClass()
-    {
+    get dataClass() {
         return this._dataClass;
     }
-
 
     /**
      * Generates a filename for the given site
      *
      * @returns {String}
      */
-    generateFilename(data)
-    {
+    generateFilename(data) {
         return this.pathesConfiguration.resolve(this.filenameTemplate, data);
     }
-
 
     /**
      * Loads all Translations
      *
      * @returns {Promise.<Array>}
      */
-    load(changes)
-    {
+    load(changes) {
         const scope = this;
-        const promise = co(function *()
-        {
-            const sites = Array.isArray(changes)
-                ? changes
-                : yield scope.sitesRepository.getItems();
+        const promise = co(function*() {
+            const sites = Array.isArray(changes) ? changes : yield scope.sitesRepository.getItems();
             const result = [];
             const filesProcessed = {};
-            for (const site of sites)
-            {
+            for (const site of sites) {
                 const filename = yield scope.generateFilename({ site: site });
-                if (!filesProcessed[filename])
-                {
+                if (!filesProcessed[filename]) {
                     const fileExists = yield fs.exists(filename);
-                    if (fileExists)
-                    {
+                    if (fileExists) {
                         const data = JSON.parse(yield fs.readFile(filename));
                         result.push(new scope.dataClass({ data: data, site: site }));
                     }
@@ -139,7 +126,6 @@ class DataLoader extends Loader
         return promise;
     }
 }
-
 
 /**
  * Exports

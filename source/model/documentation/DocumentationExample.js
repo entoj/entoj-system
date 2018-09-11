@@ -1,4 +1,3 @@
-
 'use strict';
 
 /**
@@ -8,32 +7,26 @@
 const Documentation = require('./Documentation.js').Documentation;
 const ContentKind = require('../ContentKind.js').ContentKind;
 
-
 /**
  * @memberOf model.documentation
  */
-class DocumentationExample extends Documentation
-{
+class DocumentationExample extends Documentation {
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'model.documentation/DocumentationExample';
     }
-
 
     /**
      * @inheritDocs
      */
-    get fields()
-    {
+    get fields() {
         const fields = super.fields;
         fields.contentKind = ContentKind.EXAMPLE;
         return fields;
     }
 }
-
 
 /**
  * Exports

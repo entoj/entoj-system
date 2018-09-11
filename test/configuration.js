@@ -31,7 +31,6 @@ chai.use(chaiString);
 const chaiThings = require('chai-things');
 chai.use(chaiThings);
 
-
 /**
  * Configure intel
  */
@@ -39,31 +38,25 @@ require(ES_SOURCE + '/Base.js'); // Load Base to be able to override the default
 const intel = require('intel');
 const logger = intel.getLogger('entoj');
 let level = intel.ERROR;
-if (parameters.v)
-{
+if (parameters.v) {
     level = intel.WARN;
 }
-if (parameters.vv)
-{
+if (parameters.vv) {
     level = intel.INFO;
 }
-if (parameters.vvv)
-{
+if (parameters.vvv) {
     level = intel.DEBUG;
 }
-if (parameters.vvvv)
-{
+if (parameters.vvvv) {
     level = intel.TRACE;
 }
 logger.setLevel(level);
-
 
 /**
  * Show unhandled
  */
 /* eslint no-console: 0 */
-process.on('unhandledRejection', r => console.log(r));
-
+process.on('unhandledRejection', (r) => console.log(r));
 
 /**
  * Configure fixtures

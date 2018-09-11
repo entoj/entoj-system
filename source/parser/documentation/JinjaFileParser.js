@@ -9,17 +9,14 @@ const JinjaParser = require('./JinjaParser.js').JinjaParser;
 const ContentType = require('../../model/ContentType.js').ContentType;
 const ContentKind = require('../../model/ContentKind.js').ContentKind;
 
-
 /**
  * A jinja to documentation parser
  */
-class JinjaFileParser extends FileParser
-{
+class JinjaFileParser extends FileParser {
     /**
      * @param {Object} options
      */
-    constructor(options)
-    {
+    constructor(options) {
         super(options);
 
         const opts = options || {};
@@ -29,16 +26,13 @@ class JinjaFileParser extends FileParser
         this._fileKind = opts.fileKind || ContentKind.MACRO;
     }
 
-
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'parser.documentation/JinjaFileParser';
     }
 }
-
 
 /**
  * Exports

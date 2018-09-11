@@ -1,9 +1,7 @@
-
 /**
  * @namespace export
  */
-module.exports =
-{
+module.exports = {
     Configuration: require('./Configuration.js').Configuration,
     Exporter: require('./Exporter.js').Exporter,
     Parser: require('./Renderer.js').Parser,

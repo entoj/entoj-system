@@ -6,20 +6,16 @@
  * @memberof utils
  * @param {String} content
  */
-function fixWhitespace(content)
-{
+function fixWhitespace(content) {
     let result = '';
     const lines = content.replace(/\t/g, '    ').split('\n');
 
     // Find spaces that need to be removed
     let spaces = 999;
-    for (const line of lines)
-    {
-        if (line.trim() != '')
-        {
+    for (const line of lines) {
+        if (line.trim() != '') {
             const match = line.match(/^\s+/g);
-            if (match)
-            {
+            if (match) {
                 spaces = Math.min(spaces, match[0].length);
             }
         }
@@ -29,10 +25,9 @@ function fixWhitespace(content)
     const regex = new RegExp('^\\s{' + spaces + '}');
 
     // Remove spaces
-    for (const line of lines)
-    {
+    for (const line of lines) {
         const corrected = line.replace(regex, '');
-        result+= corrected + '\n';
+        result += corrected + '\n';
     }
 
     // Remove empty lines at start & end
@@ -40,7 +35,6 @@ function fixWhitespace(content)
 
     return result;
 }
-
 
 /**
  * Exports

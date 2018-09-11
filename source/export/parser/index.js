@@ -1,8 +1,6 @@
-
 /**
  * @namespace export.parser
  */
-module.exports =
-{
+module.exports = {
     JinjaParser: require('./JinjaParser.js').JinjaParser
 };

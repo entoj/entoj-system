@@ -6,41 +6,33 @@
  */
 const Base = require('../Base.js').Base;
 
-
 /**
  * @class
  * @memberOf entity
  * @extends {Base}
  */
-class Loader extends Base
-{
+class Loader extends Base {
     /**
      * @ignore
      */
-    constructor(items)
-    {
+    constructor(items) {
         super();
         this._items = items || [];
     }
 
-
     /**
      * @inheritDoc
      */
-    static get injections()
-    {
-        return { 'parameters': ['model/Loader.items'] };
+    static get injections() {
+        return { parameters: ['model/Loader.items'] };
     }
-
 
     /**
      * @inheritDocs
      */
-    static get className()
-    {
+    static get className() {
         return 'model/Loader';
     }
-
 
     /**
      * Loads & parses data and resolve it as an array
@@ -48,8 +40,7 @@ class Loader extends Base
      * @param {*} [changes]
      * @returns {Promise.<Array>}
      */
-    load(changes)
-    {
+    load(changes) {
         return Promise.resolve(this._items);
     }
 }

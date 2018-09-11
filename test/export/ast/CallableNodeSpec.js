@@ -9,8 +9,7 @@ const callableNodeSpec = require('./CallableNodeShared.js').spec;
 /**
  * Spec
  */
-describe(CallableNode.className, function()
-{
+describe(CallableNode.className, function() {
     /**
      * CallableNode Test
      */

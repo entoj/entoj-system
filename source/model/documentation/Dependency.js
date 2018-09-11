@@ -10,13 +10,11 @@ const DependencyType = require('./DependencyType.js').DependencyType;
 /**
  * @memberOf model.documentation
  */
-class Dependency extends ValueObject
-{
+class Dependency extends ValueObject {
     /**
      * @inheritDocs
      */
-    get fields()
-    {
+    get fields() {
         return {
             name: '',
             data: {},
@@ -24,15 +22,12 @@ class Dependency extends ValueObject
         };
     }
 
-
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'model.documentation/Dependency';
     }
-
 
     /**
      * The dependency type
@@ -40,44 +35,36 @@ class Dependency extends ValueObject
      * @see {model.documenation.DependencyType}
      * @property {String}
      */
-    get type()
-    {
+    get type() {
         return this._type;
     }
 
-    set type(value)
-    {
+    set type(value) {
         this._type = value;
     }
 
     /**
      * @property {String}
      */
-    get name()
-    {
+    get name() {
         return this._name;
     }
 
-    set name(value)
-    {
+    set name(value) {
         this._name = value;
     }
-
 
     /**
      * @property {Object}
      */
-    get data()
-    {
+    get data() {
         return this._data;
     }
 
-    set data(value)
-    {
+    set data(value) {
         this._data = value;
     }
 }
-
 
 /**
  * Exports

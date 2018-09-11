@@ -7,7 +7,6 @@
 const PluggableLoader = require('../loader/PluggableLoader.js').PluggableLoader;
 const EntityCategory = require('./EntityCategory.js').EntityCategory;
 
-
 /**
  * @class
  *
@@ -16,46 +15,42 @@ const EntityCategory = require('./EntityCategory.js').EntityCategory;
  * @memberOf mode.site
  * @extends {PluggableLoader}
  */
-class EntityCategoriesLoader extends PluggableLoader
-{
+class EntityCategoriesLoader extends PluggableLoader {
     /**
      * @ignore
      */
-    constructor(categories, plugins)
-    {
+    constructor(categories, plugins) {
         super(plugins);
 
         // Assign options
         this._categories = categories || [];
     }
 
-
     /**
      * @inheritDoc
      */
-    static get injections()
-    {
-        return { 'parameters': ['model.entity/EntityCategoriesLoader.categories', 'model.entity/EntityCategoriesLoader.plugins'] };
+    static get injections() {
+        return {
+            parameters: [
+                'model.entity/EntityCategoriesLoader.categories',
+                'model.entity/EntityCategoriesLoader.plugins'
+            ]
+        };
     }
-
 
     /**
      * @inheritDocs
      */
-    static get className()
-    {
+    static get className() {
         return 'model.entity/EntityCategoriesLoader';
     }
-
 
     /**
      * @returns {Promise.<Array>}
      */
-    loadItems()
-    {
+    loadItems() {
         const result = [];
-        for (const config of this._categories)
-        {
+        for (const config of this._categories) {
             const item = new EntityCategory(config);
             item.priority = result.length;
             result.push(item);

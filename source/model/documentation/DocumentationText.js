@@ -1,4 +1,3 @@
-
 'use strict';
 
 /**
@@ -9,26 +8,21 @@ const Documentation = require('./Documentation.js').Documentation;
 const DocumentationTextSection = require('./DocumentationTextSection.js').DocumentationTextSection;
 const ContentKind = require('../ContentKind.js').ContentKind;
 
-
 /**
  * @memberOf model.documentation
  */
-class DocumentationText extends Documentation
-{
+class DocumentationText extends Documentation {
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'model.documentation/DocumentationText';
     }
-
 
     /**
      * @inheritDocs
      */
-    get fields()
-    {
+    get fields() {
         const fields = super.fields;
         fields.contentKind = ContentKind.TEXT;
         fields.sections = [];
@@ -37,80 +31,62 @@ class DocumentationText extends Documentation
         return fields;
     }
 
-
     /**
      * @property {Array}
      */
-    get tokens()
-    {
+    get tokens() {
         return this._tokens;
     }
 
-    set tokens(value)
-    {
+    set tokens(value) {
         this._tokens = Array.isArray(value) ? value : [value];
     }
-
 
     /**
      * @property {Array}
      */
-    get sections()
-    {
+    get sections() {
         return this._sections;
     }
 
-    set sections(value)
-    {
+    set sections(value) {
         this._sections = Array.isArray(value) ? value : [value];
     }
-
 
     /**
      * @param {string} name
      * @returns {DocumentationTextSection}
      */
-    getByName(name)
-    {
-        if (!this.sections)
-        {
+    getByName(name) {
+        if (!this.sections) {
             return false;
         }
-        return this.sections.find(item => item.name === name);
+        return this.sections.find((item) => item.name === name);
     }
-
 
     /**
      * @property {string}
      */
-    get description()
-    {
+    get description() {
         return this.getByName(DocumentationTextSection.DESCRIPTION);
     }
 
-    set description(value)
-    {
-    }
-
+    set description(value) {}
 
     /**
      * @property {string}
      */
-    get functional()
-    {
+    get functional() {
         return this.getByName(DocumentationTextSection.FUNCTIONAL);
     }
-
 
     /**
      * @property {Array}
      */
-    getTokens(skip)
-    {
+    getTokens(skip) {
         return this.tokens.slice(skip || 0);
     }
 }
-
 
 /**
  * Exports

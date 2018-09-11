@@ -1,9 +1,7 @@
-
 /**
  * @namespace model
  */
-module.exports =
-{
+module.exports = {
     Loader: require('./Loader.js').Loader,
     Repository: require('./Repository.js').Repository,
     ValueObject: require('./ValueObject.js').ValueObject,

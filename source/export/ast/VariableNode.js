@@ -6,55 +6,43 @@
  */
 const Node = require('./Node.js').Node;
 
-
 /**
  * Represents a variable node (e.g. model.text)
  */
-class VariableNode extends Node
-{
+class VariableNode extends Node {
     /**
      * @ignore
      */
-    constructor(values)
-    {
+    constructor(values) {
         super(values);
 
         //fields
         this.dataFields.push('fields');
-        if (values && values.fields)
-        {
+        if (values && values.fields) {
             this.fields = values.fields;
-        }
-        else
-        {
+        } else {
             this.fields = [];
         }
     }
 
-
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'export.ast/VariableNode';
     }
-
 
     /**
      * @property {Array}
      */
-    get fields()
-    {
+    get fields() {
         return this._fields;
     }
 
-    set fields(value)
-    {
+    set fields(value) {
         this._fields = Array.isArray(value) ? value : [value];
     }
 }
-
 
 /**
  * Exports

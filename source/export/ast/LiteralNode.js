@@ -6,30 +6,24 @@
  */
 const ValueNode = require('./ValueNode.js').ValueNode;
 
-
 /**
  * Represents a literal scalar value
  */
-class LiteralNode extends ValueNode
-{
+class LiteralNode extends ValueNode {
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'export.ast/LiteralNode';
     }
-
 
     /**
      * @type {String}
      */
-    get valueType()
-    {
+    get valueType() {
         return typeof this.value;
     }
 }
-
 
 /**
  * Exports

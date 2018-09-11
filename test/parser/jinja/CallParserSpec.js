@@ -6,12 +6,10 @@
 const CallParser = require(ES_SOURCE + '/parser/jinja/CallParser.js').CallParser;
 const baseSpec = require(ES_TEST + '/BaseShared.js').spec;
 
-
 /**
  * Spec
  */
-describe(CallParser.className, function()
-{
+describe(CallParser.className, function() {
     /**
      * Base Test
      */
@@ -20,20 +18,15 @@ describe(CallParser.className, function()
     /**
      * CallParser Test
      */
-    beforeEach(function()
-    {
+    beforeEach(function() {
         global.fixtures = {};
     });
 
-
-    describe('#parse()', function()
-    {
-        it('should find simple macro calls', function()
-        {
+    describe('#parse()', function() {
+        it('should find simple macro calls', function() {
             const testee = new CallParser();
             const source = '{{ one() }}{{ two }}';
-            const promise = testee.parse(source).then(function(macros)
-            {
+            const promise = testee.parse(source).then(function(macros) {
                 expect(macros.definitions).to.have.length(0);
                 expect(macros.calls).to.have.length(1);
                 expect(macros.calls).to.contain('one');
@@ -41,12 +34,10 @@ describe(CallParser.className, function()
             return promise;
         });
 
-        it('should find yield macro calls', function()
-        {
+        it('should find yield macro calls', function() {
             const testee = new CallParser();
             const source = '{% call one() %}{% endcall) %}';
-            const promise = testee.parse(source).then(function(macros)
-            {
+            const promise = testee.parse(source).then(function(macros) {
                 expect(macros.definitions).to.have.length(0);
                 expect(macros.calls).to.have.length(1);
                 expect(macros.calls).to.contain('one');
@@ -54,12 +45,11 @@ describe(CallParser.className, function()
             return promise;
         });
 
-        it('should find all macro calls', function()
-        {
+        it('should find all macro calls', function() {
             const testee = new CallParser();
-            const source = '{% call one() %}{% endcall) %}{{ three() }}{% call two() %}{% endcall) %}{{ four() }}';
-            const promise = testee.parse(source).then(function(macros)
-            {
+            const source =
+                '{% call one() %}{% endcall) %}{{ three() }}{% call two() %}{% endcall) %}{{ four() }}';
+            const promise = testee.parse(source).then(function(macros) {
                 expect(macros.definitions).to.have.length(0);
                 expect(macros.calls).to.have.length(4);
                 expect(macros.calls).to.contain('one');
@@ -70,12 +60,11 @@ describe(CallParser.className, function()
             return promise;
         });
 
-        it('should allow complex macro arguments', function()
-        {
+        it('should allow complex macro arguments', function() {
             const testee = new CallParser();
-            const source = '{{ one(with:\'Parameter\') }}{{ two(model:{ value: key }) }}{{ three(with:\'Parameter\', more:\'than\') }}';
-            const promise = testee.parse(source).then(function(macros)
-            {
+            const source =
+                '{{ one(with:\'Parameter\') }}{{ two(model:{ value: key }) }}{{ three(with:\'Parameter\', more:\'than\') }}';
+            const promise = testee.parse(source).then(function(macros) {
                 expect(macros.definitions).to.have.length(0);
                 expect(macros.calls).to.have.length(3);
                 expect(macros.calls).to.contain('one');
@@ -85,12 +74,10 @@ describe(CallParser.className, function()
             return promise;
         });
 
-        it('should combine multiple macro calls', function()
-        {
+        it('should combine multiple macro calls', function() {
             const testee = new CallParser();
             const source = '{{ one() }}{{ one() }}{{ two() }}';
-            const promise = testee.parse(source).then(function(macros)
-            {
+            const promise = testee.parse(source).then(function(macros) {
                 expect(macros.definitions).to.have.length(0);
                 expect(macros.calls).to.have.length(2);
                 expect(macros.calls).to.contain('one');
@@ -99,12 +86,10 @@ describe(CallParser.className, function()
             return promise;
         });
 
-        it('should find macro definitions', function()
-        {
+        it('should find macro definitions', function() {
             const testee = new CallParser();
             const source = '{% macro test() %}{% endmacro %}';
-            const promise = testee.parse(source).then(function(macros)
-            {
+            const promise = testee.parse(source).then(function(macros) {
                 expect(macros.calls).to.have.length(0);
                 expect(macros.definitions).to.have.length(1);
                 expect(macros.definitions).to.contain('test');
@@ -112,12 +97,10 @@ describe(CallParser.className, function()
             return promise;
         });
 
-        it('should calculate external calls', function()
-        {
+        it('should calculate external calls', function() {
             const testee = new CallParser();
             const source = '{% macro test() %}{% endmacro %}{{ test() }}{{ external() }}';
-            const promise = testee.parse(source).then(function(macros)
-            {
+            const promise = testee.parse(source).then(function(macros) {
                 expect(macros.calls).to.have.length(2);
                 expect(macros.calls).to.contain('test');
                 expect(macros.calls).to.contain('external');
@@ -129,12 +112,10 @@ describe(CallParser.className, function()
             return promise;
         });
 
-        it('should ignore variables', function()
-        {
+        it('should ignore variables', function() {
             const testee = new CallParser();
             const source = '{{ foo }}';
-            const promise = testee.parse(source).then(function(macros)
-            {
+            const promise = testee.parse(source).then(function(macros) {
                 expect(macros.calls).to.have.length(0);
             });
             return promise;

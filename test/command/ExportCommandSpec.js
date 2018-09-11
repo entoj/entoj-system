@@ -7,20 +7,19 @@ const ExportCommand = require(ES_SOURCE + '/command/ExportCommand.js').ExportCom
 const exportCommandSpec = require(ES_TEST + '/command/ExportCommandShared.js').spec;
 const projectFixture = require(ES_FIXTURES + '/project/index.js');
 
-
 /**
  * Spec
  */
-describe(ExportCommand.className, function()
-{
+describe(ExportCommand.className, function() {
     /**
      * Command Test
      */
-    function prepareParameters()
-    {
+    function prepareParameters() {
         const fixture = projectFixture.createDynamic();
         return [fixture.context];
     }
 
-    exportCommandSpec(ExportCommand, 'command/ExportCommand', prepareParameters, { action: 'default' });
+    exportCommandSpec(ExportCommand, 'command/ExportCommand', prepareParameters, {
+        action: 'default'
+    });
 });

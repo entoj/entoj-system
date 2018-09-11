@@ -1,9 +1,7 @@
-
 /**
  * @namespace export.ast
  */
-module.exports =
-{
+module.exports = {
     ArgumentNode: require('./ArgumentNode.js').ArgumentNode,
     ArrayNode: require('./ArrayNode.js').ArrayNode,
     BlockNode: require('./BlockNode.js').BlockNode,

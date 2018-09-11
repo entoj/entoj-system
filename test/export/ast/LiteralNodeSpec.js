@@ -7,17 +7,14 @@ const LiteralNode = require(ES_SOURCE + '/export/ast/LiteralNode.js').LiteralNod
 const valueNodeSpec = require('./ValueNodeShared.js').spec;
 const baseSpec = require(ES_TEST + '/BaseShared.js').spec;
 
-
 /**
  * Spec
  */
-describe(LiteralNode.className, function()
-{
+describe(LiteralNode.className, function() {
     /**
      * ValueNode Test
      */
     valueNodeSpec(LiteralNode, 'export.ast/LiteralNode');
-
 
     /**
      * LiteralNode Test

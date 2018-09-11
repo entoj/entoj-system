@@ -11,17 +11,25 @@ const Site = require(ES_SOURCE + '/model/site/Site.js').Site;
 const SitesRepository = require(ES_SOURCE + '/model/site/SitesRepository.js').SitesRepository;
 const Entity = require(ES_SOURCE + '/model/entity/Entity.js').Entity;
 const EntityIdTemplate = require(ES_SOURCE + '/model/entity/EntityIdTemplate.js').EntityIdTemplate;
-const EntitiesRepository = require(ES_SOURCE + '/model/entity/EntitiesRepository.js').EntitiesRepository;
-const EntityCategoriesRepository = require(ES_SOURCE + '/model/entity/EntityCategoriesRepository.js').EntityCategoriesRepository;
+const EntitiesRepository = require(ES_SOURCE + '/model/entity/EntitiesRepository.js')
+    .EntitiesRepository;
+const EntityCategoriesRepository = require(ES_SOURCE +
+    '/model/entity/EntityCategoriesRepository.js').EntityCategoriesRepository;
 const FilesRepository = require(ES_SOURCE + '/model/file/FilesRepository.js').FilesRepository;
-const ViewModelRepository = require(ES_SOURCE + '/model/viewmodel/ViewModelRepository.js').ViewModelRepository;
-const PathesConfiguration = require(ES_SOURCE + '/model/configuration/PathesConfiguration.js').PathesConfiguration;
-const UrlsConfiguration = require(ES_SOURCE + '/model/configuration/UrlsConfiguration.js').UrlsConfiguration;
-const GlobalConfiguration = require(ES_SOURCE + '/model/configuration/GlobalConfiguration.js').GlobalConfiguration;
-const BuildConfiguration = require(ES_SOURCE + '/model/configuration/BuildConfiguration.js').BuildConfiguration;
+const ViewModelRepository = require(ES_SOURCE + '/model/viewmodel/ViewModelRepository.js')
+    .ViewModelRepository;
+const PathesConfiguration = require(ES_SOURCE + '/model/configuration/PathesConfiguration.js')
+    .PathesConfiguration;
+const UrlsConfiguration = require(ES_SOURCE + '/model/configuration/UrlsConfiguration.js')
+    .UrlsConfiguration;
+const GlobalConfiguration = require(ES_SOURCE + '/model/configuration/GlobalConfiguration.js')
+    .GlobalConfiguration;
+const BuildConfiguration = require(ES_SOURCE + '/model/configuration/BuildConfiguration.js')
+    .BuildConfiguration;
 const GlobalRepository = require(ES_SOURCE + '/model/GlobalRepository.js').GlobalRepository;
 const CompactIdParser = require(ES_SOURCE + '/parser/entity/CompactIdParser.js').CompactIdParser;
-const SystemModuleConfiguration = require(ES_SOURCE + '/configuration/SystemModuleConfiguration.js').SystemModuleConfiguration;
+const SystemModuleConfiguration = require(ES_SOURCE + '/configuration/SystemModuleConfiguration.js')
+    .SystemModuleConfiguration;
 const File = require(ES_SOURCE + '/model/file/File.js').File;
 const ContentType = require(ES_SOURCE + '/model/ContentType.js').ContentType;
 const Context = require(ES_SOURCE + '/application/Context.js').Context;
@@ -31,19 +39,20 @@ const clone = require('lodash.clone');
 const merge = require('lodash.merge');
 const path = require('path');
 
-
 /**
  * Creates a complete static project fixture
  */
-function createStatic(options)
-{
+function createStatic(options) {
     const opts = options || {};
     const result = {};
 
     result.pathToLibraries = testFixture.pathToLibraries;
     result.globalConfiguration = new GlobalConfiguration(opts.settings);
     result.buildConfiguration = new BuildConfiguration(opts.build);
-    result.moduleConfiguration = new SystemModuleConfiguration(result.globalConfiguration, result.buildConfiguration);
+    result.moduleConfiguration = new SystemModuleConfiguration(
+        result.globalConfiguration,
+        result.buildConfiguration
+    );
     result.pathesConfiguration = new PathesConfiguration(
         merge(
             {
@@ -51,15 +60,23 @@ function createStatic(options)
                 dataTemplate: testFixture.pathToData,
                 sitesTemplate: '${root}',
                 siteTemplate: '${sites}/${site.name.toLowerCase()}',
-                entityCategoryTemplate: '${sites}/${site.name.toLowerCase()}/${entityCategory.pluralName.toLowerCase()}',
-                entityIdTemplate: '${sites}/${site.name.toLowerCase()}/${entityCategory.pluralName.toLowerCase()}/${entityCategory.shortName}-${entityId.name}',
-                entityIdGlobalTemplate: '${sites}/${site.name.toLowerCase()}/${entityCategory.pluralName.toLowerCase()}'
+                entityCategoryTemplate:
+                    '${sites}/${site.name.toLowerCase()}/${entityCategory.pluralName.toLowerCase()}',
+                entityIdTemplate:
+                    '${sites}/${site.name.toLowerCase()}/${entityCategory.pluralName.toLowerCase()}/${entityCategory.shortName}-${entityId.name}',
+                entityIdGlobalTemplate:
+                    '${sites}/${site.name.toLowerCase()}/${entityCategory.pluralName.toLowerCase()}'
             },
             opts.pathesConfiguration
         )
     );
 
-    result.categoryGlobal = new EntityCategory({ longName: 'Global', pluralName: 'Global', shortName: 'l', isGlobal: true });
+    result.categoryGlobal = new EntityCategory({
+        longName: 'Global',
+        pluralName: 'Global',
+        shortName: 'l',
+        isGlobal: true
+    });
     result.categoryElement = new EntityCategory({ longName: 'Element' });
     result.categoryModule = new EntityCategory({ longName: 'Module' });
     result.categoryModuleGroup = new EntityCategory({ longName: 'Module-Group', shortName: 'g' });
@@ -80,49 +97,66 @@ function createStatic(options)
     result.sitesRepository.add(result.siteBase);
     result.sitesRepository.add(result.siteExtended);
 
-    result.entityIdParser = new CompactIdParser(result.sitesRepository, result.categoriesRepository, { useNumbers: false });
+    result.entityIdParser = new CompactIdParser(
+        result.sitesRepository,
+        result.categoriesRepository,
+        { useNumbers: false }
+    );
     result.entityIdTemplate = new EntityIdTemplate(result.entityIdParser);
     result.entitiesRepository = new EntitiesRepository(result.entityIdParser);
 
-    result.globalRepository = new GlobalRepository(result.sitesRepository, result.categoriesRepository, result.entitiesRepository);
-    result.systemConfiguration = new SystemModuleConfiguration(result.globalConfiguration, result.buildConfiguration);
-    result.urlsConfiguration = new UrlsConfiguration(result.sitesRepository, result.categoriesRepository, result.entitiesRepository,
-        result.entityIdParser, result.pathesConfiguration);
-    result.viewModelRepository = new ViewModelRepository(result.entitiesRepository, result.pathesConfiguration);
+    result.globalRepository = new GlobalRepository(
+        result.sitesRepository,
+        result.categoriesRepository,
+        result.entitiesRepository
+    );
+    result.systemConfiguration = new SystemModuleConfiguration(
+        result.globalConfiguration,
+        result.buildConfiguration
+    );
+    result.urlsConfiguration = new UrlsConfiguration(
+        result.sitesRepository,
+        result.categoriesRepository,
+        result.entitiesRepository,
+        result.entityIdParser,
+        result.pathesConfiguration
+    );
+    result.viewModelRepository = new ViewModelRepository(
+        result.entitiesRepository,
+        result.pathesConfiguration
+    );
     result.filesRepository = new FilesRepository(result.entitiesRepository);
     result.cliLogger = new CliLogger('', { muted: true });
 
-    result.createEntity = function(idPath)
-    {
+    result.createEntity = function(idPath) {
         const entityId = synchronize.execute(result.entityIdParser, 'parse', [idPath]);
         const entity = new Entity({ id: entityId.entityId });
         result.entitiesRepository.add(entity);
         return entity;
     };
 
-    if (opts.skipEntities !== true)
-    {
-        const addFiles = function(entity, site, globs, contentType, contentKind)
-        {
-            const basePath = synchronize.execute(result.pathesConfiguration, 'resolveEntityIdForSite', [entity.id, site]);
+    if (opts.skipEntities !== true) {
+        const addFiles = function(entity, site, globs, contentType, contentKind) {
+            const basePath = synchronize.execute(
+                result.pathesConfiguration,
+                'resolveEntityIdForSite',
+                [entity.id, site]
+            );
             const globPathes = globs.map((item) => path.join(basePath, item));
             const files = synchronize.execute(undefined, glob, [globPathes]);
-            for (const filename of files)
-            {
-                const file = new File(
-                    {
-                        filename: filename,
-                        contentType: contentType,
-                        contentKind: contentKind,
-                        contents: 'DUMMY',
-                        site: site
-                    });
+            for (const filename of files) {
+                const file = new File({
+                    filename: filename,
+                    contentType: contentType,
+                    contentKind: contentKind,
+                    contents: 'DUMMY',
+                    site: site
+                });
                 entity.files.push(file);
             }
         };
 
-        const createEntityWithFiles = function(idPath)
-        {
+        const createEntityWithFiles = function(idPath) {
             const entityId = synchronize.execute(result.entityIdParser, 'parse', [idPath]);
             const entity = new Entity({ id: entityId.entityId });
             addFiles(entity, result.siteBase, ['*.j2', 'examples/*.j2'], ContentType.JINJA);
@@ -159,12 +193,10 @@ function createStatic(options)
     return result;
 }
 
-
 /**
  * Creates a complete dynamic project fixture
  */
-function createDynamic(configuration)
-{
+function createDynamic(configuration) {
     // Get fixture config
     let config = clone(testFixture.configuration);
 
@@ -174,26 +206,19 @@ function createDynamic(configuration)
 
     // Add sites
     config.sites = {};
-    config.sites.loader =
-    {
+    config.sites.loader = {
         type: require(ES_SOURCE + '/model/site').SitesLoader,
-        plugins:
-        [
-            require(ES_SOURCE + '/model/loader/documentation').PackagePlugin
-        ]
+        plugins: [require(ES_SOURCE + '/model/loader/documentation').PackagePlugin]
     };
 
     // Add entities
     config.entities = {};
-    config.entities.idParser =
-    {
+    config.entities.idParser = {
         type: require(ES_SOURCE + '/parser/entity/CompactIdParser.js').CompactIdParser
     };
-    config.entities.loader =
-    {
+    config.entities.loader = {
         type: require(ES_SOURCE + '/model/entity').EntitiesLoader,
-        plugins:
-        [
+        plugins: [
             require(ES_SOURCE + '/model/loader/documentation').PackagePlugin,
             require(ES_SOURCE + '/model/loader/documentation').JinjaPlugin,
             require(ES_SOURCE + '/model/loader/documentation').MarkdownPlugin
@@ -202,11 +227,9 @@ function createDynamic(configuration)
 
     // Add entityCategories
     config.entityCategories = {};
-    config.entityCategories.loader =
-    {
+    config.entityCategories.loader = {
         type: require(ES_SOURCE + '/model/entity').EntityCategoriesLoader,
-        categories:
-        [
+        categories: [
             {
                 longName: 'Global',
                 pluralName: 'Global',
@@ -233,18 +256,14 @@ function createDynamic(configuration)
     };
 
     // Add environments
-    config.environments =
-    {
+    config.environments = {
         development: {}
     };
 
     // apply custom configuration
-    if (typeof configuration == 'function')
-    {
+    if (typeof configuration == 'function') {
         config = configuration(config);
-    }
-    else
-    {
+    } else {
         config = merge(config, configuration);
     }
 
@@ -254,7 +273,9 @@ function createDynamic(configuration)
 
     // map defaults
     result.context.di.map('cli/CliLogger.options', { muted: config.logger.muted || false });
-    result.context.di.map('model.configuration/BuildConfiguration.options', { environments: config.environments });
+    result.context.di.map('model.configuration/BuildConfiguration.options', {
+        environments: config.environments
+    });
 
     // create global instances
     result.pathToLibraries = testFixture.pathToLibraries;
@@ -272,12 +293,13 @@ function createDynamic(configuration)
     result.cliLogger = result.context.di.create(CliLogger);
 
     // create shortcuts
-    result.siteBase = synchronize.execute(result.sitesRepository, 'findBy', [{ 'name': 'Base' }]);
-    result.siteExtended = synchronize.execute(result.sitesRepository, 'findBy', [{ 'name': 'Extended' }]);
+    result.siteBase = synchronize.execute(result.sitesRepository, 'findBy', [{ name: 'Base' }]);
+    result.siteExtended = synchronize.execute(result.sitesRepository, 'findBy', [
+        { name: 'Extended' }
+    ]);
 
     return result;
 }
-
 
 /**
  * Exports

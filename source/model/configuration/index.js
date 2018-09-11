@@ -1,9 +1,7 @@
-
 /**
  * @namespace model.configuration
  */
-module.exports =
-{
+module.exports = {
     BuildConfiguration: require('./BuildConfiguration.js').BuildConfiguration,
     GlobalConfiguration: require('./GlobalConfiguration.js').GlobalConfiguration,
     PathesConfiguration: require('./PathesConfiguration.js').PathesConfiguration,

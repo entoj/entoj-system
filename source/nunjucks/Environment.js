@@ -6,20 +6,20 @@
  */
 const BaseMixin = require('../Base.js').BaseMixin;
 const FileLoader = require('./loader/FileLoader.js').FileLoader;
-const BuildConfiguration = require('../model/configuration/BuildConfiguration.js').BuildConfiguration;
+const BuildConfiguration = require('../model/configuration/BuildConfiguration.js')
+    .BuildConfiguration;
 const EntitiesRepository = require('../model/entity/EntitiesRepository.js').EntitiesRepository;
-const PathesConfiguration = require('../model/configuration/PathesConfiguration.js').PathesConfiguration;
+const PathesConfiguration = require('../model/configuration/PathesConfiguration.js')
+    .PathesConfiguration;
 const Template = require('./Template.js').Template;
 const assertParameter = require('../utils/assert.js').assertParameter;
 const waitForPromise = require('../utils/synchronize.js').waitForPromise;
 const nunjucks = require('nunjucks');
 
-
 /**
  * @memberOf nunjucks
  */
-class Environment extends BaseMixin(nunjucks.Environment)
-{
+class Environment extends BaseMixin(nunjucks.Environment) {
     /**
      * @param {EntitiesRepository} entitiesRepository
      * @param {PathesConfiguration} pathesConfiguration
@@ -28,15 +28,27 @@ class Environment extends BaseMixin(nunjucks.Environment)
      * @param {Array} tags
      * @param {Object} options
      */
-    constructor(entitiesRepository, pathesConfiguration, buildConfiguration, filters, tags, options)
-    {
+    constructor(
+        entitiesRepository,
+        pathesConfiguration,
+        buildConfiguration,
+        filters,
+        tags,
+        options
+    ) {
         const opts = options || {};
         opts.autoescape = false;
         super([], opts);
 
         // Check params
         assertParameter(this, 'entitiesRepository', entitiesRepository, true, EntitiesRepository);
-        assertParameter(this, 'pathesConfiguration', pathesConfiguration, true, PathesConfiguration);
+        assertParameter(
+            this,
+            'pathesConfiguration',
+            pathesConfiguration,
+            true,
+            PathesConfiguration
+        );
         assertParameter(this, 'buildConfiguration', buildConfiguration, true, BuildConfiguration);
 
         // Add options
@@ -45,7 +57,11 @@ class Environment extends BaseMixin(nunjucks.Environment)
         this._filters = filters || [];
         this._tags = tags || [];
         this.templatePaths = opts.templatePaths;
-        this._template = new Template(entitiesRepository, this.templatePaths, this.buildConfiguration.environment);
+        this._template = new Template(
+            entitiesRepository,
+            this.templatePaths,
+            this.buildConfiguration.environment
+        );
         this._loader = new FileLoader(this.templatePaths, this._template, this);
         this._callbacks = {};
 
@@ -56,34 +72,35 @@ class Environment extends BaseMixin(nunjucks.Environment)
         this.addGlobal('environment', this.buildConfiguration);
 
         // Add filters
-        if (Array.isArray(this._filters))
-        {
-            for (const filter of this._filters)
-            {
+        if (Array.isArray(this._filters)) {
+            for (const filter of this._filters) {
                 filter.register(this);
             }
         }
 
         // Add tags
-        if (Array.isArray(this._tags))
-        {
-            for (const tag of this._tags)
-            {
+        if (Array.isArray(this._tags)) {
+            for (const tag of this._tags) {
                 tag.register(this);
             }
         }
     }
 
-
     /**
      * @inheritDoc
      */
-    static get injections()
-    {
-        return { 'parameters': [EntitiesRepository, PathesConfiguration, BuildConfiguration,
-            'nunjucks/Environment.filters', 'nunjucks/Environment.tags', 'nunjucks/Environment.options'] };
+    static get injections() {
+        return {
+            parameters: [
+                EntitiesRepository,
+                PathesConfiguration,
+                BuildConfiguration,
+                'nunjucks/Environment.filters',
+                'nunjucks/Environment.tags',
+                'nunjucks/Environment.options'
+            ]
+        };
     }
-
 
     /**
      * The namespaced class name
@@ -91,86 +108,68 @@ class Environment extends BaseMixin(nunjucks.Environment)
      * @type {string}
      * @static
      */
-    static get className()
-    {
+    static get className() {
         return 'nunjucks/Environment';
     }
-
 
     /**
      * @type {nunjucks.loader.FileLoader}
      */
-    get loader()
-    {
+    get loader() {
         return this._loader;
     }
-
 
     /**
      * @type {nunjucks.Template}
      */
-    get template()
-    {
+    get template() {
         return this._template;
     }
-
 
     /**
      * Returns the template root pathes used for resolving templates.
      *
      * @type {Array}
      */
-    get templatePaths()
-    {
+    get templatePaths() {
         return this._templatePaths.slice();
     }
-
 
     /**
      * @type {Array}
      */
-    set templatePaths(value)
-    {
+    set templatePaths(value) {
         this._templatePaths = [];
-        if (Array.isArray(value))
-        {
-            for (const templatePath of value)
-            {
-                this._templatePaths.push(waitForPromise(this.pathesConfiguration.resolve(templatePath)));
+        if (Array.isArray(value)) {
+            for (const templatePath of value) {
+                this._templatePaths.push(
+                    waitForPromise(this.pathesConfiguration.resolve(templatePath))
+                );
             }
-        }
-        else
-        {
+        } else {
             this._templatePaths.push(waitForPromise(this.pathesConfiguration.resolve(value || '')));
         }
-        if (this.loader)
-        {
+        if (this.loader) {
             this.loader.setSearchPaths(this._templatePaths);
         }
-        if (this.template)
-        {
+        if (this.template) {
             this.template.templatePaths = this._templatePaths;
         }
     }
 
-
     /**
      * @type {model.configuration.PathesConfiguration}
      */
-    get pathesConfiguration()
-    {
+    get pathesConfiguration() {
         return this._pathesConfiguration;
     }
-
 
     /**
      * @type {model.configuration.BuildConfiguration}
      */
-    get buildConfiguration()
-    {
+    get buildConfiguration() {
         return this._buildConfiguration;
     }
-
 
     /**
      * @param {String} content
@@ -178,22 +177,18 @@ class Environment extends BaseMixin(nunjucks.Environment)
      * @param {Object} options
      * @returns {String}
      */
-    renderString(content, context, options)
-    {
+    renderString(content, context, options) {
         const template = this._template.prepare(content, this.globals['location']);
         const result = super.renderString(template, context, options);
         return result;
     }
 
-
     /**
      * Clears all filter callbacks
      */
-    clearFilterCallbacks()
-    {
+    clearFilterCallbacks() {
         this._callbacks = {};
     }
-
 
     /**
      * Adds a callback for a specific filter
@@ -201,15 +196,12 @@ class Environment extends BaseMixin(nunjucks.Environment)
      * @param {String} name
      * @param {Function} callback
      */
-    addFilterCallback(name, callback)
-    {
-        if (!this._callbacks[name])
-        {
+    addFilterCallback(name, callback) {
+        if (!this._callbacks[name]) {
             this._callbacks[name] = [];
         }
         this._callbacks[name].push(callback);
     }
-
 
     /**
      * Applies all callbacks to value for filter
@@ -218,15 +210,12 @@ class Environment extends BaseMixin(nunjucks.Environment)
      * @param {Function} callback
      * @returns {Mixed}
      */
-    applyFilterCallbacks(filter, value, args, data)
-    {
-        if (!this._callbacks[filter.name[0]])
-        {
+    applyFilterCallbacks(filter, value, args, data) {
+        if (!this._callbacks[filter.name[0]]) {
             return value;
         }
         let result = value;
-        for (const callback of this._callbacks[filter.name[0]])
-        {
+        for (const callback of this._callbacks[filter.name[0]]) {
             result = callback(filter, result, args, data);
         }
         return result;

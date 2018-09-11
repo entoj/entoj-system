@@ -1,9 +1,7 @@
-
 /**
  * @namespace parser.documentation
  */
-module.exports =
-{
+module.exports = {
     DocBlockParser: require('./DocBlockParser.js').DocBlockParser,
     ExampleFileParser: require('./ExampleFileParser.js').ExampleFileParser,
     ExampleParser: require('./ExampleParser.js').ExampleParser,

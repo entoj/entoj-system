@@ -10,22 +10,20 @@ const Parser = require('./Parser.js').Parser;
 const Transformer = require('./Transformer.js').Transformer;
 const Configuration = require('./Configuration.js').Configuration;
 const GlobalRepository = require('../model/GlobalRepository.js').GlobalRepository;
-const BuildConfiguration = require('../model/configuration/BuildConfiguration.js').BuildConfiguration;
+const BuildConfiguration = require('../model/configuration/BuildConfiguration.js')
+    .BuildConfiguration;
 const assertParameter = require('../utils/assert.js').assertParameter;
 const metrics = require('../utils/performance.js').metrics;
 const co = require('co');
 
-
 /**
  * Source code exporter
  */
-class Exporter extends Base
-{
+class Exporter extends Base {
     /**
      * @ignore
      */
-    constructor(globalRepository, buildConfiguration, parser, renderer, transformer)
-    {
+    constructor(globalRepository, buildConfiguration, parser, renderer, transformer) {
         super();
 
         // Check params
@@ -44,69 +42,56 @@ class Exporter extends Base
         this._configurationClass = Configuration;
     }
 
-
     /**
      * @inheritDoc
      */
-    static get injections()
-    {
-        return { 'parameters': [GlobalRepository, BuildConfiguration, Parser, Renderer, Transformer] };
+    static get injections() {
+        return {
+            parameters: [GlobalRepository, BuildConfiguration, Parser, Renderer, Transformer]
+        };
     }
 
-
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'export/Exporter';
     }
-
 
     /**
      * @type {model.GlobalRepository}
      */
-    get globalRepository()
-    {
+    get globalRepository() {
         return this._globalRepository;
     }
-
 
     /**
      * @type {model.configuration.BuildConfiguration}
      */
-    get buildConfiguration()
-    {
+    get buildConfiguration() {
         return this._buildConfiguration;
     }
-
 
     /**
      * @type {export.Parser}
      */
-    get parser()
-    {
+    get parser() {
         return this._parser;
     }
-
 
     /**
      * @type {export.Renderer}
      */
-    get renderer()
-    {
+    get renderer() {
         return this._renderer;
     }
-
 
     /**
      * @type {export.Transformer}
      */
-    get transformer()
-    {
+    get transformer() {
         return this._transformer;
     }
-
 
     /**
      * @protected
@@ -115,13 +100,18 @@ class Exporter extends Base
      * @param {Object} settings
      * @returns {Configuration}
      */
-    createConfigurationInstance(entity, macro, settings)
-    {
-        return new this._configurationClass(entity, macro, settings,
-            this.parser, this.renderer, this.transformer,
-            this.globalRepository, this.buildConfiguration);
+    createConfigurationInstance(entity, macro, settings) {
+        return new this._configurationClass(
+            entity,
+            macro,
+            settings,
+            this.parser,
+            this.renderer,
+            this.transformer,
+            this.globalRepository,
+            this.buildConfiguration
+        );
     }
-
 
     /**
      * @protected
@@ -130,27 +120,27 @@ class Exporter extends Base
      * @param {Object} settings
      * @returns {Promise<Configuration>}
      */
-    createConfiguration(macroQuery, entityQuery, siteQuery, settings)
-    {
+    createConfiguration(macroQuery, entityQuery, siteQuery, settings) {
         const scope = this;
-        const promise = co(function *()
-        {
+        const promise = co(function*() {
             // Get entity
             const entity = yield scope.globalRepository.resolveEntity(siteQuery, entityQuery);
-            if (!entity)
-            {
+            if (!entity) {
                 /* istanbul ignore next */
-                throw new Error(scope.className + '::createContext - could not find entity for ' + entityQuery);
+                throw new Error(
+                    scope.className + '::createContext - could not find entity for ' + entityQuery
+                );
             }
 
             // Get macro
             let macro = yield scope.globalRepository.resolveMacro(siteQuery, macroQuery);
-            if (!macro || !macro.file)
-            {
+            if (!macro || !macro.file) {
                 // Try default macro
-                macro = yield scope.globalRepository.resolveMacro(siteQuery, entity.idString.lodasherize());
-                if (!macro || !macro.file)
-                {
+                macro = yield scope.globalRepository.resolveMacro(
+                    siteQuery,
+                    entity.idString.lodasherize()
+                );
+                if (!macro || !macro.file) {
                     /* istanbul ignore next */
                     scope.logger.debug('::createContext - could not find macro ' + macroQuery);
                 }
@@ -161,18 +151,15 @@ class Exporter extends Base
         return promise;
     }
 
-
     /**
      * Creates any additional files needed by the exported artifacts.
      *
      * @param {String} stage
      * @returns {Promise<Array>}
      */
-    createAdditionalFiles(stage)
-    {
+    createAdditionalFiles(stage) {
         const scope = this;
-        const promise = co(function *()
-        {
+        const promise = co(function*() {
             const configuration = scope.createConfigurationInstance();
             const result = yield scope.renderer.createAdditionalFiles(configuration, stage);
             return result;
@@ -180,44 +167,41 @@ class Exporter extends Base
         return promise;
     }
 
-
     /**
      * @returns {Promise<Object>}
      */
-    export(siteQuery, entityQuery, macroQuery, settings)
-    {
+    export(siteQuery, entityQuery, macroQuery, settings) {
         const scope = this;
-        const promise = co(function *()
-        {
+        const promise = co(function*() {
             metrics.pushScope(scope.className + '::export');
             metrics.start(scope.className + '::export');
 
             // Prepare
-            const result =
-            {
+            const result = {
                 configuration: false,
                 contents: ''
             };
 
             // Create configuration
             metrics.start(scope.className + '::export - create confguration');
-            const configuration = yield scope.createConfiguration(macroQuery, entityQuery, siteQuery, settings);
+            const configuration = yield scope.createConfiguration(
+                macroQuery,
+                entityQuery,
+                siteQuery,
+                settings
+            );
             result.configuration = yield configuration.getExportConfiguration();
             metrics.stop(scope.className + '::export - create confguration');
 
             // Parse jinja
             metrics.start(scope.className + '::export - parse jinja');
             let rootNode = false;
-            if (configuration.macro)
-            {
+            if (configuration.macro) {
                 rootNode = yield scope.parser.parseMacro(configuration.macro.name, configuration);
-            }
-            else
-            {
+            } else {
                 rootNode = yield scope.parser.parseTemplate(configuration.entity, configuration);
             }
-            if (rootNode === false)
-            {
+            if (rootNode === false) {
                 /* istanbul ignore next */
                 throw new Error(scope.className + '::transform - could not parse macro / template');
             }
@@ -227,8 +211,7 @@ class Exporter extends Base
             metrics.start(scope.className + '::export - transform nodes');
             yield scope.transformer.reset(configuration);
             const transformedRootNode = yield scope.transformer.transform(rootNode, configuration);
-            if (!transformedRootNode)
-            {
+            if (!transformedRootNode) {
                 /* istanbul ignore next */
                 throw new Error(scope.className + ':transform - could not transform parsed node');
             }
@@ -249,7 +232,6 @@ class Exporter extends Base
         return promise;
     }
 }
-
 
 /**
  * Exports

@@ -9,80 +9,62 @@ const createRandomNumberGenerator = require('../../utils/random.js').createRando
 const striptags = require('striptags');
 const htmlify = require('../../utils/string.js').htmlify;
 
-
 /**
  * @memberOf nunjucks.filter
  */
-class MarkupFilter extends Filter
-{
+class MarkupFilter extends Filter {
     /**
      * @inheritDoc
      */
-    constructor(styles)
-    {
+    constructor(styles) {
         super();
         this._name = 'markup';
-        this._styles = (styles)
-            ? styles
-            : { 'plain': 'plain' };
+        this._styles = styles ? styles : { plain: 'plain' };
     }
-
 
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'nunjucks.filter/MarkupFilter';
     }
-
 
     /**
      * @inheritDocs
      */
-    static get injections()
-    {
-        return { 'parameters': ['nunjucks.filter/MarkupFilter.styles'] };
+    static get injections() {
+        return { parameters: ['nunjucks.filter/MarkupFilter.styles'] };
     }
-
 
     /**
      * @type {Object}
      */
-    get styles()
-    {
+    get styles() {
         return this._styles;
     }
 
     /**
      * @inheritDocs
      */
-    filter()
-    {
+    filter() {
         const scope = this;
-        return function (value, style)
-        {
+        return function(value, style) {
             const result = value || '';
             const styleName = scope.styles[style] || 'default';
-            if (styleName == 'plain')
-            {
+            if (styleName == 'plain') {
                 return striptags(result);
             }
-            if (result.indexOf('<') > -1)
-            {
+            if (result.indexOf('<') > -1) {
                 return result;
             }
-            const globals = (this && this.env && this.env.globals)
-                ? this.env.globals
-                : { location: {} };
+            const globals =
+                this && this.env && this.env.globals ? this.env.globals : { location: {} };
             const useStaticContent = scope.useStaticContent(globals.request);
-            const tags =
-            [
+            const tags = [
                 {
                     name: 'a',
                     probability: 0.2,
-                    attributes:
-                    {
+                    attributes: {
                         href: 'JavaScript:;'
                     }
                 },
@@ -91,8 +73,7 @@ class MarkupFilter extends Filter
                     probability: 0.2
                 }
             ];
-            const options =
-            {
+            const options = {
                 tags: tags,
                 random: createRandomNumberGenerator(useStaticContent)
             };
@@ -100,7 +81,6 @@ class MarkupFilter extends Filter
         };
     }
 }
-
 
 /**
  * Exports

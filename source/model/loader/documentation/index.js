@@ -1,9 +1,7 @@
-
 /**
  * @namespace model.loader.documentation
  */
-module.exports =
-{
+module.exports = {
     ExamplePlugin: require('./ExamplePlugin.js').ExamplePlugin,
     JinjaPlugin: require('./JinjaPlugin.js').JinjaPlugin,
     MarkdownPlugin: require('./MarkdownPlugin.js').MarkdownPlugin,

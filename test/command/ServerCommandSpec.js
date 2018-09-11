@@ -11,53 +11,40 @@ const Route = require(ES_SOURCE + '/server/route/Route.js').Route;
 const request = require('supertest');
 const co = require('co');
 
-
 /**
  * Spec
  */
-describe(ServerCommand.className, function()
-{
+describe(ServerCommand.className, function() {
     /**
      * Command Test
      */
     commandSpec(ServerCommand, 'command/ServerCommand', prepareParameters);
 
     // Adds necessary parameters to create a testee
-    function prepareParameters(parameters)
-    {
+    function prepareParameters(parameters) {
         global.fixtures = projectFixture.createDynamic();
         return [global.fixtures.context];
     }
 
-
     /**
      * ServerCommand Test
      */
-    beforeEach(function()
-    {
+    beforeEach(function() {
         global.fixtures = projectFixture.createDynamic();
     });
 
-
-    afterEach(function(done)
-    {
-        const promise = co(function*()
-        {
-            for (const instance of Server.instances)
-            {
+    afterEach(function(done) {
+        const promise = co(function*() {
+            for (const instance of Server.instances) {
                 yield instance.stop();
             }
         });
         promise.then(done);
     });
 
-
-    describe('#execute', function()
-    {
-        it('should start a webserver', function(done)
-        {
-            co(function*()
-            {
+    describe('#execute', function() {
+        it('should start a webserver', function(done) {
+            co(function*() {
                 const testee = new ServerCommand(global.fixtures.context);
                 const server = yield testee.execute({ command: 'server' });
                 request(server.express)
@@ -66,12 +53,9 @@ describe(ServerCommand.className, function()
             });
         });
 
-        it('should allow to configure the server port via options.port', function()
-        {
-            const promise = co(function*()
-            {
-                const options =
-                {
+        it('should allow to configure the server port via options.port', function() {
+            const promise = co(function*() {
+                const options = {
                     port: 3200
                 };
                 const testee = new ServerCommand(global.fixtures.context, options);
@@ -81,14 +65,10 @@ describe(ServerCommand.className, function()
             return promise;
         });
 
-        it('should allow to configure the server routes via options.routes', function()
-        {
-            const promise = co(function*()
-            {
-                const options =
-                {
-                    routes:
-                    [
+        it('should allow to configure the server routes via options.routes', function() {
+            const promise = co(function*() {
+                const options = {
+                    routes: [
                         {
                             type: Route
                         }

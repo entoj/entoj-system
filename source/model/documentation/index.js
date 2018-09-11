@@ -1,9 +1,7 @@
-
 /**
  * @namespace model.documentation
  */
-module.exports =
-{
+module.exports = {
     Dependency: require('./Dependency.js').Dependency,
     DependencyType: require('./DependencyType.js').DependencyType,
     Documentation: require('./Documentation.js').Documentation,
@@ -11,7 +9,8 @@ module.exports =
     DocumentationCallable: require('./DocumentationCallable.js').DocumentationCallable,
     DocumentationClass: require('./DocumentationClass.js').DocumentationClass,
     DocumentationCode: require('./DocumentationCode.js').DocumentationCode,
-    DocumentationCompoundParameter: require('./DocumentationCompoundParameter.js').DocumentationCompoundParameter,
+    DocumentationCompoundParameter: require('./DocumentationCompoundParameter.js')
+        .DocumentationCompoundParameter,
     DocumentationExample: require('./DocumentationExample.js').DocumentationExample,
     DocumentationParameter: require('./DocumentationParameter.js').DocumentationParameter,
     DocumentationText: require('./DocumentationText.js').DocumentationText,

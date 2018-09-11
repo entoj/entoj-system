@@ -9,17 +9,14 @@ const ExampleParser = require('./ExampleParser.js').ExampleParser;
 const ContentType = require('../../model/ContentType.js').ContentType;
 const ContentKind = require('../../model/ContentKind.js').ContentKind;
 
-
 /**
  * A example to documentation parser
  */
-class ExampleFileParser extends FileParser
-{
+class ExampleFileParser extends FileParser {
     /**
      * @param {Object} options
      */
-    constructor(options)
-    {
+    constructor(options) {
         super(options);
 
         const opts = options || {};
@@ -29,16 +26,13 @@ class ExampleFileParser extends FileParser
         this._fileKind = opts.fileKind || ContentKind.EXAMPLE;
     }
 
-
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'parser.documentation/ExampleFileParser';
     }
 }
-
 
 /**
  * Exports

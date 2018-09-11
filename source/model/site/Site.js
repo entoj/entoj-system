@@ -6,39 +6,32 @@
  */
 const DocumentableValueObject = require('../DocumentableValueObject.js').DocumentableValueObject;
 
-
 /**
  * Describes a Site
  *
  * @memberOf model.site
  */
-class Site extends DocumentableValueObject
-{
+class Site extends DocumentableValueObject {
     /**
      * @constant {string}
      * @static
      */
-    static get NAME()
-    {
+    static get NAME() {
         return 'name';
     }
-
 
     /**
      * @constant {array}
      * @static
      */
-    static get ANY()
-    {
+    static get ANY() {
         return ['name'];
     }
-
 
     /**
      * @inheritDocs
      */
-    get fields()
-    {
+    get fields() {
         const fields = super.fields;
         fields.name = '';
         fields.description = '';
@@ -47,12 +40,10 @@ class Site extends DocumentableValueObject
         return fields;
     }
 
-
     /**
      * @inheritDocs
      */
-    initialize()
-    {
+    initialize() {
         super.initialize();
         this._name = '';
         this._description = '';
@@ -60,90 +51,71 @@ class Site extends DocumentableValueObject
         this._extendExcludes = [];
     }
 
-
     /**
      * @inheritDocs
      */
-    static get className()
-    {
+    static get className() {
         return 'model.site/Site';
     }
 
-
     /**
      * @inheritDocs
      */
-    get uniqueId()
-    {
+    get uniqueId() {
         return this._name;
     }
-
 
     /**
      * @let {String}
      */
-    get name()
-    {
+    get name() {
         return this._name;
     }
 
-    set name(value)
-    {
+    set name(value) {
         this._name = value;
     }
 
-
     /**
      * @let {String}
      */
-    get description()
-    {
+    get description() {
         return this._description;
     }
 
-    set description(value)
-    {
+    set description(value) {
         this._description = value;
     }
-
 
     /**
      * @let {model.site.Site}
      */
-    get extends()
-    {
+    get extends() {
         return this._extends;
     }
 
-    set extends(value)
-    {
+    set extends(value) {
         this._extends = value;
     }
-
 
     /**
      * @let {Array}
      */
-    get extendExcludes()
-    {
+    get extendExcludes() {
         return this._extendExcludes;
     }
 
-    set extendExcludes(value)
-    {
+    set extendExcludes(value) {
         this._extendExcludes = value;
     }
-
 
     /**
      * @inheritDocs
      */
-    toString()
-    {
+    toString() {
         return `[${this.className} ${this.name}]`;
     }
 }
-
 
 /**
  * Exports

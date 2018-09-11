@@ -7,29 +7,24 @@
 const ValueObject = require('../ValueObject.js').ValueObject;
 const SearchableArray = require('../../base/SearchableArray.js').SearchableArray;
 
-
 /**
  * Describes a Test suite
  *
  * @memberOf model.test
  * @extends Base
  */
-class TestSuite extends ValueObject
-{
+class TestSuite extends ValueObject {
     /**
      * @inheritDocs
      */
-    static get className()
-    {
+    static get className() {
         return 'model.test/TestSuite';
     }
 
-
     /**
      * @inheritDocs
      */
-    get fields()
-    {
+    get fields() {
         const fields = super.fields;
         fields.name = '';
         fields.site = false;
@@ -40,91 +35,72 @@ class TestSuite extends ValueObject
         return fields;
     }
 
-
     /**
      * @property {String}
      */
-    get name()
-    {
+    get name() {
         return this._name;
     }
 
-    set name(value)
-    {
+    set name(value) {
         this._name = value;
     }
-
 
     /**
      * @property {Boolean}
      */
-    get isValid()
-    {
+    get isValid() {
         return this._isValid;
     }
 
-    set isValid(value)
-    {
+    set isValid(value) {
         this._isValid = value;
     }
 
-
     /**
      * @property {Number}
      */
-    get ok()
-    {
+    get ok() {
         return this._ok;
     }
 
-    set ok(value)
-    {
+    set ok(value) {
         this._ok = value;
     }
-
 
     /**
      * @property {Number}
      */
-    get failed()
-    {
+    get failed() {
         return this._failed;
     }
 
-    set failed(value)
-    {
+    set failed(value) {
         this._failed = value;
     }
-
 
     /**
      * @property {Array}
      */
-    get tests()
-    {
+    get tests() {
         return this._tests;
     }
 
-    set tests(value)
-    {
+    set tests(value) {
         this._tests = value;
     }
-
 
     /**
      * @property {model.site.Site}
      */
-    get site()
-    {
+    get site() {
         return this._site;
     }
 
-    set site(value)
-    {
+    set site(value) {
         this._site = value;
     }
 }
-
 
 /**
  * Exports

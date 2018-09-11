@@ -1,9 +1,7 @@
-
 /**
  * @namespace application
  */
-module.exports =
-{
+module.exports = {
     Communication: require('./Communication.js').Communication,
     Configuration: require('./Configuration.js').Configuration,
     Context: require('./Context.js').Context,

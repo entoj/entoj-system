@@ -8,85 +8,65 @@ const valueObjectSpec = require('./ValueObjectShared.js').spec;
 const BaseArray = require(ES_SOURCE + '/base/BaseArray.js').BaseArray;
 const BaseMap = require(ES_SOURCE + '/base/BaseMap.js').BaseMap;
 
-
 /**
  * Spec
  */
-describe(ValueObject.className, function()
-{
+describe(ValueObject.className, function() {
     /**
      * ValueObject Test
      */
     valueObjectSpec(ValueObject, 'model/ValueObject');
 
-
     /**
      * ValueObject Local Test
      */
-    class TestValueObject extends ValueObject
-    {
-        constructor(fields)
-        {
+    class TestValueObject extends ValueObject {
+        constructor(fields) {
             super();
             this._fields = fields || {};
         }
 
-        get fields()
-        {
+        get fields() {
             return this._fields;
         }
 
-        set fields(value)
-        {
+        set fields(value) {
             this._fields = value;
         }
     }
 
-    class TestNestedValueObject extends TestValueObject
-    {
-        constructor()
-        {
+    class TestNestedValueObject extends TestValueObject {
+        constructor() {
             super({ street: '', nr: '' });
         }
     }
 
-    describe('#uniqueId', function()
-    {
-        it('should return the object instance per default', function()
-        {
+    describe('#uniqueId', function() {
+        it('should return the object instance per default', function() {
             const testee = new ValueObject();
             expect(testee.uniqueId).to.be.equal(testee);
         });
     });
 
-
-    describe('#isEqualTo', function()
-    {
-        it('should return false when both objects are not the same instance', function()
-        {
+    describe('#isEqualTo', function() {
+        it('should return false when both objects are not the same instance', function() {
             const testee = new ValueObject();
             const other = new ValueObject();
             expect(testee.isEqualTo(other)).to.be.not.ok;
         });
     });
 
-
-    describe('#hydrate', function()
-    {
-        it('should hydrate nested value objects', function()
-        {
-            const fields =
-            {
+    describe('#hydrate', function() {
+        it('should hydrate nested value objects', function() {
+            const fields = {
                 name: '',
                 age: 0,
                 address: TestNestedValueObject
             };
-            const expected =
-            {
+            const expected = {
                 name: '',
                 age: 0,
-                address:
-                {
+                address: {
                     street: '',
                     nr: ''
                 }
@@ -98,19 +78,14 @@ describe(ValueObject.className, function()
         });
     });
 
-
-    describe('#dehydrate', function()
-    {
-        it('should import known fields', function()
-        {
-            const fields =
-            {
+    describe('#dehydrate', function() {
+        it('should import known fields', function() {
+            const fields = {
                 name: '',
                 age: 0,
                 address: false
             };
-            const values =
-            {
+            const values = {
                 name: 'jon',
                 lastName: 'king'
             };
@@ -123,15 +98,12 @@ describe(ValueObject.className, function()
             expect(testee.lastName).to.be.undefined;
         });
 
-        it('should allow to import BaseArray fields', function()
-        {
-            const fields =
-            {
+        it('should allow to import BaseArray fields', function() {
+            const fields = {
                 name: '',
                 properties: BaseArray
             };
-            const values =
-            {
+            const values = {
                 name: 'jon',
                 properties: ['king']
             };
@@ -144,20 +116,16 @@ describe(ValueObject.className, function()
             expect(testee.properties[0]).to.be.equal('king');
         });
 
-        it('should clear BaseArray fields before importing', function()
-        {
-            const fields =
-            {
+        it('should clear BaseArray fields before importing', function() {
+            const fields = {
                 name: '',
                 properties: BaseArray
             };
-            const values1 =
-            {
+            const values1 = {
                 name: 'jon',
                 properties: ['king']
             };
-            const values2 =
-            {
+            const values2 = {
                 properties: ['karl']
             };
             const testee = new TestValueObject();
@@ -170,15 +138,12 @@ describe(ValueObject.className, function()
             expect(testee.properties[0]).to.be.equal('karl');
         });
 
-        it('should allow to import BaseMap fields', function()
-        {
-            const fields =
-            {
+        it('should allow to import BaseMap fields', function() {
+            const fields = {
                 name: '',
                 properties: BaseMap
             };
-            const values =
-            {
+            const values = {
                 name: 'jon',
                 properties: { status: 'king' }
             };

@@ -7,59 +7,47 @@
 const Filter = require('./Filter.js').Filter;
 const Hypher = require('hypher');
 
-
 /**
  * @memberOf nunjucks.filter
  */
-class HyphenateFilter extends Filter
-{
+class HyphenateFilter extends Filter {
     /**
      * @inheritDocs
      */
-    constructor()
-    {
+    constructor() {
         super();
         this._name = 'hyphenate';
         this._hypher = new Hypher(require('hyphenation.de'));
     }
 
-
     /**
      * @inheritDocs
      */
-    static get className()
-    {
+    static get className() {
         return 'nunjucks.filter/HyphenateFilter';
     }
 
-
     /**
      * @inheritDocs
      */
-    get hypher()
-    {
+    get hypher() {
         return this._hypher;
     }
 
-
     /**
      * @inheritDocs
      */
-    filter()
-    {
+    filter() {
         const scope = this;
-        return function (value)
-        {
+        return function(value) {
             let result = '';
-            if (value)
-            {
+            if (value) {
                 result = scope.hypher.hyphenateText(value);
             }
             return scope.applyCallbacks(result, arguments);
         };
     }
 }
-
 
 /**
  * Exports

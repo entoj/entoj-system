@@ -8,12 +8,9 @@ const fixWhitespace = require(ES_SOURCE + '/utils/markdown.js').fixWhitespace;
 /**
  * Spec
  */
-describe('utils/markdown', function()
-{
-    describe('#fixWhitespace', function()
-    {
-        it('should remove any superfluous whitespace', function()
-        {
+describe('utils/markdown', function() {
+    describe('#fixWhitespace', function() {
+        it('should remove any superfluous whitespace', function() {
             const input = `
                 # Headline
                 ## Subheadline
@@ -34,8 +31,7 @@ describe('utils/markdown', function()
                 what is x
                 \`\`\`
             `;
-            const expected =
-`# Headline
+            const expected = `# Headline
 ## Subheadline
 > Pardon my french
 *This text will be italic*

@@ -6,34 +6,28 @@
  */
 const Base = require('../Base.js').Base;
 
-
 /**
  * Base class for Parsers.
  *
  * @memberOf parser
  */
-class Parser extends Base
-{
+class Parser extends Base {
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'parser/Parser';
     }
-
 
     /**
      * @param {*} content
      * @param {string} options
      * @returns {Promise<Object>}
      */
-    parse(content, options)
-    {
+    parse(content, options) {
         return Promise.resolve(false);
     }
 }
-
 
 /**
  * Exports

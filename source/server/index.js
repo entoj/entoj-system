@@ -1,9 +1,7 @@
-
 /**
  * @namespace server
  */
-module.exports =
-{
+module.exports = {
     Server: require('./Server.js').Server,
     route: require('./route/index.js')
 };

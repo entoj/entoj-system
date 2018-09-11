@@ -3,16 +3,15 @@
 /**
  * Requirements
  */
-const DocumentationTextSection = require(ES_SOURCE + '/model/documentation/DocumentationTextSection.js').DocumentationTextSection;
+const DocumentationTextSection = require(ES_SOURCE +
+    '/model/documentation/DocumentationTextSection.js').DocumentationTextSection;
 const baseSpec = require(ES_TEST + '/BaseShared.js').spec;
 const documentationSpec = require('./DocumentationShared.js').spec;
-
 
 /**
  * Spec
  */
-describe(DocumentationTextSection.className, function()
-{
+describe(DocumentationTextSection.className, function() {
     /**
      * Documentation Test
      */
@@ -23,18 +22,15 @@ describe(DocumentationTextSection.className, function()
      */
     baseSpec.assertProperty(new DocumentationTextSection(), ['tokens'], ['hey'], []);
 
-    describe('#getTokens', function()
-    {
-        it('should return all tokens', function()
-        {
+    describe('#getTokens', function() {
+        it('should return all tokens', function() {
             const testee = new DocumentationTextSection();
             testee.tokens.push('one');
             testee.tokens.push('two');
             expect(testee.getTokens()).to.be.deep.equal(['one', 'two']);
         });
 
-        it('should allow to skip tokens', function()
-        {
+        it('should allow to skip tokens', function() {
             const testee = new DocumentationTextSection();
             testee.tokens.push('one');
             testee.tokens.push('two');
@@ -42,8 +38,7 @@ describe(DocumentationTextSection.className, function()
             expect(testee.getTokens(2)).to.be.deep.equal(['three']);
         });
 
-        it('should return a empty array when no tokens found', function()
-        {
+        it('should return a empty array when no tokens found', function() {
             const testee = new DocumentationTextSection();
             testee.tokens.push('one');
             testee.tokens.push('two');

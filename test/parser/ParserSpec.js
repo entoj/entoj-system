@@ -6,12 +6,10 @@
 const Parser = require(ES_SOURCE + '/parser/Parser.js').Parser;
 const parserSpec = require('./ParserShared.js').spec;
 
-
 /**
  * Spec
  */
-describe(Parser.className, function()
-{
+describe(Parser.className, function() {
     /**
      * Parser Test
      */

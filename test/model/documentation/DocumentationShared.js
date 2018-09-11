@@ -10,26 +10,21 @@ const File = require(ES_SOURCE + '/model/file/File.js').File;
 const baseSpec = require(ES_TEST + '/BaseShared.js').spec;
 const valueObjectSpec = require(ES_TEST + '/model/ValueObjectShared.js').spec;
 
-
 /**
  * Shared Documentation Spec
  */
-function spec(type, className, prepareParameters)
-{
+function spec(type, className, prepareParameters) {
     /**
      * ValueObject Test
      */
     valueObjectSpec(type, className, prepareParameters);
 
-
     /**
      * Documentation Test
      */
-    const createTestee = function()
-    {
+    const createTestee = function() {
         let parameters = Array.from(arguments);
-        if (prepareParameters)
-        {
+        if (prepareParameters) {
             parameters = prepareParameters(parameters);
         }
         return new type(...parameters);

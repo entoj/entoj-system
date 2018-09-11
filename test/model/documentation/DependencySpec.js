@@ -8,23 +8,19 @@ const DependencyType = require(ES_SOURCE + '/model/documentation/DependencyType.
 const valueObjectSpec = require(ES_TEST + '/model/ValueObjectShared.js').spec;
 const baseSpec = require(ES_TEST + '/BaseShared.js').spec;
 
-
 /**
  * Spec
  */
-describe(Dependency.className, function()
-{
+describe(Dependency.className, function() {
     /**
      * ValueObject Test
      */
     valueObjectSpec(Dependency, 'model.documentation/Dependency');
 
-
     /**
      * Dependency Test
      */
-    const createTestee = function()
-    {
+    const createTestee = function() {
         return new Dependency();
     };
 

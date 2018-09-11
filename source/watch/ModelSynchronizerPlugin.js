@@ -8,17 +8,14 @@ const Base = require('../Base.js').Base;
 const CliLogger = require('../cli/CliLogger.js').CliLogger;
 const assertParameter = require('../utils/assert.js').assertParameter;
 
-
 /**
  * @memberOf watch
  */
-class ModelSynchronizerPlugin extends Base
-{
+class ModelSynchronizerPlugin extends Base {
     /**
      * @param {CliLogger} cliLogger
      */
-    constructor(cliLogger)
-    {
+    constructor(cliLogger) {
         super();
 
         //Check params
@@ -28,43 +25,34 @@ class ModelSynchronizerPlugin extends Base
         this._cliLogger = cliLogger;
     }
 
-
     /**
      * @inheritDoc
      */
-    static get injections()
-    {
-        return { 'parameters': [CliLogger] };
+    static get injections() {
+        return { parameters: [CliLogger] };
     }
 
-
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'watch/ModelSynchronizerPlugin';
     }
-
 
     /**
      * @type {cli.CliLogger}
      */
-    get cliLogger()
-    {
+    get cliLogger() {
         return this._cliLogger;
     }
-
 
     /**
      * @returns {Promise.<*>}
      */
-    execute(changes)
-    {
+    execute(changes) {
         return Promise.resolve({});
     }
 }
-
 
 /**
  * Exports

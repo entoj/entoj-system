@@ -1,10 +1,8 @@
-
 /**
  * @namespace base
  */
-module.exports =
-{
+module.exports = {
     BaseArray: require('./BaseArray.js').BaseArray,
     BaseMap: require('./BaseMap.js').BaseMap,
-    SearchableArray: require('./SearchableArray.js').SearchableArray,
+    SearchableArray: require('./SearchableArray.js').SearchableArray
 };

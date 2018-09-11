@@ -9,12 +9,10 @@ const transformingTaskSpec = require(ES_TEST + '/task/TransformingTaskShared.js'
 const VinylFile = require('vinyl');
 const co = require('co');
 
-
 /**
  * Spec
  */
-describe(TemplateTask.className, function()
-{
+describe(TemplateTask.className, function() {
     /**
      * TransformingTask Test
      */
@@ -22,38 +20,32 @@ describe(TemplateTask.className, function()
 
     /**
      */
-    function prepareParameters(parameters)
-    {
+    function prepareParameters(parameters) {
         parameters.unshift(global.fixtures.cliLogger);
         return parameters;
     }
 
-
     /**
      * TemplateTask Test
      */
-    beforeEach(function()
-    {
+    beforeEach(function() {
         global.fixtures.cliLogger = new CliLogger();
         global.fixtures.cliLogger.muted = true;
     });
 
-
-    describe('#processFile()', function()
-    {
-        it('should process files as templates', function()
-        {
-            const promise = co(function*()
-            {
-                const options =
-                {
-                    templateData:
-                    {
+    describe('#processFile()', function() {
+        it('should process files as templates', function() {
+            const promise = co(function*() {
+                const options = {
+                    templateData: {
                         data: 'test'
                     }
                 };
                 const fileData = '<$ data $>';
-                const file = new VinylFile({ path: '/tmp/template.css', contents: new Buffer(fileData)});
+                const file = new VinylFile({
+                    path: '/tmp/template.css',
+                    contents: new Buffer(fileData)
+                });
                 const testee = new TemplateTask(global.fixtures.cliLogger);
                 const data = yield testee.processFile(file, undefined, options);
                 expect(data).to.be.instanceof(VinylFile);
@@ -62,20 +54,19 @@ describe(TemplateTask.className, function()
             return promise;
         });
 
-        it('should allow to autoescape variables', function()
-        {
-            const promise = co(function*()
-            {
-                const options =
-                {
+        it('should allow to autoescape variables', function() {
+            const promise = co(function*() {
+                const options = {
                     templateAutoescape: true,
-                    templateData:
-                    {
+                    templateData: {
                         data: 'test<a>link</a>'
                     }
                 };
                 const fileData = '<$ data $>';
-                const file = new VinylFile({ path: '/tmp/template.css', contents: new Buffer(fileData)});
+                const file = new VinylFile({
+                    path: '/tmp/template.css',
+                    contents: new Buffer(fileData)
+                });
                 const testee = new TemplateTask(global.fixtures.cliLogger);
                 const data = yield testee.processFile(file, undefined, options);
                 expect(data).to.be.instanceof(VinylFile);
@@ -84,20 +75,19 @@ describe(TemplateTask.className, function()
             return promise;
         });
 
-        it('should allow to skip processing file types as templates', function()
-        {
-            const promise = co(function*()
-            {
-                const options =
-                {
+        it('should allow to skip processing file types as templates', function() {
+            const promise = co(function*() {
+                const options = {
                     templateSkipFiles: ['.css'],
-                    templateData:
-                    {
+                    templateData: {
                         data: 'test'
                     }
                 };
                 const fileData = '<$ data $>';
-                const file = new VinylFile({ path: '/tmp/template.css', contents: new Buffer(fileData)});
+                const file = new VinylFile({
+                    path: '/tmp/template.css',
+                    contents: new Buffer(fileData)
+                });
                 const testee = new TemplateTask(global.fixtures.cliLogger);
                 const data = yield testee.processFile(file, undefined, options);
                 expect(data).to.be.instanceof(VinylFile);

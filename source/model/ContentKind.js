@@ -6,91 +6,72 @@
  */
 const Base = require('../Base.js').Base;
 
-
 /**
  * @class
  * @memberOf model
  * @extends {Base}
  */
-class ContentKind extends Base
-{
+class ContentKind extends Base {
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'model/ContentKind';
     }
-
 
     /**
      * Unknown kind
      */
-    static get UNKNOWN()
-    {
+    static get UNKNOWN() {
         return '*';
     }
-
 
     /**
      * CSS
      */
-    static get CSS()
-    {
+    static get CSS() {
         return 'css';
     }
-
 
     /**
      * JS
      */
-    static get JS()
-    {
+    static get JS() {
         return 'js';
     }
-
 
     /**
      * Macro
      */
-    static get MACRO()
-    {
+    static get MACRO() {
         return 'macro';
     }
-
 
     /**
      * Example
      */
-    static get EXAMPLE()
-    {
+    static get EXAMPLE() {
         return 'example';
     }
-
 
     /**
      * Styleguide
      */
-    static get STYLEGUIDE()
-    {
+    static get STYLEGUIDE() {
         return 'styleguide';
     }
-
 
     /**
      * Datamodel
      */
-    static get DATAMODEL()
-    {
+    static get DATAMODEL() {
         return 'datamodel';
     }
-
 
     /**
      * Text
      */
-    static get TEXT()
-    {
+    static get TEXT() {
         return 'text';
     }
 }

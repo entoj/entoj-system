@@ -6,12 +6,10 @@
 const DependencyType = require(ES_SOURCE + '/model/documentation/DependencyType.js').DependencyType;
 const baseSpec = require(ES_TEST + '/BaseShared.js').spec;
 
-
 /**
  * Spec
  */
-describe(DependencyType.className, function()
-{
+describe(DependencyType.className, function() {
     /**
      * Base Tests
      */

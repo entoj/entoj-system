@@ -12,19 +12,16 @@ const CliLogger = require('../cli/CliLogger.js').CliLogger;
 const assertParameter = require('../utils/assert.js').assertParameter;
 const co = require('co');
 
-
 /**
  * @memberOf watch
  */
-class ModelSynchronizerSitesPlugin extends ModelSynchronizerPlugin
-{
+class ModelSynchronizerSitesPlugin extends ModelSynchronizerPlugin {
     /**
      * @param {CliLogger} cliLogger
      * @param {model.site.SitesRepository} sitesRepository
      * @param {model.entity.EntitiesRepository} entitiesRepository
      */
-    constructor(cliLogger, sitesRepository, entitiesRepository)
-    {
+    constructor(cliLogger, sitesRepository, entitiesRepository) {
         super(cliLogger.createPrefixed('modelsynchronizer.sites'));
 
         //Check params
@@ -36,56 +33,44 @@ class ModelSynchronizerSitesPlugin extends ModelSynchronizerPlugin
         this._entitiesRepository = entitiesRepository;
     }
 
-
     /**
      * @inheritDoc
      */
-    static get injections()
-    {
-        return { 'parameters': [CliLogger, SitesRepository, EntitiesRepository] };
+    static get injections() {
+        return { parameters: [CliLogger, SitesRepository, EntitiesRepository] };
     }
 
-
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'watch/ModelSynchronizerSitesPlugin';
     }
-
 
     /**
      * @type {model.site.SitesRepository}
      */
-    get sitesRepository()
-    {
+    get sitesRepository() {
         return this._sitesRepository;
     }
-
 
     /**
      * @type {model.entity.EntitiesRepository}
      */
-    get entitiesRepository()
-    {
+    get entitiesRepository() {
         return this._entitiesRepository;
     }
-
 
     /**
      * @returns {Promise.<*>}
      */
-    execute(changes)
-    {
+    execute(changes) {
         const scope = this;
-        const promise = co(function *()
-        {
+        const promise = co(function*() {
             const result = {};
 
             // Apply changes for sites
-            if (changes.site)
-            {
+            if (changes.site) {
                 const workSites = scope.cliLogger.work('Invalidating <SitesRepository>');
                 result.site = yield scope.sitesRepository.invalidate(changes.site);
                 scope.cliLogger.end(workSites);
@@ -100,7 +85,6 @@ class ModelSynchronizerSitesPlugin extends ModelSynchronizerPlugin
         return promise;
     }
 }
-
 
 /**
  * Exports

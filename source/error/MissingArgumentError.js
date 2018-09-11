@@ -4,10 +4,8 @@
  * @memberOf error
  * @extends Error
  */
-class MissingArgumentError extends Error
-{
-    constructor(message)
-    {
+class MissingArgumentError extends Error {
+    constructor(message) {
         super(message);
         this.name = 'MissingArgumentError';
     }

@@ -8,20 +8,17 @@ const Base = require('../Base.js').Base;
 const renderers = require('./renderer/index.js');
 const co = require('co');
 
-
 /**
  * Artefact renderer
  *
  * @memberOf export
  * @extends Base
  */
-class Renderer extends Base
-{
+class Renderer extends Base {
     /**
      * @ignore
      */
-    constructor(nodeRenderers, options)
-    {
+    constructor(nodeRenderers, options) {
         super();
         this._options = options || {};
         this._nodeRenderers = [];
@@ -30,12 +27,9 @@ class Renderer extends Base
         this._nodeRenderers.push(new renderers.NodeListRenderer());
 
         // Custom renderer
-        if (nodeRenderers && Array.isArray(nodeRenderers))
-        {
-            for (const nodeRenderer of nodeRenderers)
-            {
-                if (!(nodeRenderer instanceof renderers.NodeRenderer))
-                {
+        if (nodeRenderers && Array.isArray(nodeRenderers)) {
+            for (const nodeRenderer of nodeRenderers) {
+                if (!(nodeRenderer instanceof renderers.NodeRenderer)) {
                     throw new Error(this.className + ' expects a list of NodeRenderer instances');
                 }
                 this._nodeRenderers.push(nodeRenderer);
@@ -43,42 +37,33 @@ class Renderer extends Base
         }
     }
 
-
     /**
      * @inheritDocs
      */
-    static get className()
-    {
+    static get className() {
         return 'export/Renderer';
     }
 
-
     /**
      * @inheritDocs
      */
-    static get injections()
-    {
-        return { 'parameters': ['export/Renderer.nodeRenderers', 'export/Renderer.options'] };
+    static get injections() {
+        return { parameters: ['export/Renderer.nodeRenderers', 'export/Renderer.options'] };
     }
-
 
     /**
      * @type {Object}
      */
-    get options()
-    {
+    get options() {
         return this._options;
     }
-
 
     /**
      * @type {Array}
      */
-    get nodeRenderers()
-    {
+    get nodeRenderers() {
         return this._nodeRenderers;
     }
-
 
     /**
      * Renders any source code at the top of each rendering
@@ -87,11 +72,9 @@ class Renderer extends Base
      * @param {export.Configuration} configuration
      * @returns {Promise<String>}
      */
-    renderPreface(configuration)
-    {
+    renderPreface(configuration) {
         return Promise.resolve('');
     }
-
 
     /**
      * Renders any source code at the bottom of each rendering
@@ -100,11 +83,9 @@ class Renderer extends Base
      * @param {export.Configuration} configuration
      * @returns {Promise<String>}
      */
-    renderPostface(configuration)
-    {
+    renderPostface(configuration) {
         return Promise.resolve('');
     }
-
 
     /**
      * Renders the given node (and it's child nodes) to a string.
@@ -118,40 +99,32 @@ class Renderer extends Base
      * @param {export.Configuration} configuration
      * @returns {Promise<String>}
      */
-    renderNode(node, configuration)
-    {
-        if (!node)
-        {
+    renderNode(node, configuration) {
+        if (!node) {
             return Promise.resolve('');
         }
         const scope = this;
-        const promise = co(function*()
-        {
+        const promise = co(function*() {
             let result = '';
             let didRender = false;
-            for (const renderer of scope.nodeRenderers)
-            {
+            for (const renderer of scope.nodeRenderers) {
                 const willRender = yield renderer.willRender(node, configuration);
-                if (willRender)
-                {
+                if (willRender) {
                     didRender = true;
-                    result+= yield renderer.render(node, configuration);
+                    result += yield renderer.render(node, configuration);
                     const stopRendering = yield renderer.shouldStopRendering(node, configuration);
-                    if (stopRendering)
-                    {
+                    if (stopRendering) {
                         return result;
                     }
                 }
             }
-            if (!didRender)
-            {
+            if (!didRender) {
                 scope.logger.error('renderNode: No renderer found', node.serialize());
             }
             return result;
         });
         return promise;
     }
-
 
     /**
      * Renders a list of Nodes.
@@ -160,25 +133,20 @@ class Renderer extends Base
      * @param {export.Configuration} configuration
      * @returns {Promise<String>}
      */
-    renderList(list, configuration)
-    {
-        if (!list)
-        {
+    renderList(list, configuration) {
+        if (!list) {
             return Promise.resolve('');
         }
         const scope = this;
-        const promise = co(function*()
-        {
+        const promise = co(function*() {
             let result = '';
-            for (const item of list)
-            {
-                result+= yield scope.renderNode(item, configuration);
+            for (const item of list) {
+                result += yield scope.renderNode(item, configuration);
             }
             return result;
         });
         return promise;
     }
-
 
     /**
      * A central comment renderer
@@ -187,11 +155,9 @@ class Renderer extends Base
      * @param {export.Configuration} configuration
      * @returns {Promise<String>}
      */
-    renderComment(text, configuration)
-    {
+    renderComment(text, configuration) {
         return Promise.resolve('<!-- ' + text + ' -->\n');
     }
-
 
     /**
      * Renders a node as source code
@@ -200,15 +166,12 @@ class Renderer extends Base
      * @param {export.Configuration} configuration
      * @returns {Promise<String>}
      */
-    render(node, configuration)
-    {
-        if (!node)
-        {
+    render(node, configuration) {
+        if (!node) {
             return Promise.resolve('');
         }
         const scope = this;
-        const promise = co(function*()
-        {
+        const promise = co(function*() {
             const nodes = yield scope.renderNode(node, configuration);
             const preface = yield scope.renderPreface(configuration);
             const postface = yield scope.renderPostface(configuration);
@@ -217,26 +180,21 @@ class Renderer extends Base
         return promise;
     }
 
-
     /**
      * Reset's the internal state of all renderers.
      *
      * @param {export.Configuration} configuration
      * @returns {Promise}
      */
-    reset(configuration)
-    {
+    reset(configuration) {
         const scope = this;
-        const promise = co(function *()
-        {
-            for (const nodeRenderer of scope.nodeRenderers)
-            {
+        const promise = co(function*() {
+            for (const nodeRenderer of scope.nodeRenderers) {
                 yield nodeRenderer.reset(configuration);
             }
         });
         return promise;
     }
-
 
     /**
      * Creates any additional files needed by node renderers.
@@ -245,14 +203,11 @@ class Renderer extends Base
      * @param {String} stage
      * @returns {Promise<Array>}
      */
-    createAdditionalFiles(configuration, stage)
-    {
+    createAdditionalFiles(configuration, stage) {
         const scope = this;
-        const promise = co(function *()
-        {
+        const promise = co(function*() {
             const result = [];
-            for (const nodeRenderer of scope.nodeRenderers)
-            {
+            for (const nodeRenderer of scope.nodeRenderers) {
                 const files = yield nodeRenderer.createAdditionalFiles(configuration, stage);
                 result.push(...files);
             }
@@ -261,7 +216,6 @@ class Renderer extends Base
         return promise;
     }
 }
-
 
 /**
  * Exports

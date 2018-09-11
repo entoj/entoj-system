@@ -9,16 +9,13 @@ const nodeSpec = require('./NodeShared.js').spec;
 /**
  * Spec
  */
-describe(Node.className, function()
-{
+describe(Node.className, function() {
     /**
      * Node Test
      */
-    nodeSpec(Node, 'export.ast/Node',
-        {
-            serialized:
-            {
-                type: 'Node'
-            }
-        });
+    nodeSpec(Node, 'export.ast/Node', {
+        serialized: {
+            type: 'Node'
+        }
+    });
 });

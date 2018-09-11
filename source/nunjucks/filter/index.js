@@ -1,9 +1,7 @@
-
 /**
  * @namespace nunjucks.filter
  */
-module.exports =
-{
+module.exports = {
     AssetUrlFilter: require('./AssetUrlFilter.js').AssetUrlFilter,
     AttributesFilter: require('./AttributesFilter.js').AttributesFilter,
     DebugFilter: require('./DebugFilter.js').DebugFilter,

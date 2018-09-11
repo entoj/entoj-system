@@ -8,7 +8,8 @@ const Base = require('../Base.js').Base;
 const EntitiesRepository = require('../model/entity/EntitiesRepository.js').EntitiesRepository;
 const CallParser = require('../parser/jinja/CallParser.js').CallParser;
 const ContentType = require('../model/ContentType.js').ContentType;
-const DocumentationCallable = require('../model/documentation/DocumentationCallable.js').DocumentationCallable;
+const DocumentationCallable = require('../model/documentation/DocumentationCallable.js')
+    .DocumentationCallable;
 const synchronize = require('../utils/synchronize.js');
 const urls = require('../utils/urls.js');
 const activateEnvironment = require('../utils/string.js').activateEnvironment;
@@ -23,36 +24,29 @@ const crypto = require('crypto');
 const templates = new Map();
 let templateCacheEnabled = false;
 
-
 /**
  * Enables the template cache
  */
-function enableTemplateCache()
-{
+function enableTemplateCache() {
     templateCacheEnabled = true;
 }
-
 
 /**
  * Disables the template cache
  */
-function disableTemplateCache()
-{
+function disableTemplateCache() {
     templateCacheEnabled = false;
 }
-
 
 /**
  * @memberOf nunjucks
  */
-class Template extends Base
-{
+class Template extends Base {
     /**
      * @param {EntitiesRepository} entitiesRepository
      * @param {Object} options
      */
-    constructor(entitiesRepository, templatePaths, environment)
-    {
+    constructor(entitiesRepository, templatePaths, environment) {
         super();
 
         // Check params
@@ -67,15 +61,18 @@ class Template extends Base
         this._extends = [];
     }
 
-
     /**
      * @inheritDoc
      */
-    static get injections()
-    {
-        return { 'parameters': [EntitiesRepository, 'nunjucks/Template.templatePaths', 'nunjucks/Template.options'] };
+    static get injections() {
+        return {
+            parameters: [
+                EntitiesRepository,
+                'nunjucks/Template.templatePaths',
+                'nunjucks/Template.options'
+            ]
+        };
     }
-
 
     /**
      * The namespaced class name
@@ -83,84 +80,68 @@ class Template extends Base
      * @type {string}
      * @static
      */
-    static get className()
-    {
+    static get className() {
         return 'nunjucks/Template';
     }
-
 
     /**
      * Returns a map of all calls
      *
      * @type {Object}
      */
-    get calls()
-    {
+    get calls() {
         return this._calls;
     }
-
 
     /**
      * Returns a array of template extends
      *
      * @type {Array}
      */
-    get extends()
-    {
+    get extends() {
         return this._extends;
     }
-
 
     /**
      * Returns the templates base path used for resolving macro include pathes.
      *
      * @type {string}
      */
-    get templatePaths()
-    {
+    get templatePaths() {
         return this._templatePaths.slice();
     }
-
 
     /**
      * @type {string}
      */
-    set templatePaths(value)
-    {
+    set templatePaths(value) {
         this._templatePaths = Array.isArray(value) ? value.slice() : [value];
     }
-
 
     /**
      * @returns {Boolean|String}
      */
-    getInclude(name, site)
-    {
+    getInclude(name, site) {
         const items = synchronize.execute(this._entitiesRepository, 'getItems');
-        for (const item of items)
-        {
+        for (const item of items) {
             // Get all matching macros
-            const macros = item.documentation.filter((doc) =>
-            {
-                return doc.contentType == ContentType.JINJA &&
+            const macros = item.documentation.filter((doc) => {
+                return (
+                    doc.contentType == ContentType.JINJA &&
                     doc instanceof DocumentationCallable &&
-                    doc.name == name;
+                    doc.name == name
+                );
             });
 
             // Default to first found
-            let macro = macros.length
-                ? macros[0]
-                : false;
+            let macro = macros.length ? macros[0] : false;
 
             // Process
-            if (macro)
-            {
+            if (macro) {
                 // Prefer macro that matches given site
-                if (site)
-                {
+                if (site) {
                     const preferedMacro = macros.find((macro) => macro.site.isEqualTo(site));
-                    if (preferedMacro)
-                    {
+                    if (preferedMacro) {
                         macro = preferedMacro;
                     }
                 }
@@ -171,8 +152,7 @@ class Template extends Base
 
                 // Build include
                 let from = macro.file.filename;
-                for (const templatePath of this.templatePaths)
-                {
+                for (const templatePath of this.templatePaths) {
                     from = from.replace(templatePath, '');
                 }
                 return '{% from "' + urls.normalize(from) + '" import ' + macro.name + ' %}';
@@ -181,32 +161,28 @@ class Template extends Base
         return false;
     }
 
-
     /**
      * Prepares a template for rendering
      */
-    prepare(content, location)
-    {
+    prepare(content, location) {
         // Get site
-        const site = location && location.site
-            ? location.site
-            : false;
+        const site = location && location.site ? location.site : false;
 
         // Check cache
         let hash = false;
-        if (templateCacheEnabled)
-        {
-            hash = crypto.createHash('md5').update((site ? site.name : 'Default') + '::' + content).digest('hex');
-            if (templates.has(hash))
-            {
+        if (templateCacheEnabled) {
+            hash = crypto
+                .createHash('md5')
+                .update((site ? site.name : 'Default') + '::' + content)
+                .digest('hex');
+            if (templates.has(hash)) {
                 this.logger.verbose('Using cached template');
                 return templates.get(hash);
             }
         }
 
         // Memorize call
-        if (location && location.entity)
-        {
+        if (location && location.entity) {
             this._calls[location.entity.pathString] = this._calls[location.entity.pathString] || [];
         }
 
@@ -214,18 +190,15 @@ class Template extends Base
         const macros = synchronize.execute(this._callParser, 'parse', [content]);
 
         // Add extends
-        if (macros.extends && Array.isArray(macros.extends))
-        {
+        if (macros.extends && Array.isArray(macros.extends)) {
             this._extends.push(...macros.extends);
         }
 
         // Build includes
         let includes = [];
-        for (const macro of macros.externals)
-        {
+        for (const macro of macros.externals) {
             const include = this.getInclude(macro, site);
-            if (include)
-            {
+            if (include) {
                 includes.push(include);
             }
         }
@@ -233,8 +206,7 @@ class Template extends Base
 
         // Update template
         let result = content;
-        for (const include of includes)
-        {
+        for (const include of includes) {
             result = include + '\n' + result;
         }
 
@@ -242,8 +214,7 @@ class Template extends Base
         result = activateEnvironment(result, this._environment);
 
         // Update cache
-        if (templateCacheEnabled)
-        {
+        if (templateCacheEnabled) {
             templates.set(hash, result);
         }
 
@@ -251,7 +222,6 @@ class Template extends Base
         return result;
     }
 }
-
 
 /**
  * Exports

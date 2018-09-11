@@ -3,38 +3,33 @@
 /**
  * Requirements
  */
-const EntityExamplesInheriter = require(ES_SOURCE + '/model/entity/inheriter/EntityExamplesInheriter.js').EntityExamplesInheriter;
+const EntityExamplesInheriter = require(ES_SOURCE +
+    '/model/entity/inheriter/EntityExamplesInheriter.js').EntityExamplesInheriter;
 const EntityAspect = require(ES_SOURCE + '/model/entity/EntityAspect.js').EntityAspect;
-const DocumentationExample = require(ES_SOURCE + '/model/documentation/DocumentationExample.js').DocumentationExample;
+const DocumentationExample = require(ES_SOURCE + '/model/documentation/DocumentationExample.js')
+    .DocumentationExample;
 const baseSpec = require(ES_TEST + '/BaseShared.js').spec;
 const projectFixture = require(ES_FIXTURES + '/project/index.js');
-
 
 /**
  * Spec
  */
-describe(EntityExamplesInheriter.className, function()
-{
+describe(EntityExamplesInheriter.className, function() {
     /**
      * Base Test
      */
     baseSpec(EntityExamplesInheriter, 'model.entity.inheriter/EntityExamplesInheriter');
 
-
     /**
      * EntityPropertiesInheriter Test
      */
-    beforeEach(function()
-    {
+    beforeEach(function() {
         global.fixtures = projectFixture.createStatic();
     });
 
-    describe('#inherit', function()
-    {
-        it('should add all examples of the aspect site', function()
-        {
-            const docs =
-            [
+    describe('#inherit', function() {
+        it('should add all examples of the aspect site', function() {
+            const docs = [
                 new DocumentationExample({ site: global.fixtures.siteBase }),
                 new DocumentationExample({ site: global.fixtures.siteExtended })
             ];

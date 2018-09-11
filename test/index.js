@@ -9,26 +9,21 @@ require('./configuration.js');
  * Public API
  * @ignore
  */
-module.exports =
-{
+module.exports = {
     BaseShared: require('./BaseShared.js').spec,
-    fixture:
-    {
+    fixture: {
         files: path.join(__dirname, '/__fixtures__/files'),
         project: require('./__fixtures__/project/index.js'),
         test: require('entoj-test-fixture'),
-        export:
-        {
+        export: {
             renderer: path.join(__dirname, '/__fixtures__/export/renderer')
         }
     },
-    command:
-    {
+    command: {
         CommandShared: require('./command/CommandShared.js').spec,
         ExportCommandShared: require('./command/ExportCommandShared.js').spec
     },
-    export:
-    {
+    export: {
         ConfigurationShared: require('./export/ConfigurationShared.js').spec,
         ExporterShared: require('./export/ExporterShared.js').spec,
         ExportHelper: require('./export/ExportHelper.js'),
@@ -38,51 +33,40 @@ module.exports =
         RendererShared: require('./export/RendererShared.js').spec,
         Helper: require('./export/ExportHelper.js')
     },
-    formatter:
-    {
+    formatter: {
         FormatterShared: require('./formatter/FormatterShared.js').spec
     },
-    linter:
-    {
+    linter: {
         LinterShared: require('./linter/LinterShared.js').spec,
         FileLinterShared: require('./linter/FileLinterShared.js').spec
     },
-    model:
-    {
-        data:
-        {
+    model: {
+        data: {
             DataLoaderShared: require('./model/data/DataLoaderShared.js').spec,
             DataRepositoryShared: require('./model/data/DataRepositoryShared.js').spec
         },
-        loader:
-        {
+        loader: {
             LoaderPluginShared: require('./model/loader/LoaderPluginShared.js').spec
         },
-        test:
-        {
+        test: {
             TestSuiteShared: require('./model/test/TestSuiteShared.js').spec
         },
-        viewmodel:
-        {
+        viewmodel: {
             ViewModelPluginShared: require('./model/viewmodel/ViewModelPluginShared.js').spec
         }
     },
-    nunjucks:
-    {
+    nunjucks: {
         FilterShared: require('./nunjucks/filter/FilterShared.js').spec,
         TagShared: require('./nunjucks/tag/TagShared.js').spec
     },
-    parser:
-    {
+    parser: {
         ParserShared: require('./parser/ParserShared.js').spec,
         FileParserShared: require('./parser/FileParserShared.js').spec
     },
-    server:
-    {
+    server: {
         RouteShared: require('./server/route/RouteShared.js').spec
     },
-    task:
-    {
+    task: {
         TaskShared: require('./task/TaskShared.js').spec,
         TransformingTaskShared: require('./task/TransformingTaskShared.js').spec,
         EntitiesTaskShared: require('./task/EntitiesTaskShared.js').spec

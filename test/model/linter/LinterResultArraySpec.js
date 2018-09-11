@@ -3,40 +3,35 @@
 /**
  * Requirements
  */
-const LinterResultArray = require(ES_SOURCE + '/model/linter/LinterResultArray.js').LinterResultArray;
+const LinterResultArray = require(ES_SOURCE + '/model/linter/LinterResultArray.js')
+    .LinterResultArray;
 const ContentType = require(ES_SOURCE + '/model/ContentType.js').ContentType;
 const ContentKind = require(ES_SOURCE + '/model/ContentKind.js').ContentKind;
 const searchableArraySpec = require(ES_TEST + '/base/SearchableArrayShared.js').spec;
 
-
 /**
  * Spec
  */
-describe(LinterResultArray.className, function()
-{
+describe(LinterResultArray.className, function() {
     /**
      * SerchableArray Test
      */
     searchableArraySpec(LinterResultArray, 'model.linter/LinterResultArray');
 
-
     /**
      * LinterResultArray Test
      */
-    describe('#import', function()
-    {
-        it('should import a single object', function()
-        {
+    describe('#import', function() {
+        it('should import a single object', function() {
             const testee = new LinterResultArray();
-            const input =
-            {
+            const input = {
                 linter: 'LinterName',
                 success: false,
                 contentType: ContentType.ANY,
                 contentKind: ContentKind.UNKNOWN,
                 warningCount: 1,
                 errorCount: 2,
-                messages: [ { message: 'Errors' } ]
+                messages: [{ message: 'Errors' }]
             };
             testee.import(input);
             expect(testee).to.have.length(1);
@@ -49,11 +44,9 @@ describe(LinterResultArray.className, function()
             expect(testee[0].messages).to.have.length(1);
         });
 
-        it('should import a array of objects', function()
-        {
+        it('should import a array of objects', function() {
             const testee = new LinterResultArray();
-            const input =
-            [
+            const input = [
                 {
                     linter: 'LinterName1',
                     success: true
@@ -69,21 +62,18 @@ describe(LinterResultArray.className, function()
             expect(testee[1].linter).to.be.equal(input[1].linter);
         });
 
-        it('should update existing objects based on zthe linter name', function()
-        {
+        it('should update existing objects based on zthe linter name', function() {
             const testee = new LinterResultArray();
-            const input1 =
-            {
+            const input1 = {
                 linter: 'LinterName',
                 success: false,
                 contentType: ContentType.ANY,
                 contentKind: ContentKind.UNKNOWN,
                 warningCount: 1,
                 errorCount: 2,
-                messages: [ { message: 'Errors' } ]
+                messages: [{ message: 'Errors' }]
             };
-            const input2 =
-            {
+            const input2 = {
                 linter: 'LinterName',
                 success: true,
                 contentType: ContentType.ANY,

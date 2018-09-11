@@ -9,17 +9,14 @@ const ContentType = require('../../model/ContentType.js').ContentType;
 const ContentKind = require('../../model/ContentKind.js').ContentKind;
 const MarkdownParser = require('./MarkdownParser.js').MarkdownParser;
 
-
 /**
  * A markdown to documentation parser
  */
-class MarkdownFileParser extends FileParser
-{
+class MarkdownFileParser extends FileParser {
     /**
      * @param {Object} options
      */
-    constructor(options)
-    {
+    constructor(options) {
         super(options);
 
         const opts = options || {};
@@ -29,16 +26,13 @@ class MarkdownFileParser extends FileParser
         this._fileKind = opts.fileKind || ContentKind.TEXT;
     }
 
-
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'parser.documentation/MarkdownFileParser';
     }
 }
-
 
 /**
  * Exports

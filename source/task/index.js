@@ -1,9 +1,7 @@
-
 /**
  * @namespace task
  */
-module.exports =
-{
+module.exports = {
     DecorateTask: require('./DecorateTask.js').DecorateTask,
     EntitiesTask: require('./EntitiesTask.js').EntitiesTask,
     EnvironmentTask: require('./EnvironmentTask.js').EnvironmentTask,

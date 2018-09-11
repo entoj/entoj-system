@@ -3,14 +3,14 @@
 /**
  * Requirements
  */
-const ComplexVariableNode = require(ES_SOURCE + '/export/ast/ComplexVariableNode.js').ComplexVariableNode;
+const ComplexVariableNode = require(ES_SOURCE + '/export/ast/ComplexVariableNode.js')
+    .ComplexVariableNode;
 const valueNodeSpec = require('./ValueNodeShared.js').spec;
 
 /**
  * Spec
  */
-describe(ComplexVariableNode.className, function()
-{
+describe(ComplexVariableNode.className, function() {
     /**
      * ValueNode Test
      */

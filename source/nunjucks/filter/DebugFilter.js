@@ -6,43 +6,34 @@
  */
 const Filter = require('./Filter.js').Filter;
 
-
 /**
  * @memberOf nunjucks.filter
  */
-class DebugFilter extends Filter
-{
+class DebugFilter extends Filter {
     /**
      * @inheritDocs
      */
-    constructor()
-    {
+    constructor() {
         super();
         this._name = 'debug';
     }
 
-
     /**
      * @inheritDocs
      */
-    static get className()
-    {
+    static get className() {
         return 'nunjucks.filter/DebugFilter';
     }
 
-
     /**
      * @inheritDocs
      */
-    filter()
-    {
-        return function(value)
-        {
-            return '<pre>' + (typeof value) + ' :: ' + JSON.stringify(value) + '</pre>';
+    filter() {
+        return function(value) {
+            return '<pre>' + typeof value + ' :: ' + JSON.stringify(value) + '</pre>';
         };
     }
 }
-
 
 /**
  * Exports

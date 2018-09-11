@@ -9,7 +9,8 @@ const Site = require('../site/Site.js').Site;
 const ErrorHandler = require('../../error/ErrorHandler.js').ErrorHandler;
 const SitesRepository = require('../site/SitesRepository.js').SitesRepository;
 const EntityCategory = require('../entity/EntityCategory.js').EntityCategory;
-const EntityCategoriesRepository = require('../entity/EntityCategoriesRepository.js').EntityCategoriesRepository;
+const EntityCategoriesRepository = require('../entity/EntityCategoriesRepository.js')
+    .EntityCategoriesRepository;
 const EntitiesRepository = require('../entity/EntitiesRepository.js').EntitiesRepository;
 const Entity = require('../entity/Entity.js').Entity;
 const EntityId = require('../entity/EntityId.js').EntityId;
@@ -22,7 +23,6 @@ const routes = require('routes');
 const urlify = require('../../utils/urls.js').urlify;
 const urls = require('../../utils/urls.js');
 
-
 /**
  * Holds all url related configuration.
  *
@@ -30,21 +30,38 @@ const urls = require('../../utils/urls.js');
  *
  * @memberOf model.configuration
  */
-class UrlsConfiguration extends Base
-{
+class UrlsConfiguration extends Base {
     /**
      * @param {object} options
      */
-    constructor(sitesRepository, entityCategoriesRepository, entitiesRepository, entityIdParser, pathesConfiguration, options)
-    {
+    constructor(
+        sitesRepository,
+        entityCategoriesRepository,
+        entitiesRepository,
+        entityIdParser,
+        pathesConfiguration,
+        options
+    ) {
         super();
 
         // Check parameters
         assertParameter(this, 'sitesRepository', sitesRepository, true, SitesRepository);
-        assertParameter(this, 'entityCategoriesRepository', entityCategoriesRepository, true, EntityCategoriesRepository);
+        assertParameter(
+            this,
+            'entityCategoriesRepository',
+            entityCategoriesRepository,
+            true,
+            EntityCategoriesRepository
+        );
         assertParameter(this, 'entitiesCategory', entitiesRepository, true, EntitiesRepository);
         assertParameter(this, 'entityIdParser', entityIdParser, true, IdParser);
-        assertParameter(this, 'pathesConfiguration', pathesConfiguration, false, PathesConfiguration);
+        assertParameter(
+            this,
+            'pathesConfiguration',
+            pathesConfiguration,
+            false,
+            PathesConfiguration
+        );
 
         // Add parameters
         this._sitesRepository = sitesRepository;
@@ -58,31 +75,38 @@ class UrlsConfiguration extends Base
         this._root = opts.root || '';
         this._siteTemplate = opts.siteTemplate || '${root}/${site.name.toLowerCase()}';
         this._sitePattern = opts.sitePattern || '${root}/:site';
-        this._entityCategoryTemplate = opts.entityCategoryTemplate || '${root}/${site.name.toLowerCase()}/${entityCategory.pluralName.toLowerCase()}';
+        this._entityCategoryTemplate =
+            opts.entityCategoryTemplate ||
+            '${root}/${site.name.toLowerCase()}/${entityCategory.pluralName.toLowerCase()}';
         this._entityCategoryPattern = opts.entityCategoryPattern || '${root}/:site/:entityCategory';
-        this._entityIdTemplate = opts.entityIdTemplate || '${root}/${site.name.toLowerCase()}/${entityCategory.pluralName.toLowerCase()}/${entityCategory.shortName.toLowerCase()}${entityId.number}-${entityId.name.toLowerCase()}';
+        this._entityIdTemplate =
+            opts.entityIdTemplate ||
+            '${root}/${site.name.toLowerCase()}/${entityCategory.pluralName.toLowerCase()}/${entityCategory.shortName.toLowerCase()}${entityId.number}-${entityId.name.toLowerCase()}';
         this._entityIdPattern = opts._entityIdPattern || '${root}/:site/:entityCategory/:entityId';
     }
 
-
     /**
      * @inheritDoc
      */
-    static get injections()
-    {
-        return { 'parameters': [SitesRepository, EntityCategoriesRepository, EntitiesRepository,
-            IdParser, PathesConfiguration, 'model.configuration/UrlsConfiguration.options'] };
+    static get injections() {
+        return {
+            parameters: [
+                SitesRepository,
+                EntityCategoriesRepository,
+                EntitiesRepository,
+                IdParser,
+                PathesConfiguration,
+                'model.configuration/UrlsConfiguration.options'
+            ]
+        };
     }
 
-
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'model.configuration/UrlsConfiguration';
     }
-
 
     /**
      * Renders a path template
@@ -92,16 +116,16 @@ class UrlsConfiguration extends Base
      * @param {object} variables
      * @returns {Promise.<string>|string}
      */
-    renderTemplate(template, variables)
-    {
+    renderTemplate(template, variables) {
         const data = Object.assign(
             {
                 root: this.root
-            }, variables);
+            },
+            variables
+        );
         const result = templateString(template, data);
         return Promise.resolve(result);
     }
-
 
     /**
      * Match a url and returns a object that contains any matched objects for:
@@ -112,49 +136,39 @@ class UrlsConfiguration extends Base
      * @param {string} url
      * @returns {Promise.<Template>}
      */
-    match(value, patternTemplate)
-    {
+    match(value, patternTemplate) {
         const scope = this;
-        const promise = co(function *()
-        {
+        const promise = co(function*() {
             const pattern = yield scope.renderTemplate(patternTemplate);
             const match = routes.match([routes.Route(pattern)], value);
-            if (match)
-            {
-                const result =
-                {
+            if (match) {
+                const result = {
                     url: value,
                     params: match.params
                 };
-                if (match.params.site && match.params.site.length)
-                {
+                if (match.params.site && match.params.site.length) {
                     result.site = yield scope._sitesRepository.findBy({ '*': match.params.site });
                 }
-                if (match.params.entityCategory && match.params.entityCategory.length)
-                {
-                    result.entityCategory = yield scope._entityCategoriesRepository.findBy({ '*': match.params.entityCategory }, function(value, searched)
-                    {
-                        return urlify(value) === searched;
-                    });
+                if (match.params.entityCategory && match.params.entityCategory.length) {
+                    result.entityCategory = yield scope._entityCategoriesRepository.findBy(
+                        { '*': match.params.entityCategory },
+                        function(value, searched) {
+                            return urlify(value) === searched;
+                        }
+                    );
                 }
-                if (match.params.entityId && match.params.entityId.length)
-                {
+                if (match.params.entityId && match.params.entityId.length) {
                     result.entity = yield scope._entitiesRepository.getById(value);
-                    if (result.entity)
-                    {
+                    if (result.entity) {
                         result.entityId = result.entity.id;
-                    }
-                    else
-                    {
+                    } else {
                         result.entityId = yield scope._entityIdParser.parse(match.params.entityId);
-                        if (result.entityId && result.site)
-                        {
+                        if (result.entityId && result.site) {
                             result.entityId.site = result.site;
                         }
                     }
                 }
-                if (match.splats && match.splats.length > 0 && match.splats[0])
-                {
+                if (match.splats && match.splats.length > 0 && match.splats[0]) {
                     result.customPath = urls.normalize(match.splats[0]);
                 }
                 //console.log('Match:', result);
@@ -165,20 +179,17 @@ class UrlsConfiguration extends Base
         return promise;
     }
 
-
     /**
      * Resolve a filename to a url.
      *
      * @param {string} file
      * @returns {Promise.<string>}
      */
-    resolveFilename(filename)
-    {
-        const basePath = (this._pathesConfiguration ? this._pathesConfiguration.sites :  '');
+    resolveFilename(filename) {
+        const basePath = this._pathesConfiguration ? this._pathesConfiguration.sites : '';
         const filePath = filename.replace(basePath, '');
         return Promise.resolve(urls.normalize(filePath));
     }
-
 
     /**
      * Resolve a template url.
@@ -187,18 +198,15 @@ class UrlsConfiguration extends Base
      * @param {string} customPath
      * @returns {Promise.<string>}
      */
-    resolveSite(site, customPath)
-    {
+    resolveSite(site, customPath) {
         // Check parameters
         assertParameter(this, 'site', site, true, Site);
 
         // Resolve path
-        return this.renderTemplate(this._siteTemplate + (customPath ? customPath : ''),
-            {
-                site: site
-            });
+        return this.renderTemplate(this._siteTemplate + (customPath ? customPath : ''), {
+            site: site
+        });
     }
-
 
     /**
      * Match a site path.
@@ -207,11 +215,9 @@ class UrlsConfiguration extends Base
      * @param {bool} [partial] Matches partial urls
      * @returns {Promise.<Site>}
      */
-    matchSite(url, partial)
-    {
+    matchSite(url, partial) {
         return this.match(url + (partial ? '/' : ''), this._sitePattern + (partial ? '/*?' : ''));
     }
-
 
     /**
      * Resolve a entity category.
@@ -221,20 +227,17 @@ class UrlsConfiguration extends Base
      * @param {string} customPath
      * @returns {Promise.<string>}
      */
-    resolveEntityCategory(site, entityCategory, customPath)
-    {
+    resolveEntityCategory(site, entityCategory, customPath) {
         // Check parameters
         assertParameter(this, 'site', site, true, Site);
         assertParameter(this, 'entityCategory', entityCategory, true, EntityCategory);
 
         // Resolve path
-        return this.renderTemplate(this._entityCategoryTemplate + (customPath ? customPath : ''),
-            {
-                site: site,
-                entityCategory: entityCategory
-            });
+        return this.renderTemplate(this._entityCategoryTemplate + (customPath ? customPath : ''), {
+            site: site,
+            entityCategory: entityCategory
+        });
     }
-
 
     /**
      * Match a entity category path.
@@ -243,11 +246,12 @@ class UrlsConfiguration extends Base
      * @param {bool} [partial] Matches partial urls
      * @returns {Promise.<EntityCategory>}
      */
-    matchEntityCategory(url, partial)
-    {
-        return this.match(url + (partial ? '/' : ''), this._entityCategoryPattern + (partial ? '/*?' : ''));
+    matchEntityCategory(url, partial) {
+        return this.match(
+            url + (partial ? '/' : ''),
+            this._entityCategoryPattern + (partial ? '/*?' : '')
+        );
     }
-
 
     /**
      * Resolve a entity id url.
@@ -256,25 +260,21 @@ class UrlsConfiguration extends Base
      * @param {string} customPath
      * @returns {Promise.<string>}
      */
-    resolveEntityId(entityId, customPath)
-    {
+    resolveEntityId(entityId, customPath) {
         // Check parameters
         assertParameter(this, 'entityId', entityId, true, EntityId);
 
         // Resolve path
         let template = this._entityIdTemplate;
-        if (entityId.isGlobal)
-        {
+        if (entityId.isGlobal) {
             template = this._entityCategoryTemplate;
         }
-        return this.renderTemplate(template + (customPath ? customPath : ''),
-            {
-                site: entityId.site,
-                entityCategory: entityId.category,
-                entityId: entityId
-            });
+        return this.renderTemplate(template + (customPath ? customPath : ''), {
+            site: entityId.site,
+            entityCategory: entityId.category,
+            entityId: entityId
+        });
     }
-
 
     /**
      * Match a template path.
@@ -283,11 +283,12 @@ class UrlsConfiguration extends Base
      * @param {bool} [partial] Matches partial urls
      * @returns {Promise.<EntityId>}
      */
-    matchEntityId(url, partial)
-    {
-        return this.match(url + (partial ? '/' : ''), this._entityIdPattern + (partial ? '/*?' : ''));
+    matchEntityId(url, partial) {
+        return this.match(
+            url + (partial ? '/' : ''),
+            this._entityIdPattern + (partial ? '/*?' : '')
+        );
     }
-
 
     /**
      * Resolve a entity url.
@@ -297,13 +298,11 @@ class UrlsConfiguration extends Base
      * @param {string} customPath
      * @returns {Promise.<string>}
      */
-    resolveEntity(entity, site, customPath)
-    {
+    resolveEntity(entity, site, customPath) {
         // Check parameters
         assertParameter(this, 'entity', entity, true, Entity);
         return this.resolveEntityId(entity.id, site, customPath);
     }
-
 
     /**
      * Match a template path.
@@ -312,11 +311,9 @@ class UrlsConfiguration extends Base
      * @param {bool} [partial] Matches partial urls
      * @returns {Promise.<EntityId>}
      */
-    matchEntity(url, partial)
-    {
+    matchEntity(url, partial) {
         return this.matchEntityId(url, partial);
     }
-
 
     /**
      * Match a entity file url.
@@ -324,26 +321,22 @@ class UrlsConfiguration extends Base
      * @param {string} url
      * @returns {Promise.<EntityId>}
      */
-    matchEntityFile(url)
-    {
+    matchEntityFile(url) {
         const scope = this;
-        const promise = this.matchEntityId(url, true)
-            .then(function(result)
-            {
-                if (result.entity && result.customPath)
-                {
-                    for (const file of result.entity.files)
-                    {
-                        const basePath = (scope._pathesConfiguration ? scope._pathesConfiguration.sites :  '');
-                        const fileUrl = urls.shift(file.filename.replace(basePath, ''));
-                        if (fileUrl === urls.shift(url))
-                        {
-                            result.file = file;
-                        }
+        const promise = this.matchEntityId(url, true).then(function(result) {
+            if (result.entity && result.customPath) {
+                for (const file of result.entity.files) {
+                    const basePath = scope._pathesConfiguration
+                        ? scope._pathesConfiguration.sites
+                        : '';
+                    const fileUrl = urls.shift(file.filename.replace(basePath, ''));
+                    if (fileUrl === urls.shift(url)) {
+                        result.file = file;
                     }
                 }
-                return result;
-            });
+            }
+            return result;
+        });
         return promise;
     }
 }

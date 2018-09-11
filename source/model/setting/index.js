@@ -1,9 +1,7 @@
-
 /**
  * @namespace setting
  */
-module.exports =
-{
+module.exports = {
     SettingsLoader: require('./SettingsLoader.js').SettingsLoader,
     SettingsRepository: require('./SettingsRepository.js').SettingsRepository
 };

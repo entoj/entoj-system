@@ -6,8 +6,10 @@
  */
 const Base = require('../Base.js').Base;
 const GlobalRepository = require('../model/GlobalRepository.js').GlobalRepository;
-const BuildConfiguration = require('../model/configuration/BuildConfiguration.js').BuildConfiguration;
-const DocumentationCallable = require('../model/documentation/DocumentationCallable.js').DocumentationCallable;
+const BuildConfiguration = require('../model/configuration/BuildConfiguration.js')
+    .BuildConfiguration;
+const DocumentationCallable = require('../model/documentation/DocumentationCallable.js')
+    .DocumentationCallable;
 const EntityAspect = require('../model/entity/EntityAspect.js').EntityAspect;
 const Parser = require('./Parser.js').Parser;
 const Renderer = require('./Renderer.js').Renderer;
@@ -19,7 +21,6 @@ const merge = require('lodash.merge');
 const omit = require('lodash.omit');
 const minimatch = require('minimatch');
 
-
 /**
  * The configuration holds all macro specific settings needed
  * for exporting.
@@ -27,13 +28,20 @@ const minimatch = require('minimatch');
  * @memberOf export
  * @extends Base
  */
-class Configuration extends Base
-{
+class Configuration extends Base {
     /**
      * @ignore
      */
-    constructor(entity, macro, settings, parser, renderer, transformer, globalRepository, buildConfiguration)
-    {
+    constructor(
+        entity,
+        macro,
+        settings,
+        parser,
+        renderer,
+        transformer,
+        globalRepository,
+        buildConfiguration
+    ) {
         super();
 
         // Check params
@@ -57,33 +65,26 @@ class Configuration extends Base
         this._identifier = 'default';
     }
 
-
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'export/Configuration';
     }
-
 
     /**
      * @type {model.configuration.BuildConfiguration}
      */
-    get buildConfiguration()
-    {
+    get buildConfiguration() {
         return this._buildConfiguration;
     }
-
 
     /**
      * @type {model.GlobalRepository}
      */
-    get globalRepository()
-    {
+    get globalRepository() {
         return this._globalRepository;
     }
-
 
     /**
      * The configuration identifier used to extract
@@ -91,11 +92,9 @@ class Configuration extends Base
      *
      * @type {String}
      */
-    get identifier()
-    {
+    get identifier() {
         return this._identifier;
     }
-
 
     /**
      * The macro this context was created for.
@@ -103,22 +102,18 @@ class Configuration extends Base
      *
      * @type {DocumentationCallable}
      */
-    get macro()
-    {
+    get macro() {
         return this._macro;
     }
-
 
     /**
      * The entity this context was created for.
      *
      * @type {Entity}
      */
-    get entity()
-    {
+    get entity() {
         return this._entity;
     }
-
 
     /**
      * The site this context was created for.
@@ -126,55 +121,45 @@ class Configuration extends Base
      *
      * @type {Site}
      */
-    get site()
-    {
+    get site() {
         return this._entity ? this._entity.site : undefined;
     }
-
 
     /**
      * The settings for this specific export.
      *
      * @type {Object}
      */
-    get settings()
-    {
+    get settings() {
         return this._settings;
     }
-
 
     /**
      * Access to the parser instance.
      *
      * @type {export.Parser}
      */
-    get parser()
-    {
+    get parser() {
         return this._parser;
     }
-
 
     /**
      * Access to the renderer instance.
      *
      * @type {export.Renderer}
      */
-    get renderer()
-    {
+    get renderer() {
         return this._renderer;
     }
-
 
     /**
      * Access to the transformer instance.
      *
      * @type {export.Transformer}
      */
-    get transformer()
-    {
+    get transformer() {
         return this._transformer;
     }
-
 
     /**
      * The default configurations used as a base
@@ -184,11 +169,9 @@ class Configuration extends Base
      * @param {Object} configuration
      * @returns {Promise<Object>}
      */
-    getDefaultConfiguration(configuration)
-    {
+    getDefaultConfiguration(configuration) {
         return Promise.resolve({});
     }
-
 
     /**
      * Template method to allow subclasses to make last minute changes to
@@ -198,11 +181,9 @@ class Configuration extends Base
      * @param {Object} configuration
      * @returns {Promise<Object>}
      */
-    refineConfiguration(configuration)
-    {
+    refineConfiguration(configuration) {
         return Promise.resolve(configuration);
     }
-
 
     /**
      * Resolves to the first macro that matches macroQuery.
@@ -211,30 +192,23 @@ class Configuration extends Base
      * @param {String} [macroQuery]
      * @returns {Promise<model.documentation.DocumentationCallable>}
      */
-    getMacro(macroQuery)
-    {
+    getMacro(macroQuery) {
         const scope = this;
-        const promise = co(function *()
-        {
+        const promise = co(function*() {
             let macro;
 
             // Default is the main macro
-            if (!macroQuery)
-            {
+            if (!macroQuery) {
                 macroQuery = scope.macro;
             }
 
             // Get Macro
-            if (macroQuery instanceof DocumentationCallable)
-            {
+            if (macroQuery instanceof DocumentationCallable) {
                 macro = macroQuery;
-            }
-            else
-            {
+            } else {
                 macro = yield scope.globalRepository.resolveMacro(scope.site, macroQuery);
             }
-            if (!macro || !(macro instanceof DocumentationCallable))
-            {
+            if (!macro || !(macro instanceof DocumentationCallable)) {
                 return false;
             }
 
@@ -243,7 +217,6 @@ class Configuration extends Base
         return promise;
     }
 
-
     /**
      * Resolves to the entity containing macro.
      *
@@ -251,11 +224,9 @@ class Configuration extends Base
      * @param {model.documentation.DocumentationCallable} [macro]
      * @returns {Promise<model.entity.Entity>}
      */
-    getMacroEntity(macro)
-    {
+    getMacroEntity(macro) {
         return this.globalRepository.resolveEntityForMacro(this.site, macro);
     }
-
 
     /**
      * Resolves to a macro specific configuration based
@@ -264,19 +235,16 @@ class Configuration extends Base
      * @param {String} [macroQuery]
      * @returns {Promise<Object>}
      */
-    getMacroConfiguration(macroQuery)
-    {
+    getMacroConfiguration(macroQuery) {
         const scope = this;
-        const promise = co(function *()
-        {
+        const promise = co(function*() {
             metrics.start(scope.className + '::getMacroConfiguration');
 
             // Get macro
             metrics.start(scope.className + '::getMacroConfiguration - get macro');
             const macro = yield scope.getMacro(macroQuery);
             metrics.stop(scope.className + '::getMacroConfiguration - get macro');
-            if (!macro || !(macro instanceof DocumentationCallable))
-            {
+            if (!macro || !(macro instanceof DocumentationCallable)) {
                 /* istanbul ignore next */
                 scope.logger.warn('getMacroConfiguration - could not find macro ' + macroQuery);
                 metrics.stop(scope.className + '::getMacroConfiguration');
@@ -287,10 +255,11 @@ class Configuration extends Base
             metrics.start(scope.className + '::getMacroConfiguration - get entity');
             const entity = yield scope.getMacroEntity(macro);
             metrics.stop(scope.className + '::getMacroConfiguration - get entity');
-            if (!entity)
-            {
+            if (!entity) {
                 /* istanbul ignore next */
-                scope.logger.warn('getMacroConfiguration - could not find entity for macro ' + macroQuery);
+                scope.logger.warn(
+                    'getMacroConfiguration - could not find entity for macro ' + macroQuery
+                );
                 metrics.stop(scope.className + '::getMacroConfiguration');
                 return false;
             }
@@ -316,16 +285,22 @@ class Configuration extends Base
 
             // Add global settings
             metrics.start(scope.className + '::getMacroConfiguration - add global settings');
-            configurations.push(omit(basics.entity.properties.getByPath('export.settings.' + scope.identifier, {}), ['macros']));
+            configurations.push(
+                omit(
+                    basics.entity.properties.getByPath('export.settings.' + scope.identifier, {}),
+                    ['macros']
+                )
+            );
             metrics.stop(scope.className + '::getMacroConfiguration - add global settings');
 
             // Add global macro settings
             metrics.start(scope.className + '::getMacroConfiguration - add global macro settings');
-            const globalMacros = basics.entity.properties.getByPath('export.settings.' + scope.identifier + '.macros', {});
-            for (const match in globalMacros)
-            {
-                if (minimatch(basics.macro.name, match))
-                {
+            const globalMacros = basics.entity.properties.getByPath(
+                'export.settings.' + scope.identifier + '.macros',
+                {}
+            );
+            for (const match in globalMacros) {
+                if (minimatch(basics.macro.name, match)) {
                     configurations.push(globalMacros[match]);
                 }
             }
@@ -333,13 +308,9 @@ class Configuration extends Base
 
             // Add local macro settings
             metrics.start(scope.className + '::getMacroConfiguration - add local macro settings');
-            const localMacros = scope.settings.settings
-                ? scope.settings.settings
-                : {};
-            for (const match in localMacros)
-            {
-                if (minimatch(basics.macro.name, match))
-                {
+            const localMacros = scope.settings.settings ? scope.settings.settings : {};
+            for (const match in localMacros) {
+                if (minimatch(basics.macro.name, match)) {
                     configurations.push(localMacros[match]);
                 }
             }
@@ -347,8 +318,7 @@ class Configuration extends Base
 
             // Add local settings
             metrics.start(scope.className + '::getMacroConfiguration - add local settings');
-            if (scope.macro && scope.macro.name === macro.name)
-            {
+            if (scope.macro && scope.macro.name === macro.name) {
                 configurations.push(omit(scope.settings, ['macros', 'macro']));
             }
             metrics.stop(scope.className + '::getMacroConfiguration - add local settings');
@@ -372,21 +342,17 @@ class Configuration extends Base
         return promise;
     }
 
-
     /**
      * Resolves to the export configuration based
      * on the default, the entity and the refined configuration.
      *
      * @returns {Promise<Object>}
      */
-    getExportConfiguration()
-    {
+    getExportConfiguration() {
         const scope = this;
-        const promise = co(function *()
-        {
+        const promise = co(function*() {
             // See if it's a macro export
-            if (scope.macro)
-            {
+            if (scope.macro) {
                 const result = yield scope.getMacroConfiguration(scope.macro.name);
                 return result;
             }
@@ -405,7 +371,12 @@ class Configuration extends Base
             configurations.push(yield scope.getDefaultConfiguration(basics));
 
             // Add global settings
-            configurations.push(omit(basics.entity.properties.getByPath('export.settings.' + scope.identifier, {}), ['macros']));
+            configurations.push(
+                omit(
+                    basics.entity.properties.getByPath('export.settings.' + scope.identifier, {}),
+                    ['macros']
+                )
+            );
 
             // Add local settings
             configurations.push(omit(scope.settings, ['macros', 'macro']));
@@ -422,7 +393,6 @@ class Configuration extends Base
         return promise;
     }
 }
-
 
 // Exports
 module.exports.Configuration = Configuration;

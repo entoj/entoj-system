@@ -11,46 +11,49 @@ const FileLinter = require(ES_SOURCE + '/linter/FileLinter.js').FileLinter;
 const co = require('co');
 const sinon = require('sinon');
 
-
 /**
  * Spec
  */
-describe(LintCommand.className, function()
-{
+describe(LintCommand.className, function() {
     /**
      * Command Test
      */
     commandSpec(LintCommand, 'command/LintCommand', prepareParameters);
 
     // Adds necessary parameters to create a testee
-    function prepareParameters(parameters)
-    {
+    function prepareParameters(parameters) {
         global.fixtures = projectFixture.createDynamic();
         global.fixtures.context.di.map(Communication, Communication, false);
-        return [global.fixtures.context, global.fixtures.globalRepository, global.fixtures.pathesConfiguration, [], { exitCodes: false }];
+        return [
+            global.fixtures.context,
+            global.fixtures.globalRepository,
+            global.fixtures.pathesConfiguration,
+            [],
+            { exitCodes: false }
+        ];
     }
-
 
     /**
      * LintCommand Test
      */
-    beforeEach(function()
-    {
+    beforeEach(function() {
         global.fixtures = projectFixture.createDynamic();
         global.fixtures.context.di.map(Communication, Communication, false);
     });
 
-    function createTestee(linters)
-    {
-        return new LintCommand(global.fixtures.context, global.fixtures.globalRepository, global.fixtures.pathesConfiguration, linters, { exitCodes: false });
+    function createTestee(linters) {
+        return new LintCommand(
+            global.fixtures.context,
+            global.fixtures.globalRepository,
+            global.fixtures.pathesConfiguration,
+            linters,
+            { exitCodes: false }
+        );
     }
 
-    describe('#execute', function()
-    {
-        it('should apply all linter to all entities', function()
-        {
-            const promise = co(function*()
-            {
+    describe('#execute', function() {
+        it('should apply all linter to all entities', function() {
+            const promise = co(function*() {
                 const linter = new FileLinter();
                 sinon.spy(linter, 'lint');
                 const testee = createTestee([linter]);

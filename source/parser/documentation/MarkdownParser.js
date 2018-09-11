@@ -7,28 +7,26 @@
 const Parser = require('../Parser.js').Parser;
 const ContentType = require('../../model/ContentType.js').ContentType;
 const ContentKind = require('../../model/ContentKind.js').ContentKind;
-const DocumentationText = require('../../model/documentation/DocumentationText.js').DocumentationText;
-const DocumentationTextSection = require('../../model/documentation/DocumentationTextSection.js').DocumentationTextSection;
+const DocumentationText = require('../../model/documentation/DocumentationText.js')
+    .DocumentationText;
+const DocumentationTextSection = require('../../model/documentation/DocumentationTextSection.js')
+    .DocumentationTextSection;
 const marked = require('marked');
-
 
 /**
  * A markdown to documentation parser
  */
-class MarkdownParser extends Parser
-{
+class MarkdownParser extends Parser {
     /**
      * @param {Object} options
      */
-    constructor(options)
-    {
+    constructor(options) {
         super();
 
         // Add initial values
         const opts = options || {};
         this._sections = opts.sections || {};
-        const defaultOptions =
-        {
+        const defaultOptions = {
             gfm: true,
             tables: true,
             breaks: false,
@@ -40,25 +38,20 @@ class MarkdownParser extends Parser
         this._options = opts.options || defaultOptions;
     }
 
-
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'parser.documentation/MarkdownParser';
     }
-
 
     /**
      * @param {string} content
      * @param {string} options
      * @returns {Promise<Object>}
      */
-    parse(content, options)
-    {
-        if (!content || content.trim() === '')
-        {
+    parse(content, options) {
+        if (!content || content.trim() === '') {
             return Promise.resolve(new DocumentationText());
         }
 
@@ -68,28 +61,22 @@ class MarkdownParser extends Parser
         // Create sections
         const sections = [];
         let section = false;
-        for (const token of tokens)
-        {
-            if (token.type === 'heading' && token.depth === 1)
-            {
+        for (const token of tokens) {
+            if (token.type === 'heading' && token.depth === 1) {
                 section = new DocumentationTextSection();
                 section.contentType = ContentType.MARKDOWN;
                 section.contentKind = ContentKind.TEXT;
                 section.name = token.text.trim();
 
-                for (const name in this._sections)
-                {
+                for (const name in this._sections) {
                     const value = this._sections[name];
-                    if (section.name.toLowerCase() == value.toLowerCase())
-                    {
+                    if (section.name.toLowerCase() == value.toLowerCase()) {
                         section.name = DocumentationTextSection[name];
                     }
                 }
 
                 sections.push(section);
-            }
-            else if (section)
-            {
+            } else if (section) {
                 section.tokens.push(token);
             }
         }
@@ -102,7 +89,6 @@ class MarkdownParser extends Parser
         return Promise.resolve(result);
     }
 }
-
 
 /**
  * Exports

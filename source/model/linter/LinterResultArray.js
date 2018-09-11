@@ -7,19 +7,16 @@
 const SearchableArray = require('../../base/SearchableArray.js').SearchableArray;
 const LinterResult = require('./LinterResult.js').LinterResult;
 
-
 /**
  * @class
  * @memberOf model.docmentation
  * @extends {Base}
  */
-class LinterResultArray extends SearchableArray
-{
+class LinterResultArray extends SearchableArray {
     /**
      * @ignore
      */
-    constructor(...args)
-    {
+    constructor(...args) {
         super(...args);
 
         // Initial values
@@ -31,92 +28,70 @@ class LinterResultArray extends SearchableArray
         this.events.on('change', this.updateSummary.bind(this));
     }
 
-
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'model.linter/LinterResultArray';
     }
-
 
     /**
      * @protected
      */
-    updateSummary()
-    {
+    updateSummary() {
         this._warningCount = 0;
         this._errorCount = 0;
-        for (const item of this)
-        {
-            this._warningCount+= item.warningCount;
-            this._errorCount+= item.errorCount;
+        for (const item of this) {
+            this._warningCount += item.warningCount;
+            this._errorCount += item.errorCount;
         }
         this._success = this._warningCount === 0 && this._errorCount === 0;
     }
 
-
     /**
      * @type {Number}
      */
-    get warningCount()
-    {
+    get warningCount() {
         return this._warningCount;
     }
 
-
     /**
      * @type {Number}
      */
-    get errorCount()
-    {
+    get errorCount() {
         return this._errorCount;
     }
 
-
     /**
      * @type {Boolean}
      */
-    get success()
-    {
+    get success() {
         return this._success;
     }
 
-
     /**
      * @type {Boolean}
      */
-    successForKind(kind)
-    {
-        const linterResult = this.findBy(
-            {
-                contentKind: kind
-            });
-        if (!linterResult)
-        {
+    successForKind(kind) {
+        const linterResult = this.findBy({
+            contentKind: kind
+        });
+        if (!linterResult) {
             return true;
         }
         return linterResult.success;
     }
 
-
     /**
      * @param {Array} data
      */
-    import(data)
-    {
-        const items = Array.isArray(data)
-            ? data
-            : [data];
-        for (const item of items)
-        {
-            let linterResult = this.findBy(
-                {
-                    linter: data.linter
-                });
-            if (!linterResult)
-            {
+    import(data) {
+        const items = Array.isArray(data) ? data : [data];
+        for (const item of items) {
+            let linterResult = this.findBy({
+                linter: data.linter
+            });
+            if (!linterResult) {
                 linterResult = new LinterResult();
                 this.push(linterResult);
             }

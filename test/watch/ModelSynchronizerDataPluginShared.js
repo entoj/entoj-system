@@ -8,41 +8,31 @@ const co = require('co');
 const sinon = require('sinon');
 const DIRECTORY_DELIMITER = require('path').sep;
 
-
 /**
  * Shared ModelSynchronizerDataPlugin spec
  */
-function spec(type, className, prepareParameters)
-{
+function spec(type, className, prepareParameters) {
     /**
      * Base Test
      */
     baseSpec(type, className, prepareParameters);
 
-
     /**
      * ModelSynchronizerTranslationsPlugin Test
      */
-    const createTestee = function(fileTemplate)
-    {
+    const createTestee = function(fileTemplate) {
         let parameters = [];
-        if (prepareParameters)
-        {
+        if (prepareParameters) {
             parameters = prepareParameters(parameters, fileTemplate);
         }
         return new type(...parameters);
     };
 
-
-    describe('#processChanges', function()
-    {
-        it('should invalidate the underlying repository when matching files are found', function()
-        {
-            const promise = co(function *()
-            {
+    describe('#processChanges', function() {
+        it('should invalidate the underlying repository when matching files are found', function() {
+            const promise = co(function*() {
                 const testee = createTestee('${sites}/${site.name.urlify()}/data.json');
-                const input =
-                {
+                const input = {
                     files: [DIRECTORY_DELIMITER + 'base' + DIRECTORY_DELIMITER + 'data.json']
                 };
                 const invalidate = sinon.spy(testee.dataRepository, 'invalidate');
@@ -52,14 +42,11 @@ function spec(type, className, prepareParameters)
             return promise;
         });
 
-        it('should not invalidate the underlying repository when no matching files found', function()
-        {
-            const promise = co(function *()
-            {
+        it('should not invalidate the underlying repository when no matching files found', function() {
+            const promise = co(function*() {
                 const testee = createTestee('${sites}/${site.name.urlify()}/data.json');
-                const input =
-                {
-                    files: [DIRECTORY_DELIMITER + 'base'+ DIRECTORY_DELIMITER + 'foo.json']
+                const input = {
+                    files: [DIRECTORY_DELIMITER + 'base' + DIRECTORY_DELIMITER + 'foo.json']
                 };
                 const invalidate = sinon.spy(testee.dataRepository, 'invalidate');
                 yield testee.execute(input);

@@ -10,116 +10,91 @@ const ErrorHandler = require('../error/ErrorHandler.js').ErrorHandler;
 const through2 = require('through2');
 const co = require('co');
 
-
 /**
  * @memberOf task
  */
-class WrappingTask extends Task
-{
+class WrappingTask extends Task {
     /**
      * @inheritDoc
      */
-    static get injections()
-    {
-        return { 'parameters': [CliLogger] };
+    static get injections() {
+        return { parameters: [CliLogger] };
     }
 
-
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'task/WrappingTask';
     }
 
-
     /**
      * @inheritDoc
      */
-    get sectionName()
-    {
+    get sectionName() {
         return 'Running wrapped tasks';
     }
-
 
     /**
      * @protected
      * @returns {Promise<Array>}
      */
-    prepareParameters(buildConfiguration, parameters)
-    {
-        const promise = super.prepareParameters(buildConfiguration, parameters)
-            .then((params) =>
-            {
-                params.query = params.query || '*';
-                return params;
-            });
+    prepareParameters(buildConfiguration, parameters) {
+        const promise = super.prepareParameters(buildConfiguration, parameters).then((params) => {
+            params.query = params.query || '*';
+            return params;
+        });
         return promise;
     }
 
+    /**
+     * @inheritDoc
+     * @returns {Promise<Array>}
+     */
+    prepare(buildConfiguration, parameters) {
+        return Promise.resolve([]);
+    }
 
     /**
      * @inheritDoc
      * @returns {Promise<Array>}
      */
-    prepare(buildConfiguration, parameters)
-    {
+    runTasks(buildConfiguration, parameters) {
         return Promise.resolve([]);
     }
-
 
     /**
      * @inheritDoc
      * @returns {Promise<Array>}
      */
-    runTasks(buildConfiguration, parameters)
-    {
+    finalize(buildConfiguration, parameters) {
         return Promise.resolve([]);
     }
-
-
-    /**
-     * @inheritDoc
-     * @returns {Promise<Array>}
-     */
-    finalize(buildConfiguration, parameters)
-    {
-        return Promise.resolve([]);
-    }
-
 
     /**
      * @returns {Stream}
      */
-    stream(stream, buildConfiguration, parameters)
-    {
+    stream(stream, buildConfiguration, parameters) {
         let resultStream = stream;
-        if (!resultStream)
-        {
-            resultStream = through2(
-                {
-                    objectMode: true
-                });
+        if (!resultStream) {
+            resultStream = through2({
+                objectMode: true
+            });
             const scope = this;
-            co(function *()
-            {
+            co(function*() {
                 const work = scope.cliLogger.section(scope.sectionName);
                 const params = yield scope.prepareParameters(buildConfiguration, parameters);
                 scope.cliLogger.options(params);
                 const preparedFiles = yield scope.prepare(buildConfiguration, params);
-                for (const file of preparedFiles)
-                {
+                for (const file of preparedFiles) {
                     resultStream.write(file);
                 }
                 const files = yield scope.runTasks(buildConfiguration, params);
-                for (const file of files)
-                {
+                for (const file of files) {
                     resultStream.write(file);
                 }
                 const finalizedFiles = yield scope.finalize(buildConfiguration, params);
-                for (const file of finalizedFiles)
-                {
+                for (const file of finalizedFiles) {
                     resultStream.write(file);
                 }
                 resultStream.end();
@@ -129,7 +104,6 @@ class WrappingTask extends Task
         return resultStream;
     }
 }
-
 
 /**
  * Exports

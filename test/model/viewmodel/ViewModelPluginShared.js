@@ -6,36 +6,28 @@
  */
 const baseSpec = require(ES_TEST + '/BaseShared.js').spec;
 
-
 /**
  * Shared ViewModelPlugin spec
  */
-function spec(type, className, prepareParameters)
-{
+function spec(type, className, prepareParameters) {
     /**
      * Base Test
      */
     baseSpec(type, className, prepareParameters);
 
-
     /**
      * ViewModelPlugin Test
      */
-    const createTestee = function()
-    {
+    const createTestee = function() {
         let parameters = Array.from(arguments);
-        if (prepareParameters)
-        {
+        if (prepareParameters) {
             parameters = prepareParameters(parameters);
         }
         return new type(...parameters);
     };
 
-
-    describe('#execute', function()
-    {
-        it('should return a promise', function()
-        {
+    describe('#execute', function() {
+        it('should return a promise', function() {
             const testee = new createTestee();
             const promise = testee.execute();
             expect(promise).to.be.instanceof(Promise);

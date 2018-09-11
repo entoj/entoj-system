@@ -1,8 +1,7 @@
 /**
  * @namespace utils
  */
-module.exports =
-{
+module.exports = {
     assert: require('./assert.js'),
     DIContainer: require('./DIContainer.js'),
     glob: require('./glob.js'),

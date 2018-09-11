@@ -8,19 +8,16 @@ const Base = require('../Base.js').Base;
 const BaseArray = require('../base/BaseArray.js').BaseArray;
 const BaseMap = require('../base/BaseMap.js').BaseMap;
 
-
 /**
  * @class
  * @memberOf model
  * @extends {Base}
  */
-class ValueObject extends Base
-{
+class ValueObject extends Base {
     /**
      * @param {Object} values
      */
-    constructor(values)
-    {
+    constructor(values) {
         super();
 
         // Add initial values
@@ -31,20 +28,16 @@ class ValueObject extends Base
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'model/ValueObject';
     }
-
 
     /**
      * @property {*}
      */
-    get uniqueId()
-    {
+    get uniqueId() {
         return this;
     }
-
 
     /**
      * Returns a object of all fields with their
@@ -53,20 +46,16 @@ class ValueObject extends Base
      *
      * @property {Object}
      */
-    get fields()
-    {
+    get fields() {
         return {};
     }
-
 
     /**
      * @returns {Boolean}
      */
-    shouldDehydrate(item)
-    {
+    shouldDehydrate(item) {
         return true;
     }
-
 
     /**
      * Called right after instanciation.
@@ -74,80 +63,56 @@ class ValueObject extends Base
      *
      * @returns {void}
      */
-    initialize()
-    {
-    }
-
+    initialize() {}
 
     /**
      * @param {ValueObject} other
      * @returns {Bool}
      */
-    isEqualTo(other)
-    {
-        return other && (this.uniqueId === other.uniqueId);
+    isEqualTo(other) {
+        return other && this.uniqueId === other.uniqueId;
     }
-
 
     /**
      * @param {*} values
      * @returns {void}
      */
-    dehydrate(values)
-    {
+    dehydrate(values) {
         const v = values || {};
-        for (const name in this.fields)
-        {
+        for (const name in this.fields) {
             const selfValue = this[name];
             const defaultValue = this.fields[name];
             const importValue = v[name];
 
             // Create field?
-            if (typeof selfValue === 'undefined')
-            {
-                try
-                {
-                    if (typeof defaultValue === 'function')
-                    {
+            if (typeof selfValue === 'undefined') {
+                try {
+                    if (typeof defaultValue === 'function') {
                         this[name] = new defaultValue();
                         // Prefill VO
-                        if (this[name] instanceof ValueObject && this.shouldDehydrate(this[name]))
-                        {
+                        if (this[name] instanceof ValueObject && this.shouldDehydrate(this[name])) {
                             this[name].dehydrate({});
                         }
-                    }
-                    else
-                    {
+                    } else {
                         this[name] = defaultValue;
                     }
-                }
-                catch(e)
-                {
+                } catch (e) {
                     /* istanbul ignore next */
                     this.logger.warn('FAIL: Creating field', name, this.className, e);
                 }
             }
 
             // Import?
-            if (typeof importValue !== 'undefined')
-            {
+            if (typeof importValue !== 'undefined') {
                 // is BaseArray or BaseMap?
-                if (this[name] instanceof BaseArray || this[name] instanceof BaseMap)
-                {
+                if (this[name] instanceof BaseArray || this[name] instanceof BaseMap) {
                     this[name].load(importValue, true);
-                }
-                else if (this[name] instanceof ValueObject && this.shouldDehydrate(this[name]))
-                {
+                } else if (this[name] instanceof ValueObject && this.shouldDehydrate(this[name])) {
                     this[name].dehydrate(importValue);
-                }
-                else
-                {
-                    try
-                    {
+                } else {
+                    try {
                         this[name] = importValue;
-                    }
-                    catch(e)
-                    {
+                    } catch (e) {
                         /* istanbul ignore next */
                         this.logger.warn('FAIL: Importing default for', name, this.className, e);
                     }
@@ -156,59 +121,40 @@ class ValueObject extends Base
         }
     }
 
-
     /**
      * @returns {Object}
      */
-    hydrate()
-    {
+    hydrate() {
         const result = {};
-        for (const name in this.fields)
-        {
-            if (this[name] instanceof ValueObject)
-            {
+        for (const name in this.fields) {
+            if (this[name] instanceof ValueObject) {
                 result[name] = this[name].hydrate();
-            }
-            else if (Array.isArray(this[name]))
-            {
+            } else if (Array.isArray(this[name])) {
                 result[name] = [];
-                for (const item of this[name])
-                {
-                    if (item instanceof ValueObject)
-                    {
+                for (const item of this[name]) {
+                    if (item instanceof ValueObject) {
                         result[name].push(item.hydrate());
-                    }
-                    else
-                    {
+                    } else {
                         result[name].push(item);
                     }
                 }
-            }
-            else if (this[name] instanceof BaseMap)
-            {
+            } else if (this[name] instanceof BaseMap) {
                 result[name] = {};
-                for (const key in this[name])
-                {
+                for (const key in this[name]) {
                     const item = this[name][key];
-                    if (item instanceof ValueObject)
-                    {
+                    if (item instanceof ValueObject) {
                         result[name][key] = item.hydrate();
-                    }
-                    else
-                    {
+                    } else {
                         result[name][key] = item;
                     }
                 }
-            }
-            else
-            {
+            } else {
                 result[name] = this[name];
             }
         }
         return result;
     }
 }
-
 
 /**
  * Exports

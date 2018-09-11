@@ -8,43 +8,34 @@ const Node = require(ES_SOURCE + '/export/ast/Node.js').Node;
 const NodeList = require(ES_SOURCE + '/export/ast/NodeList.js').NodeList;
 const baseSpec = require(ES_TEST + '/BaseShared.js').spec;
 
-
 /**
  * Shared Node spec
  */
-function spec(type, className, fixture, prepareParameters)
-{
+function spec(type, className, fixture, prepareParameters) {
     /**
      * Base Test
      */
     baseSpec(type, className, prepareParameters);
 
-
     /**
      * Node Test
      */
     const nodeName = className.split('/').pop();
-    const createTestee = function()
-    {
+    const createTestee = function() {
         let parameters = Array.from(arguments);
-        if (prepareParameters)
-        {
+        if (prepareParameters) {
             parameters = prepareParameters(parameters);
         }
         return new type(...parameters);
     };
 
-
-    describe('#next', function()
-    {
-        it('should return false when last node', function()
-        {
+    describe('#next', function() {
+        it('should return false when last node', function() {
             const testee = createTestee();
             expect(testee.next).to.be.not.ok;
         });
 
-        it('should return the next node', function()
-        {
+        it('should return the next node', function() {
             const parent = new NodeList();
             const testee = createTestee();
             const next = createTestee();
@@ -53,17 +44,13 @@ function spec(type, className, fixture, prepareParameters)
         });
     });
 
-
-    describe('#previous', function()
-    {
-        it('should return false when first node node', function()
-        {
+    describe('#previous', function() {
+        it('should return false when first node node', function() {
             const testee = createTestee();
             expect(testee.previous).to.be.not.ok;
         });
 
-        it('should return the previous node', function()
-        {
+        it('should return the previous node', function() {
             const parent = new NodeList();
             const testee = createTestee();
             const previous = createTestee();
@@ -72,31 +59,25 @@ function spec(type, className, fixture, prepareParameters)
         });
     });
 
-
-    describe('#is', function()
-    {
-        it('should return true when no query was provided', function()
-        {
+    describe('#is', function() {
+        it('should return true when no query was provided', function() {
             const testee = createTestee();
             expect(testee.is()).to.be.ok;
         });
 
-        it('should allow to match by type', function()
-        {
+        it('should allow to match by type', function() {
             const testee = createTestee();
             expect(testee.is(nodeName)).to.be.ok;
             expect(testee.is('Foo')).to.be.not.ok;
         });
 
-        it('should allow to match by multiple types', function()
-        {
+        it('should allow to match by multiple types', function() {
             const testee = createTestee();
             expect(testee.is(['Foo', nodeName])).to.be.ok;
             expect(testee.is(['Foo', 'Bar'])).to.be.not.ok;
         });
 
-        it('should allow to match by properties', function()
-        {
+        it('should allow to match by properties', function() {
             const testee = createTestee();
             testee.foo = 'bar';
             expect(testee.is(undefined, { foo: 'bar' })).to.be.ok;
@@ -106,32 +87,26 @@ function spec(type, className, fixture, prepareParameters)
         });
     });
 
-
-    describe('#isChildOf', function()
-    {
-        it('should return false when node has no parent', function()
-        {
+    describe('#isChildOf', function() {
+        it('should return false when node has no parent', function() {
             const testee = createTestee();
             expect(testee.isChildOf()).to.be.not.ok;
         });
 
-        it('should return true when no query was provided', function()
-        {
+        it('should return true when no query was provided', function() {
             const testee = createTestee();
             testee.parent = createTestee();
             expect(testee.isChildOf()).to.be.ok;
         });
 
-        it('should allow to match by type', function()
-        {
+        it('should allow to match by type', function() {
             const testee = createTestee();
             testee.parent = createTestee();
             expect(testee.isChildOf(nodeName)).to.be.ok;
             expect(testee.isChildOf('Foo')).to.be.not.ok;
         });
 
-        it('should allow to match by property', function()
-        {
+        it('should allow to match by property', function() {
             const testee = createTestee();
             testee.parent = createTestee();
             testee.parent.foo = 'bar';
@@ -139,8 +114,7 @@ function spec(type, className, fixture, prepareParameters)
             expect(testee.isChildOf(undefined, { foo: 'baz' })).to.be.not.ok;
         });
 
-        it('should traverse up to the root node', function()
-        {
+        it('should traverse up to the root node', function() {
             const testee = createTestee();
             testee.parent = createTestee();
             testee.parent.parent = createTestee();
@@ -149,23 +123,18 @@ function spec(type, className, fixture, prepareParameters)
         });
     });
 
-
-    describe('#find', function()
-    {
-        it('should return false when no node matches', function()
-        {
+    describe('#find', function() {
+        it('should return false when no node matches', function() {
             const testee = createTestee();
             expect(testee.find('Foo')).to.be.not.ok;
         });
 
-        it('should return the node when it matches', function()
-        {
+        it('should return the node when it matches', function() {
             const testee = createTestee();
             expect(testee.find(nodeName)).to.be.equal(testee);
         });
 
-        it('should search all iterable fields', function()
-        {
+        it('should search all iterable fields', function() {
             const testee = createTestee();
             testee.foo = new Node({ type: 'Foo' });
             testee.iterableFields.push('foo');
@@ -173,42 +142,33 @@ function spec(type, className, fixture, prepareParameters)
         });
     });
 
-
-    describe('#filter', function()
-    {
-        it('should return a empty array when no nodes match', function()
-        {
+    describe('#filter', function() {
+        it('should return a empty array when no nodes match', function() {
             const testee = createTestee();
             expect(testee.filter('Foo')).to.be.deep.equal([]);
         });
 
-        it('should return a array containg the node when it matches', function()
-        {
+        it('should return a array containg the node when it matches', function() {
             const testee = createTestee();
             expect(testee.filter(nodeName)).to.be.deep.equal([testee]);
         });
     });
 
-
-    describe('#clone', function()
-    {
-        it('should create a new instance', function()
-        {
+    describe('#clone', function() {
+        it('should create a new instance', function() {
             const testee = createTestee();
             expect(testee.clone()).to.be.not.equal(testee);
             expect(testee.clone()).to.be.instanceof(type);
         });
 
-        it('should return a new Node that contains the same dataFields', function()
-        {
+        it('should return a new Node that contains the same dataFields', function() {
             const testee = createTestee();
             testee.name = 'Igor';
             testee.dataFields.push('name');
             expect(testee.clone().serialize()).to.be.deep.equal(testee.serialize());
         });
 
-        it('should clone nested nodes & arrays', function()
-        {
+        it('should clone nested nodes & arrays', function() {
             const testee = createTestee();
             testee.name = 'Igor';
             testee.dataFields.push('name');
@@ -224,11 +184,8 @@ function spec(type, className, fixture, prepareParameters)
         });
     });
 
-
-    describe('#serialize', function()
-    {
-        it('should return a object containing all fields specified in dataFields', function()
-        {
+    describe('#serialize', function() {
+        it('should return a object containing all fields specified in dataFields', function() {
             const testee = createTestee();
             expect(testee.serialize()).to.be.deep.equal(fixture.serialized);
         });

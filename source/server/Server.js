@@ -17,13 +17,11 @@ const basicAuth = require('basic-auth');
 const compression = require('compression');
 const bodyParser = require('body-parser');
 
-
 /**
  * List of all currently running instances
  * @type {Array}
  */
 const instances = new BaseArray();
-
 
 /**
  * Provides a express based server with support for http2
@@ -32,15 +30,13 @@ const instances = new BaseArray();
  * @memberOf server
  * @extends Base
  */
-class Server extends Base
-{
+class Server extends Base {
     /**
      * @param {CliLogger} cliLogger
      * @param {object} [routes]
      * @param {object} [options]
      */
-    constructor(cliLogger, routes, options)
-    {
+    constructor(cliLogger, routes, options) {
         super();
 
         // Check params
@@ -53,8 +49,8 @@ class Server extends Base
         this._port = opts.port || 3000;
         this._express = express();
         this._routes = [];
-        this._sslKey = opts.sslKey || (__dirname + '/localhost.key');
-        this._sslCert = opts.sslCert || (__dirname + '/localhost.crt');
+        this._sslKey = opts.sslKey || __dirname + '/localhost.key';
+        this._sslCert = opts.sslCert || __dirname + '/localhost.crt';
         this._baseUrl = 'http' + (this._http2 ? 's' : '') + '://localhost:' + this._port;
         this.options = opts;
         this.options.authentication = opts.authentication || false;
@@ -65,120 +61,96 @@ class Server extends Base
         this.express.use(bodyParser.json());
 
         // Add routes
-        if (Array.isArray(routes))
-        {
-            for (const route of routes)
-            {
+        if (Array.isArray(routes)) {
+            for (const route of routes) {
                 this.addRoute(route);
             }
         }
     }
 
-
     /**
      * @inheritDoc
      */
-    static get injections()
-    {
-        return { 'parameters': [CliLogger, 'server/Server.routes', 'server/Server.options'] };
+    static get injections() {
+        return { parameters: [CliLogger, 'server/Server.routes', 'server/Server.options'] };
     }
-
 
     /**
      * @inheritDocs
      */
-    static get className()
-    {
+    static get className() {
         return 'server/Server';
     }
-
 
     /**
      * List of all currently running instances
      * @type {Array}
      */
-    static get instances()
-    {
+    static get instances() {
         return instances;
     }
-
 
     /**
      * @let {cli.CliLogger}
      */
-    get cliLogger()
-    {
+    get cliLogger() {
         return this._cliLogger;
     }
 
-
     /**
      * @let {String}
      */
-    get port()
-    {
+    get port() {
         return this._port;
     }
 
-
     /**
      * @let {String}
      */
-    get http2()
-    {
+    get http2() {
         return this._http2;
     }
 
-
     /**
      * @let {String}
      */
-    get baseUrl()
-    {
+    get baseUrl() {
         return this._baseUrl;
     }
-
 
     /**
      * @let {Express}
      */
-    get express()
-    {
+    get express() {
         return this._express;
     }
-
 
     /**
      * @let {Array}
      */
-    get routes()
-    {
+    get routes() {
         return this._routes;
     }
-
 
     /**
      * @let {Express}
      */
-    get server()
-    {
+    get server() {
         return this._server;
     }
-
 
     /**
      * @param {server.route.Route}
      * @return {Promise}
      */
-    authenticate(request, response, next)
-    {
-        if (this.options.authentication)
-        {
+    authenticate(request, response, next) {
+        if (this.options.authentication) {
             const authed = basicAuth(request);
-            if (!authed ||
+            if (
+                !authed ||
                 authed.name !== this.options.credentials.username ||
-                authed.pass !== this.options.credentials.password)
-            {
+                authed.pass !== this.options.credentials.password
+            ) {
                 response.statusCode = 401;
                 response.setHeader('WWW-Authenticate', 'Basic realm="example"');
                 response.end('Access denied');
@@ -191,13 +163,11 @@ class Server extends Base
         return true;
     }
 
-
     /**
      * @param {server.route.Route}
      * @return {Promise}
      */
-    addRoute(route)
-    {
+    addRoute(route) {
         // Check params
         assertParameter(this, 'route', route, true, Route);
 
@@ -206,34 +176,30 @@ class Server extends Base
         return route.register(this);
     }
 
-
     /**
      * @returns {Promise.<Express>}
      */
-    start()
-    {
-        if (this.server)
-        {
+    start() {
+        if (this.server) {
             return Promise.resolve(this.server);
         }
 
         const scope = this;
-        return new Promise(function(resolve, reject)
-        {
-            if (scope.http2)
-            {
-                const options =
-                {
+        return new Promise(function(resolve, reject) {
+            if (scope.http2) {
+                const options = {
                     key: fs.readFileSync(scope._sslKey),
                     cert: fs.readFileSync(scope._sslCert)
                 };
-                const work = scope.cliLogger.work('Starting <http/2> server at <https://localhost:' + scope.port + '>');
+                const work = scope.cliLogger.work(
+                    'Starting <http/2> server at <https://localhost:' + scope.port + '>'
+                );
                 scope._server = spdy.createServer(options, scope.express).listen(scope.port);
                 scope.cliLogger.end(work);
-            }
-            else
-            {
-                const work = scope.cliLogger.info('Starting <http> server at <http://localhost:' + scope.port + '>');
+            } else {
+                const work = scope.cliLogger.info(
+                    'Starting <http> server at <http://localhost:' + scope.port + '>'
+                );
                 scope._server = http.createServer(scope.express).listen(scope.port);
                 scope.cliLogger.end(work);
             }
@@ -242,34 +208,26 @@ class Server extends Base
         });
     }
 
-
     /**
      * @returns {Promise.<Bool>}
      */
-    stop()
-    {
+    stop() {
         const scope = this;
-        return new Promise(function(resolve, reject)
-        {
-            if (scope.server)
-            {
+        return new Promise(function(resolve, reject) {
+            if (scope.server) {
                 scope.cliLogger.info('Server: Stopping');
-                scope.server.close(function()
-                {
+                scope.server.close(function() {
                     scope._server = false;
                     Server.instances.remove(scope);
                     resolve();
                 });
-            }
-            else
-            {
+            } else {
                 /* istanbul ignore next */
                 resolve(false);
             }
         });
     }
 }
-
 
 /**
  * Exports

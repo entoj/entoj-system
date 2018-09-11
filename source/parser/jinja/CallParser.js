@@ -11,69 +11,52 @@ const nunjucks = require('nunjucks');
 const unique = require('lodash.uniq');
 const difference = require('lodash.difference');
 
-
 /**
  * A jinja macro calls parser
  */
-class CallParser extends Parser
-{
+class CallParser extends Parser {
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'parser.jinja/CallParser';
     }
 
-
     /**
      * @inheritDoc
      */
-    parseCallOrMacro(ast)
-    {
+    parseCallOrMacro(ast) {
         let token = ast.nextToken();
         const result = {};
         let name = false;
         let call = false;
         let definition = false;
         let extend = false;
-        while(token)
-        {
-            switch(token.type)
-            {
+        while (token) {
+            switch (token.type) {
                 case nunjucks.lexer.TOKEN_SYMBOL:
-                    if (token.value === 'call')
-                    {
+                    if (token.value === 'call') {
                         call = true;
-                    }
-                    else if (token.value === 'macro')
-                    {
+                    } else if (token.value === 'macro') {
                         definition = true;
-                    }
-                    else if (token.value === 'extends')
-                    {
+                    } else if (token.value === 'extends') {
                         extend = true;
-                    }
-                    else
-                    {
+                    } else {
                         name = token.value;
                     }
                     break;
 
                 case nunjucks.lexer.TOKEN_LEFT_PAREN:
-                    if (call && !result.call)
-                    {
+                    if (call && !result.call) {
                         result.call = name;
                     }
-                    if (definition && !result.definition)
-                    {
+                    if (definition && !result.definition) {
                         result.definition = name;
                     }
                     break;
 
                 case nunjucks.lexer.TOKEN_STRING:
-                    if (extend)
-                    {
+                    if (extend) {
                         result.extends = token.value;
                         extend = false;
                     }
@@ -84,27 +67,22 @@ class CallParser extends Parser
                     break;
             }
 
-            if (token !== false)
-            {
+            if (token !== false) {
                 token = ast.nextToken();
             }
         }
         return result;
     }
 
-
     /**
      * @inheritDoc
      */
-    parseSimpleCall(ast)
-    {
+    parseSimpleCall(ast) {
         let token = ast.nextToken();
         let result = false;
         let name = false;
-        while(token)
-        {
-            switch(token.type)
-            {
+        while (token) {
+            switch (token.type) {
                 case nunjucks.lexer.TOKEN_SYMBOL:
                     name = token.value;
                     break;
@@ -118,54 +96,44 @@ class CallParser extends Parser
                     break;
             }
 
-            if (token !== false)
-            {
+            if (token !== false) {
                 token = ast.nextToken();
             }
         }
         return result;
     }
 
-
     /**
      * @param {string} content
      * @returns {Promise<Array>}
      */
-    find(content)
-    {
+    find(content) {
         const ast = nunjucks.lexer.lex(content);
-        const result =
-        {
+        const result = {
             calls: [],
             definitions: [],
             externals: [],
             extends: []
         };
         let token;
-        while ((token = ast.nextToken()))
-        {
-            switch (token.type)
-            {
+        while ((token = ast.nextToken())) {
+            switch (token.type) {
                 case 'block-start':
                     const yieldCall = this.parseCallOrMacro(ast);
-                    if (yieldCall.call)
-                    {
+                    if (yieldCall.call) {
                         result.calls.push(yieldCall.call);
                     }
-                    if (yieldCall.definition)
-                    {
+                    if (yieldCall.definition) {
                         result.definitions.push(yieldCall.definition);
                     }
-                    if (yieldCall.extends)
-                    {
+                    if (yieldCall.extends) {
                         result.extends.push(yieldCall.extends);
                     }
                     break;
 
                 case 'variable-start':
                     const simpleCall = this.parseSimpleCall(ast);
-                    if (simpleCall)
-                    {
+                    if (simpleCall) {
                         result.calls.push(simpleCall);
                     }
                     break;
@@ -178,23 +146,19 @@ class CallParser extends Parser
         return Promise.resolve(result);
     }
 
-
     /**
      * @param {string} content
      * @param {string} options
      * @returns {Promise<Array>}
      */
-    parse(content, options)
-    {
+    parse(content, options) {
         /* istanbul ignore next */
-        if (!content || content.trim() === '')
-        {
+        if (!content || content.trim() === '') {
             Promise.resolve(false);
         }
 
         const scope = this;
-        const promise = co(function*()
-        {
+        const promise = co(function*() {
             const result = yield scope.find(content);
             result.calls = unique(result.calls);
             result.externals = difference(result.calls, result.definitions);
@@ -204,7 +168,6 @@ class CallParser extends Parser
         return promise;
     }
 }
-
 
 /**
  * Exports

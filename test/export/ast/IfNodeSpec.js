@@ -8,16 +8,12 @@ const Node = require(ES_SOURCE + '/export/ast/Node.js').Node;
 const nodeListSpec = require('./NodeListShared.js').spec;
 //const baseSpec = require(ES_TEST + '/BaseShared.js').spec;
 
-
 /**
  * Spec
  */
-describe(IfNode.className, function()
-{
-    const fixture =
-    {
-        serialized:
-        {
+describe(IfNode.className, function() {
+    const fixture = {
+        serialized: {
             type: 'IfNode',
             children: [],
             elseChildren: [],
@@ -34,10 +30,8 @@ describe(IfNode.className, function()
     /**
      * IfNode Test
      */
-    describe('#constructor', function()
-    {
-        it('should allow to prepopulate condition and elseChildren', function()
-        {
+    describe('#constructor', function() {
+        it('should allow to prepopulate condition and elseChildren', function() {
             const condition = new Node();
             const elseChildren = [new Node()];
             const testee = new IfNode({ condition: condition, elseChildren: elseChildren });
@@ -47,11 +41,8 @@ describe(IfNode.className, function()
         });
     });
 
-
-    describe('#condition', function()
-    {
-        it('should set parent of assigned node', function()
-        {
+    describe('#condition', function() {
+        it('should set parent of assigned node', function() {
             const testee = new IfNode();
             const node1 = new Node();
             testee.condition = node1;
@@ -59,11 +50,8 @@ describe(IfNode.className, function()
         });
     });
 
-
-    describe('#elseChildren', function()
-    {
-        it('should set parent of all added nodes', function()
-        {
+    describe('#elseChildren', function() {
+        it('should set parent of all added nodes', function() {
             const testee = new IfNode();
             const node1 = new Node();
             const node2 = new Node();

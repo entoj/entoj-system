@@ -12,16 +12,18 @@ const exporterSpec = require('./ExporterShared.js').spec;
 /**
  * Spec
  */
-describe(Exporter.className, function()
-{
+describe(Exporter.className, function() {
     /**
      * Exporter Test
      */
-    exporterSpec(Exporter, 'export/Exporter', () =>
-    {
-        const result = [global.fixtures.globalRepository,
+    exporterSpec(Exporter, 'export/Exporter', () => {
+        const result = [
+            global.fixtures.globalRepository,
             global.fixtures.buildConfiguration,
-            new Parser(), new Renderer(), new Transformer()];
+            new Parser(),
+            new Renderer(),
+            new Transformer()
+        ];
         return result;
     });
 });

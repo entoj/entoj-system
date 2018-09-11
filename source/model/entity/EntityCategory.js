@@ -7,7 +7,6 @@
 const DocumentableValueObject = require('../DocumentableValueObject.js').DocumentableValueObject;
 const EntityCategoryType = require('./EntityCategoryType.js').EntityCategoryType;
 
-
 /**
  * Describes entity categories in the system.
  * The main property of a category is its long name.
@@ -16,14 +15,12 @@ const EntityCategoryType = require('./EntityCategoryType.js').EntityCategoryType
  *
  * @memberOf model.entity
  */
-class EntityCategory extends DocumentableValueObject
-{
+class EntityCategory extends DocumentableValueObject {
     /**
      * @constant {string}
      * @static
      */
-    static get LONG_NAME()
-    {
+    static get LONG_NAME() {
         return 'longName';
     }
 
@@ -31,8 +28,7 @@ class EntityCategory extends DocumentableValueObject
      * @constant {string}
      * @static
      */
-    static get SHORT_NAME()
-    {
+    static get SHORT_NAME() {
         return 'shortName';
     }
 
@@ -40,8 +36,7 @@ class EntityCategory extends DocumentableValueObject
      * @constant {string}
      * @static
      */
-    static get PLURAL_NAME()
-    {
+    static get PLURAL_NAME() {
         return 'pluralName';
     }
 
@@ -49,26 +44,21 @@ class EntityCategory extends DocumentableValueObject
      * @constant {array}
      * @static
      */
-    static get ANY()
-    {
+    static get ANY() {
         return ['longName', 'shortName', 'pluralName'];
     }
 
-
     /**
      * @inheritDocs
      */
-    static get className()
-    {
+    static get className() {
         return 'model.entity/EntityCategory';
     }
 
-
     /**
      * @inheritDocs
      */
-    get fields()
-    {
+    get fields() {
         const fields = super.fields;
         fields.longName = '';
         fields.shortName = '';
@@ -78,80 +68,63 @@ class EntityCategory extends DocumentableValueObject
         return fields;
     }
 
-
     /**
      * @inheritDocs
      */
-    get uniqueId()
-    {
+    get uniqueId() {
         return this._longName + this._isGlobal;
     }
 
-
     /**
      * @property {String}
      */
-    get longName()
-    {
+    get longName() {
         return this._longName;
     }
 
-    set longName(value)
-    {
+    set longName(value) {
         this._longName = value;
     }
 
-
     /**
      * @property {String}
      */
-    get shortName()
-    {
+    get shortName() {
         return this._shortName;
     }
 
-    set shortName(value)
-    {
+    set shortName(value) {
         this._shortName = value;
     }
-
 
     /**
      * @property {String}
      */
-    get pluralName()
-    {
+    get pluralName() {
         return this._pluralName;
     }
 
-    set pluralName(value)
-    {
+    set pluralName(value) {
         this._pluralName = value;
     }
-
 
     /**
      * @property {Bool}
      */
-    get isGlobal()
-    {
+    get isGlobal() {
         return this.type === EntityCategoryType.GLOBAL;
     }
-
 
     /**
      * @property {String}
      */
-    get type()
-    {
+    get type() {
         return this._type;
     }
 
-    set type(value)
-    {
+    set type(value) {
         this._type = value;
     }
-
 
     /**
      * The priority of the category.
@@ -159,44 +132,32 @@ class EntityCategory extends DocumentableValueObject
      *
      * @property {Bool}
      */
-    get priority()
-    {
+    get priority() {
         return this._priority;
     }
 
-    set priority(value)
-    {
+    set priority(value) {
         this._priority = value;
     }
-
 
     /**
      * @inheritDocs
      */
-    dehydrate(values)
-    {
+    dehydrate(values) {
         super.dehydrate(values);
-        if (!this.pluralName.length)
-        {
+        if (!this.pluralName.length) {
             this.pluralName = this.longName + 's';
         }
-        if (!this.shortName.length)
-        {
+        if (!this.shortName.length) {
             this.shortName = this.longName.substr(0, 1).toLowerCase();
         }
         // Support deprecated way of declaring global categories
-        if (values &&
-            typeof values.isGlobal !== 'undefined' &&
-            values.isGlobal === true)
-        {
+        if (values && typeof values.isGlobal !== 'undefined' && values.isGlobal === true) {
             this.type = EntityCategoryType.GLOBAL;
         }
         // Add some sane magic categories
-        if (values &&
-            !values.type)
-        {
-            switch(this.longName.toLowerCase())
-            {
+        if (values && !values.type) {
+            switch (this.longName.toLowerCase()) {
                 case 'page':
                     this.type = EntityCategoryType.PAGE;
                     break;
@@ -212,16 +173,13 @@ class EntityCategory extends DocumentableValueObject
         }
     }
 
-
     /**
      * @inheritDocs
      */
-    toString()
-    {
+    toString() {
         return `[${this.className} ${this.longName}]`;
     }
 }
-
 
 /**
  * Exports

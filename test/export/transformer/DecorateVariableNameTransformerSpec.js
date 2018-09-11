@@ -3,33 +3,37 @@
 /**
  * Requirements
  */
-const DecorateVariableNameTransformer = require(ES_SOURCE + '/export/transformer/DecorateVariableNameTransformer.js').DecorateVariableNameTransformer;
+const DecorateVariableNameTransformer = require(ES_SOURCE +
+    '/export/transformer/DecorateVariableNameTransformer.js').DecorateVariableNameTransformer;
 const nodeTransformerSpec = require(ES_TEST + '/export/transformer/NodeTransformerShared.js').spec;
-
 
 /**
  * Spec
  */
-describe(DecorateVariableNameTransformer.className, function()
-{
+describe(DecorateVariableNameTransformer.className, function() {
     /**
      * NodeTransformer Test
      */
-    const options =
-    {
+    const options = {
         basePath: ES_FIXTURES + '/export/transformer'
     };
-    const testFixtures =
-    {
+    const testFixtures = {
         'should decorate variables': 'DecorateVariableNameTransformer'
     };
-    const prepareParameters = function()
-    {
-        return [{
-            prefix: 'pre_',
-            suffix: '_suf',
-            filter: (name) => name !== 'keep'
-        }];
+    const prepareParameters = function() {
+        return [
+            {
+                prefix: 'pre_',
+                suffix: '_suf',
+                filter: (name) => name !== 'keep'
+            }
+        ];
     };
-    nodeTransformerSpec(DecorateVariableNameTransformer, 'export.transformer/DecorateVariableNameTransformer', prepareParameters, testFixtures, options);
+    nodeTransformerSpec(
+        DecorateVariableNameTransformer,
+        'export.transformer/DecorateVariableNameTransformer',
+        prepareParameters,
+        testFixtures,
+        options
+    );
 });

@@ -14,66 +14,59 @@ const fs = require('co-fs-extra');
 const path = require('path');
 const upperFirst = require('lodash.upperfirst');
 
-
 /**
  * @class
  * @memberOf mode.site
  * @extends {PluggableLoader}
  */
-class SitesLoader extends PluggableLoader
-{
+class SitesLoader extends PluggableLoader {
     /**
      * @ignore
      */
-    constructor(pathesConfiguration, plugins)
-    {
+    constructor(pathesConfiguration, plugins) {
         super(plugins);
 
         //Check params
-        assertParameter(this, 'pathesConfiguration', pathesConfiguration, true, PathesConfiguration);
+        assertParameter(
+            this,
+            'pathesConfiguration',
+            pathesConfiguration,
+            true,
+            PathesConfiguration
+        );
 
         // Assign options
         this._pathesConfiguration = pathesConfiguration;
     }
 
-
     /**
      * @inheritDoc
      */
-    static get injections()
-    {
-        return { 'parameters': [PathesConfiguration, 'model.site/SitesLoader.plugins'] };
+    static get injections() {
+        return { parameters: [PathesConfiguration, 'model.site/SitesLoader.plugins'] };
     }
-
 
     /**
      * @inheritDocs
      */
-    static get className()
-    {
+    static get className() {
         return 'model.site/SitesLoader';
     }
-
 
     /**
      * Loads all basic site information
      *
      * @returns {Promise.<Array>}
      */
-    loadItems()
-    {
+    loadItems() {
         const scope = this;
-        const promise = co(function *()
-        {
-            if (scope._pathesConfiguration)
-            {
+        const promise = co(function*() {
+            if (scope._pathesConfiguration) {
                 const result = [];
                 const basePath = scope._pathesConfiguration.sites;
                 const directories = yield fs.readdir(basePath);
-                for (const directory of directories)
-                {
-                    if (!directory.startsWith('.'))
-                    {
+                for (const directory of directories) {
+                    if (!directory.startsWith('.')) {
                         result.push(new Site({ name: upperFirst(path.basename(directory)) }));
                     }
                 }
@@ -83,29 +76,23 @@ class SitesLoader extends PluggableLoader
         return promise;
     }
 
-
     /**
      * @inheritDocs
      */
-    finalize(items)
-    {
+    finalize(items) {
         const parent = super.finalize(items);
-        const promise = co(function *()
-        {
+        const promise = co(function*() {
             // Get items
             const items = yield parent;
 
             // Find a site by name
-            const find = function(name)
-            {
-                return items.find(item => item.name.toLowerCase() === name.toLowerCase());
+            const find = function(name) {
+                return items.find((item) => item.name.toLowerCase() === name.toLowerCase());
             };
 
             // Add extends
-            for (const item of items)
-            {
-                if (item.properties.getByPath('extends.site'))
-                {
+            for (const item of items) {
+                if (item.properties.getByPath('extends.site')) {
                     item.extends = find(item.properties.getByPath('extends.site'));
                     item.extendExcludes = item.properties.getByPath('extends.exclude', []);
                 }
@@ -116,7 +103,6 @@ class SitesLoader extends PluggableLoader
         return promise;
     }
 }
-
 
 /**
  * Exports

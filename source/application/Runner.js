@@ -7,12 +7,12 @@
 const Base = require('../Base.js').Base;
 const Context = require('../application/Context.js').Context;
 const CliLogger = require('../cli/CliLogger.js').CliLogger;
-const PathesConfiguration = require('../model/configuration/PathesConfiguration.js').PathesConfiguration;
+const PathesConfiguration = require('../model/configuration/PathesConfiguration.js')
+    .PathesConfiguration;
 const assertParameter = require('../utils/assert.js').assertParameter;
 const metrics = require('../utils/performance.js').metrics;
 const co = require('co');
 const chalk = require('chalk');
-
 
 /**
  * The runner is the main cli interface to entoj.
@@ -21,13 +21,11 @@ const chalk = require('chalk');
  * @memberOf application
  * @extends Base
  */
-class Runner extends Base
-{
+class Runner extends Base {
     /**
      * @param {Context} context
      */
-    constructor(context, cliLogger, commands)
-    {
+    constructor(context, cliLogger, commands) {
         super();
 
         //Check params
@@ -40,68 +38,56 @@ class Runner extends Base
         this._commands = [];
 
         // Create commands
-        if (Array.isArray(commands))
-        {
-            for (const command of commands)
-            {
-                this._commands.push(this.context.di.create((typeof command === 'function') ? command : command.type));
+        if (Array.isArray(commands)) {
+            for (const command of commands) {
+                this._commands.push(
+                    this.context.di.create(typeof command === 'function' ? command : command.type)
+                );
             }
         }
     }
 
-
     /**
      * @inheritDoc
      */
-    static get injections()
-    {
+    static get injections() {
         /* istanbul ignore next */
-        return { 'parameters': [Context, CliLogger, 'application/Runner.commands'] };
+        return { parameters: [Context, CliLogger, 'application/Runner.commands'] };
     }
 
-
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'application/Runner';
     }
 
-
     /**
      * @type {Context}
      */
-    get context()
-    {
+    get context() {
         return this._context;
     }
 
-
     /**
      * @type {Context}
      */
-    get cliLogger()
-    {
+    get cliLogger() {
         return this._cliLogger;
     }
-
 
     /**
      * @type {array}
      */
-    get commands()
-    {
+    get commands() {
         return this._commands;
     }
-
 
     /* istanbul ignore next */
     /**
      * @returns {Promise}
      */
-    help()
-    {
+    help() {
         this.cliLogger.info('Usage:');
         this.cliLogger.info('  entoj command [action] [options]');
         this.cliLogger.info('');
@@ -113,78 +99,63 @@ class Runner extends Base
 
         const data = [];
         let isFirstCommand = true;
-        for (const command of this._commands)
-        {
-            if (!isFirstCommand)
-            {
+        for (const command of this._commands) {
+            if (!isFirstCommand) {
                 data.push({});
             }
             isFirstCommand = false;
 
-            data.push(
-                {
-                    command: String.fromCharCode(6) + '    ' + command.help.name,
-                    description: chalk.white(command.help.description)
-                });
+            data.push({
+                command: String.fromCharCode(6) + '    ' + command.help.name,
+                description: chalk.white(command.help.description)
+            });
 
             let isFirstAction = true;
-            if (command.help.actions && command.help.actions.length)
-            {
-                for (const action of command.help.actions)
-                {
-                    if (!isFirstAction)
-                    {
+            if (command.help.actions && command.help.actions.length) {
+                for (const action of command.help.actions) {
+                    if (!isFirstAction) {
                         data.push({});
                     }
                     isFirstAction = false;
 
                     let parameters = '';
-                    if (action.options)
-                    {
-                        for (const option of action.options)
-                        {
-                            if (option.optional)
-                            {
-                                parameters+= chalk.dim('[');
+                    if (action.options) {
+                        for (const option of action.options) {
+                            if (option.optional) {
+                                parameters += chalk.dim('[');
                             }
-                            if (option.type == 'named')
-                            {
-                                parameters+= chalk.yellow('--');
+                            if (option.type == 'named') {
+                                parameters += chalk.yellow('--');
                             }
-                            parameters+= chalk.yellow(option.name);
-                            if (option.defaultValue || option.value)
-                            {
-                                parameters+= chalk.yellow('=' + (option.defaultValue || option.value));
+                            parameters += chalk.yellow(option.name);
+                            if (option.defaultValue || option.value) {
+                                parameters += chalk.yellow(
+                                    '=' + (option.defaultValue || option.value)
+                                );
                             }
-                            if (option.optional)
-                            {
-                                parameters+= chalk.dim(']');
+                            if (option.optional) {
+                                parameters += chalk.dim(']');
                             }
-                            parameters+= ' ';
+                            parameters += ' ';
                         }
                     }
 
-                    data.push(
-                        {
-                            command: String.fromCharCode(6) + '      ' + action.name + ' ' + parameters,
-                            description: chalk.white(action.description)
-                        });
+                    data.push({
+                        command: String.fromCharCode(6) + '      ' + action.name + ' ' + parameters,
+                        description: chalk.white(action.description)
+                    });
 
-                    if (action.options)
-                    {
-                        for (const option of action.options)
-                        {
+                    if (action.options) {
+                        for (const option of action.options) {
                             let command = String.fromCharCode(6) + '        ';
-                            if (option.type == 'named')
-                            {
-                                command+= chalk.yellow('--');
+                            if (option.type == 'named') {
+                                command += chalk.yellow('--');
                             }
-                            command+= chalk.yellow(option.name);
-                            data.push(
-                                {
-                                    command: command,
-                                    description: chalk.white(option.description)
-                                });
+                            command += chalk.yellow(option.name);
+                            data.push({
+                                command: command,
+                                description: chalk.white(option.description)
+                            });
                         }
                     }
                 }
@@ -193,59 +164,54 @@ class Runner extends Base
         this.cliLogger.table(data);
     }
 
-
     /**
      * @returns {Promise}
      */
-    run()
-    {
+    run() {
         const scope = this;
         metrics.start(scope.className + '::run');
         let handled = false;
         this._context.parameters._ = this._context.parameters._ || [];
-        this._context.parameters.command = this._context.parameters._.length ? this._context.parameters._.shift() : false;
-        this._context.parameters.action = this._context.parameters._.length ? this._context.parameters._.shift() : false;
-        const promise = co(function *()
-        {
-            for (const command of scope._commands)
-            {
+        this._context.parameters.command = this._context.parameters._.length
+            ? this._context.parameters._.shift()
+            : false;
+        this._context.parameters.action = this._context.parameters._.length
+            ? this._context.parameters._.shift()
+            : false;
+        const promise = co(function*() {
+            for (const command of scope._commands) {
                 const result = yield command.execute(scope._context.parameters);
-                if (result !== false)
-                {
+                if (result !== false) {
                     handled = true;
                 }
             }
-            if (!handled)
-            {
+            if (!handled) {
                 scope.cliLogger.error('No command handled request');
                 scope.help();
             }
             metrics.stop(scope.className + '::run');
-            if (typeof scope.context.parameters.performance != 'undefined')
-            {
+            if (typeof scope.context.parameters.performance != 'undefined') {
                 let patterns = undefined;
-                if (typeof scope.context.parameters.performance == 'string')
-                {
+                if (typeof scope.context.parameters.performance == 'string') {
                     patterns = scope.context.parameters.performance.split(',');
                 }
                 metrics.show(patterns);
 
                 const pathesConfiguration = scope.context.di.create(PathesConfiguration);
                 const performanceLabel = scope.context.parameters.performanceLabel || '';
-                const filename = yield pathesConfiguration.resolveCache('/metrics/performance-' + performanceLabel.urlify() + '-' + Date.now() + '.json');
+                const filename = yield pathesConfiguration.resolveCache(
+                    '/metrics/performance-' + performanceLabel.urlify() + '-' + Date.now() + '.json'
+                );
                 metrics.save(filename, performanceLabel);
             }
             return true;
-
-        }).catch(function(error)
-        {
+        }).catch(function(error) {
             metrics.stop(scope.className + '::run');
             scope.cliLogger.error(error);
         });
         return promise;
     }
 }
-
 
 /**
  * Exports

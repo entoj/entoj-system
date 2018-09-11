@@ -6,73 +6,58 @@
  */
 const Base = require('../Base.js').Base;
 
-
 /**
  * @class
  * @memberOf model
  * @extends {Base}
  */
-class ContentType extends Base
-{
+class ContentType extends Base {
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'model/ContentType';
     }
-
 
     /**
      * Any
      */
-    static get ANY()
-    {
+    static get ANY() {
         return '*';
     }
-
 
     /**
      * Sass
      */
-    static get SASS()
-    {
+    static get SASS() {
         return 'sass';
     }
-
 
     /**
      * Js
      */
-    static get JS()
-    {
+    static get JS() {
         return 'js';
     }
-
 
     /**
      * Json
      */
-    static get JSON()
-    {
+    static get JSON() {
         return 'json';
     }
-
 
     /**
      * Jinja
      */
-    static get JINJA()
-    {
+    static get JINJA() {
         return 'jinja';
     }
-
 
     /**
      * Markdown
      */
-    static get MARKDOWN()
-    {
+    static get MARKDOWN() {
         return 'markdown';
     }
 }

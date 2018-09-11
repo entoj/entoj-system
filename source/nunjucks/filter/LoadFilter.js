@@ -5,13 +5,13 @@
  * @ignore
  */
 const Filter = require('./Filter.js').Filter;
-const ViewModelRepository = require('../../model/viewmodel/ViewModelRepository.js').ViewModelRepository;
+const ViewModelRepository = require('../../model/viewmodel/ViewModelRepository.js')
+    .ViewModelRepository;
 const assertParameter = require('../../utils/assert.js').assertParameter;
 const synchronize = require('../../utils/synchronize.js');
 const isString = require('lodash.isstring');
 const deasync = require('deasync');
 const request = deasync(require('request'));
-
 
 /**
  * A filter that is used to load static json models from
@@ -19,78 +19,67 @@ const request = deasync(require('request'));
  *
  * @memberOf nunjucks.filter
  */
-class LoadFilter extends Filter
-{
+class LoadFilter extends Filter {
     /**
      * @param {model.viewmodel.ViewModelRepository} viewModelRepository
      * @param {Object} options
      */
-    constructor(viewModelRepository)
-    {
+    constructor(viewModelRepository) {
         super();
         this._name = 'load';
 
         // Check params
-        assertParameter(this, 'viewModelRepository', viewModelRepository, true, ViewModelRepository);
+        assertParameter(
+            this,
+            'viewModelRepository',
+            viewModelRepository,
+            true,
+            ViewModelRepository
+        );
 
         // Assign options
         this._viewModelRepository = viewModelRepository;
     }
 
-
     /**
      * @inheritDocs
      */
-    static get injections()
-    {
-        return { 'parameters': [ViewModelRepository] };
+    static get injections() {
+        return { parameters: [ViewModelRepository] };
     }
 
-
     /**
      * @inheritDocs
      */
-    static get className()
-    {
+    static get className() {
         return 'nunjucks.filter/LoadFilter';
     }
-
 
     /**
      * @type {model.viewmodel.ViewModelRepository}
      */
-    get viewModelRepository()
-    {
+    get viewModelRepository() {
         return this._viewModelRepository;
     }
-
 
     /**
      * @inheritDocs
      */
-    filter()
-    {
+    filter() {
         const scope = this;
-        return function (value)
-        {
-            if (!isString(value))
-            {
+        return function(value) {
+            if (!isString(value)) {
                 return value;
             }
 
             // See if it's a url
-            if (value.startsWith('http'))
-            {
+            if (value.startsWith('http')) {
                 const response = request(value, { strictSSL: false });
                 let data = {};
-                if (response.body)
-                {
-                    try
-                    {
+                if (response.body) {
+                    try {
                         data = JSON.parse(response.body);
-                    }
-                    catch (e)
-                    {
+                    } catch (e) {
                         scope.logger.warn('Failed loading model from ' + value);
                     }
                 }
@@ -99,12 +88,18 @@ class LoadFilter extends Filter
 
             // Load internal models
             const globals = scope.getGlobals(this);
-            const language = (globals.configuration && typeof globals.configuration.getByPath == 'function')
-                ? globals.configuration.getByPath('language', false)
-                : false;
+            const language =
+                globals.configuration && typeof globals.configuration.getByPath == 'function'
+                    ? globals.configuration.getByPath('language', false)
+                    : false;
             const site = globals.location.site || false;
             const useStaticContent = scope.useStaticContent(globals.request);
-            const viewModel = synchronize.execute(scope.viewModelRepository, 'getByPath', [value, site, useStaticContent, { language: language }]);
+            const viewModel = synchronize.execute(scope.viewModelRepository, 'getByPath', [
+                value,
+                site,
+                useStaticContent,
+                { language: language }
+            ]);
             return viewModel.data;
         };
     }

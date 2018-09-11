@@ -11,13 +11,11 @@ const ContentKind = require('../ContentKind.js').ContentKind;
 /**
  * @memberOf model.documentation
  */
-class Documentation extends ValueObject
-{
+class Documentation extends ValueObject {
     /**
      * @inheritDocs
      */
-    get fields()
-    {
+    get fields() {
         return {
             name: '',
             description: '',
@@ -30,31 +28,25 @@ class Documentation extends ValueObject
         };
     }
 
-
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'model.documentation/Documentation';
     }
-
 
     /**
      * The site (aspect) this documentation belongs to.
      *
      * @property {model.site.Site}
      */
-    get site()
-    {
+    get site() {
         return this._site;
     }
 
-    set site(value)
-    {
+    set site(value) {
         this._site = value;
     }
-
 
     /**
      * The actual content type this documentation was extracted from.
@@ -62,16 +54,13 @@ class Documentation extends ValueObject
      * @see {model.ContentType}
      * @property {String}
      */
-    get contentType()
-    {
+    get contentType() {
         return this._contentType;
     }
 
-    set contentType(value)
-    {
+    set contentType(value) {
         this._contentType = value;
     }
-
 
     /**
      * The actual content kind this documentation was extracted from.
@@ -79,87 +68,69 @@ class Documentation extends ValueObject
      * @see {model.ContentKind}
      * @property {String}
      */
-    get contentKind()
-    {
+    get contentKind() {
         return this._contentKind;
     }
 
-    set contentKind(value)
-    {
+    set contentKind(value) {
         this._contentKind = value;
     }
-
 
     /**
      * @property {model.file.File}
      */
-    get file()
-    {
+    get file() {
         return this._file;
     }
 
-    set file(value)
-    {
+    set file(value) {
         this._file = value;
     }
 
-
     /**
      * @property {String}
      */
-    get name()
-    {
+    get name() {
         return this._name;
     }
 
-    set name(value)
-    {
+    set name(value) {
         this._name = value;
     }
 
-
     /**
      * @property {String}
      */
-    get description()
-    {
+    get description() {
         return this._description;
     }
 
-    set description(value)
-    {
+    set description(value) {
         this._description = value;
     }
-
 
     /**
      * @property {String}
      */
-    get group()
-    {
+    get group() {
         return this._group;
     }
 
-    set group(value)
-    {
+    set group(value) {
         this._group = value;
     }
-
 
     /**
      * @property {Array}
      */
-    get tags()
-    {
+    get tags() {
         return this._tags;
     }
 
-    set tags(value)
-    {
+    set tags(value) {
         this._tags = value;
     }
 }
-
 
 /**
  * Exports

@@ -6,7 +6,6 @@
  */
 const MissingArgumentError = require('../error/MissingArgumentError.js').MissingArgumentError;
 
-
 /**
  * Checks a parameter for required and type
  *
@@ -15,32 +14,25 @@ const MissingArgumentError = require('../error/MissingArgumentError.js').Missing
  * @param {String} className - the expected class (or parent class)
  * @returns {Bool}
  */
-function assertClass(type, className)
-{
-    if (!type ||
-        typeof type.className === 'undefined' ||
-        !className)
-    {
+function assertClass(type, className) {
+    if (!type || typeof type.className === 'undefined' || !className) {
         return false;
     }
-    if (type.className === className)
-    {
+    if (type.className === className) {
         return true;
     }
-    if (type.prototype &&
-        Object.getPrototypeOf(type.prototype))
-    {
+    if (type.prototype && Object.getPrototypeOf(type.prototype)) {
         return assertClass(Object.getPrototypeOf(type.prototype), className);
     }
-    if (type.constructor &&
+    if (
+        type.constructor &&
         type.constructor.prototype &&
-        Object.getPrototypeOf(type.constructor.prototype))
-    {
+        Object.getPrototypeOf(type.constructor.prototype)
+    ) {
         return assertClass(Object.getPrototypeOf(type.constructor.prototype), className);
     }
     return false;
 }
-
 
 /**
  * Checks a parameter for required and type
@@ -52,35 +44,31 @@ function assertClass(type, className)
  * @param {Class|Array<Class>} type - The expected type(s) of the parameter
  * @returns {void}
  */
-function assertParameter(instance, name, value, required, type)
-{
-    if (!instance)
-    {
+function assertParameter(instance, name, value, required, type) {
+    if (!instance) {
         throw new TypeError(`Missing instance to assert ${name}`);
     }
-    if (required && !value)
-    {
+    if (required && !value) {
         throw new MissingArgumentError(`${instance.className} - Missing parameter ${name}`);
     }
-    if (value && type)
-    {
+    if (value && type) {
         const types = Array.isArray(type) ? type : [type];
         let ok = false;
-        for (const t of types)
-        {
-            if (assertClass(value, t.className))
-            {
+        for (const t of types) {
+            if (assertClass(value, t.className)) {
                 ok = true;
             }
         }
-        if (!ok)
-        {
+        if (!ok) {
             //console.log(`${instance.className} - ${name} must of of type ${type.className}`);
-            throw new TypeError(`${instance.className} - ${name} must be of type ${type.className} but is of type ${value.className}`);
+            throw new TypeError(
+                `${instance.className} - ${name} must be of type ${type.className} but is of type ${
+                    value.className
+                }`
+            );
         }
     }
 }
-
 
 /**
  * API

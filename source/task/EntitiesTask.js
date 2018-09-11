@@ -13,17 +13,14 @@ const metrics = require('../utils/performance.js').metrics;
 const through2 = require('through2');
 const co = require('co');
 
-
 /**
  * @memberOf task
  */
-class EntitiesTask extends Task
-{
+class EntitiesTask extends Task {
     /**
      *
      */
-    constructor(cliLogger, globalRepository)
-    {
+    constructor(cliLogger, globalRepository) {
         super(cliLogger);
 
         //Check params
@@ -33,107 +30,84 @@ class EntitiesTask extends Task
         this._globalRepository = globalRepository;
     }
 
-
     /**
      * @inheritDoc
      */
-    static get injections()
-    {
-        return { 'parameters': [CliLogger, GlobalRepository] };
+    static get injections() {
+        return { parameters: [CliLogger, GlobalRepository] };
     }
 
-
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'task/EntitiesTask';
     }
 
-
     /**
      * @inheritDoc
      */
-    get sectionName()
-    {
+    get sectionName() {
         return 'Processing entities';
     }
-
 
     /**
      * @type {model.GlobalRepository}
      */
-    get globalRepository()
-    {
+    get globalRepository() {
         return this._globalRepository;
     }
-
 
     /**
      * @protected
      * @returns {Promise<Array>}
      */
-    prepareParameters(buildConfiguration, parameters)
-    {
-        const promise = super.prepareParameters(buildConfiguration, parameters)
-            .then((params) =>
-            {
-                params.query = params.query || '*';
-                return params;
-            });
+    prepareParameters(buildConfiguration, parameters) {
+        const promise = super.prepareParameters(buildConfiguration, parameters).then((params) => {
+            params.query = params.query || '*';
+            return params;
+        });
         return promise;
     }
 
+    /**
+     * @inheritDoc
+     * @returns {Promise<Array>}
+     */
+    prepare(buildConfiguration, parameters) {
+        return Promise.resolve([]);
+    }
 
     /**
      * @inheritDoc
      * @returns {Promise<Array>}
      */
-    prepare(buildConfiguration, parameters)
-    {
+    finalize(buildConfiguration, parameters) {
         return Promise.resolve([]);
     }
-
-
-    /**
-     * @inheritDoc
-     * @returns {Promise<Array>}
-     */
-    finalize(buildConfiguration, parameters)
-    {
-        return Promise.resolve([]);
-    }
-
 
     /**
      * @returns {Promise<Array>}
      */
-    processEntity(entity, buildConfiguration, parameters)
-    {
+    processEntity(entity, buildConfiguration, parameters) {
         return Promise.resolve(false);
     }
 
-
     /**
      * @inheritDoc
      * @returns {Promise<Array>}
      */
-    getEntities(query, buildConfiguration, parameters)
-    {
+    getEntities(query, buildConfiguration, parameters) {
         return this.globalRepository.resolveEntities(query);
     }
 
-
     /**
      * @inheritDoc
      * @returns {Promise<Array>}
      */
-    processEntities(buildConfiguration, parameters)
-    {
+    processEntities(buildConfiguration, parameters) {
         const scope = this;
-        const promise = co(function *()
-        {
+        const promise = co(function*() {
             metrics.pushScope(scope.className + '::processEntities');
             metrics.start(scope.className + '::processEntities');
 
@@ -147,14 +121,16 @@ class EntitiesTask extends Task
             metrics.start(scope.className + '::processEntities - getEntities');
             const entities = yield scope.getEntities(params.query, buildConfiguration, params);
             metrics.stop(scope.className + '::processEntities - getEntities');
-            for (const entity of entities)
-            {
+            for (const entity of entities) {
                 // Render entity
                 metrics.start(scope.className + '::processEntities - processEntity');
-                const entityResult = yield scope.processEntity(entity, buildConfiguration, parameters);
+                const entityResult = yield scope.processEntity(
+                    entity,
+                    buildConfiguration,
+                    parameters
+                );
                 metrics.stop(scope.className + '::processEntities - processEntity');
-                if (Array.isArray(entityResult))
-                {
+                if (Array.isArray(entityResult)) {
                     result.push(...entityResult);
                 }
             }
@@ -168,38 +144,30 @@ class EntitiesTask extends Task
         return promise;
     }
 
-
     /**
      * @returns {Stream}
      */
-    stream(stream, buildConfiguration, parameters)
-    {
+    stream(stream, buildConfiguration, parameters) {
         let resultStream = stream;
-        if (!resultStream)
-        {
-            resultStream = through2(
-                {
-                    objectMode: true
-                });
+        if (!resultStream) {
+            resultStream = through2({
+                objectMode: true
+            });
             const scope = this;
-            co(function *()
-            {
+            co(function*() {
                 const work = scope.cliLogger.section(scope.sectionName);
                 const params = yield scope.prepareParameters(buildConfiguration, parameters);
                 scope.cliLogger.options(params);
                 const preparedFiles = yield scope.prepare(buildConfiguration, parameters);
-                for (const file of preparedFiles)
-                {
+                for (const file of preparedFiles) {
                     resultStream.write(file);
                 }
                 const files = yield scope.processEntities(buildConfiguration, parameters);
-                for (const file of files)
-                {
+                for (const file of files) {
                     resultStream.write(file);
                 }
                 const finalizedFiles = yield scope.finalize(buildConfiguration, parameters);
-                for (const file of finalizedFiles)
-                {
+                for (const file of finalizedFiles) {
                     resultStream.write(file);
                 }
                 resultStream.end();
@@ -209,7 +177,6 @@ class EntitiesTask extends Task
         return resultStream;
     }
 }
-
 
 /**
  * Exports

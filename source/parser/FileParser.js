@@ -16,15 +16,13 @@ const co = require('co');
  * Reads files based on glob patterns
  * @memberOf parser
  */
-class FileParser extends Parser
-{
+class FileParser extends Parser {
     /**
      * @param {object|undefined} options
      * @param {parser.Parser} options.parser - a parser instance that is applied to all files read
      * @param {Array} options.glob - a list of glob pathes that will be queried
      */
-    constructor(options)
-    {
+    constructor(options) {
         super();
 
         // Assign options
@@ -35,66 +33,52 @@ class FileParser extends Parser
         this._fileKind = opts.fileKind || ContentKind.UNKNOWN;
 
         // Add parser
-        if (!this._parser)
-        {
+        if (!this._parser) {
             this._parser = new Parser();
         }
     }
 
-
     /**
      * @inheritDoc
      */
-    static get injections()
-    {
-        return { 'parameters': ['parser/FileParser.options'] };
+    static get injections() {
+        return { parameters: ['parser/FileParser.options'] };
     }
 
-
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'parser/FileParser';
     }
-
 
     /**
      * @property {parser.Parser}
      */
-    get parser()
-    {
+    get parser() {
         return this._parser;
     }
-
 
     /**
      * @property {Array}
      */
-    get glob()
-    {
+    get glob() {
         return this._glob;
     }
 
-
     /**
      * @property {String}
      */
-    get fileType()
-    {
+    get fileType() {
         return this._fileType;
     }
 
-
     /**
      * @property {String}
      */
-    get fileKind()
-    {
+    get fileKind() {
         return this._fileKind;
     }
-
 
     /**
      * Parses a file
@@ -103,34 +87,27 @@ class FileParser extends Parser
      * @param {model.file.File} file
      * @returns {Promise.<Array>}
      */
-    parseFile(file)
-    {
-        if (!this._parser)
-        {
+    parseFile(file) {
+        if (!this._parser) {
             return Promise.resolve(false);
         }
 
         const scope = this;
-        const promise = co(function*()
-        {
+        const promise = co(function*() {
             // Parse
             let result = yield scope._parser.parse(file.contents);
-            if (!result)
-            {
+            if (!result) {
                 return false;
             }
 
-            if (!Array.isArray(result))
-            {
+            if (!Array.isArray(result)) {
                 result = [result];
             }
 
             // Add file
-            for (const documentation of result)
-            {
+            for (const documentation of result) {
                 documentation.file = file;
-                if (!documentation.name)
-                {
+                if (!documentation.name) {
                     documentation.name = file.basename;
                 }
             }
@@ -141,21 +118,17 @@ class FileParser extends Parser
         return promise;
     }
 
-
     /**
      * @inheritDocs
      */
-    parse(content, options)
-    {
+    parse(content, options) {
         const scope = this;
-        const result =
-        {
+        const result = {
             files: [],
             items: []
         };
         let lastFilename = '';
-        const promise = co(function*()
-        {
+        const promise = co(function*() {
             // Options
             const opts = options || {};
 
@@ -165,22 +138,22 @@ class FileParser extends Parser
             const fileKind = opts.fileKind || scope.fileKind;
             const globs = opts.glob || scope.glob || [];
             const files = yield glob(globs, { root: root });
-            if (!files || !files.length)
-            {
+            if (!files || !files.length) {
                 return result;
             }
 
             // Read & parse
-            for (const filename of files)
-            {
+            for (const filename of files) {
                 lastFilename = filename;
-                const file = new File({ filename: filename, contentType: fileType, contentKind: fileKind });
+                const file = new File({
+                    filename: filename,
+                    contentType: fileType,
+                    contentKind: fileKind
+                });
                 result.files.push(file);
-                if (file.contents)
-                {
+                if (file.contents) {
                     const items = yield scope.parseFile(file);
-                    if (items)
-                    {
+                    if (items) {
                         Array.prototype.push.apply(result.items, items);
                     }
                 }
@@ -191,7 +164,6 @@ class FileParser extends Parser
         return promise;
     }
 }
-
 
 /**
  * Exports

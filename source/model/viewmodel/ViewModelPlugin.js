@@ -6,48 +6,39 @@
  */
 const Base = require('../../Base.js').Base;
 
-
 /**
  * @class
  * @memberOf model.viewmodel
  * @extends {Base}
  */
-class ViewModelPlugin extends Base
-{
+class ViewModelPlugin extends Base {
     /**
      * @inheritDoc
      */
-    constructor()
-    {
+    constructor() {
         super();
 
         // Assign
         this._name = [];
     }
 
-
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'model.viewmodel/ViewModelPlugin';
     }
-
 
     /**
      * @type {Array}
      */
-    get name()
-    {
+    get name() {
         return this._name;
     }
 
-    set name(value)
-    {
+    set name(value) {
         this._name = Array.isArray(value) ? value : [value];
     }
-
 
     /**
      * @protected
@@ -58,11 +49,9 @@ class ViewModelPlugin extends Base
      * @param {Object} options
      * @returns {Promise}
      */
-    doExecute(repository, site, useStaticContent, name, parameters, options)
-    {
+    doExecute(repository, site, useStaticContent, name, parameters, options) {
         return Promise.resolve();
     }
-
 
     /**
      * @param {model.viewmodel.ViewModelRepository} repository
@@ -72,10 +61,8 @@ class ViewModelPlugin extends Base
      * @param {Object} options
      * @returns {Promise}
      */
-    execute(repository, site, useStaticContent, name, parameters, options)
-    {
-        if (this.name.length && this.name.indexOf(name) === -1)
-        {
+    execute(repository, site, useStaticContent, name, parameters, options) {
+        if (this.name.length && this.name.indexOf(name) === -1) {
             return Promise.resolve();
         }
         return this.doExecute(repository, site, useStaticContent, name, parameters, options);

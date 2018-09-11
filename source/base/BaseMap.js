@@ -8,69 +8,53 @@ const BaseMixin = require('../Base.js').BaseMixin;
 const isPlainObject = require('lodash.isplainobject');
 const merge = require('lodash.merge');
 
-
 /**
  * @memberOf base
  * @extends {Array}
  */
-class BaseMap extends BaseMixin(Map)
-{
+class BaseMap extends BaseMixin(Map) {
     /**
      * @inheritDocs
      */
-    constructor(data)
-    {
+    constructor(data) {
         super();
-        if (data)
-        {
+        if (data) {
             this.load(data);
         }
     }
 
-
     /**
      * @inheritDocs
      */
-    static get className()
-    {
+    static get className() {
         return 'base/BaseMap';
     }
-
 
     /**
      * @param {String} path
      * @param {*} defaultValue
      */
-    getByPath(path, defaultValue)
-    {
+    getByPath(path, defaultValue) {
         // Path valid?
-        if (!path)
-        {
+        if (!path) {
             return defaultValue;
         }
 
         // Walk path and find value
         const names = path.split('.');
         let current = this;
-        for (const name of names)
-        {
+        for (const name of names) {
             // Try to get value at current name
-            if (current instanceof Map)
-            {
+            if (current instanceof Map) {
                 current = current.get(name);
-            }
-            else if (typeof current[name] !== 'undefined')
-            {
+            } else if (typeof current[name] !== 'undefined') {
                 current = current[name];
-            }
-            else
-            {
+            } else {
                 current = undefined;
             }
 
             // Should we stop here?
-            if (typeof current === 'undefined')
-            {
+            if (typeof current === 'undefined') {
                 return defaultValue;
             }
         }
@@ -78,16 +62,13 @@ class BaseMap extends BaseMixin(Map)
         return current;
     }
 
-
     /**
      * @param {String} path
      * @param {*} value
      */
-    setByPath(path, value)
-    {
+    setByPath(path, value) {
         // Path valid?
-        if (!path)
-        {
+        if (!path) {
             return false;
         }
 
@@ -95,111 +76,82 @@ class BaseMap extends BaseMixin(Map)
         const names = path.split('.');
         let parent = this;
         let current;
-        for (let index = 0; index < names.length; index++)
-        {
+        for (let index = 0; index < names.length; index++) {
             const name = names[index];
 
             // Try to get value at current name
             current = undefined;
-            if (parent instanceof Map)
-            {
+            if (parent instanceof Map) {
                 current = parent.get(name);
-            }
-            else if (typeof parent[name] !== 'undefined')
-            {
+            } else if (typeof parent[name] !== 'undefined') {
                 current = parent[name];
             }
 
             // Add value if missing or last
-            if (!current || index == names.length - 1)
-            {
-                current = (index < names.length - 1)
-                    ? {}
-                    : value;
+            if (!current || index == names.length - 1) {
+                current = index < names.length - 1 ? {} : value;
             }
 
-            if (parent instanceof Map)
-            {
+            if (parent instanceof Map) {
                 parent.set(name, current);
-            }
-            else
-            {
+            } else {
                 parent[name] = current;
             }
             parent = current;
         }
     }
 
-
     /**
      * @param {*} data
      * @param {bool} clear
      */
-    load(data, clear)
-    {
-        if (clear === true)
-        {
+    load(data, clear) {
+        if (clear === true) {
             this.clear();
         }
 
-        if (!data)
-        {
+        if (!data) {
             return;
         }
 
-        if (data instanceof Map || data instanceof BaseMap || typeof data.keys == 'function')
-        {
-            for (const item of data.keys())
-            {
+        if (data instanceof Map || data instanceof BaseMap || typeof data.keys == 'function') {
+            for (const item of data.keys()) {
                 this.set(item, data.get(item));
             }
-        }
-        else if (isPlainObject(data))
-        {
-            for (const key in data)
-            {
+        } else if (isPlainObject(data)) {
+            for (const key in data) {
                 this.set(key, data[key]);
             }
         }
     }
 
-
     /**
      * @param {*} data
      */
-    merge(data)
-    {
-        if (!data)
-        {
+    merge(data) {
+        if (!data) {
             return;
         }
 
-        if (data instanceof Map || data instanceof BaseMap || typeof data.keys == 'function')
-        {
-            for (const key of data.keys())
-            {
+        if (data instanceof Map || data instanceof BaseMap || typeof data.keys == 'function') {
+            for (const key of data.keys()) {
                 const merged = merge(this.getByPath(key, {}), data.get(key));
                 this.set(key, merged);
             }
-        }
-        else if (isPlainObject(data))
-        {
-            for (const key in data)
-            {
+        } else if (isPlainObject(data)) {
+            for (const key in data) {
                 const merged = merge(this.getByPath(key, {}), data[key]);
                 this.set(key, merged);
             }
         }
     }
 
-
     /**
      * Returns a simple string representation of the object
      *
      * @returns {string}
      */
-    toString()
-    {
+    toString() {
         return `[${this.className} size=${this.size}]`;
     }
 }

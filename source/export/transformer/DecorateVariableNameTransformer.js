@@ -7,20 +7,17 @@
 const NodeTransformer = require('./NodeTransformer.js').NodeTransformer;
 const metrics = require('../../utils/performance.js').metrics;
 
-
 /**
  * Adds configurable prefix and suffix to VariableNodes. To specify only a
  * subset of all variables use a filter function via options.filter
  *
  * @todo rename to ModifyVariableNameTransformer
  */
-class DecorateVariableNameTransformer extends NodeTransformer
-{
+class DecorateVariableNameTransformer extends NodeTransformer {
     /**
      * @ingnore
      */
-    constructor(options)
-    {
+    constructor(options) {
         super();
 
         // Assign options
@@ -31,70 +28,54 @@ class DecorateVariableNameTransformer extends NodeTransformer
         this._mapping = opts.mapping || {};
     }
 
-
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'export.transformer/DecorateVariableNameTransformer';
     }
-
 
     /**
      * @type {Function}
      */
-    get filter()
-    {
+    get filter() {
         return this._filter;
     }
 
-
     /**
      * @type {String}
      */
-    get prefix()
-    {
+    get prefix() {
         return this._prefix;
     }
 
-
     /**
      * @type {String}
      */
-    get suffix()
-    {
+    get suffix() {
         return this._suffix;
     }
-
 
     /**
      * @type {Object}
      */
-    get mapping()
-    {
+    get mapping() {
         return this._mapping;
     }
-
 
     /**
      * @inheritDocs
      */
-    transformNode(node, configuration)
-    {
+    transformNode(node, configuration) {
         metrics.start(this.className + '::transformNode');
-        if (node.is('VariableNode'))
-        {
+        if (node.is('VariableNode')) {
             // See if variable is allowed
-            if (!this.filter ||
-                (this.filter && this.filter(node.fields[0])))
-            {
+            if (!this.filter || (this.filter && this.filter(node.fields[0]))) {
                 const variableName = node.fields.join('.');
                 this.logger.info('transformNode - decorating variable ' + variableName);
 
                 // See if variable needs to be mapped
-                if (this.mapping[variableName])
-                {
+                if (this.mapping[variableName]) {
                     node.fields = this.mapping[variableName].split('.');
                 }
 

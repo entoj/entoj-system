@@ -6,12 +6,10 @@
 const IdParser = require(ES_SOURCE + '/parser/entity/IdParser.js').IdParser;
 const baseSpec = require(ES_TEST + '/BaseShared.js').spec;
 
-
 /**
  * Spec
  */
-describe(IdParser.className, function()
-{
+describe(IdParser.className, function() {
     /**
      * Base Test
      */

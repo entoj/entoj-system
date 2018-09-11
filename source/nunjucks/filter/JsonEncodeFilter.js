@@ -6,44 +6,35 @@
  */
 const Filter = require('./Filter.js').Filter;
 
-
 /**
  * @memberOf nunjucks.filter
  */
-class JsonEncodeFilter extends Filter
-{
+class JsonEncodeFilter extends Filter {
     /**
      * @inheritDoc
      */
-    constructor()
-    {
+    constructor() {
         super();
         this._name = ['jsonEncode'];
     }
 
-
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'nunjucks.filter/JsonEncodeFilter';
     }
 
-
     /**
      * @inheritDoc
      */
-    filter(value)
-    {
+    filter(value) {
         const scope = this;
-        return function(value)
-        {
+        return function(value) {
             return scope.applyCallbacks(JSON.stringify(value));
         };
     }
 }
-
 
 /**
  * Exports

@@ -6,46 +6,37 @@
  */
 const Base = require('../../Base.js').Base;
 
-
 /**
  * @class
  * @memberOf model.documentation
  * @extends {Base}
  */
-class DocumentationType extends Base
-{
+class DocumentationType extends Base {
     /**
      * @inheritDocs
      */
-    static get className()
-    {
+    static get className() {
         return 'model.documentation/DocumentationType';
     }
 
-
     /**
      *
      */
-    static get TEXT()
-    {
+    static get TEXT() {
         return 'DocumentationText';
     }
 
-
     /**
      *
      */
-    static get TEXT_SECTION()
-    {
+    static get TEXT_SECTION() {
         return 'DocumentationTextSection';
     }
 
-
     /**
      *
      */
-    static get EXAMPLE()
-    {
+    static get EXAMPLE() {
         return 'DocumentationExample';
     }
 }

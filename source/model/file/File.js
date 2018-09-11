@@ -10,27 +10,22 @@ const ContentKind = require('../ContentKind.js').ContentKind;
 const path = require('path');
 const fs = require('fs');
 
-
 /**
  * @memberOf model.file
  * @extends {model.ValueObject}
  */
-class File extends ValueObject
-{
+class File extends ValueObject {
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'model.file/File';
     }
-
 
     /**
      * @inheritDocs
      */
-    get fields()
-    {
+    get fields() {
         const fields = super.fields;
         fields.filename = '';
         fields.contentType = ContentType.ANY;
@@ -41,84 +36,68 @@ class File extends ValueObject
         return fields;
     }
 
-
     /**
      * @inheritDoc
      */
-    initialize()
-    {
+    initialize() {
         super.initialize();
         this._updated = Date.now();
     }
-
 
     /**
      * @param {*} values
      * @returns {void}
      */
-    dehydrate(values)
-    {
+    dehydrate(values) {
         const result = super.dehydrate(values);
         this._updated = Date.now();
         return result;
     }
-
 
     /**
      * Timestamp of last file update
      *
      * @property {Number}
      */
-    get updated()
-    {
+    get updated() {
         return this._updated;
     }
-
 
     /**
      * The site (aspect) this file belongs to.
      *
      * @property {model.site.Site}
      */
-    get site()
-    {
+    get site() {
         return this._site;
     }
 
-    set site(value)
-    {
+    set site(value) {
         this._site = value;
     }
-
 
     /**
      * @type {String}
      */
-    get contentType()
-    {
+    get contentType() {
         return this._contentType;
     }
 
-    set contentType(value)
-    {
+    set contentType(value) {
         this._contentType = value;
     }
-
 
     /**
      * @type {String}
      * @see model.ContentType
      */
-    get contentKind()
-    {
+    get contentKind() {
         return this._contentKind;
     }
 
-    set contentKind(value)
-    {
+    set contentKind(value) {
         this._contentKind = value;
     }
-
 
     /**
      * The full filename
@@ -126,13 +105,11 @@ class File extends ValueObject
      *
      * @type {String}
      */
-    get filename()
-    {
+    get filename() {
         return this._filename;
     }
 
-    set filename(value)
-    {
+    set filename(value) {
         this._filename = path.normalize(value);
         this._basename = path.basename(this._filename);
         this._path = path.dirname(this._filename);
@@ -140,39 +117,32 @@ class File extends ValueObject
         this._contents = undefined;
     }
 
-
     /**
      * The name of the file without any directories
      *
      * @type {String}
      */
-    get basename()
-    {
+    get basename() {
         return this._basename;
     }
-
 
     /**
      * The directory part of the filename
      *
      * @type {String}
      */
-    get path()
-    {
+    get path() {
         return this._path;
     }
-
 
     /**
      * The file extension (including the dot)
      *
      * @type {String}
      */
-    get extension()
-    {
+    get extension() {
         return this._extension;
     }
-
 
     /**
      * The file contents.
@@ -180,40 +150,30 @@ class File extends ValueObject
      *
      * @type {String}
      */
-    get contents()
-    {
-        if (!this._contents && this._filename)
-        {
-            try
-            {
-                if (fs.existsSync(this._filename))
-                {
+    get contents() {
+        if (!this._contents && this._filename) {
+            try {
+                if (fs.existsSync(this._filename)) {
                     this._contents = fs.readFileSync(this._filename, { encoding: 'utf8' });
                 }
-            }
-            catch(e)
-            {
+            } catch (e) {
                 this._contents = undefined;
             }
         }
         return this._contents;
     }
 
-    set contents(value)
-    {
+    set contents(value) {
         this._contents = value;
     }
-
 
     /**
      * @inheritDoc
      */
-    toString()
-    {
+    toString() {
         return `[${this.className} ${this.filename}]`;
     }
 }
-
 
 /**
  * Exports

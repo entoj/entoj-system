@@ -7,22 +7,18 @@
 const BaseArray = require('./BaseArray.js').BaseArray;
 const matchObject = require('../utils/match.js').matchObject;
 
-
 /**
  * @class
  * @memberOf model.performance.resource
  * @extends {Base}
  */
-class SearchableArray extends BaseArray
-{
+class SearchableArray extends BaseArray {
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'base/SearchableArray';
     }
-
 
     /**
      * Find item by property queries.
@@ -30,11 +26,9 @@ class SearchableArray extends BaseArray
      * @param {Object} properties
      * @returns {*}
      */
-    findBy(properties)
-    {
+    findBy(properties) {
         return this.find((item) => matchObject(item, properties));
     }
-
 
     /**
      * Filter items by property queries.
@@ -42,14 +36,12 @@ class SearchableArray extends BaseArray
      * @param {Object} properties
      * @returns {Promise.<Array>}
      */
-    filterBy(properties)
-    {
+    filterBy(properties) {
         const result = new SearchableArray();
         result.push(...this.filter((item) => matchObject(item, properties)));
         return result;
     }
 }
-
 
 /**
  * Exports

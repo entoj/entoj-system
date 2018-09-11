@@ -3,16 +3,15 @@
 /**
  * Requirements
  */
-const DocumentationCallable = require(ES_SOURCE + '/model/documentation/DocumentationCallable.js').DocumentationCallable;
+const DocumentationCallable = require(ES_SOURCE + '/model/documentation/DocumentationCallable.js')
+    .DocumentationCallable;
 const baseSpec = require(ES_TEST + '/BaseShared.js').spec;
 const documentationCodeSpec = require('./DocumentationCodeShared.js').spec;
-
 
 /**
  * Spec
  */
-describe(DocumentationCallable.className, function()
-{
+describe(DocumentationCallable.className, function() {
     /**
      * DocumentationCode Test
      */

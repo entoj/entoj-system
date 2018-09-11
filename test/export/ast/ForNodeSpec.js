@@ -7,16 +7,12 @@ const ForNode = require(ES_SOURCE + '/export/ast/ForNode.js').ForNode;
 const valueNodeSpec = require('./ValueNodeShared.js').spec;
 const baseSpec = require(ES_TEST + '/BaseShared.js').spec;
 
-
 /**
  * Spec
  */
-describe(ForNode.className, function()
-{
-    const fixture =
-    {
-        serialized:
-        {
+describe(ForNode.className, function() {
+    const fixture = {
+        serialized: {
             type: 'ForNode',
             children: [],
             keyName: undefined,
@@ -35,10 +31,8 @@ describe(ForNode.className, function()
      */
     baseSpec.assertProperty(new ForNode(), ['keyName', 'valueName'], 'name', undefined);
 
-    describe('#constructor', function()
-    {
-        it('should allow to prepopulate keyName and valueName', function()
-        {
+    describe('#constructor', function() {
+        it('should allow to prepopulate keyName and valueName', function() {
             const testee = new ForNode({ keyName: 'keyName', valueName: 'valueName' });
             expect(testee.keyName).to.be.equal('keyName');
             expect(testee.valueName).to.be.equal('valueName');

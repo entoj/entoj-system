@@ -16,24 +16,27 @@ const path = require('path');
 const isObject = require('lodash.isobject');
 const isString = require('lodash.isstring');
 
-
 /**
  * @class
  * @memberOf model.viewmodel
  * @extends {Base}
  */
-class ViewModelRepository extends Base
-{
+class ViewModelRepository extends Base {
     /**
      * @param {model.entity.EntitiesRepository} entitiesRepository
      */
-    constructor(entitiesRepository, pathesConfiguration, plugins)
-    {
+    constructor(entitiesRepository, pathesConfiguration, plugins) {
         super();
 
         // Check params
         assertParameter(this, 'entitiesRepository', entitiesRepository, true, EntitiesRepository);
-        assertParameter(this, 'pathesConfiguration', pathesConfiguration, true, PathesConfiguration);
+        assertParameter(
+            this,
+            'pathesConfiguration',
+            pathesConfiguration,
+            true,
+            PathesConfiguration
+        );
 
         // Assign
         this._entitiesRepository = entitiesRepository;
@@ -41,42 +44,39 @@ class ViewModelRepository extends Base
         this._plugins = plugins || [];
     }
 
-
     /**
      * @inheritDoc
      */
-    static get injections()
-    {
-        return { 'parameters': [EntitiesRepository, PathesConfiguration, 'model.viewmodel/ViewModelRepository.plugins'] };
+    static get injections() {
+        return {
+            parameters: [
+                EntitiesRepository,
+                PathesConfiguration,
+                'model.viewmodel/ViewModelRepository.plugins'
+            ]
+        };
     }
-
 
     /**
      * @inheritDocs
      */
-    static get className()
-    {
+    static get className() {
         return 'model.viewmodel/ViewModelRepository';
     }
-
 
     /**
      * @type {model.configuration.PathesConfiguration}
      */
-    get pathesConfiguration()
-    {
+    get pathesConfiguration() {
         return this._pathesConfiguration;
     }
-
 
     /**
      * @type {Array}
      */
-    get plugins()
-    {
+    get plugins() {
         return this._plugins;
     }
-
 
     /**
      * Recursively scan data for macro calls (@macro:options)
@@ -88,17 +88,13 @@ class ViewModelRepository extends Base
      * @param {Boolean} useStaticContent - Should we use static or random contents?
      * @param {Object} options
      */
-    process(data, site, useStaticContent, options)
-    {
+    process(data, site, useStaticContent, options) {
         const scope = this;
-        const promise = co(function*()
-        {
+        const promise = co(function*() {
             // Handle arrays
-            if (Array.isArray(data))
-            {
+            if (Array.isArray(data)) {
                 const result = [];
-                for (const item of data)
-                {
+                for (const item of data) {
                     const value = yield scope.process(item, site, useStaticContent, options);
                     result.push(value);
                 }
@@ -106,12 +102,10 @@ class ViewModelRepository extends Base
             }
 
             // Handle object literals
-            if (isObject(data))
-            {
+            if (isObject(data)) {
                 const keys = Object.keys(data);
                 const result = {};
-                for (const key of keys)
-                {
+                for (const key of keys) {
                     const value = yield scope.process(data[key], site, useStaticContent, options);
                     result[key] = value;
                 }
@@ -119,19 +113,22 @@ class ViewModelRepository extends Base
             }
 
             // Handle plugins
-            if (isString(data))
-            {
+            if (isString(data)) {
                 //Is it a plugin call?
                 const macro = data.match(/^@([\w-]+):(.*)$/i);
-                if (macro)
-                {
+                if (macro) {
                     const name = macro[1].toLowerCase();
                     const parameters = macro[2] || '';
-                    for (const plugin of scope._plugins)
-                    {
-                        const result = yield plugin.execute(scope, site, useStaticContent, name, parameters, options);
-                        if (typeof result !== 'undefined')
-                        {
+                    for (const plugin of scope._plugins) {
+                        const result = yield plugin.execute(
+                            scope,
+                            site,
+                            useStaticContent,
+                            name,
+                            parameters,
+                            options
+                        );
+                        if (typeof result !== 'undefined') {
                             return result;
                         }
                     }
@@ -144,7 +141,6 @@ class ViewModelRepository extends Base
         return promise;
     }
 
-
     /**
      * Resolves to a Object
      *
@@ -154,11 +150,9 @@ class ViewModelRepository extends Base
      * @param {Boolean} useStaticContent - Should we use static or random contents?
      * @param {Object} options
      */
-    loadFile(filename, site, useStaticContent, options)
-    {
+    loadFile(filename, site, useStaticContent, options) {
         const scope = this;
-        const promise = co(function*()
-        {
+        const promise = co(function*() {
             const fileContents = yield fs.readFile(filename, { encoding: 'utf8' });
             const rawData = JSON.parse(fileContents);
             const data = yield scope.process(rawData, site, useStaticContent, options);
@@ -166,7 +160,6 @@ class ViewModelRepository extends Base
         }).catch(ErrorHandler.handler(scope));
         return promise;
     }
-
 
     /**
      * Transforms the given path to a actual path on
@@ -178,20 +171,16 @@ class ViewModelRepository extends Base
      * @param {Boolean} useStaticContent - Should we use static or random contents?
      * @param {Object} options
      */
-    load(pth, site, useStaticContent, options)
-    {
+    load(pth, site, useStaticContent, options) {
         const scope = this;
-        const promise = co(function*()
-        {
+        const promise = co(function*() {
             // Check straight path
             let filename = path.join(scope._pathesConfiguration.sites, pth);
-            if (!filename.endsWith('.json'))
-            {
-                filename+= '.json';
+            if (!filename.endsWith('.json')) {
+                filename += '.json';
             }
             const fileExists = yield fs.exists(filename);
-            if (fileExists)
-            {
+            if (fileExists) {
                 const model = yield scope.loadFile(filename, site, useStaticContent, options);
                 return model;
             }
@@ -201,37 +190,41 @@ class ViewModelRepository extends Base
             const entityId = pathParts[0] || '';
             const modelName = pathParts[1] || '';
             const entity = yield scope._entitiesRepository.getById(entityId, site);
-            if (entity)
-            {
+            if (entity) {
                 // Build a model path
                 let modelPath = '/models/' + modelName;
-                if (!modelPath.endsWith('.json'))
-                {
-                    modelPath+= '.json';
+                if (!modelPath.endsWith('.json')) {
+                    modelPath += '.json';
                 }
                 filename = yield scope._pathesConfiguration.resolveEntity(entity, modelPath);
                 const fileExists = yield fs.exists(filename);
-                if (fileExists)
-                {
+                if (fileExists) {
                     const model = yield scope.loadFile(filename, site, useStaticContent, options);
                     return model;
                 }
 
                 // Check extended parent
-                if (entity.site && entity.site.extends)
-                {
-                    const parentEntity = yield scope._entitiesRepository.getById(entityId, entity.site.extends);
-                    filename = yield scope._pathesConfiguration.resolveEntity(parentEntity, modelPath);
+                if (entity.site && entity.site.extends) {
+                    const parentEntity = yield scope._entitiesRepository.getById(
+                        entityId,
+                        entity.site.extends
+                    );
+                    filename = yield scope._pathesConfiguration.resolveEntity(
+                        parentEntity,
+                        modelPath
+                    );
                     const fileExists = yield fs.exists(filename);
-                    if (fileExists)
-                    {
-                        const model = yield scope.loadFile(filename, site, useStaticContent, options);
+                    if (fileExists) {
+                        const model = yield scope.loadFile(
+                            filename,
+                            site,
+                            useStaticContent,
+                            options
+                        );
                         return model;
                     }
                 }
-            }
-            else
-            {
+            } else {
                 scope.logger.warn('load(' + pth + ') : Entity not found', entityId);
             }
 
@@ -239,7 +232,6 @@ class ViewModelRepository extends Base
         }).catch(ErrorHandler.handler(scope));
         return promise;
     }
-
 
     /**
      * Resolves to a ViewModel
@@ -250,15 +242,12 @@ class ViewModelRepository extends Base
      * @param {Object} options
      * @returns {Promise<ViewModel>}
      */
-    getByPath(path, site, useStaticContent, options)
-    {
-        if (!path)
-        {
+    getByPath(path, site, useStaticContent, options) {
+        if (!path) {
             return Promise.resolve(false);
         }
         const scope = this;
-        const promise = co(function*()
-        {
+        const promise = co(function*() {
             const data = yield scope.load(path, site, useStaticContent, options);
             return new ViewModel({ data: data });
         }).catch(ErrorHandler.handler(scope));

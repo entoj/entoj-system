@@ -8,23 +8,16 @@ const path = require('path');
  * Runs multiple globs and combines the result
  * @memberof utils
  */
-function glob(patterns, options)
-{
-    const promise = new Promise(function(resolve, reject)
-    {
+function glob(patterns, options) {
+    const promise = new Promise(function(resolve, reject) {
         const result = [];
         const tasks = [];
         const p = Array.isArray(patterns) ? patterns : [patterns];
-        for (const pattern of p)
-        {
-            tasks.push(function(cb)
-            {
-                _glob(pattern, options, function (error, files)
-                {
-                    if (files)
-                    {
-                        for(const file of files)
-                        {
+        for (const pattern of p) {
+            tasks.push(function(cb) {
+                _glob(pattern, options, function(error, files) {
+                    if (files) {
+                        for (const file of files) {
                             result.push(path.normalize(file));
                         }
                     }
@@ -32,14 +25,12 @@ function glob(patterns, options)
                 });
             });
         }
-        async.parallel(tasks, function()
-        {
+        async.parallel(tasks, function() {
             resolve(result);
         });
     });
     return promise;
 }
-
 
 /**
  * Exports

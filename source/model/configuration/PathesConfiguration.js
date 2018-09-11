@@ -16,7 +16,6 @@ const trimSlashesLeft = require('../../utils/string.js').trimSlashesLeft;
 const path = require('path');
 const templateString = require('es6-template-strings');
 
-
 /**
  * Holds all path related configuration.
  *
@@ -24,13 +23,11 @@ const templateString = require('es6-template-strings');
  *
  * @memberOf model.configuration
  */
-class PathesConfiguration extends Base
-{
+class PathesConfiguration extends Base {
     /**
      * @param {object} options
      */
-    constructor(options)
-    {
+    constructor(options) {
         super();
 
         const opts = options || {};
@@ -40,28 +37,28 @@ class PathesConfiguration extends Base
         this._cache = this.renderTemplate(opts.cacheTemplate || '${root}/cache', {}, true);
         this._sites = this.renderTemplate(opts.sitesTemplate || '${root}/sites', {}, true);
         this._siteTemplate = opts.siteTemplate || '${sites}/${site.name.toLowerCase()}';
-        this._entityCategoryTemplate = opts.entityCategoryTemplate || '${sites}/${site.name.toLowerCase()}/${entityCategory.pluralName.toLowerCase()}';
-        this._entityTemplate = opts.entityIdTemplate || opts.entityTemplate || '${sites}/${site.name.toLowerCase()}/${entityCategory.pluralName.toLowerCase()}/${entityCategory.shortName.toLowerCase()}-${entityId.name.toLowerCase()}';
+        this._entityCategoryTemplate =
+            opts.entityCategoryTemplate ||
+            '${sites}/${site.name.toLowerCase()}/${entityCategory.pluralName.toLowerCase()}';
+        this._entityTemplate =
+            opts.entityIdTemplate ||
+            opts.entityTemplate ||
+            '${sites}/${site.name.toLowerCase()}/${entityCategory.pluralName.toLowerCase()}/${entityCategory.shortName.toLowerCase()}-${entityId.name.toLowerCase()}';
     }
-
 
     /**
      * @inheritDoc
      */
-    static get injections()
-    {
-        return { 'parameters': ['model.configuration/PathesConfiguration.options'] };
+    static get injections() {
+        return { parameters: ['model.configuration/PathesConfiguration.options'] };
     }
-
 
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'model.configuration/PathesConfiguration';
     }
-
 
     /**
      * Updates configurations mostly for testing purposes
@@ -69,31 +66,24 @@ class PathesConfiguration extends Base
      * @private
      * @param {string} options
      */
-    configure(options)
-    {
+    configure(options) {
         const opts = options || {};
-        if (opts.root)
-        {
+        if (opts.root) {
             this._root = path.resolve(opts.root);
         }
-        if (opts.cacheTemplate)
-        {
+        if (opts.cacheTemplate) {
             this._cache = this.renderTemplate(opts.cacheTemplate, {}, true);
         }
-        if (opts.dataTemplate)
-        {
+        if (opts.dataTemplate) {
             this._data = this.renderTemplate(opts.dataTemplate, {}, true);
         }
-        if (opts.entojTemplate)
-        {
+        if (opts.entojTemplate) {
             this._entoj = this.renderTemplate(opts.entojTemplate, {}, true);
         }
-        if (opts.sitesTemplate)
-        {
+        if (opts.sitesTemplate) {
             this._sites = this.renderTemplate(opts.sitesTemplate, {}, true);
         }
     }
-
 
     /**
      * Renders a path template.
@@ -106,8 +96,7 @@ class PathesConfiguration extends Base
      * @param {bool} directReturn
      * @returns {Promise.<string>|string}
      */
-    renderTemplate(template, variables, directReturn)
-    {
+    renderTemplate(template, variables, directReturn) {
         const data = Object.assign(
             {
                 root: this.root,
@@ -118,17 +107,17 @@ class PathesConfiguration extends Base
                 siteTemplate: this._siteTemplate,
                 entityCategoryTemplate: this._entityCategoryTemplate,
                 entityTemplate: this._entityTemplate
-            }, variables);
+            },
+            variables
+        );
         const passOne = templateString(template, data);
         const passTwo = templateString(passOne, data);
         const result = path.resolve(passTwo);
-        if (directReturn === true)
-        {
+        if (directReturn === true) {
             return result;
         }
         return Promise.resolve(result);
     }
-
 
     /**
      * The root path for most other pathes
@@ -137,22 +126,18 @@ class PathesConfiguration extends Base
      *
      * @type {String}
      */
-    get root()
-    {
+    get root() {
         return this._root;
     }
-
 
     /**
      * The root path for the local entoj installation
      *
      * @type {String}
      */
-    get entoj()
-    {
+    get entoj() {
         return this._entoj;
     }
-
 
     /**
      * The cache base path.
@@ -161,11 +146,9 @@ class PathesConfiguration extends Base
      *
      * @type {String}
      */
-    get cache()
-    {
+    get cache() {
         return this._cache;
     }
-
 
     /**
      * The data base path.
@@ -174,11 +157,9 @@ class PathesConfiguration extends Base
      *
      * @type {String}
      */
-    get data()
-    {
+    get data() {
         return this._data;
     }
-
 
     /**
      * The sites base path.
@@ -187,11 +168,9 @@ class PathesConfiguration extends Base
      *
      * @type {String}
      */
-    get sites()
-    {
+    get sites() {
         return this._sites;
     }
-
 
     /**
      * Resolve a path.
@@ -201,17 +180,14 @@ class PathesConfiguration extends Base
      *
      * @returns {Promise.<string>}
      */
-    resolve()
-    {
-        if (!arguments.length)
-        {
+    resolve() {
+        if (!arguments.length) {
             return Promise.resolve(false);
         }
 
         // Get path
         let customPath = '';
-        if (typeof arguments[arguments.length - 1] === 'string')
-        {
+        if (typeof arguments[arguments.length - 1] === 'string') {
             customPath = arguments[arguments.length - 1];
         }
 
@@ -219,32 +195,27 @@ class PathesConfiguration extends Base
         const mainVO = arguments[0];
 
         // Check Site
-        if (mainVO instanceof Site)
-        {
+        if (mainVO instanceof Site) {
             return this.resolveSite(mainVO, customPath);
         }
 
         // Check EntityId
-        if (mainVO instanceof EntityId)
-        {
+        if (mainVO instanceof EntityId) {
             return this.resolveEntityId(mainVO, customPath);
         }
 
         // Check Entity
-        if (mainVO instanceof Entity)
-        {
+        if (mainVO instanceof Entity) {
             return this.resolveEntity(mainVO, customPath);
         }
 
         // Check template
-        if (typeof mainVO === 'string')
-        {
+        if (typeof mainVO === 'string') {
             return this.renderTemplate(mainVO, arguments[1] || {});
         }
 
         return Promise.resolve(false);
     }
-
 
     /**
      * Makes the path relative to sites
@@ -252,12 +223,12 @@ class PathesConfiguration extends Base
      * @param {string} pth
      * @returns {Promise.<string>}
      */
-    relativeToSites(pth)
-    {
-        const result = trimSlashesLeft(path.resolve(pth.replace('file://', '')).replace(this.sites, ''));
+    relativeToSites(pth) {
+        const result = trimSlashesLeft(
+            path.resolve(pth.replace('file://', '')).replace(this.sites, '')
+        );
         return Promise.resolve(result);
     }
-
 
     /**
      * Shortens a path for display usage
@@ -266,16 +237,13 @@ class PathesConfiguration extends Base
      * @param {number} maxLength
      * @returns {Promise.<string>}
      */
-    shorten(pth, maxLength)
-    {
+    shorten(pth, maxLength) {
         let result = path.resolve(pth.replace('file://', '')).replace(this.root, '');
-        if (maxLength)
-        {
+        if (maxLength) {
             result = shortenMiddle(result, maxLength);
         }
         return Promise.resolve(result);
     }
-
 
     /**
      * Resolve a Cache path.
@@ -283,12 +251,10 @@ class PathesConfiguration extends Base
      * @param {string} customPath
      * @returns {Promise.<string>}
      */
-    resolveCache(customPath)
-    {
+    resolveCache(customPath) {
         const result = path.resolve(path.join(this.cache, customPath));
         return Promise.resolve(result);
     }
-
 
     /**
      * Resolve a Data path.
@@ -296,12 +262,10 @@ class PathesConfiguration extends Base
      * @param {string} customPath
      * @returns {Promise.<string>}
      */
-    resolveData(customPath)
-    {
+    resolveData(customPath) {
         const result = path.resolve(path.join(this.data, customPath));
         return Promise.resolve(result);
     }
-
 
     /**
      * Resolve a Site path.
@@ -310,18 +274,15 @@ class PathesConfiguration extends Base
      * @param {string} customPath
      * @returns {Promise.<string>}
      */
-    resolveSite(site, customPath)
-    {
+    resolveSite(site, customPath) {
         // Check parameters
         assertParameter(this, 'site', site, true, Site);
 
         // Resolve path
-        return this.renderTemplate(this._siteTemplate + (customPath ? customPath : ''),
-            {
-                site: site
-            });
+        return this.renderTemplate(this._siteTemplate + (customPath ? customPath : ''), {
+            site: site
+        });
     }
-
 
     /**
      * Resolve a EntityCategory path
@@ -331,20 +292,17 @@ class PathesConfiguration extends Base
      * @param {string} customPath
      * @returns {Promise.<string>}
      */
-    resolveEntityCategory(site, entityCategory, customPath)
-    {
+    resolveEntityCategory(site, entityCategory, customPath) {
         // Check parameters
         assertParameter(this, 'site', site, true, Site);
         assertParameter(this, 'entityCategory', entityCategory, true, EntityCategory);
 
         // Resolve path
-        return this.renderTemplate(this._entityCategoryTemplate + (customPath ? customPath : ''),
-            {
-                site: site,
-                entityCategory: entityCategory
-            });
+        return this.renderTemplate(this._entityCategoryTemplate + (customPath ? customPath : ''), {
+            site: site,
+            entityCategory: entityCategory
+        });
     }
-
 
     /**
      * Resolve a EntityId path for a specific site
@@ -354,27 +312,23 @@ class PathesConfiguration extends Base
      * @param {string} customPath
      * @returns {Promise.<string>}
      */
-    resolveEntityIdForSite(entityId, site, customPath)
-    {
+    resolveEntityIdForSite(entityId, site, customPath) {
         // Check parameters
         assertParameter(this, 'entityId', entityId, true, EntityId);
         assertParameter(this, 'site', site, true, Site);
 
         let template = this._entityTemplate;
-        if (entityId.isGlobal)
-        {
+        if (entityId.isGlobal) {
             template = this._entityCategoryTemplate;
         }
 
         // Resolve path
-        return this.renderTemplate(template + (customPath ? customPath : ''),
-            {
-                site: site,
-                entityCategory: entityId.category,
-                entityId: entityId
-            });
+        return this.renderTemplate(template + (customPath ? customPath : ''), {
+            site: site,
+            entityCategory: entityId.category,
+            entityId: entityId
+        });
     }
-
 
     /**
      * Resolve a EntityId path
@@ -383,11 +337,9 @@ class PathesConfiguration extends Base
      * @param {string} customPath
      * @returns {Promise.<string>}
      */
-    resolveEntityId(entityId, customPath)
-    {
+    resolveEntityId(entityId, customPath) {
         return this.resolveEntityIdForSite(entityId, entityId.site, customPath);
     }
-
 
     /**
      * Resolve a Entity path
@@ -396,15 +348,13 @@ class PathesConfiguration extends Base
      * @param {string} customPath
      * @returns {Promise.<string>}
      */
-    resolveEntity(entity, customPath)
-    {
+    resolveEntity(entity, customPath) {
         // Check parameters
         assertParameter(this, 'entity', entity, true, [Entity, EntityAspect]);
 
         // Resolve path
         return this.resolveEntityId(entity.id, customPath);
     }
-
 
     /**
      * Resolve a Entity path for a specific site
@@ -414,8 +364,7 @@ class PathesConfiguration extends Base
      * @param {string} customPath
      * @returns {Promise.<string>}
      */
-    resolveEntityForSite(entity, site, customPath)
-    {
+    resolveEntityForSite(entity, site, customPath) {
         // Check parameters
         assertParameter(this, 'entity', entity, true, [Entity, EntityAspect]);
         assertParameter(this, 'site', site, true, Site);
@@ -424,12 +373,10 @@ class PathesConfiguration extends Base
         return this.resolveEntityIdForSite(entity.id, site, customPath);
     }
 
-
     /**
      * @inheritDoc
      */
-    toString()
-    {
+    toString() {
         return `[${this.className} ${this.root}`;
     }
 }

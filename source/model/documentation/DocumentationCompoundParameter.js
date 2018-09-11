@@ -9,42 +9,34 @@ const DocumentationParameter = require('./DocumentationParameter.js').Documentat
 /**
  * @memberOf model.documentation
  */
-class DocumentationCompoundParameter extends DocumentationParameter
-{
+class DocumentationCompoundParameter extends DocumentationParameter {
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'model.documentation/DocumentationCompoundParameter';
     }
-
 
     /**
      * @inheritDocs
      */
-    get fields()
-    {
+    get fields() {
         const fields = super.fields;
         fields.children = [];
         return fields;
     }
 
-
     /**
      * @property {String}
      */
-    get children()
-    {
+    get children() {
         return this._children;
     }
 
-    set children(value)
-    {
+    set children(value) {
         this._children = value;
     }
 }
-
 
 /**
  * Exports

@@ -3,15 +3,14 @@
 /**
  * Requirements
  */
-const DocumentationCode = require(ES_SOURCE + '/model/documentation/DocumentationCode.js').DocumentationCode;
+const DocumentationCode = require(ES_SOURCE + '/model/documentation/DocumentationCode.js')
+    .DocumentationCode;
 const documentationCodeSpec = require('./DocumentationCodeShared.js').spec;
-
 
 /**
  * Spec
  */
-describe(DocumentationCode.className, function()
-{
+describe(DocumentationCode.className, function() {
     /**
      * DocumentationCode Test
      */

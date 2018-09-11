@@ -9,17 +9,14 @@ const nodeListSpec = require('./NodeListShared.js').spec;
 /**
  * Spec
  */
-describe(GroupNode.className, function()
-{
+describe(GroupNode.className, function() {
     /**
      * NodeList Test
      */
-    nodeListSpec(GroupNode, 'export.ast/GroupNode',
-        {
-            serialized:
-            {
-                type: 'GroupNode',
-                children: []
-            }
-        });
+    nodeListSpec(GroupNode, 'export.ast/GroupNode', {
+        serialized: {
+            type: 'GroupNode',
+            children: []
+        }
+    });
 });

@@ -4,47 +4,40 @@
  * Requirements
  */
 const Transformer = require(ES_SOURCE + '/export/Transformer.js').Transformer;
-const NodeTransformer = require(ES_SOURCE + '/export/transformer/NodeTransformer.js').NodeTransformer;
+const NodeTransformer = require(ES_SOURCE + '/export/transformer/NodeTransformer.js')
+    .NodeTransformer;
 const NodeList = require(ES_SOURCE + '/export/ast/NodeList.js').NodeList;
 const baseSpec = require(ES_TEST + '/BaseShared.js').spec;
 const sinon = require('sinon');
 const co = require('co');
 
-
 /**
  * Spec
  */
-describe(Transformer.className, function()
-{
+describe(Transformer.className, function() {
     /**
      * Base Test
      */
     baseSpec(Transformer, 'export/Transformer');
-
 
     /**
      * Transformer Test
      */
 
     // Create a initialized testee
-    const createTestee = function(nodeTransformers)
-    {
+    const createTestee = function(nodeTransformers) {
         return new Transformer(nodeTransformers);
     };
 
-
-    describe('#constructor', function()
-    {
-        it('should allow to configure a single pass transformation', function()
-        {
+    describe('#constructor', function() {
+        it('should allow to configure a single pass transformation', function() {
             const testee = createTestee([new NodeTransformer()]);
             expect(testee.nodeTransformers).to.have.length(1);
             expect(testee.nodeTransformers[0]).to.have.length(1);
             expect(testee.nodeTransformers[0][0]).to.be.instanceof(NodeTransformer);
         });
 
-        it('should allow to configure a multi pass transformation', function()
-        {
+        it('should allow to configure a multi pass transformation', function() {
             const testee = createTestee([[new NodeTransformer()], [new NodeTransformer()]]);
             expect(testee.nodeTransformers).to.have.length(2);
             expect(testee.nodeTransformers[0]).to.have.length(1);
@@ -54,17 +47,16 @@ describe(Transformer.className, function()
         });
     });
 
-
-    describe('#transform', function()
-    {
-        it('should apply all node transformers', function()
-        {
-            const promise = co(function*()
-            {
+    describe('#transform', function() {
+        it('should apply all node transformers', function() {
+            const promise = co(function*() {
                 const nodeTransformer1 = new NodeTransformer();
                 const nodeTransformer2 = new NodeTransformer();
                 const nodeTransformer3 = new NodeTransformer();
-                const testee = createTestee([[nodeTransformer1, nodeTransformer2], [nodeTransformer3]]);
+                const testee = createTestee([
+                    [nodeTransformer1, nodeTransformer2],
+                    [nodeTransformer3]
+                ]);
                 sinon.spy(nodeTransformer1, 'transform');
                 sinon.spy(nodeTransformer2, 'transform');
                 sinon.spy(nodeTransformer3, 'transform');

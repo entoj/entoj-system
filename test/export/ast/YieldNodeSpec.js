@@ -9,16 +9,13 @@ const nodeSpec = require('./NodeShared.js').spec;
 /**
  * Spec
  */
-describe(YieldNode.className, function()
-{
+describe(YieldNode.className, function() {
     /**
      * Node Test
      */
-    nodeSpec(YieldNode, 'export.ast/YieldNode',
-        {
-            serialized:
-            {
-                type: 'YieldNode'
-            }
-        });
+    nodeSpec(YieldNode, 'export.ast/YieldNode', {
+        serialized: {
+            type: 'YieldNode'
+        }
+    });
 });

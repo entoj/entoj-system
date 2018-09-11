@@ -6,21 +6,17 @@
  */
 const ValueNode = require('./ValueNode.js').ValueNode;
 
-
 /**
  *
  */
-class BooleanOperandNode extends ValueNode
-{
+class BooleanOperandNode extends ValueNode {
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'export.ast/BooleanOperandNode';
     }
 }
-
 
 /**
  * Exports

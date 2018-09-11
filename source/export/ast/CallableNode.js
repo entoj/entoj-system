@@ -7,23 +7,19 @@
 const NodeList = require('./NodeList.js').NodeList;
 const BaseArray = require('../../base/BaseArray.js').BaseArray;
 
-
 /**
  * A node that can take optional arguments
  */
-class CallableNode extends NodeList
-{
+class CallableNode extends NodeList {
     /**
      * @ignore
      */
-    constructor(values)
-    {
+    constructor(values) {
         super(values);
 
         //name
         this.dataFields.push('name');
-        if (values && values.name)
-        {
+        if (values && values.name) {
             this.name = values.name;
         }
 
@@ -31,74 +27,58 @@ class CallableNode extends NodeList
         this.dataFields.push('arguments');
         this.iterableFields.push('arguments');
         this.arguments = new BaseArray();
-        if (values && values.arguments)
-        {
+        if (values && values.arguments) {
             this.arguments.load(values.arguments);
         }
     }
 
-
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'export.ast/CallableNode';
     }
-
 
     /**
      * @property {String}
      */
-    get name()
-    {
+    get name() {
         return this._name;
     }
 
-    set name(value)
-    {
+    set name(value) {
         this._name = value;
     }
-
 
     /**
      * @property {ParametersNode}
      */
-    get arguments()
-    {
+    get arguments() {
         return this._arguments;
     }
 
-    set arguments(value)
-    {
-        if (!this.argumentsChangeHandler)
-        {
+    set arguments(value) {
+        if (!this.argumentsChangeHandler) {
             this.argumentsChangeHandler = this.handleArgumentsChange.bind(this);
         }
-        if (this._arguments)
-        {
+        if (this._arguments) {
             this._arguments.events.removeListener('change', this.argumentsChangeHandler);
         }
         this._arguments = value;
-        if (this._arguments)
-        {
+        if (this._arguments) {
             this._arguments.events.on('change', this.argumentsChangeHandler);
         }
     }
 
-
     /**
      * Updates parent property of all nodes
      */
-    handleArgumentsChange()
-    {
-        for (const node of this.arguments)
-        {
+    handleArgumentsChange() {
+        for (const node of this.arguments) {
             node.parent = this;
         }
     }
 }
-
 
 /**
  * Exports

@@ -6,50 +6,41 @@
  */
 const ValueObject = require('../ValueObject.js').ValueObject;
 
-
 /**
  * @memberOf model.viewmodel
  * @extends {Base}
  */
-class ViewModel extends ValueObject
-{
+class ViewModel extends ValueObject {
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'model.viewmodel/ViewModel';
     }
-
 
     /**
      * @inheritDocs
      */
-    get fields()
-    {
+    get fields() {
         const fields = super.fields;
         fields.data = false;
         return fields;
     }
 
-
     /**
      * @inheritDoc
      */
-    get data()
-    {
+    get data() {
         return this._data;
     }
 
     /**
      * @inheritDoc
      */
-    set data(value)
-    {
+    set data(value) {
         this._data = value;
     }
 }
-
 
 /**
  * Exports

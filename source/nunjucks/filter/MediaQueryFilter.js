@@ -5,9 +5,9 @@
  * @ignore
  */
 const Filter = require('./Filter.js').Filter;
-const GlobalConfiguration = require('../../model/configuration/GlobalConfiguration.js').GlobalConfiguration;
+const GlobalConfiguration = require('../../model/configuration/GlobalConfiguration.js')
+    .GlobalConfiguration;
 const assertParameter = require('../../utils/assert.js').assertParameter;
-
 
 /**
  * Returns a media query for a configured breakpoint.
@@ -16,55 +16,51 @@ const assertParameter = require('../../utils/assert.js').assertParameter;
  *
  * @memberOf nunjucks.filter
  */
-class MediaQueryFilter extends Filter
-{
+class MediaQueryFilter extends Filter {
     /**
      * @inheritDoc
      */
-    constructor(globalConfiguration)
-    {
+    constructor(globalConfiguration) {
         super();
         this._name = 'mediaQuery';
 
         // Check params
-        assertParameter(this, 'globalConfiguration', globalConfiguration, true, GlobalConfiguration);
+        assertParameter(
+            this,
+            'globalConfiguration',
+            globalConfiguration,
+            true,
+            GlobalConfiguration
+        );
 
         // Assign options
         this._mediaQueries = globalConfiguration.get('mediaQueries');
     }
 
-
     /**
      * @inheritDoc
      */
-    static get injections()
-    {
-        return { 'parameters': [GlobalConfiguration] };
+    static get injections() {
+        return { parameters: [GlobalConfiguration] };
     }
 
-
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'nunjucks.filter/MediaQueryFilter';
     }
 
-
     /**
      * @inheritDoc
      */
-    filter()
-    {
+    filter() {
         const scope = this;
-        return function (value)
-        {
+        return function(value) {
             return scope.applyCallbacks(scope._mediaQueries[value] || '', arguments);
         };
     }
 }
-
 
 /**
  * Exports

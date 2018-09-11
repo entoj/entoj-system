@@ -35,50 +35,40 @@ const FunctionCallNode = require('../ast/FunctionCallNode.js').FunctionCallNode;
 const activateEnvironment = require('../../utils/string.js').activateEnvironment;
 const co = require('co');
 
-
 /**
  * Jinja Template Parser
  */
-class JinjaParser extends Parser
-{
+class JinjaParser extends Parser {
     /**
      * @ignore
      */
-    constructor(tags)
-    {
+    constructor(tags) {
         super();
 
         // Assign options
         this._tags = tags || [];
     }
 
-
     /**
      * @inheritDoc
      */
-    static get injections()
-    {
-        return { 'parameters': ['export.parser/JinjaParser.tags'] };
+    static get injections() {
+        return { parameters: ['export.parser/JinjaParser.tags'] };
     }
 
-
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'export.parser/JinjaParser';
     }
-
 
     /**
      * @type {Array}
      */
-    get tags()
-    {
+    get tags() {
         return this._tags;
     }
-
 
     /**
      * var or var.property
@@ -86,14 +76,18 @@ class JinjaParser extends Parser
      * @protected
      * @param {export.ast.Node}
      */
+<<<<<<< HEAD
     parseVariable(node)
     {
         const parse = (node, context) =>
         {
+=======
+    parseVariable(node) {
+        const parse = (node) => {
+>>>>>>> chore: reformat all source files
             const type = Object.getPrototypeOf(node).typename;
             const result = [];
-            switch(type)
-            {
+            switch (type) {
                 case 'Symbol':
                     if (context && context == 'LookupVal')
                     {
@@ -116,7 +110,11 @@ class JinjaParser extends Parser
 
                 /* istanbul ignore next */
                 default:
-                    this.logger.error('parseVariable: Not Implemented', type, JSON.stringify(node, null, 4));
+                    this.logger.error(
+                        'parseVariable: Not Implemented',
+                        type,
+                        JSON.stringify(node, null, 4)
+                    );
             }
             return result;
         };
@@ -124,32 +122,31 @@ class JinjaParser extends Parser
         return new VariableNode({ fields: parse(node, true) });
     }
 
-
     /**
      * something|filter or something|filter(param)
      *
      * @protected
      * @param {export.ast.Node}
      */
-    parseFilter(node)
-    {
-        const parse = (node) =>
-        {
+    parseFilter(node) {
+        const parse = (node) => {
             let result;
             const type = Object.getPrototypeOf(node).typename;
-            if (type === 'Filter')
-            {
-                result = new FilterNode({ name: node.name.value, value: parse(node.args.children[0]) });
-                if (node.args.children.length > 1)
-                {
-                    for (let i = 1; i < node.args.children.length; i++)
-                    {
-                        result.arguments.push(new ParameterNode({ value: this.parseExpression(node.args.children[i]) }));
+            if (type === 'Filter') {
+                result = new FilterNode({
+                    name: node.name.value,
+                    value: parse(node.args.children[0])
+                });
+                if (node.args.children.length > 1) {
+                    for (let i = 1; i < node.args.children.length; i++) {
+                        result.arguments.push(
+                            new ParameterNode({
+                                value: this.parseExpression(node.args.children[i])
+                            })
+                        );
                     }
                 }
-            }
-            else
-            {
+            } else {
                 result = this.parseNode(node);
             }
             return result;
@@ -158,33 +155,32 @@ class JinjaParser extends Parser
         return parse(node);
     }
 
-
     /**
      * (variable, 'literal', name=value)
      *
      * @protected
      * @param {export.ast.Node}
      */
-    parseArguments(node)
-    {
-        const parse = (node, current) =>
-        {
+    parseArguments(node) {
+        const parse = (node, current) => {
             const type = Object.getPrototypeOf(node).typename;
             const result = current ? current : [];
-            switch(type)
-            {
+            switch (type) {
                 case 'NodeList':
                 case 'KeywordArgs':
-                    for (const child of node.children)
-                    {
+                    for (const child of node.children) {
                         parse(child, result);
                     }
                     break;
 
                 case 'Pair':
-                    if (node.key.value !== 'caller')
-                    {
-                        result.push(new ArgumentNode({ name: node.key.value, value: this.parseExpression(node.value) }));
+                    if (node.key.value !== 'caller') {
+                        result.push(
+                            new ArgumentNode({
+                                name: node.key.value,
+                                value: this.parseExpression(node.value)
+                            })
+                        );
                     }
                     break;
 
@@ -193,7 +189,9 @@ class JinjaParser extends Parser
                     break;
 
                 case 'Literal':
-                    result.push(new ArgumentNode({ value: new LiteralNode({ value: node.value }) }));
+                    result.push(
+                        new ArgumentNode({ value: new LiteralNode({ value: node.value }) })
+                    );
                     break;
 
                 case 'LookupVal':
@@ -202,7 +200,11 @@ class JinjaParser extends Parser
 
                 /* istanbul ignore next */
                 default:
-                    this.logger.error('parseArguments: Not Implemented', type, JSON.stringify(node, null, 4));
+                    this.logger.error(
+                        'parseArguments: Not Implemented',
+                        type,
+                        JSON.stringify(node, null, 4)
+                    );
             }
             return result;
         };
@@ -210,33 +212,32 @@ class JinjaParser extends Parser
         return parse(node);
     }
 
-
     /**
      * (variable, name='literal')
      *
      * @protected
      * @param {export.ast.Node}
      */
-    parseParameters(node)
-    {
-        const parse = (node, current) =>
-        {
+    parseParameters(node) {
+        const parse = (node, current) => {
             const type = Object.getPrototypeOf(node).typename;
             const result = current ? current : [];
-            switch(type)
-            {
+            switch (type) {
                 case 'NodeList':
                 case 'KeywordArgs':
-                    for (const child of node.children)
-                    {
+                    for (const child of node.children) {
                         parse(child, result);
                     }
                     break;
 
                 case 'Pair':
-                    if (node.key.value !== 'caller')
-                    {
-                        result.push(new ParameterNode({ name: node.key.value, value: this.parseExpression(node.value, 'parameter') }));
+                    if (node.key.value !== 'caller') {
+                        result.push(
+                            new ParameterNode({
+                                name: node.key.value,
+                                value: this.parseExpression(node.value, 'parameter')
+                            })
+                        );
                     }
                     break;
 
@@ -250,7 +251,11 @@ class JinjaParser extends Parser
 
                 /* istanbul ignore next */
                 default:
-                    this.logger.error('parseParameters: Not Implemented', type, JSON.stringify(node, null, 4));
+                    this.logger.error(
+                        'parseParameters: Not Implemented',
+                        type,
+                        JSON.stringify(node, null, 4)
+                    );
             }
             return result;
         };
@@ -258,29 +263,23 @@ class JinjaParser extends Parser
         return parse(node);
     }
 
-
     /**
      * caller()
      */
-    parseYield(node)
-    {
+    parseYield(node) {
         let result = false;
-        const parse = (node) =>
-        {
+        const parse = (node) => {
             const type = Object.getPrototypeOf(node).typename;
-            switch(type)
-            {
+            switch (type) {
                 case 'NodeList':
                 case 'KeywordArgs':
-                    for (const child of node.children)
-                    {
+                    for (const child of node.children) {
                         parse(child);
                     }
                     break;
 
                 case 'Pair':
-                    if (node.key.value === 'caller' && node.value.body)
-                    {
+                    if (node.key.value === 'caller' && node.value.body) {
                         result = [this.parseNode(node.value.body)];
                     }
                     break;
@@ -291,33 +290,27 @@ class JinjaParser extends Parser
         return result;
     }
 
-
     /**
      * This will only work for static json like structures
      *
      * @protected
      * @param {export.ast.Node}
      */
-    parseComplexVariable(node)
-    {
-        const parse = (node, result) =>
-        {
+    parseComplexVariable(node) {
+        const parse = (node, result) => {
             const type = Object.getPrototypeOf(node).typename;
-            switch(type)
-            {
+            switch (type) {
                 case 'NodeList':
                 case 'Dict':
                     result = {};
-                    for (const child of node.children)
-                    {
+                    for (const child of node.children) {
                         parse(child, result);
                     }
                     return result;
 
                 case 'Array':
                     result = [];
-                    for (const child of node.children)
-                    {
+                    for (const child of node.children) {
                         result.push(parse(child));
                     }
                     return result;
@@ -329,12 +322,9 @@ class JinjaParser extends Parser
                     return node.value;
 
                 case 'Pair':
-                    if (result)
-                    {
+                    if (result) {
                         result[node.key.value] = parse(node.value);
-                    }
-                    else
-                    {
+                    } else {
                         return parse(node.value);
                     }
                     break;
@@ -347,13 +337,16 @@ class JinjaParser extends Parser
 
                 /* istanbul ignore next */
                 default:
-                    this.logger.error('parseComplexVariable: Not Implemented', type, JSON.stringify(node, null, 4));
+                    this.logger.error(
+                        'parseComplexVariable: Not Implemented',
+                        type,
+                        JSON.stringify(node, null, 4)
+                    );
             }
             return undefined;
         };
         return new ComplexVariableNode({ value: parse(node) });
     }
-
 
     /**
      * 'literal' == variable or something|filter and (!model.copy)
@@ -361,18 +354,14 @@ class JinjaParser extends Parser
      * @protected
      * @param {export.ast.Node}
      */
-    parseCondition(node)
-    {
-        const parse = (node, result) =>
-        {
+    parseCondition(node) {
+        const parse = (node, result) => {
             const type = Object.getPrototypeOf(node).typename;
             result = result || [];
-            switch(type)
-            {
+            switch (type) {
                 case 'Group':
                     const group = new GroupNode();
-                    for (const child of node.children)
-                    {
+                    for (const child of node.children) {
                         group.children.push.apply(group.children, parse(child));
                     }
                     result.push(group);
@@ -392,8 +381,7 @@ class JinjaParser extends Parser
 
                 case 'Compare':
                     parse(node.expr, result);
-                    for (const op of node.ops)
-                    {
+                    for (const op of node.ops) {
                         parse(op, result);
                     }
                     break;
@@ -455,18 +443,23 @@ class JinjaParser extends Parser
                     break;
 
                 case 'FunCall':
-                    result.push(new FunctionCallNode(
-                        {
-                            name: (node.name.value)
+                    result.push(
+                        new FunctionCallNode({
+                            name: node.name.value
                                 ? new VariableNode({ fields: [node.name.value] })
                                 : this.parseVariable(node.name),
                             arguments: this.parseArguments(node.args)
-                        }));
+                        })
+                    );
                     break;
 
                 /* istanbul ignore next */
                 default:
-                    this.logger.error('parseCondition: Not Implemented', type, JSON.stringify(node, null, 4));
+                    this.logger.error(
+                        'parseCondition: Not Implemented',
+                        type,
+                        JSON.stringify(node, null, 4)
+                    );
             }
 
             return result;
@@ -475,25 +468,20 @@ class JinjaParser extends Parser
         return new ConditionNode({ children: parse(node) });
     }
 
-
     /**
      * 'literal' + model.copy + (1 - 2)
      *
      * @protected
      * @param {export.ast.Node}
      */
-    parseExpression(node)
-    {
-        const parse = (node, result) =>
-        {
+    parseExpression(node) {
+        const parse = (node, result) => {
             result = result || [];
             const type = Object.getPrototypeOf(node).typename;
-            switch(type)
-            {
+            switch (type) {
                 case 'Group':
                     const group = new GroupNode();
-                    for (const child of node.children)
-                    {
+                    for (const child of node.children) {
                         group.children.push.apply(group.children, parse(child));
                     }
                     result.push(group);
@@ -565,27 +553,33 @@ class JinjaParser extends Parser
                     break;
 
                 case 'InlineIf':
-                    result.push(new IfNode(
-                        {
+                    result.push(
+                        new IfNode({
                             condition: this.parseCondition(node.cond),
                             children: [new ExpressionNode({ children: parse(node.body) })],
                             elseChildren: [new ExpressionNode({ children: parse(node.else_) })]
-                        }));
+                        })
+                    );
                     break;
 
                 case 'FunCall':
-                    result.push(new FunctionCallNode(
-                        {
-                            name: (node.name.value)
+                    result.push(
+                        new FunctionCallNode({
+                            name: node.name.value
                                 ? new VariableNode({ fields: [node.name.value] })
                                 : this.parseVariable(node.name),
                             arguments: this.parseArguments(node.args)
-                        }));
+                        })
+                    );
                     break;
 
                 /* istanbul ignore next */
                 default:
-                    this.logger.error('parseExpression: Not Implemented', type, JSON.stringify(node, null, 4));
+                    this.logger.error(
+                        'parseExpression: Not Implemented',
+                        type,
+                        JSON.stringify(node, null, 4)
+                    );
             }
             return result;
         };
@@ -593,17 +587,14 @@ class JinjaParser extends Parser
         return new ExpressionNode({ children: parse(node) });
     }
 
-
     /**
      * @protected
      * @param {export.ast.Node}
      */
-    parseOutput(node)
-    {
+    parseOutput(node) {
         const children = [];
         let types = [];
-        for (const child of node.children)
-        {
+        for (const child of node.children) {
             const childNode = this.parseNode(child);
             types.push(childNode.type);
             children.push(childNode);
@@ -611,18 +602,13 @@ class JinjaParser extends Parser
         types = unique(types);
 
         // Only TextNode/CallNode(s)?
-        if (types.length == 1 &&
-            (['TextNode', 'CallNode', 'YieldNode'].indexOf(types[0]) > -1))
-        {
-            return children.length > 1
-                ? new NodeList({ children: children })
-                : children[0];
+        if (types.length == 1 && ['TextNode', 'CallNode', 'YieldNode'].indexOf(types[0]) > -1) {
+            return children.length > 1 ? new NodeList({ children: children }) : children[0];
         }
 
         // Just add the output
         return new OutputNode({ children: children });
     }
-
 
     /**
      * {% set var="" value="" %}
@@ -630,20 +616,17 @@ class JinjaParser extends Parser
      * @protected
      * @param {export.ast.Node}
      */
-    parseSet(node)
-    {
+    parseSet(node) {
         const variable = this.parseVariable(node.targets[0]);
         const expression = this.parseExpression(node.value);
         return new SetNode({ variable: variable, value: expression });
     }
 
-
     /**
      * @protected
      * @param {export.ast.Node}
      */
-    parseIf(node)
-    {
+    parseIf(node) {
         //console.log(JSON.stringify(node, null, 4));
         const condition = this.parseCondition(node.cond);
         const children = [];
@@ -651,52 +634,50 @@ class JinjaParser extends Parser
         const elseIfChildren = [];
 
         // if
-        if (node.body)
-        {
-            for (const child of node.body.children)
-            {
+        if (node.body) {
+            for (const child of node.body.children) {
                 children.push(this.parseNode(child));
             }
         }
         // add else & elseif
-        if (node.else_)
-        {
-            const addElseNodes = (elseNode) =>
-            {
+        if (node.else_) {
+            const addElseNodes = (elseNode) => {
                 // elseif
-                if (elseNode && elseNode.cond)
-                {
+                if (elseNode && elseNode.cond) {
                     const nodeCondition = this.parseCondition(elseNode.cond);
                     const nodeChildren = [];
-                    if (elseNode.body)
-                    {
-                        for (const child of elseNode.body.children)
-                        {
+                    if (elseNode.body) {
+                        for (const child of elseNode.body.children) {
                             nodeChildren.push(this.parseNode(child));
                         }
                     }
-                    elseIfChildren.push(new ElseIfNode({ condition: nodeCondition, children: nodeChildren }));
+                    elseIfChildren.push(
+                        new ElseIfNode({ condition: nodeCondition, children: nodeChildren })
+                    );
                 }
                 // else
-                else if (elseNode)
-                {
-                    for (const child of elseNode.children)
-                    {
+                else if (elseNode) {
+                    for (const child of elseNode.children) {
                         elseChildren.push(this.parseNode(child));
                     }
                 }
                 // add more else nodes?
-                if (elseNode && elseNode.else_)
-                {
+                if (elseNode && elseNode.else_) {
                     addElseNodes(elseNode.else_);
                 }
             };
             addElseNodes(node.else_);
         }
 
-        return new IfNode({ condition: condition, children: children, elseChildren: elseChildren, elseIfChildren: elseIfChildren });
+        return new IfNode({
+            condition: condition,
+            children: children,
+            elseChildren: elseChildren,
+            elseIfChildren: elseIfChildren
+        });
     }
 
+<<<<<<< HEAD
     /**
      * @protected
      * @param {export.ast.Node}
@@ -720,52 +701,56 @@ class JinjaParser extends Parser
     }
 
 
+=======
+>>>>>>> chore: reformat all source files
     /**
      * @protected
      * @param {export.ast.Node}
      */
-    parseFor(node)
-    {
+    parseFor(node) {
         //console.log(JSON.stringify(node, null, 4));
         const value = this.parseVariable(node.arr);
         const children = [];
+<<<<<<< HEAD
         const childNodes = Array.isArray(node.body.children) ? node.body.children : [node.body.children];
         for (const child of childNodes)
         {
+=======
+        for (const child of node.body.children) {
+>>>>>>> chore: reformat all source files
             children.push(this.parseNode(child));
         }
         const keyName = node.name.children ? node.name.children[0].value : false;
         const valueName = node.name.children ? node.name.children[1].value : node.name.value;
-        return new ForNode({ keyName: keyName, valueName: valueName, value: value, children: children});
+        return new ForNode({
+            keyName: keyName,
+            valueName: valueName,
+            value: value,
+            children: children
+        });
     }
-
 
     /**
      * @protected
      * @param {export.ast.Node}
      */
-    parseMacroDefinition(node)
-    {
+    parseMacroDefinition(node) {
         //console.log(JSON.stringify(node, null, 4));
         const children = [];
         const parameters = this.parseParameters(node.args);
-        for (const child of node.body.children)
-        {
+        for (const child of node.body.children) {
             children.push(this.parseNode(child));
         }
 
         return new MacroNode({ name: node.name.value, parameters: parameters, children: children });
     }
 
-
     /**
      * @protected
      * @param {export.ast.Node}
      */
-    parseCall(node)
-    {
-        if (node.name.value === 'caller')
-        {
+    parseCall(node) {
+        if (node.name.value === 'caller') {
             return new YieldNode();
         }
         else
@@ -788,31 +773,23 @@ class JinjaParser extends Parser
         }
     }
 
-
     /**
      * @protected
      * @param {export.ast.Node}
      */
-    parseTag(node)
-    {
+    parseTag(node) {
         const children = [];
-        if (node.contentArgs &&
-            Array.isArray(node.contentArgs) &&
-            node.contentArgs.length)
-        {
-            for (const child of node.contentArgs[0].children)
-            {
+        if (node.contentArgs && Array.isArray(node.contentArgs) && node.contentArgs.length) {
+            for (const child of node.contentArgs[0].children) {
                 children.push(this.parseNode(child));
             }
         }
-        return new TagNode(
-            {
-                name: node.extName.type,
-                arguments: this.parseArguments(node.args),
-                children: children
-            });
+        return new TagNode({
+            name: node.extName.type,
+            arguments: this.parseArguments(node.args),
+            children: children
+        });
     }
-
 
     /**
      * [...]
@@ -820,17 +797,14 @@ class JinjaParser extends Parser
      * @protected
      * @param {export.ast.Node}
      */
-    parseArray(node)
-    {
+    parseArray(node) {
         const children = [];
-        for (const child of node.children)
-        {
+        for (const child of node.children) {
             children.push(this.parseNode(child));
         }
 
         return new ArrayNode({ children: children });
     }
-
 
     /**
      * {% block content %}{% endblock %}
@@ -838,13 +812,10 @@ class JinjaParser extends Parser
      * @protected
      * @param {export.ast.Node}
      */
-    parseBlock(node)
-    {
+    parseBlock(node) {
         const children = [];
-        if (node.body && node.body.children)
-        {
-            for (const child of node.body.children)
-            {
+        if (node.body && node.body.children) {
+            for (const child of node.body.children) {
                 children.push(this.parseNode(child));
             }
         }
@@ -852,41 +823,32 @@ class JinjaParser extends Parser
         return new BlockNode({ name: node.name.value, children: children });
     }
 
-
     /**
      * @protected
      * @param {export.ast.Node}
      */
-    parseList(node)
-    {
+    parseList(node) {
         const children = [];
-        for (const child of node.children)
-        {
+        for (const child of node.children) {
             children.push(this.parseNode(child));
         }
 
-        if (children.length > 1)
-        {
+        if (children.length > 1) {
             return new NodeList({ children: children });
-        }
-        else
-        {
+        } else {
             return children[0];
         }
     }
 
-
     /**
      * @protected
      * @param {export.ast.Node}
      */
-    parseNode(node, context)
-    {
+    parseNode(node, context) {
         /* eslint complexity: "off" */
         const type = Object.getPrototypeOf(node).typename;
         let result;
-        switch(type)
-        {
+        switch (type) {
             case 'NodeList':
             case 'Root':
                 result = this.parseList(node);
@@ -979,55 +941,52 @@ class JinjaParser extends Parser
         }
 
         // return a node - always
-        if (!result)
-        {
+        if (!result) {
             result = new TextNode({ value: '' });
         }
         return result;
     }
 
-
     /**
      * @inheritDoc
      */
-    parseString(source, configuration)
-    {
+    parseString(source, configuration) {
         let preparedSource = source || '';
-        if (configuration)
-        {
-            preparedSource = activateEnvironment(preparedSource, configuration.buildConfiguration.environment);
+        if (configuration) {
+            preparedSource = activateEnvironment(
+                preparedSource,
+                configuration.buildConfiguration.environment
+            );
         }
         const ast = nunjucks.parser.parse(preparedSource, this.tags);
         return Promise.resolve(this.parseNode(ast));
     }
 
-
     /**
      * @inheritDoc
      */
-    parseTemplate(entity, configuration)
-    {
-        if (!entity || !configuration)
-        {
+    parseTemplate(entity, configuration) {
+        if (!entity || !configuration) {
             return Promise.resolve(false);
         }
         const scope = this;
-        const promise = co(function *()
-        {
+        const promise = co(function*() {
             // Get template
-            const template = entity.files.find((file) => file.contentType == 'jinja' && file.basename == entity.id.idString + '.j2');
+            const template = entity.files.find(
+                (file) => file.contentType == 'jinja' && file.basename == entity.id.idString + '.j2'
+            );
             /* istanbul ignore next */
-            if (!template || !template.contents)
-            {
-                scope.logger.warn('parseTemplate - could not find template for ' + entity.pathString);
+            if (!template || !template.contents) {
+                scope.logger.warn(
+                    'parseTemplate - could not find template for ' + entity.pathString
+                );
                 return false;
             }
 
             // Parse file
             const rootNode = yield scope.parseString(template.contents, configuration);
             /* istanbul ignore next */
-            if (!rootNode)
-            {
+            if (!rootNode) {
                 scope.logger.warn('parseTemplate - could not find file');
                 return false;
             }
@@ -1037,32 +996,29 @@ class JinjaParser extends Parser
         return promise;
     }
 
-
     /**
      * @inheritDoc
      */
-    parseMacro(name, configuration)
-    {
-        if (!name || !configuration)
-        {
+    parseMacro(name, configuration) {
+        if (!name || !configuration) {
             return Promise.resolve(false);
         }
         const scope = this;
-        const promise = co(function *()
-        {
+        const promise = co(function*() {
             // Find macro
             const macroConfiguration = yield configuration.getMacroConfiguration(name);
-            if (!macroConfiguration)
-            {
+            if (!macroConfiguration) {
                 scope.logger.warn('parseMacro - could not find macro configuration');
                 return false;
             }
 
             // Parse file
-            const rootNode = yield scope.parseString(macroConfiguration.macro.file.contents, configuration);
+            const rootNode = yield scope.parseString(
+                macroConfiguration.macro.file.contents,
+                configuration
+            );
             /* istanbul ignore next */
-            if (!rootNode)
-            {
+            if (!rootNode) {
                 scope.logger.warn('parseMacro - could not find file');
                 return false;
             }
@@ -1070,8 +1026,7 @@ class JinjaParser extends Parser
             // Find macro node
             const macroNode = rootNode.find('MacroNode', { name: name });
             /* istanbul ignore next */
-            if (!macroNode)
-            {
+            if (!macroNode) {
                 scope.logger.warn('parseMacro - could not find macro node');
                 return false;
             }
@@ -1081,7 +1036,6 @@ class JinjaParser extends Parser
         return promise;
     }
 }
-
 
 /**
  * Exports

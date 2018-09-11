@@ -7,13 +7,10 @@ const taskSpec = require(ES_TEST + '/task/TaskShared.js').spec;
 const sinon = require('sinon');
 const co = require('co');
 
-
-
 /**
  * Shared EntitiesTask spec
  */
-function spec(type, className, prepareParameters, options)
-{
+function spec(type, className, prepareParameters, options) {
     /**
      * Task Test
      */
@@ -21,27 +18,20 @@ function spec(type, className, prepareParameters, options)
     spec.readStream = taskSpec.readStream;
     spec.filesStream = taskSpec.filesStream;
 
-
     /**
      * EntitiesTask Test
      */
-    const createTestee = function()
-    {
+    const createTestee = function() {
         let parameters = Array.from(arguments);
-        if (prepareParameters)
-        {
+        if (prepareParameters) {
             parameters = prepareParameters(parameters);
         }
         return new type(...parameters);
     };
 
-
-    describe('#stream()', function()
-    {
-        it('should call processEntities', function()
-        {
-            const promise = co(function *()
-            {
+    describe('#stream()', function() {
+        it('should call processEntities', function() {
+            const promise = co(function*() {
                 const testee = createTestee();
                 sinon.spy(testee, 'processEntities');
                 yield taskSpec.readStream(testee.stream());
@@ -50,11 +40,8 @@ function spec(type, className, prepareParameters, options)
             return promise;
         });
 
-
-        it('should call processEntity for each entity queried', function()
-        {
-            const promise = co(function *()
-            {
+        it('should call processEntity for each entity queried', function() {
+            const promise = co(function*() {
                 const testee = createTestee();
                 sinon.spy(testee, 'processEntity');
                 yield taskSpec.readStream(testee.stream());

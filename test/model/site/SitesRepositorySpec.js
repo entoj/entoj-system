@@ -9,8 +9,7 @@ const repositorySpec = require('../RepositoryShared.js').spec;
 /**
  * Spec
  */
-describe(SitesRepository.className, function()
-{
+describe(SitesRepository.className, function() {
     /**
      * Repository Test
      */

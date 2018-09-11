@@ -6,51 +6,41 @@
  */
 const ValueNode = require('./ValueNode.js').ValueNode;
 
-
 /**
  * A single parameter of a ParametersNode
  */
-class ParameterNode extends ValueNode
-{
+class ParameterNode extends ValueNode {
     /**
      * @ignore
      */
-    constructor(values)
-    {
+    constructor(values) {
         super(values);
 
         //name
         this.dataFields.push('name');
-        if (values && values.name)
-        {
+        if (values && values.name) {
             this.name = values.name;
         }
     }
 
-
     /**
      * @inheritDoc
      */
-    static get className()
-    {
+    static get className() {
         return 'export.ast/ParameterNode';
     }
-
 
     /**
      * @property {String}
      */
-    get name()
-    {
+    get name() {
         return this._name;
     }
 
-    set name(value)
-    {
+    set name(value) {
         this._name = value;
     }
 }
-
 
 /**
  * Exports
