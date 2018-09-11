@@ -6,7 +6,6 @@
  */
 const LoaderPlugin = require('../LoaderPlugin.js').LoaderPlugin;
 const PathesConfiguration = require('../../configuration/PathesConfiguration.js').PathesConfiguration;
-const GlobalConfiguration = require('../../configuration/GlobalConfiguration.js').GlobalConfiguration;
 const Entity = require('../../entity/Entity.js').Entity;
 const Site = require('../../site/Site.js').Site;
 const assertParameter = require('../../../utils/assert.js').assertParameter;
@@ -21,22 +20,18 @@ class PackagePlugin extends LoaderPlugin
 {
     /**
      * @param {model.configuration.PathesConfiguration} pathesConfiguration
-     * @param {model.configuration.GlobalConfiguration} globalConfiguration
-     * @param {object|undefined} options
+     * @param {String} filename Entity relative filename to package file
      */
-    constructor(pathesConfiguration, globalConfiguration, settingsRepository, options)
+    constructor(pathesConfiguration, filename)
     {
         super();
 
         //Check params
         assertParameter(this, 'pathesConfiguration', pathesConfiguration, true, PathesConfiguration);
-        assertParameter(this, 'globalConfiguration', globalConfiguration, true, GlobalConfiguration);
 
         // Assign options
-        const opts = options || {};
         this._pathesConfiguration = pathesConfiguration;
-        this._globalConfiguration = globalConfiguration;
-        this._filename = opts.filename || '/entity.json';
+        this._filename = filename || '/entity.json';
     }
 
 
@@ -45,7 +40,7 @@ class PackagePlugin extends LoaderPlugin
      */
     static get injections()
     {
-        return { 'parameters': [PathesConfiguration, GlobalConfiguration, 'model.loader.documentation/PackagePlugin.options'] };
+        return { 'parameters': [PathesConfiguration, 'model.loader.documentation/PackagePlugin.filename'] };
     }
 
 
@@ -77,48 +72,11 @@ class PackagePlugin extends LoaderPlugin
 
 
     /**
-     * @property {model.configuration.GlobalConfiguration}
-     */
-    get globalConfiguration()
-    {
-        return this._globalConfiguration;
-    }
-
-
-    /**
-     * @property {model.setting.SettingsRepository}
-     */
-    get settingsRepository()
-    {
-        return this._settingsRepository;
-    }
-
-
-    /**
      * @param {String} content
      */
     parse(content)
     {
-        const result = JSON.parse(content);
-
-        // Enhance example settings
-        if (result && result.examples && result.examples.settings)
-        {
-            for (const setting of result.examples.settings)
-            {
-                if (setting.type == 'locale')
-                {
-                    setting.name = setting.name || 'locale';
-                    setting.label = setting.label || 'Locale';
-                    setting.type = 'select';
-                    setting.items = this.globalConfiguration.get('languages', []);
-                    setting.default = setting.default || this.globalConfiguration.get('language', '');
-                    setting.allowEmpty = true;
-                }
-            }
-        }
-
-        return Promise.resolve(result);
+        return Promise.resolve(JSON.parse(content));
     }
 
 

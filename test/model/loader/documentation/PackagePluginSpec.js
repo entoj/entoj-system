@@ -16,7 +16,6 @@ describe(PackagePlugin.className, function()
      */
     loaderPluginSpec(PackagePlugin, 'model.loader.documentation/PackagePlugin', function(params)
     {
-        params.unshift(global.fixtures.globalConfiguration);
         params.unshift(global.fixtures.pathesConfiguration);
         return params;
     });
@@ -30,12 +29,16 @@ describe(PackagePlugin.className, function()
         global.fixtures = projectFixture.createStatic();
     });
 
+    const createTestee = function()
+    {
+        return new PackagePlugin(global.fixtures.pathesConfiguration);
+    };
 
     describe('#execute()', function()
     {
         it('should do nothing if file was not found', function()
         {
-            const testee = new PackagePlugin(global.fixtures.pathesConfiguration, global.fixtures.globalConfiguration);
+            const testee = createTestee();
             const promise = testee.execute(global.fixtures.entityCta).then(function()
             {
                 expect(global.fixtures.siteBase.properties.size).to.be.equal(0);
@@ -45,7 +48,7 @@ describe(PackagePlugin.className, function()
 
         it('should import all properties for a Site', function()
         {
-            const testee = new PackagePlugin(global.fixtures.pathesConfiguration, global.fixtures.globalConfiguration);
+            const testee = createTestee();
             const promise = testee.execute(global.fixtures.siteBase).then(function()
             {
                 expect(global.fixtures.siteBase.properties.getByPath('state.concept')).to.be.equal('Done');
@@ -57,7 +60,7 @@ describe(PackagePlugin.className, function()
 
         it('should import all properties for a extended Site', function()
         {
-            const testee = new PackagePlugin(global.fixtures.pathesConfiguration, global.fixtures.globalConfiguration);
+            const testee = new PackagePlugin(global.fixtures.pathesConfiguration);
             const promise = testee.execute(global.fixtures.siteExtended).then(function()
             {
                 expect(global.fixtures.siteExtended.properties.getByPath('state.concept')).to.be.equal('None');
@@ -69,7 +72,7 @@ describe(PackagePlugin.className, function()
 
         it('should import all properties for a Entity namespaced by its Site', function()
         {
-            const testee = new PackagePlugin(global.fixtures.pathesConfiguration, global.fixtures.globalConfiguration);
+            const testee = createTestee();
             const promise = testee.execute(global.fixtures.entityImage).then(function()
             {
                 expect(global.fixtures.entityImage.properties.getByPath('base.state.concept')).to.be.equal('Done');
@@ -81,7 +84,7 @@ describe(PackagePlugin.className, function()
 
         it('should import all properties for a extended Entity', function()
         {
-            const testee = new PackagePlugin(global.fixtures.pathesConfiguration, global.fixtures.globalConfiguration);
+            const testee = createTestee();
             global.fixtures.entityImage.usedBy.push(global.fixtures.siteExtended);
             const promise = testee.execute(global.fixtures.entityImage, global.fixtures.siteExtended).then(function()
             {
