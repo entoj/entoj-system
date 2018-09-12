@@ -155,5 +155,21 @@ describe(ValueObject.className, function() {
             expect(testee.properties.size).to.be.equal(1);
             expect(testee.properties.get('status')).to.be.equal('king');
         });
+
+        it('should allow to import ValueObject fields', function() {
+            const fields = {
+                name: '',
+                vo: new TestValueObject({ name: 'nested' })
+            };
+            const values = {
+                name: 'jon',
+                vo: { name: 'nested-imported' }
+            };
+            const testee = new TestValueObject(fields);
+            testee.dehydrate(values);
+            expect(testee.name).to.be.equal('jon');
+            expect(testee.vo).to.be.instanceof(TestValueObject);
+            expect(testee.vo.name).to.be.equal('nested-imported');
+        });
     });
 });

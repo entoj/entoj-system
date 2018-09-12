@@ -120,6 +120,39 @@ describe(GlobalRepository.className, function() {
         });
     });
 
+    describe('#resolveSites', function() {
+        it('should resolve "*" to all Sites', function() {
+            const testee = createTestee();
+            const promise = testee.resolveSites('*').then(function(result) {
+                expect(result).to.be.ok;
+                expect(result).to.have.length(2);
+                expect(result[0]).to.be.instanceof(Site);
+                expect(result[1]).to.be.instanceof(Site);
+            });
+            return promise;
+        });
+
+        it('should resolve "base" to Site Base', function() {
+            const testee = createTestee();
+            const promise = testee.resolveSites('base').then(function(result) {
+                expect(result).to.be.ok;
+                expect(result).to.have.length(1);
+                expect(result[0]).to.be.instanceof(Site);
+                expect(result[0].name).to.be.equal('Base');
+            });
+            return promise;
+        });
+
+        it('should resolve to an emnpty array when no site was found', function() {
+            const testee = createTestee();
+            const promise = testee.resolveSites('no').then(function(result) {
+                expect(result).to.be.ok;
+                expect(result).to.have.length(0);
+            });
+            return promise;
+        });
+    });
+
     describe('#resolveEntities', function() {
         it('should resolve "*" to all Entities', function() {
             const testee = createTestee();
@@ -190,9 +223,27 @@ describe(GlobalRepository.className, function() {
             });
             return promise;
         });
+
+        it('should return an empty array when no entities where found', function() {
+            const testee = createTestee();
+            const promise = testee.resolveEntities('/no/entites').then(function(result) {
+                expect(result).to.be.ok;
+                expect(result).to.have.length(0);
+            });
+            return promise;
+        });
     });
 
     describe('#resolveEntity', function() {
+        it('should resolve to false for no search parameters', function() {
+            const testee = createTestee();
+            const promise = co(function*() {
+                const entity = yield testee.resolveEntity();
+                expect(entity).to.be.not.ok;
+            });
+            return promise;
+        });
+
         it('should resolve to false for a non existing site', function() {
             const testee = createTestee();
             const promise = co(function*() {
@@ -244,6 +295,15 @@ describe(GlobalRepository.className, function() {
     });
 
     describe('#resolveMacro', function() {
+        it('should resolve to false for no search parameters', function() {
+            const testee = createTestee();
+            const promise = co(function*() {
+                const entity = yield testee.resolveMacro();
+                expect(entity).to.be.not.ok;
+            });
+            return promise;
+        });
+
         it('should resolve to false for a non existing site', function() {
             const testee = createTestee();
             const promise = co(function*() {
