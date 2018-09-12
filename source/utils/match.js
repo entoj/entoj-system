@@ -25,7 +25,12 @@ function matchValue(value, test) {
     // array => indexOf
     else if (Array.isArray(value)) {
         if (Array.isArray(test)) {
-            return value.indexOf(test[0]) > -1;
+            for (const t of test) {
+                if (value.indexOf(t) > -1) {
+                    return true;
+                }
+            }
+            return false;
         } else {
             return value.indexOf(test) > -1;
         }

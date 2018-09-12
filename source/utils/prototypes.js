@@ -1,7 +1,6 @@
 'use strict';
 
 const urlify = require('./urls.js').urlify;
-const kebabCase = require('lodash.kebabcase');
 const reduce = Function.bind.call(Function.call, Array.prototype.reduce);
 const isEnumerable = Function.bind.call(Function.call, Object.prototype.propertyIsEnumerable);
 const concat = Function.bind.call(Function.call, Array.prototype.concat);
@@ -15,12 +14,13 @@ Number.prototype.format = function(digits, decimals) {
     const options = { minimumIntegerDigits: digits };
     if (decimals > 0) {
         options.minimumFractionDigits = decimals;
+        options.maximumFractionDigits = decimals;
     }
     return this.toLocaleString('en-EN', options);
 };
 
 /**
- * Applies urlize to the string
+ * Applies urlify to the string
  * @memberof utils
  */
 String.prototype.urlify = function(whitespace) {
@@ -29,6 +29,7 @@ String.prototype.urlify = function(whitespace) {
 
 /**
  * Replaces whitespace and dashes with lodashes
+ *
  * @memberof utils
  */
 String.prototype.lodasherize = function() {
@@ -36,16 +37,17 @@ String.prototype.lodasherize = function() {
 };
 
 /**
- * Replaces uppercase letters with a dash
+ * Replaces whitespace and lodashes with dashes
  * @memberof utils
  */
 String.prototype.dasherize = function() {
-    return kebabCase(this);
+    return this.replace(/\s|_/g, '-');
 };
 
 /**
  * Polyfills
  */
+/* istanbul ignore next */
 if (!Object.values) {
     Object.values = function values(O) {
         return reduce(
@@ -56,6 +58,7 @@ if (!Object.values) {
     };
 }
 
+/* istanbul ignore next */
 if (!Object.entries) {
     Object.entries = function entries(O) {
         return reduce(

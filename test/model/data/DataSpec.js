@@ -4,6 +4,7 @@
  * Requirements
  */
 const Data = require(ES_SOURCE + '/model/data/Data.js').Data;
+const Site = require(ES_SOURCE + '/model/site/Site.js').Site;
 const valueObjectSpec = require('../ValueObjectShared.js').spec;
 const baseSpec = require(ES_TEST + '/BaseShared.js').spec;
 
@@ -31,8 +32,8 @@ describe(Data.className, function() {
 
     describe('#dehydrate', function() {
         it('should allow to update data and site', function() {
-            const data = new Data({ data: 'augmented', site: { name: 'Base' } });
-            const testee = new Data({ data: 'data', site: { name: 'Extended' } });
+            const data = new Data({ data: 'augmented', site: new Site({ name: 'Base' }) });
+            const testee = new Data({ data: 'data', site: new Site({ name: 'Extended' }) });
             testee.dehydrate(data);
             expect(testee.data).to.be.equal(data.data);
             expect(testee.site.name).to.equal(data.site.name);

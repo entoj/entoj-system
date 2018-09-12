@@ -1017,14 +1017,17 @@ function createRandomNumberGenerator(pseudo) {
     if (pseudo !== true) {
         return Math.random;
     }
-    return function() {
-        let randomSequenceIndex = 0;
-        const value = randomSequence[randomSequenceIndex++] / 1000;
-        if (randomSequenceIndex > randomSequence.length - 1) {
-            randomSequenceIndex = 0;
+    const generator = function() {
+        if (typeof generator.randomSequenceIndex == 'undefined') {
+            generator.randomSequenceIndex = 0;
+        }
+        const value = randomSequence[generator.randomSequenceIndex++] / 1000;
+        if (generator.randomSequenceIndex > randomSequence.length - 1) {
+            generator.randomSequenceIndex = 0;
         }
         return value;
     };
+    return generator;
 }
 
 /**

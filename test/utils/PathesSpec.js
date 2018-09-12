@@ -6,6 +6,7 @@
 const concat = require(ES_SOURCE + '/utils/pathes.js').concat;
 const normalize = require(ES_SOURCE + '/utils/pathes.js').normalize;
 const shift = require(ES_SOURCE + '/utils/pathes.js').shift;
+const strip = require(ES_SOURCE + '/utils/pathes.js').strip;
 const trimLeadingSlash = require(ES_SOURCE + '/utils/pathes.js').trimLeadingSlash;
 
 /**
@@ -75,6 +76,14 @@ describe('utils/pathes', function() {
             const prefix = process.platform == 'win32' ? __dirname.substr(0, 3) : '/';
             expect(shift('them')).to.be.equal(prefix);
             expect(shift('them' + PATH_SEPERATOR + 'foos')).to.be.equal(prefix + 'foos');
+        });
+    });
+
+    describe('#strip', function() {
+        it('should return a path minus the given directories', function() {
+            const prefix = process.platform == 'win32' ? __dirname.substr(0, 3) : '/';
+            const testee = prefix + PATH_SEPERATOR + 'foo' + PATH_SEPERATOR + 'bar';
+            expect(strip(testee, '/foo')).to.be.equal(prefix + PATH_SEPERATOR + 'bar');
         });
     });
 });

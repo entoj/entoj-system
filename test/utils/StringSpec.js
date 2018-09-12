@@ -10,6 +10,7 @@ const activateEnvironment = require(ES_SOURCE + '/utils/string.js').activateEnvi
 const trimSlashesLeft = require(ES_SOURCE + '/utils/string.js').trimSlashesLeft;
 const trimQuotes = require(ES_SOURCE + '/utils/string.js').trimQuotes;
 const htmlify = require(ES_SOURCE + '/utils/string.js').htmlify;
+const uppercaseFirst = require(ES_SOURCE + '/utils/string.js').uppercaseFirst;
 const lorem = require('lorem-ipsum');
 
 /**
@@ -208,6 +209,11 @@ describe('utils/string', function() {
     });
 
     describe('#trimSlashesLeft()', function() {
+        it('should handle invalid strings', function() {
+            expect(trimSlashesLeft()).to.be.equal('');
+            expect(trimSlashesLeft(false)).to.be.equal('');
+        });
+
         it('should remove any slashes on the left side', function() {
             expect(trimSlashesLeft('/hi//')).to.be.equal('hi//');
             expect(trimSlashesLeft('//hi')).to.be.equal('hi');
@@ -218,12 +224,17 @@ describe('utils/string', function() {
     });
 
     describe('#trimQuotes()', function() {
+        it('should handle invalid strings', function() {
+            expect(trimQuotes()).to.be.equal('');
+            expect(trimQuotes(false)).to.be.equal('');
+        });
+
         it('should remove any quotes from both sides side', function() {
             expect(trimQuotes('hi')).to.be.equal('hi');
             expect(trimQuotes('"hi')).to.be.equal('hi');
             expect(trimQuotes('hi"')).to.be.equal('hi');
-            expect(trimQuotes('\'hi')).to.be.equal('hi');
-            expect(trimQuotes('hi\'')).to.be.equal('hi');
+            expect(trimQuotes("'hi")).to.be.equal('hi');
+            expect(trimQuotes("hi'")).to.be.equal('hi');
             expect(trimQuotes('"\'hi"\'')).to.be.equal('hi');
         });
     });
@@ -274,6 +285,17 @@ describe('utils/string', function() {
             expect(htmlify(lipsum, options)).to.be.equal(
                 '<p><a href="">Dolorem</a> lipsum sum <a href="">at</a> ebit nor <a href="">debitel</a> omnese</p>\n'
             );
+        });
+    });
+
+    describe('#uppercaseFirst()', function() {
+        it('should handle invalid strings', function() {
+            expect(uppercaseFirst()).to.be.equal('');
+            expect(uppercaseFirst(false)).to.be.equal('');
+        });
+
+        it('should uppercase the first char of a string', function() {
+            expect(uppercaseFirst('yes')).to.be.equal('Yes');
         });
     });
 });

@@ -102,6 +102,27 @@ function spec(type, className, prepareParameters) {
             return promise;
         });
     });
+
+    describe('#getByName', function() {
+        it('should get a item by name', function() {
+            const fixture = projectFixture.createStatic();
+            const data = [
+                new Data({
+                    data: {
+                        name1: 'value1',
+                        name2: 'value2'
+                    },
+                    site: fixture.siteBase
+                })
+            ];
+            const testee = createTestee(data);
+            const promise = co(function*() {
+                expect(yield testee.getByName('name1')).to.be.equal('value1');
+                expect(yield testee.getByName('name2')).to.be.equal('value2');
+            });
+            return promise;
+        });
+    });
 }
 
 /**

@@ -23,6 +23,14 @@ describe('utils/random', function() {
             const sequence1 = [generator1(), generator1(), generator1()];
             const sequence2 = [generator2(), generator2(), generator2()];
             expect(sequence1).to.be.deep.equal(sequence2);
+            expect(sequence1[0]).to.be.not.equal(sequence1[1]);
+        });
+
+        it('the static value random generator should produce endless values', function() {
+            const generator = createRandomNumberGenerator(true);
+            for (let index = 0; index < 1500; index++) {
+                expect(Number.isFinite(generator())).to.be.true;
+            }
         });
     });
 });

@@ -69,12 +69,12 @@ function add(data, key, type, sourceType, values) {
     // Get config
     let config = type
         ? data[key].find((i) => {
-            return (
-                i &&
+              return (
+                  i &&
                   (i.type === type ||
                       (i.type.className && type.className && i.type.className === type.className))
-            );
-        })
+              );
+          })
         : data[key];
     if (!config) {
         config = {

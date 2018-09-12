@@ -96,6 +96,9 @@ function shortenLeft(content, length) {
  * @param {String} content
  */
 function uppercaseFirst(content) {
+    if (typeof content !== 'string') {
+        return '';
+    }
     return content.charAt(0).toUpperCase() + content.substr(1);
 }
 

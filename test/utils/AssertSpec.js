@@ -15,6 +15,10 @@ const Linter = require(ES_SOURCE + '/linter/Linter.js').Linter;
  */
 describe('utils/assert', function() {
     describe('#assertClass', function() {
+        it('should return false when type or className are of a wrong type', function() {
+            expect(assertClass({ className: 'Whatever' }, Base)).to.be.not.ok;
+        });
+
         it('should return false when type or className missing', function() {
             expect(assertClass()).to.be.not.ok;
             expect(assertClass(Base)).to.be.not.ok;

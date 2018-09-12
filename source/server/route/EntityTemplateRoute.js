@@ -253,7 +253,7 @@ class EntityTemplateRoute extends Route {
     }
 
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
     register(server) {
         const promise = super.register(server);

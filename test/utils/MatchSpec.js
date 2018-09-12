@@ -11,10 +11,28 @@ const matchObject = require(ES_SOURCE + '/utils/match.js').matchObject;
  */
 describe('utils/match', function() {
     describe('#matchValue()', function() {
+        it('should return false when no value given', function() {
+            expect(matchValue()).to.be.not.ok;
+            expect(matchValue(undefined)).to.be.not.ok;
+        });
+
         it('should allow to match a scalar', function() {
             expect(matchValue(1, 2)).to.be.not.ok;
             expect(matchValue(1, 1)).to.be.ok;
             expect(matchValue('yo', 'yo')).to.be.ok;
+        });
+
+        it('should allow to match a member of an array', function() {
+            expect(matchValue([1, 2], 3)).to.be.not.ok;
+            expect(matchValue([1, 2], 2)).to.be.ok;
+            expect(matchValue([1, 2], [2])).to.be.ok;
+        });
+
+        it('should allow to match any members of an array', function() {
+            expect(matchValue([1, 2], [3])).to.be.not.ok;
+            expect(matchValue([1, 2], [3, 2])).to.be.ok;
+            expect(matchValue([1, 2], [2])).to.be.ok;
+            expect(matchValue([1, 2], [1, 2])).to.be.ok;
         });
 
         it('should ignore case when matching strings', function() {
@@ -31,6 +49,12 @@ describe('utils/match', function() {
     });
 
     describe('#matchObject()', function() {
+        it('should return false when no object given', function() {
+            expect(matchObject()).to.be.not.ok;
+            expect(matchObject(undefined)).to.be.not.ok;
+            expect(matchObject(false)).to.be.not.ok;
+        });
+
         it('should match when all tests match', function() {
             const testee = {
                 name: 'Test',

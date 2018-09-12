@@ -7,8 +7,8 @@
 const Route = require('./Route.js').Route;
 const UrlsConfiguration = require('../../model/configuration/UrlsConfiguration.js')
     .UrlsConfiguration;
-const GlobalConfiguration = require('../../model/configuration/GlobalConfiguration.js')
-    .GlobalConfiguration;
+const SystemModuleConfiguration = require('../../configuration/SystemModuleConfiguration.js')
+    .SystemModuleConfiguration;
 const PathesConfiguration = require('../../model/configuration/PathesConfiguration.js')
     .PathesConfiguration;
 const BuildConfiguration = require('../../model/configuration/BuildConfiguration.js')
@@ -35,7 +35,7 @@ class GuiTemplateRoute extends Route {
      * @param {model.site.SitesRepository} sitesRepository
      * @param {model.entity.EntityCategoriesRepository} entityCategoriesRepository
      * @param {model.entity.EntitiesRepository} entitiesRepository
-     * @param {model.configuration.GlobalConfiguration} globalConfiguration
+     * @param {configuration.SystemModuleConfiguration} SystemModuleConfiguration
      * @param {model.configuration.UrlsConfiguration} urlsConfiguration
      * @param {model.configuration.PathesConfiguration} pathesConfiguration
      * @param {model.configuration.BuildConfiguration} buildConfiguration
@@ -48,7 +48,7 @@ class GuiTemplateRoute extends Route {
         sitesRepository,
         entityCategoriesRepository,
         entitiesRepository,
-        globalConfiguration,
+        moduleConfiguration,
         urlsConfiguration,
         pathesConfiguration,
         buildConfiguration,
@@ -78,10 +78,10 @@ class GuiTemplateRoute extends Route {
         );
         assertParameter(
             this,
-            'globalConfiguration',
-            globalConfiguration,
+            'moduleConfiguration',
+            moduleConfiguration,
             true,
-            GlobalConfiguration
+            SystemModuleConfiguration
         );
         assertParameter(this, 'buildConfiguration', buildConfiguration, true, BuildConfiguration);
         assertParameter(this, 'nunjucks', nunjucks, true, Environment);
@@ -98,8 +98,7 @@ class GuiTemplateRoute extends Route {
             sites: synchronize(sitesRepository),
             entityCategories: synchronize(entityCategoriesRepository),
             entities: synchronize(entitiesRepository),
-            urls: synchronize(urlsConfiguration),
-            configuration: synchronize(globalConfiguration)
+            urls: synchronize(urlsConfiguration)
         };
 
         // Routes
@@ -133,7 +132,7 @@ class GuiTemplateRoute extends Route {
                 SitesRepository,
                 EntityCategoriesRepository,
                 EntitiesRepository,
-                GlobalConfiguration,
+                SystemModuleConfiguration,
                 UrlsConfiguration,
                 PathesConfiguration,
                 BuildConfiguration,
@@ -145,10 +144,10 @@ class GuiTemplateRoute extends Route {
     }
 
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
     static get className() {
-        return 'server.route/PagesRoute';
+        return 'server.route/GuiTemplateRoute';
     }
 
     /**
@@ -234,7 +233,7 @@ class GuiTemplateRoute extends Route {
     }
 
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
     renderTemplate(filename, request, model) {
         const tpl = fs.readFileSync(filename, { encoding: 'utf8' });

@@ -81,7 +81,7 @@ describe(EntityTemplateRoute.className, function() {
             });
         });
 
-        xit('should only serve .j2 files', function(done) {
+        it('should only serve .j2 files', function(done) {
             const testee = createTestee();
             routeSpec.createServer([testee]);
             global.fixtures.server.addRoute(testee);
@@ -92,7 +92,7 @@ describe(EntityTemplateRoute.className, function() {
             });
         });
 
-        xit('should only serve existing files', function(done) {
+        it('should only serve existing files', function(done) {
             const testee = createTestee();
             routeSpec.createServer([testee]);
             global.fixtures.server.addRoute(testee);

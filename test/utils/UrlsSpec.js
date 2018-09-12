@@ -10,6 +10,7 @@ const trimLeadingSlash = require(ES_SOURCE + '/utils/urls.js').trimLeadingSlash;
 const shift = require(ES_SOURCE + '/utils/urls.js').shift;
 const concat = require(ES_SOURCE + '/utils/urls.js').concat;
 const trimTrailingSlash = require(ES_SOURCE + '/utils/urls.js').trimTrailingSlash;
+const ensureTrailingSlash = require(ES_SOURCE + '/utils/urls.js').ensureTrailingSlash;
 
 /**
  * Spec
@@ -82,6 +83,13 @@ describe('utils/urls', function() {
     describe('#shift', function() {
         it('should remove the first path segment', function() {
             expect(shift('/start/where')).to.be.equal('/where');
+        });
+    });
+
+    describe('#ensureTrailingSlash', function() {
+        it('should add a trailing slash when missing', function() {
+            expect(ensureTrailingSlash('/start/where')).to.be.equal('/start/where/');
+            expect(ensureTrailingSlash('/start/where/')).to.be.equal('/start/where/');
         });
     });
 });

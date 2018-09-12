@@ -83,6 +83,7 @@ function createStatic(options) {
     result.categoryPage = new EntityCategory({ longName: 'Page' });
     result.categoryTemplate = new EntityCategory({ longName: 'Template' });
     result.categoriesRepository = new EntityCategoriesRepository();
+    result.entityCategoriesRepository = result.categoriesRepository;
     result.categoriesRepository.add(result.categoryGlobal);
     result.categoriesRepository.add(result.categoryElement);
     result.categoriesRepository.add(result.categoryModule);

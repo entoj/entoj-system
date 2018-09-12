@@ -127,7 +127,7 @@ class JinjaParser extends Parser {
                         if (block.type == 'macro' && block.arguments.length) {
                             let value = t.value;
                             if (t.type == 'string') {
-                                value = '\'' + value + '\'';
+                                value = "'" + value + "'";
                             }
                             block.arguments[block.arguments.length - 1].type = t.type;
                             block.arguments[block.arguments.length - 1].value = value;
