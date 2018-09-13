@@ -52,6 +52,28 @@ class SystemModuleConfiguration extends ModuleConfiguration {
 
         // Get options
         this._breakpoints = this.getConfiguration('system.breakpoints', breakpoints);
+        this._urlBase = this.getConfiguration('system.url.base', '');
+        this._urlSite = this.getConfiguration(
+            'system.url.site',
+            '${urlBase}/${site.name.urlify()}'
+        );
+        this._routeSite = this.getConfiguration('system.route.site', '${urlBase}/:site');
+        this._urlEntityCategory = this.getConfiguration(
+            'system.url.entityCategory',
+            '${urlSite}/${entityCategory.pluralName.urlify()}'
+        );
+        this._routeEntityCategory = this.getConfiguration(
+            'system.route.entityCategory',
+            '${routeSite}/:entityCategory'
+        );
+        this._urlEntityId = this.getConfiguration(
+            'system.url.entity',
+            '${urlEntityCategory}/${entityCategory.shortName.toLowerCase()}-${entityId.name.urlify()}'
+        );
+        this._routeEntityId = this.getConfiguration(
+            'system.route.site',
+            '${routEntityCategory}/:entity'
+        );
 
         // Derive options
         this._mediaQueries = this.generateMediaQueries(this._breakpoints);
@@ -121,6 +143,55 @@ class SystemModuleConfiguration extends ModuleConfiguration {
      */
     get mediaQueries() {
         return this._mediaQueries;
+    }
+
+    /**
+     * @type {String}
+     */
+    get urlBase() {
+        return this._urlBase;
+    }
+
+    /**
+     * @type {String}
+     */
+    get urlSite() {
+        return this._urlSite;
+    }
+
+    /**
+     * @type {String}
+     */
+    get urlEntityCategory() {
+        return this._urlEntityCategory;
+    }
+
+    /**
+     * @type {String}
+     */
+    get urlEntityId() {
+        return this._urlEntityId;
+    }
+
+    /**
+     * @type {String}
+     */
+    get routeSite() {
+        return this._routeSite;
+    }
+
+    /**
+     * @type {String}
+     */
+    get routeEntityCategory() {
+        return this._routeEntityCategory;
+    }
+
+    /**
+     * @type {String}
+     */
+    get routeEntityId() {
+        return this._routeEntityId;
     }
 }
 

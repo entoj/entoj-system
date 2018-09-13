@@ -120,7 +120,8 @@ function createStatic(options) {
         result.categoriesRepository,
         result.entitiesRepository,
         result.entityIdParser,
-        result.pathesConfiguration
+        result.pathesConfiguration,
+        result.moduleConfiguration
     );
     result.viewModelRepository = new ViewModelRepository(
         result.entitiesRepository,

@@ -16,6 +16,8 @@ const Entity = require('../entity/Entity.js').Entity;
 const EntityId = require('../entity/EntityId.js').EntityId;
 const IdParser = require('../../parser/entity/IdParser.js').IdParser;
 const PathesConfiguration = require('../configuration/PathesConfiguration.js').PathesConfiguration;
+const SystemModuleConfiguration = require('../../configuration/SystemModuleConfiguration.js')
+    .SystemModuleConfiguration;
 const assertParameter = require('../../utils/assert.js').assertParameter;
 const templateString = require('es6-template-strings');
 const co = require('co');
@@ -25,8 +27,7 @@ const urls = require('../../utils/urls.js');
 
 /**
  * Holds all url related configuration.
- *
- * Most urls are configured via template strings
+ * Urls are configured via template strings provided by SystemModuleConfiguration
  *
  * @memberOf model.configuration
  */
@@ -40,7 +41,7 @@ class UrlsConfiguration extends Base {
         entitiesRepository,
         entityIdParser,
         pathesConfiguration,
-        options
+        moduleConfiguration
     ) {
         super();
 
@@ -62,6 +63,13 @@ class UrlsConfiguration extends Base {
             false,
             PathesConfiguration
         );
+        assertParameter(
+            this,
+            'moduleConfiguration',
+            moduleConfiguration,
+            true,
+            SystemModuleConfiguration
+        );
 
         // Add parameters
         this._sitesRepository = sitesRepository;
@@ -69,20 +77,7 @@ class UrlsConfiguration extends Base {
         this._entitiesRepository = entitiesRepository;
         this._entityIdParser = entityIdParser;
         this._pathesConfiguration = pathesConfiguration;
-
-        // Get options
-        const opts = options || {};
-        this._root = opts.root || '';
-        this._siteTemplate = opts.siteTemplate || '${root}/${site.name.toLowerCase()}';
-        this._sitePattern = opts.sitePattern || '${root}/:site';
-        this._entityCategoryTemplate =
-            opts.entityCategoryTemplate ||
-            '${root}/${site.name.toLowerCase()}/${entityCategory.pluralName.toLowerCase()}';
-        this._entityCategoryPattern = opts.entityCategoryPattern || '${root}/:site/:entityCategory';
-        this._entityIdTemplate =
-            opts.entityIdTemplate ||
-            '${root}/${site.name.toLowerCase()}/${entityCategory.pluralName.toLowerCase()}/${entityCategory.shortName.toLowerCase()}${entityId.number}-${entityId.name.toLowerCase()}';
-        this._entityIdPattern = opts._entityIdPattern || '${root}/:site/:entityCategory/:entityId';
+        this._moduleConfiguration = moduleConfiguration;
     }
 
     /**
@@ -96,7 +91,7 @@ class UrlsConfiguration extends Base {
                 EntitiesRepository,
                 IdParser,
                 PathesConfiguration,
-                'model.configuration/UrlsConfiguration.options'
+                SystemModuleConfiguration
             ]
         };
     }
@@ -106,6 +101,48 @@ class UrlsConfiguration extends Base {
      */
     static get className() {
         return 'model.configuration/UrlsConfiguration';
+    }
+
+    /**
+     * @type {model.site.SitesRepository}
+     */
+    get sitesRepository() {
+        return this._sitesRepository;
+    }
+
+    /**
+     * @type {model.entity.EntityCategoriesRepository}
+     */
+    get entityCategoriesRepository() {
+        return this._entityCategoriesRepository;
+    }
+
+    /**
+     * @type {model.entity.EntitiesRepository}
+     */
+    get entitiesRepository() {
+        return this._entitiesRepository;
+    }
+
+    /**
+     * @type {}
+     */
+    get entityIdParser() {
+        return this._entityIdParser;
+    }
+
+    /**
+     * @type {model.configuration.PathesConfiguration}
+     */
+    get pathesConfiguration() {
+        return this._pathesConfiguration;
+    }
+
+    /**
+     * @type {configuration.SystemModuleConfiguration}
+     */
+    get moduleConfiguration() {
+        return this._moduleConfiguration;
     }
 
     /**
@@ -119,11 +156,23 @@ class UrlsConfiguration extends Base {
     renderTemplate(template, variables) {
         const data = Object.assign(
             {
-                root: this.root
+                urlBase: this.moduleConfiguration.urlBase,
+                urlSite: this.moduleConfiguration.urlSite,
+                urlEntityCategory: this.moduleConfiguration.urlEntityCategory,
+                urlEntityId: this.moduleConfiguration.urlEntityId,
+                routeBase: this.moduleConfiguration.urlBase,
+                routeSite: this.moduleConfiguration.routeSite,
+                routeEntityCategory: this.moduleConfiguration.routeEntityCategory,
+                routeEntityId: this.moduleConfiguration.routeEntityId
             },
             variables
         );
-        const result = templateString(template, data);
+        let result = templateString(template, data);
+        let lastResult = template;
+        while (result != lastResult) {
+            lastResult = result;
+            result = templateString(result, data);
+        }
         return Promise.resolve(result);
     }
 
@@ -147,10 +196,10 @@ class UrlsConfiguration extends Base {
                     params: match.params
                 };
                 if (match.params.site && match.params.site.length) {
-                    result.site = yield scope._sitesRepository.findBy({ '*': match.params.site });
+                    result.site = yield scope.sitesRepository.findBy({ '*': match.params.site });
                 }
                 if (match.params.entityCategory && match.params.entityCategory.length) {
-                    result.entityCategory = yield scope._entityCategoriesRepository.findBy(
+                    result.entityCategory = yield scope.entityCategoriesRepository.findBy(
                         { '*': match.params.entityCategory },
                         function(value, searched) {
                             return urlify(value) === searched;
@@ -158,11 +207,11 @@ class UrlsConfiguration extends Base {
                     );
                 }
                 if (match.params.entityId && match.params.entityId.length) {
-                    result.entity = yield scope._entitiesRepository.getById(value);
+                    result.entity = yield scope.entitiesRepository.getById(value);
                     if (result.entity) {
                         result.entityId = result.entity.id;
                     } else {
-                        result.entityId = yield scope._entityIdParser.parse(match.params.entityId);
+                        result.entityId = yield scope.entityIdParser.parse(match.params.entityId);
                         if (result.entityId && result.site) {
                             result.entityId.site = result.site;
                         }
@@ -186,7 +235,7 @@ class UrlsConfiguration extends Base {
      * @returns {Promise.<string>}
      */
     resolveFilename(filename) {
-        const basePath = this._pathesConfiguration ? this._pathesConfiguration.sites : '';
+        const basePath = this.pathesConfiguration ? this.pathesConfiguration.sites : '';
         const filePath = filename.replace(basePath, '');
         return Promise.resolve(urls.normalize(filePath));
     }
@@ -203,9 +252,12 @@ class UrlsConfiguration extends Base {
         assertParameter(this, 'site', site, true, Site);
 
         // Resolve path
-        return this.renderTemplate(this._siteTemplate + (customPath ? customPath : ''), {
-            site: site
-        });
+        return this.renderTemplate(
+            this.moduleConfiguration.urlSite + (customPath ? customPath : ''),
+            {
+                site: site
+            }
+        );
     }
 
     /**
@@ -216,7 +268,10 @@ class UrlsConfiguration extends Base {
      * @returns {Promise.<Site>}
      */
     matchSite(url, partial) {
-        return this.match(url + (partial ? '/' : ''), this._sitePattern + (partial ? '/*?' : ''));
+        return this.match(
+            url + (partial ? '/' : ''),
+            this.moduleConfiguration.routeSite + (partial ? '/*?' : '')
+        );
     }
 
     /**
@@ -233,10 +288,13 @@ class UrlsConfiguration extends Base {
         assertParameter(this, 'entityCategory', entityCategory, true, EntityCategory);
 
         // Resolve path
-        return this.renderTemplate(this._entityCategoryTemplate + (customPath ? customPath : ''), {
-            site: site,
-            entityCategory: entityCategory
-        });
+        return this.renderTemplate(
+            this.moduleConfiguration.urlEntityCategory + (customPath ? customPath : ''),
+            {
+                site: site,
+                entityCategory: entityCategory
+            }
+        );
     }
 
     /**
@@ -249,7 +307,7 @@ class UrlsConfiguration extends Base {
     matchEntityCategory(url, partial) {
         return this.match(
             url + (partial ? '/' : ''),
-            this._entityCategoryPattern + (partial ? '/*?' : '')
+            this.moduleConfiguration.routeEntityCategory + (partial ? '/*?' : '')
         );
     }
 
@@ -265,9 +323,9 @@ class UrlsConfiguration extends Base {
         assertParameter(this, 'entityId', entityId, true, EntityId);
 
         // Resolve path
-        let template = this._entityIdTemplate;
+        let template = this.moduleConfiguration.urlEntityId;
         if (entityId.isGlobal) {
-            template = this._entityCategoryTemplate;
+            template = this.moduleConfiguration.urlEntityCategory;
         }
         return this.renderTemplate(template + (customPath ? customPath : ''), {
             site: entityId.site,
@@ -286,7 +344,7 @@ class UrlsConfiguration extends Base {
     matchEntityId(url, partial) {
         return this.match(
             url + (partial ? '/' : ''),
-            this._entityIdPattern + (partial ? '/*?' : '')
+            this.moduleConfiguration.routeEntityId + (partial ? '/*?' : '')
         );
     }
 
@@ -326,8 +384,8 @@ class UrlsConfiguration extends Base {
         const promise = this.matchEntityId(url, true).then(function(result) {
             if (result.entity && result.customPath) {
                 for (const file of result.entity.files) {
-                    const basePath = scope._pathesConfiguration
-                        ? scope._pathesConfiguration.sites
+                    const basePath = scope.pathesConfiguration
+                        ? scope.pathesConfiguration.sites
                         : '';
                     const fileUrl = urls.shift(file.filename.replace(basePath, ''));
                     if (fileUrl === urls.shift(url)) {
