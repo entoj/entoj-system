@@ -1,2 +1,8 @@
+{# Just output #}
 {{ moduleClass }}
 {{ model.image.url.1x1 }}
+{# Array access #}
+{{ model.image[0] }}
+{{ model.image[index] }}
+{# Conditional output #}
+{{ 'is-disabled' if not enabled }}

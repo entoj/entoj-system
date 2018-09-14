@@ -2,6 +2,10 @@
     "type": "NodeList",
     "children": [
         {
+            "type": "TextNode",
+            "value": "\n"
+        },
+        {
             "type": "OutputNode",
             "children": [
                 {
@@ -27,6 +31,83 @@
                         "url",
                         "1x1"
                     ]
+                }
+            ]
+        },
+        {
+            "type": "TextNode",
+            "value": "\n"
+        },
+        {
+            "type": "TextNode",
+            "value": "\n"
+        },
+        {
+            "type": "OutputNode",
+            "children": [
+                {
+                    "type": "VariableNode",
+                    "fields": [
+                        "model",
+                        "image",
+                        0
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "TextNode",
+            "value": "\n"
+        },
+        {
+            "type": "OutputNode",
+            "children": [
+                {
+                    "type": "VariableNode",
+                    "fields": [
+                        "model",
+                        "image",
+                        "$index"
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "TextNode",
+            "value": "\n"
+        },
+        {
+            "type": "TextNode",
+            "value": "\n"
+        },
+        {
+            "type": "OutputNode",
+            "children": [
+                {
+                    "type": "IfNode",
+                    "children": [
+                        {
+                            "type": "LiteralNode",
+                            "value": "is-disabled"
+                        }
+                    ],
+                    "condition": {
+                        "type": "ConditionNode",
+                        "children": [
+                            {
+                                "type": "BooleanOperandNode",
+                                "value": "not"
+                            },
+                            {
+                                "type": "VariableNode",
+                                "fields": [
+                                    "enabled"
+                                ]
+                            }
+                        ]
+                    },
+                    "elseIfChildren": [],
+                    "elseChildren": []
                 }
             ]
         },

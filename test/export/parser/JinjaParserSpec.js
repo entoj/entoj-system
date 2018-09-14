@@ -87,7 +87,6 @@ describe(JinjaParser.className, function()
         return promise;
     }
 
-
     describe('#parseString()', function()
     {
         it('should parse empty templates', function()
@@ -148,7 +147,7 @@ describe(JinjaParser.className, function()
         it('should parse custom tags', function()
         {
             return testFixture('tags');
-        });        
+        });
     });
 
 

@@ -88,20 +88,30 @@ class JinjaParser extends Parser
      */
     parseVariable(node)
     {
-        const parse = (node) =>
+        const parse = (node, context) =>
         {
             const type = Object.getPrototypeOf(node).typename;
             const result = [];
             switch(type)
             {
                 case 'Symbol':
+                    if (context && context == 'LookupVal')
+                    {
+                        result.push('$' + node.value);
+                    }
+                    else
+                    {
+                        result.push(node.value);
+                    }
+                    break;
+
                 case 'Literal':
                     result.push(node.value);
                     break;
 
                 case 'LookupVal':
                     Array.prototype.push.apply(result, parse(node.target));
-                    Array.prototype.push.apply(result, parse(node.val));
+                    Array.prototype.push.apply(result, parse(node.val, type));
                     break;
 
                 /* istanbul ignore next */
@@ -111,7 +121,7 @@ class JinjaParser extends Parser
             return result;
         };
 
-        return new VariableNode({ fields: parse(node) });
+        return new VariableNode({ fields: parse(node, true) });
     }
 
 
@@ -687,6 +697,28 @@ class JinjaParser extends Parser
         return new IfNode({ condition: condition, children: children, elseChildren: elseChildren, elseIfChildren: elseIfChildren });
     }
 
+    /**
+     * @protected
+     * @param {export.ast.Node}
+     */
+    parseInlineIf(node)
+    {
+        const condition = this.parseCondition(node.cond);
+        const children = [];
+
+        // if
+        if (node.body)
+        {
+            const childNodes = Array.isArray(node.body.children) ? node.body.children : [node.body];
+            for (const child of childNodes)
+            {
+                children.push(this.parseNode(child));
+            }
+        }
+
+        return new IfNode({ condition: condition, children: children, elseChildren: [], elseIfChildren: [] });
+    }
+
 
     /**
      * @protected
@@ -697,7 +729,8 @@ class JinjaParser extends Parser
         //console.log(JSON.stringify(node, null, 4));
         const value = this.parseVariable(node.arr);
         const children = [];
-        for (const child of node.body.children)
+        const childNodes = Array.isArray(node.body.children) ? node.body.children : [node.body.children];
+        for (const child of childNodes)
         {
             children.push(this.parseNode(child));
         }
@@ -917,6 +950,10 @@ class JinjaParser extends Parser
             case 'Div':
             case 'Mod':
                 result = this.parseExpression(node);
+                break;
+
+            case 'InlineIf':
+                result = this.parseInlineIf(node);
                 break;
 
             /* istanbul ignore next */
