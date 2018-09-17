@@ -104,7 +104,7 @@ describe(JinjaParser.className, function()
             return testFixture('assigments');
         });
 
-        it('should parse macro calls', function()
+        it('should parse macro and function calls', function()
         {
             return testFixture('calls');
         });

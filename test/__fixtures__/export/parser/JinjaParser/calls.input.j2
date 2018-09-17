@@ -2,3 +2,4 @@
 {% call yield(model=self, text='literal') %}children{% endcall %}
 {{ simple(classes=moduleName + '--check') }}
 {{ caller() }}
+{{ model.check() }}

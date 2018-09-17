@@ -770,9 +770,18 @@ class JinjaParser extends Parser
         }
         else
         {
+            const nameNode = this.parseNode(node.name);
+            if (nameNode.fields.length > 1)
+            {
+                return new FunctionCallNode(
+                    {
+                        name: nameNode,
+                        arguments: this.parseArguments(node.args)
+                    });
+            }
             return new CallNode(
                 {
-                    name: node.name.value,
+                    name: nameNode.fields.join('.'),
                     arguments: this.parseArguments(node.args),
                     children: this.parseYield(node.args)
                 });

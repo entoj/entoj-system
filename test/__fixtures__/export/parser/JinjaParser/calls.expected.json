@@ -128,6 +128,27 @@
         {
             "type": "TextNode",
             "value": "\n"
+        },
+        {
+            "type": "OutputNode",
+            "children": [
+                {
+                    "type": "FunctionCallNode",
+                    "children": [],
+                    "name": {
+                        "type": "VariableNode",
+                        "fields": [
+                            "model",
+                            "check"
+                        ]
+                    },
+                    "arguments": []
+                }
+            ]
+        },
+        {
+            "type": "TextNode",
+            "value": "\n"
         }
     ]
 }
