@@ -53,7 +53,7 @@ function spec(type, className, prepareParameters, options)
             ? options.rendererClass
             : Renderer;
         const renderer = new RendererClass([nodeRenderer, new AnyNodeRenderer()]);
-        return exportHelper.testRendererFixture(name, renderer);
+        return exportHelper.testRendererFixture(name, renderer, (options && options.settings) ? options.settings : undefined);
     }
     spec.testFixture = testFixture;
 
