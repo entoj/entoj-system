@@ -11,8 +11,8 @@ const metrics = require('../../utils/performance.js').metrics;
 
 
 /**
- * Maps variables to specified variable names.
- * The mapping is configured via export.settings.[exporter].parameterMapping
+ * Maps parameters of a macro to specified paramter names.
+ * The mapping is configured via export.settings.[exporter].parameters
  */
 class MapParametersTransformer extends NodeTransformer
 {
