@@ -154,26 +154,7 @@ class UrlsConfiguration extends Base {
      * @returns {Promise.<string>|string}
      */
     renderTemplate(template, variables) {
-        const data = Object.assign(
-            {
-                urlBase: this.moduleConfiguration.urlBase,
-                urlSite: this.moduleConfiguration.urlSite,
-                urlEntityCategory: this.moduleConfiguration.urlEntityCategory,
-                urlEntityId: this.moduleConfiguration.urlEntityId,
-                routeBase: this.moduleConfiguration.urlBase,
-                routeSite: this.moduleConfiguration.routeSite,
-                routeEntityCategory: this.moduleConfiguration.routeEntityCategory,
-                routeEntityId: this.moduleConfiguration.routeEntityId
-            },
-            variables
-        );
-        let result = templateString(template, data);
-        let lastResult = template;
-        while (result != lastResult) {
-            lastResult = result;
-            result = templateString(result, data);
-        }
-        return Promise.resolve(result);
+        return Promise.resolve(templateString(template, variables));
     }
 
     /**

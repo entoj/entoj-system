@@ -252,9 +252,11 @@ describe(UrlsConfiguration.className, function() {
         });
     });
 
-    xdescribe('#resolveEntityId', function() {
+    describe('#resolveEntityId', function() {
         it('should require a valid EntityId', function() {
-            const urls = { entityIdTemplate: '${root}/${site.name.toLowerCase()}' };
+            const urls = {
+                system: { url: { entityIde: '${urlBase}/${site.name.toLowerCase()}' } }
+            };
             const testee = createTestee(urls);
             expect(function() {
                 testee.resolveEntityId({});
@@ -263,8 +265,12 @@ describe(UrlsConfiguration.className, function() {
 
         it('should resolve to the configured path', function() {
             const urls = {
-                entityIdTemplate:
-                    '${root}/${site.name.toLowerCase()}/${entityCategory.longName}/${entityId.name}'
+                system: {
+                    url: {
+                        entityId:
+                            '${urlBase}/${site.name.toLowerCase()}/${entityCategory.longName}/${entityId.name}'
+                    }
+                }
             };
             const testee = createTestee(urls);
             const promise = testee
@@ -277,8 +283,12 @@ describe(UrlsConfiguration.className, function() {
 
         it('should resolve a global entity id to the configured category path', function() {
             const urls = {
-                entityCategoryTemplate:
-                    '${root}/${site.name.toLowerCase()}/${entityCategory.longName.toLowerCase()}'
+                system: {
+                    url: {
+                        entityCategory:
+                            '${urlBase}/${site.name.toLowerCase()}/${entityCategory.longName.toLowerCase()}'
+                    }
+                }
             };
             const testee = createTestee(urls);
             const promise = testee
@@ -290,10 +300,14 @@ describe(UrlsConfiguration.className, function() {
         });
     });
 
-    xdescribe('#matchEntityId', function() {
+    describe('#matchEntityId', function() {
         it('should resolve to false when no entity matched', function() {
-            const patterns = { entityIdPattern: '${root}/:site/:entityCategory/:entityId' };
-            const testee = createTestee(patterns);
+            const routes = {
+                system: {
+                    route: { entityId: '${routeBase}/:site/:entityCategory/:entityId' }
+                }
+            };
+            const testee = createTestee(routes);
             const promise = testee.matchEntityId('/foo/bar/baz').then(function(match) {
                 expect(match.entityId).to.be.not.ok;
             });
@@ -301,8 +315,12 @@ describe(UrlsConfiguration.className, function() {
         });
 
         it('should resolve to the entity when matched', function() {
-            const patterns = { entityIdPattern: '${root}/:site/:entityCategory/:entityId' };
-            const testee = createTestee(patterns);
+            const routes = {
+                system: {
+                    route: { entityId: '${routeBase}/:site/:entityCategory/:entityId' }
+                }
+            };
+            const testee = createTestee(routes);
             const promise = testee.matchEntityId('/base/modules/m-teaser').then(function(match) {
                 expect(match.site).to.be.equal(global.fixtures.siteBase);
                 expect(match.entityCategory).to.be.instanceof(EntityCategory);
@@ -318,8 +336,12 @@ describe(UrlsConfiguration.className, function() {
         });
 
         it('should only match complete pathes', function() {
-            const patterns = { entityIdPattern: '${root}/:site/:entityCategory/:entityId' };
-            const testee = createTestee(patterns);
+            const routes = {
+                system: {
+                    route: { entityId: '${routeBase}/:site/:entityCategory/:entityId' }
+                }
+            };
+            const testee = createTestee(routes);
             const promise = testee
                 .matchEntityId('/base/modules/m001-gallery/readme.md')
                 .then(function(match) {
@@ -331,8 +353,12 @@ describe(UrlsConfiguration.className, function() {
         });
 
         it('should allow to match partial pathes with partial=true', function() {
-            const patterns = { entityIdPattern: '${root}/:site/:entityCategory/:entityId' };
-            const testee = createTestee(patterns);
+            const routes = {
+                system: {
+                    route: { entityId: '${routeBase}/:site/:entityCategory/:entityId' }
+                }
+            };
+            const testee = createTestee(routes);
             const promise = testee
                 .matchEntityId('/base/modules/m-teaser/readme.md', true)
                 .then(function(match) {
@@ -345,9 +371,15 @@ describe(UrlsConfiguration.className, function() {
         });
     });
 
-    xdescribe('#resolveEntity', function() {
+    describe('#resolveEntity', function() {
         it('should require a valid Entity', function() {
-            const urls = { entityIdTemplate: '${root}/${site.name.toLowerCase()}' };
+            const urls = {
+                system: {
+                    url: {
+                        entityId: '${urlBase}/${site.name.toLowerCase()}'
+                    }
+                }
+            };
             const testee = createTestee(urls);
             expect(function() {
                 testee.resolveEntity({});
@@ -356,8 +388,12 @@ describe(UrlsConfiguration.className, function() {
 
         it('should resolve to the configured path', function() {
             const urls = {
-                entityIdTemplate:
-                    '${root}/${site.name.toLowerCase()}/${entityCategory.longName}/${entityId.name}'
+                system: {
+                    url: {
+                        entityId:
+                            '${urlBase}/${site.name.toLowerCase()}/${entityCategory.longName}/${entityId.name}'
+                    }
+                }
             };
             const testee = createTestee(urls);
             const promise = testee.resolveEntity(global.fixtures.entityTeaser).then(function(url) {
@@ -368,8 +404,12 @@ describe(UrlsConfiguration.className, function() {
 
         it('should resolve a global entity id to the configured category path', function() {
             const urls = {
-                entityCategoryTemplate:
-                    '${root}/${site.name.toLowerCase()}/${entityCategory.longName.toLowerCase()}'
+                system: {
+                    url: {
+                        entityId:
+                            '${urlBase}/${site.name.toLowerCase()}/${entityCategory.longName.toLowerCase()}'
+                    }
+                }
             };
             const testee = createTestee(urls);
             const promise = testee.resolveEntity(global.fixtures.entityGlobal).then(function(url) {
@@ -379,10 +419,14 @@ describe(UrlsConfiguration.className, function() {
         });
     });
 
-    xdescribe('#matchEntity', function() {
+    describe('#matchEntity', function() {
         it('should resolve to false when no entity matched', function() {
-            const patterns = { entityIdPattern: '${root}/:site/:entityCategory/:entityId' };
-            const testee = createTestee(patterns);
+            const routes = {
+                system: {
+                    route: { entityId: '${routeBase}/:site/:entityCategory/:entityId' }
+                }
+            };
+            const testee = createTestee(routes);
             const promise = testee.matchEntity('/foo/bar/baz').then(function(match) {
                 expect(match.entityId).to.be.not.ok;
             });
@@ -390,8 +434,12 @@ describe(UrlsConfiguration.className, function() {
         });
 
         it('should resolve to the entity when matched', function() {
-            const patterns = { entityIdPattern: '${root}/:site/:entityCategory/:entityId' };
-            const testee = createTestee(patterns);
+            const routes = {
+                system: {
+                    route: { entityId: '${routeBase}/:site/:entityCategory/:entityId' }
+                }
+            };
+            const testee = createTestee(routes);
             const promise = testee.matchEntity('/base/modules/m-teaser').then(function(match) {
                 expect(match.site).to.be.equal(global.fixtures.siteBase);
                 expect(match.entityCategory).to.be.instanceof(EntityCategory);
@@ -407,8 +455,12 @@ describe(UrlsConfiguration.className, function() {
         });
 
         it('should only match complete pathes', function() {
-            const patterns = { entityIdPattern: '${root}/:site/:entityCategory/:entityId' };
-            const testee = createTestee(patterns);
+            const routes = {
+                system: {
+                    route: { entityId: '${routeBase}/:site/:entityCategory/:entityId' }
+                }
+            };
+            const testee = createTestee(routes);
             const promise = testee
                 .matchEntity('/base/modules/m001-gallery/readme.md')
                 .then(function(match) {
@@ -420,8 +472,12 @@ describe(UrlsConfiguration.className, function() {
         });
 
         it('should allow to match partial pathes with partial=true', function() {
-            const patterns = { entityIdPattern: '${root}/:site/:entityCategory/:entityId' };
-            const testee = createTestee(patterns);
+            const routes = {
+                system: {
+                    route: { entityId: '${routeBase}/:site/:entityCategory/:entityId' }
+                }
+            };
+            const testee = createTestee(routes);
             const promise = testee
                 .matchEntity('/base/modules/m-teaser/readme.md', true)
                 .then(function(match) {
@@ -434,10 +490,14 @@ describe(UrlsConfiguration.className, function() {
         });
     });
 
-    xdescribe('#matchEntityFile', function() {
+    describe('#matchEntityFile', function() {
         it('should resolve to false when no entity matched', function() {
-            const patterns = { entityIdPattern: '${root}/:site/:entityCategory/:entityId' };
-            const testee = createTestee(patterns);
+            const routes = {
+                system: {
+                    route: { entityId: '${routeBase}/:site/:entityCategory/:entityId' }
+                }
+            };
+            const testee = createTestee(routes);
             const promise = testee.matchEntityFile('/foo/bar/baz').then(function(match) {
                 expect(match.entityId).to.be.not.ok;
             });
@@ -445,8 +505,12 @@ describe(UrlsConfiguration.className, function() {
         });
 
         it('should resolve to a entity when matched', function() {
-            const patterns = { entityIdPattern: '${root}/:site/:entityCategory/:entityId' };
-            const testee = createTestee(patterns);
+            const routes = {
+                system: {
+                    route: { entityId: '${routeBase}/:site/:entityCategory/:entityId' }
+                }
+            };
+            const testee = createTestee(routes);
             const promise = testee
                 .matchEntityFile('/default/modules/m-teaser')
                 .then(function(match) {
@@ -464,8 +528,12 @@ describe(UrlsConfiguration.className, function() {
             file.site = global.fixtures.siteBase;
             global.fixtures.entityTeaser.files.push(file);
 
-            const patterns = { entityIdPattern: '${root}/:site/:entityCategory/:entityId' };
-            const testee = createTestee(patterns);
+            const routes = {
+                system: {
+                    route: { entityId: '${routeBase}/:site/:entityCategory/:entityId' }
+                }
+            };
+            const testee = createTestee(routes);
             const promise = testee
                 .matchEntityFile('/base/modules/m-teaser/examples/overview.j2')
                 .then(function(match) {
@@ -484,8 +552,12 @@ describe(UrlsConfiguration.className, function() {
             file.site = global.fixtures.siteBase;
             global.fixtures.entityTeaser.files.push(file);
 
-            const patterns = { entityIdPattern: '${root}/:site/:entityCategory/:entityId' };
-            const testee = createTestee(patterns);
+            const routes = {
+                system: {
+                    route: { entityId: '${routeBase}/:site/:entityCategory/:entityId' }
+                }
+            };
+            const testee = createTestee(routes);
             const promise = testee
                 .matchEntityFile('/extended/modules/m-teaser/examples/overview.j2')
                 .then(function(match) {
