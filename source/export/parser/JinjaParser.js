@@ -76,15 +76,10 @@ class JinjaParser extends Parser {
      * @protected
      * @param {export.ast.Node}
      */
-<<<<<<< HEAD
     parseVariable(node)
     {
         const parse = (node, context) =>
         {
-=======
-    parseVariable(node) {
-        const parse = (node) => {
->>>>>>> chore: reformat all source files
             const type = Object.getPrototypeOf(node).typename;
             const result = [];
             switch (type) {
@@ -677,7 +672,6 @@ class JinjaParser extends Parser {
         });
     }
 
-<<<<<<< HEAD
     /**
      * @protected
      * @param {export.ast.Node}
@@ -701,8 +695,6 @@ class JinjaParser extends Parser {
     }
 
 
-=======
->>>>>>> chore: reformat all source files
     /**
      * @protected
      * @param {export.ast.Node}
@@ -711,13 +703,9 @@ class JinjaParser extends Parser {
         //console.log(JSON.stringify(node, null, 4));
         const value = this.parseVariable(node.arr);
         const children = [];
-<<<<<<< HEAD
         const childNodes = Array.isArray(node.body.children) ? node.body.children : [node.body.children];
         for (const child of childNodes)
         {
-=======
-        for (const child of node.body.children) {
->>>>>>> chore: reformat all source files
             children.push(this.parseNode(child));
         }
         const keyName = node.name.children ? node.name.children[0].value : false;
