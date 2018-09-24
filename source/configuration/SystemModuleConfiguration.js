@@ -68,7 +68,7 @@ class SystemModuleConfiguration extends ModuleConfiguration {
     createConfigurations() {
         this.addConfiguration('breakpoints', 'system.breakpoints', breakpoints);
         this.addConfiguration('urlBase', 'system.url.base', '');
-        this.addConfiguration('routeBase', 'system.route.base', this.urlBase);
+        this.addConfiguration('routeBase', 'system.route.base', '');
         this.addConfiguration('urlSite', 'system.url.site', '${url.base}/${site.name.urlify()}');
         this.addConfiguration('routeSite', 'system.route.site', '${urlBase}/:site');
         this.addConfiguration(
@@ -88,8 +88,8 @@ class SystemModuleConfiguration extends ModuleConfiguration {
         );
         this.addConfiguration(
             'routeEntityId',
-            'system.route.site',
-            '${routeEntityCategory}/:entity'
+            'system.route.entityId',
+            '${routeEntityCategory}/:entityId'
         );
 
         this.configurations.set('mediaQueries', this.generateMediaQueries(this.breakpoints));

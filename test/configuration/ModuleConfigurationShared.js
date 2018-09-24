@@ -73,6 +73,28 @@ function spec(type, className, prepareParameters) {
             expect(testee.getConfiguration('system.value', 'default')).to.be.equal('42');
         });
     });
+
+    describe('#addConfiguration', function() {
+        it('should create a entry in #configurations', function() {
+            const testee = createTestee();
+            testee.addConfiguration('the.path', 'the.path', 'theValue');
+            expect(testee.configurations.get('the.path')).to.be.equal('theValue');
+        });
+
+        it('should resolve any templates', function() {
+            const testee = createTestee();
+            testee.addConfiguration('base', 'system.base', 'base');
+            testee.addConfiguration('extended', 'system.extended', '${base}/extended');
+            expect(testee.configurations.get('extended')).to.be.equal('base/extended');
+        });
+
+        it('should throw an error when endless recursion is detected', function() {
+            const testee = createTestee();
+            expect(function() {
+                testee.addConfiguration('extended', 'system.extended', '${extended}/extended');
+            }).to.throw();
+        });
+    });
 }
 
 /**

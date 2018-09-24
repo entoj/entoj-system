@@ -38,11 +38,16 @@ class ModuleConfiguration extends Base {
         // Set
         this._globalConfiguration = globalConfiguration;
         this._buildConfiguration = buildConfiguration;
+        this._rawConfigurations = new BaseMap();
         this._configurations = new BaseMap();
+        this._maxRecursionDepth = 10;
 
         // Go
         this.createConfigurations();
-        this.finalizeConfigurations();
+        this.updateConfigurations();
+
+        // Watch for changes
+        this._rawConfigurations.events.on('change', () => this.updateConfigurations());
     }
 
     /**
@@ -78,6 +83,13 @@ class ModuleConfiguration extends Base {
     /**
      * @type {base.BaseMap}
      */
+    get rawConfigurations() {
+        return this._rawConfigurations;
+    }
+
+    /**
+     * @type {base.BaseMap}
+     */
     get configurations() {
         return this._configurations;
     }
@@ -87,49 +99,67 @@ class ModuleConfiguration extends Base {
     createConfigurations() {}
 
     /**
+     * Walks all configurations and replaces any templates
+     * with their current value
+     *
+     * @protected
      */
-    finalizeConfigurations() {
+    updateConfigurations() {
         // Create data
         const data = {};
-        for (const key of this.configurations.keys()) {
-            if (typeof this.configurations.get(key) == 'string') {
+        for (const key of this.rawConfigurations.keys()) {
+            if (typeof this.rawConfigurations.get(key) == 'string') {
                 const parts = kebabCase(key).split('-');
                 const object = parts.shift();
                 const objectKey = camelCase(parts.join('-'));
-                data['${' + key + '}'] = this.configurations.get(key);
-                data['${' + object + '.' + objectKey + '}'] = this.configurations.get(key);
+                data['${' + key + '}'] = this.rawConfigurations.get(key);
+                data['${' + object + '.' + objectKey + '}'] = this.rawConfigurations.get(key);
             }
         }
 
         // Replace templates for a key
-        const replaceTemplates = (key) => {
-            let hasChanges = false;
+        const replaceTemplates = (key, count) => {
+            if (count > this._maxRecursionDepth) {
+                throw new Error('Detected recursive template for ' + key);
+            }
             const matches = this.configurations.get(key).match(/\$\{[^}]+\}/);
-            if (matches) {
+            let replaceCount = 0;
+            if (matches && replaceCount < this._maxRecursionDepth) {
                 for (const match of matches) {
-                    if (typeof data[match] != 'undefined') {
+                    if (
+                        typeof data[match] == 'string' &&
+                        typeof this.configurations.get(key) == 'string'
+                    ) {
                         this.configurations.set(
                             key,
                             this.configurations.get(key).replace(match, data[match])
                         );
-                        hasChanges = true;
+                        replaceCount++;
                     }
                 }
             }
-            if (hasChanges) {
-                replaceTemplates(key);
+            if (replaceCount > 0) {
+                replaceTemplates(key, count + 1);
             }
         };
 
         // Replace all templates
-        for (const key of this.configurations.keys()) {
+        this.configurations.clear();
+        for (const key of this.rawConfigurations.keys()) {
+            this.configurations.set(key, this.rawConfigurations.get(key));
             if (typeof this.configurations.get(key) == 'string') {
-                replaceTemplates(key);
+                replaceTemplates(key, 0);
             }
         }
+        /*
+        console.log('updateConfigurations data=', data);
+        console.log('updateConfigurations rawConfigurations=', this.rawConfigurations);
+        console.log('updateConfigurations configurations=', this.configurations);
+        */
     }
 
     /**
+     * @protected
      * @param {String} path
      * @param {mixed} defaultValue
      */
@@ -138,12 +168,13 @@ class ModuleConfiguration extends Base {
     }
 
     /**
+     * @protected
      * @param {String} name
      * @param {String} path
      * @param {mixed} defaultValue
      */
     addConfiguration(name, path, defaultValue) {
-        this.configurations.set(name, this.getConfiguration(path, defaultValue));
+        this.rawConfigurations.set(name, this.getConfiguration(path, defaultValue));
     }
 }
 
