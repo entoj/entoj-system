@@ -164,6 +164,9 @@ class ModuleConfiguration extends Base {
      * @param {mixed} defaultValue
      */
     getConfiguration(path, defaultValue) {
+        if (!path) {
+            return defaultValue;
+        }
         return this.buildConfiguration.get(path, this.globalConfiguration.get(path, defaultValue));
     }
 

@@ -11,7 +11,7 @@ const GlobalConfiguration = require('../model/configuration/GlobalConfiguration.
     .GlobalConfiguration;
 
 /**
- * Defaults
+ * @ignore
  */
 const breakpoints = {
     application: {
@@ -66,7 +66,6 @@ class SystemModuleConfiguration extends ModuleConfiguration {
      * @inheritDoc
      */
     createConfigurations() {
-        this.addConfiguration('breakpoints', 'system.breakpoints', breakpoints);
         this.addConfiguration('urlBase', 'system.url.base', '');
         this.addConfiguration('routeBase', 'system.route.base', '');
         this.addConfiguration('urlSite', 'system.url.site', '${url.base}/${site.name.urlify()}');
@@ -92,7 +91,12 @@ class SystemModuleConfiguration extends ModuleConfiguration {
             '${routeEntityCategory}/:entityId'
         );
 
-        this.configurations.set('mediaQueries', this.generateMediaQueries(this.breakpoints));
+        this.addConfiguration('breakpoints', 'system.breakpoints', breakpoints);
+        this.addConfiguration(
+            'mediaQueries',
+            false,
+            this.generateMediaQueries(this.rawConfigurations.get('breakpoints'))
+        );
     }
 
     /**
@@ -128,6 +132,8 @@ class SystemModuleConfiguration extends ModuleConfiguration {
     }
 
     /**
+     * A map of all named breakpoints
+     *
      * @type {Object}
      */
     get breakpoints() {
@@ -135,6 +141,8 @@ class SystemModuleConfiguration extends ModuleConfiguration {
     }
 
     /**
+     * A map containing the derived media queries from breakpoints
+     *
      * @type {Object}
      */
     get mediaQueries() {
