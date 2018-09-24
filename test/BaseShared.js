@@ -34,7 +34,7 @@ function spec(type, className, prepareParameters) {
             describe(prefix + propertyName, function() {
                 if (typeof value === 'undefined' && typeof defaulValue === 'undefined') {
                     it('should exist', function() {
-                        expect(testee[propertyName]).to.be.ok;
+                        expect(testee[propertyName]).to.be.not.undefined;
                     });
                 }
 

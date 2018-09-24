@@ -9,6 +9,8 @@ const BuildConfiguration = require(ES_SOURCE + '/model/configuration/BuildConfig
     .BuildConfiguration;
 const GlobalConfiguration = require(ES_SOURCE + '/model/configuration/GlobalConfiguration.js')
     .GlobalConfiguration;
+const moduleConfigurationSpec = require(ES_TEST + '/configuration/ModuleConfigurationShared.js')
+    .spec;
 const baseSpec = require(ES_TEST + '/BaseShared.js').spec;
 
 /**
@@ -18,40 +20,45 @@ describe(SystemModuleConfiguration.className, function() {
     /**
      * Base Test
      */
-    baseSpec(SystemModuleConfiguration, 'configuration/SystemModuleConfiguration', function(
-        parameters
-    ) {
-        return [new GlobalConfiguration(), new BuildConfiguration()];
-    });
+    moduleConfigurationSpec(
+        SystemModuleConfiguration,
+        'configuration/SystemModuleConfiguration',
+        function(parameters) {
+            if (parameters && parameters.length >= 2) {
+                return parameters;
+            }
+            return [new GlobalConfiguration(), new BuildConfiguration()];
+        }
+    );
 
     /**
      * SystemModuleConfiguration Test
      */
 
     // create a initialized testee instance
-    /*
-    const createTestee = function(globalConfiguration, buildConfiguration)
-    {
-        return new SystemModuleConfiguration(new GlobalConfiguration(globalConfiguration),
-            new BuildConfiguration({ environments : { development: buildConfiguration }}));
+    const createTestee = function(globalConfiguration, buildConfiguration) {
+        return new SystemModuleConfiguration(
+            new GlobalConfiguration(globalConfiguration),
+            new BuildConfiguration({ environments: { development: buildConfiguration } })
+        );
     };
-    */
+
+    describe('Should make sure that references to other templates are resolved', function() {
+        const testee = createTestee({
+            system: {
+                url: {
+                    base: '',
+                    site: '${url.base}/${site.name.urlify()}',
+                    entityCategory: '${url.site}/${entityCartegory.shortName.urlify()}'
+                }
+            }
+        });
+        expect(testee.urlSite).to.be.equal('/${site.name.urlify()}');
+        expect(testee.urlEntityCategory).to.be.equal(
+            '/${site.name.urlify()}/${entityCartegory.shortName.urlify()}'
+        );
+    });
 
     // Simple properties
-    /*
-    baseSpec.assertProperty(createTestee(), ['languages'], undefined, ['en_US']);
-    baseSpec.assertProperty(createTestee(), ['language'], 'de_DE', 'en_US');
-
-    describe('Configuration via GlobalConfiguration', function()
-    {
-        baseSpec.assertProperty(createTestee({ languages: ['de_DE'] }), ['languages'], undefined, ['de_DE']);
-        baseSpec.assertProperty(createTestee({ language: 'de_DE' }), ['language'], 'en_US', 'de_DE');
-    });
-
-    describe('Configuration via BuildConfiguration', function()
-    {
-        baseSpec.assertProperty(createTestee(undefined, { languages: ['de_DE'] }), ['languages'], undefined, ['de_DE']);
-        baseSpec.assertProperty(createTestee(undefined, { language: 'de_DE' }), ['language'], 'en_GB', 'de_DE');
-    });
-    */
+    baseSpec.assertProperty(createTestee(), ['urlBase', 'urlSite']);
 });

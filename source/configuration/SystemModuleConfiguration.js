@@ -43,43 +43,6 @@ const breakpoints = {
  */
 class SystemModuleConfiguration extends ModuleConfiguration {
     /**
-     * @param {model.configuration.GlobalConfiguration} globalConfiguration
-     * @param {model.configuration.BuildConfiguration} buildConfiguration
-     * @param {Object} options
-     */
-    constructor(globalConfiguration, buildConfiguration, options) {
-        super(globalConfiguration, buildConfiguration);
-
-        // Get options
-        this._breakpoints = this.getConfiguration('system.breakpoints', breakpoints);
-        this._urlBase = this.getConfiguration('system.url.base', '');
-        this._urlSite = this.getConfiguration(
-            'system.url.site',
-            '${urlBase}/${site.name.urlify()}'
-        );
-        this._routeSite = this.getConfiguration('system.route.site', '${urlBase}/:site');
-        this._urlEntityCategory = this.getConfiguration(
-            'system.url.entityCategory',
-            '${urlSite}/${entityCategory.pluralName.urlify()}'
-        );
-        this._routeEntityCategory = this.getConfiguration(
-            'system.route.entityCategory',
-            '${routeSite}/:entityCategory'
-        );
-        this._urlEntityId = this.getConfiguration(
-            'system.url.entity',
-            '${urlEntityCategory}/${entityCategory.shortName.toLowerCase()}-${entityId.name.urlify()}'
-        );
-        this._routeEntityId = this.getConfiguration(
-            'system.route.site',
-            '${routEntityCategory}/:entity'
-        );
-
-        // Derive options
-        this._mediaQueries = this.generateMediaQueries(this._breakpoints);
-    }
-
-    /**
      * @inheritDoc
      */
     static get injections() {
@@ -97,6 +60,39 @@ class SystemModuleConfiguration extends ModuleConfiguration {
      */
     static get className() {
         return 'configuration/SystemModuleConfiguration';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    createConfigurations() {
+        this.addConfiguration('breakpoints', 'system.breakpoints', breakpoints);
+        this.addConfiguration('urlBase', 'system.url.base', '');
+        this.addConfiguration('routeBase', 'system.route.base', this.urlBase);
+        this.addConfiguration('urlSite', 'system.url.site', '${url.base}/${site.name.urlify()}');
+        this.addConfiguration('routeSite', 'system.route.site', '${urlBase}/:site');
+        this.addConfiguration(
+            'urlEntityCategory',
+            'system.url.entityCategory',
+            '${urlSite}/${entityCategory.pluralName.urlify()}'
+        );
+        this.addConfiguration(
+            'routeEntityCategory',
+            'system.route.entityCategory',
+            '${routeSite}/:entityCategory'
+        );
+        this.addConfiguration(
+            'urlEntityId',
+            'system.url.entityId',
+            '${urlEntityCategory}/${entityCategory.shortName.toLowerCase()}-${entityId.name.urlify()}'
+        );
+        this.addConfiguration(
+            'routeEntityId',
+            'system.route.site',
+            '${routeEntityCategory}/:entity'
+        );
+
+        this.configurations.set('mediaQueries', this.generateMediaQueries(this.breakpoints));
     }
 
     /**
@@ -135,63 +131,70 @@ class SystemModuleConfiguration extends ModuleConfiguration {
      * @type {Object}
      */
     get breakpoints() {
-        return this._breakpoints;
+        return this.configurations.get('breakpoints');
     }
 
     /**
      * @type {Object}
      */
     get mediaQueries() {
-        return this._mediaQueries;
+        return this.configurations.get('mediaQueries');
     }
 
     /**
      * @type {String}
      */
     get urlBase() {
-        return this._urlBase;
+        return this.configurations.get('urlBase');
     }
 
     /**
      * @type {String}
      */
     get urlSite() {
-        return this._urlSite;
+        return this.configurations.get('urlSite');
     }
 
     /**
      * @type {String}
      */
     get urlEntityCategory() {
-        return this._urlEntityCategory;
+        return this.configurations.get('urlEntityCategory');
     }
 
     /**
      * @type {String}
      */
     get urlEntityId() {
-        return this._urlEntityId;
+        return this.configurations.get('urlEntityId');
+    }
+
+    /**
+     * @type {String}
+     */
+    get routeBase() {
+        return this.configurations.get('routeBase');
     }
 
     /**
      * @type {String}
      */
     get routeSite() {
-        return this._routeSite;
+        return this.configurations.get('routeSite');
     }
 
     /**
      * @type {String}
      */
     get routeEntityCategory() {
-        return this._routeEntityCategory;
+        return this.configurations.get('routeEntityCategory');
     }
 
     /**
      * @type {String}
      */
     get routeEntityId() {
-        return this._routeEntityId;
+        return this.configurations.get('routeEntityId');
     }
 }
 
