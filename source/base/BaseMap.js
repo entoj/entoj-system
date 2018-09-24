@@ -5,6 +5,7 @@
  * @ignore
  */
 const BaseMixin = require('../Base.js').BaseMixin;
+const EventEmitter = require('events').EventEmitter;
 const isPlainObject = require('lodash.isplainobject');
 const merge = require('lodash.merge');
 
@@ -28,6 +29,43 @@ class BaseMap extends BaseMixin(Map) {
      */
     static get className() {
         return 'base/BaseMap';
+    }
+
+    /**
+     * @returns {EventEmitter}
+     */
+    get events() {
+        if (!this._events) {
+            this._events = new EventEmitter(this);
+        }
+        return this._events;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    set(...args) {
+        const result = super.set(...args);
+        this.events.emit('change');
+        return result;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    delete(...args) {
+        const result = super.delete(...args);
+        this.events.emit('change');
+        return result;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    clear(...args) {
+        const result = super.clear(...args);
+        this.events.emit('change');
+        return result;
     }
 
     /**

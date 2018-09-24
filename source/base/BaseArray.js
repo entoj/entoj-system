@@ -34,7 +34,7 @@ class BaseArray extends BaseMixin(Array) {
     }
 
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
     pop() {
         const result = super.pop();
@@ -43,7 +43,7 @@ class BaseArray extends BaseMixin(Array) {
     }
 
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
     push(...items) {
         const result = super.push(...items);
@@ -52,7 +52,7 @@ class BaseArray extends BaseMixin(Array) {
     }
 
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
     reverse() {
         const result = super.reverse();
@@ -61,7 +61,7 @@ class BaseArray extends BaseMixin(Array) {
     }
 
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
     shift() {
         const result = super.shift();
@@ -70,7 +70,7 @@ class BaseArray extends BaseMixin(Array) {
     }
 
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
     sort(compareFunction) {
         const result = super.sort(compareFunction);
@@ -79,7 +79,7 @@ class BaseArray extends BaseMixin(Array) {
     }
 
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
     splice(...items) {
         const result = super.splice(...items);
@@ -88,7 +88,7 @@ class BaseArray extends BaseMixin(Array) {
     }
 
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
     slice(begin, end) {
         const result = super.slice(begin, end);

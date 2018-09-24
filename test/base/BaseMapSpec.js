@@ -18,43 +18,78 @@ describe(BaseMap.className, function() {
     /**
      * BaseMap Test
      */
+    const createTestee = function(...parameters) {
+        return new BaseMap(...parameters);
+    };
+
     describe('#constructor', function() {
         it('should allow to initilize map with a iterable', function() {
-            const testee = new BaseMap({ foo: 'bar' });
+            const testee = createTestee({ foo: 'bar' });
 
             expect(testee.get('foo')).to.be.equal('bar');
         });
     });
 
+    describe('#events', function() {
+        it('should be a EventEmitter', function() {
+            const testee = createTestee();
+            expect(testee.events).to.be.instanceof(require('events').EventEmitter);
+        });
+
+        it('should emit a change event on set', function(cb) {
+            const testee = createTestee();
+            testee.events.on('change', (e) => {
+                cb();
+            });
+            testee.set('one', 'two');
+        });
+
+        it('should emit a change event on clear', function(cb) {
+            const testee = createTestee();
+            testee.events.on('change', (e) => {
+                cb();
+            });
+            testee.clear();
+        });
+
+        it('should emit a change event on delete', function(cb) {
+            const testee = createTestee();
+            testee.events.on('change', (e) => {
+                cb();
+            });
+            testee.delete('one');
+        });
+    });
+
     describe('#getByPath', function() {
         it('should return defaultValue when no path is given', function() {
-            const testee = new BaseMap();
+            const testee = createTestee();
 
             expect(testee.getByPath(false, 'not found')).to.be.equal('not found');
         });
 
         it('should return defaultValue when path is not found', function() {
-            const testee = new BaseMap();
+            const testee = createTestee();
 
             expect(testee.getByPath('simple', 'not found')).to.be.equal('not found');
         });
 
         it('should allow to get a value by path', function() {
-            const testee = new BaseMap();
+            const testee = createTestee();
             testee.set('simple', 'simple');
 
             expect(testee.getByPath('simple')).to.be.equal('simple');
         });
 
         it('should support objects', function() {
-            const testee = new BaseMap();
+            const testee = createTestee();
             testee.set('object', { path: { to: 'object' } });
 
             expect(testee.getByPath('object.path.to')).to.be.equal('object');
         });
 
         it('should support maps', function() {
-            const testee = new BaseMap();
+            const testee = createTestee();
             const map1 = new Map();
             const map2 = new Map();
             map2.set('to', 'map');
@@ -65,14 +100,14 @@ describe(BaseMap.className, function() {
         });
 
         it('should return undefined when path is not found and no defaultValue given', function() {
-            const testee = new BaseMap();
+            const testee = createTestee();
             testee.set('object', { path: { to: 'object' } });
 
             expect(testee.getByPath('object.path.from')).to.be.equal(undefined);
         });
 
         it('should return the defaultValue when path is not found', function() {
-            const testee = new BaseMap();
+            const testee = createTestee();
 
             expect(testee.getByPath('object.path.to', 'Default')).to.be.equal('Default');
         });
@@ -80,7 +115,7 @@ describe(BaseMap.className, function() {
 
     describe('#setByPath', function() {
         it('should set the value at the given path', function() {
-            const testee = new BaseMap();
+            const testee = createTestee();
             testee.set('map', new Map());
             testee.set('object', {});
             testee.setByPath('map.name', 'Map');
@@ -93,7 +128,7 @@ describe(BaseMap.className, function() {
         });
 
         it('should overwrite the value at the given path', function() {
-            const testee = new BaseMap();
+            const testee = createTestee();
             testee.set('object', { name: 'Object' });
             testee.setByPath('object.name', 'Overwritten');
 
@@ -103,7 +138,7 @@ describe(BaseMap.className, function() {
 
     describe('#load', function() {
         it('should allow to import a Map', function() {
-            const testee = new BaseMap();
+            const testee = createTestee();
             const data = new Map();
             data.set('foo', 'bar');
 
@@ -112,8 +147,8 @@ describe(BaseMap.className, function() {
         });
 
         it('should allow to import a BaseMap', function() {
-            const testee = new BaseMap();
-            const data = new BaseMap();
+            const testee = createTestee();
+            const data = createTestee();
             data.set('foo', 'bar');
 
             testee.load(data);
@@ -121,7 +156,7 @@ describe(BaseMap.className, function() {
         });
 
         it('should allow to import a Object', function() {
-            const testee = new BaseMap();
+            const testee = createTestee();
             const data = {
                 foo: 'bar'
             };
@@ -131,7 +166,7 @@ describe(BaseMap.className, function() {
         });
 
         it('should preserve existing items', function() {
-            const testee = new BaseMap();
+            const testee = createTestee();
             testee.set('bar', 'foo');
             const data = {
                 foo: 'bar'
@@ -143,7 +178,7 @@ describe(BaseMap.className, function() {
         });
 
         it('should allow to clear items before loading', function() {
-            const testee = new BaseMap();
+            const testee = createTestee();
             testee.set('bar', 'foo');
             const data = {
                 foo: 'bar'
@@ -155,7 +190,7 @@ describe(BaseMap.className, function() {
         });
 
         it('should do nothing when given non iterable data', function() {
-            const testee = new BaseMap();
+            const testee = createTestee();
 
             testee.load(undefined);
             expect(testee.size).to.be.equal(0);
@@ -164,14 +199,14 @@ describe(BaseMap.className, function() {
 
     describe('#merge', function() {
         it('should just swallow falsy values', function() {
-            const testee = new BaseMap();
+            const testee = createTestee();
             testee.merge();
             testee.merge(null);
             testee.merge(false);
         });
 
         it('should allow to merge a Map', function() {
-            const testee = new BaseMap();
+            const testee = createTestee();
             testee.set('foo', { value: 'bar', version: 1 });
             const data = new Map();
             data.set('foo', { version: 2 });
@@ -182,7 +217,7 @@ describe(BaseMap.className, function() {
         });
 
         it('should allow to merge a BaseMap', function() {
-            const testee = new BaseMap();
+            const testee = createTestee();
             testee.set('foo', { value: 'bar', version: 1 });
             const data = new BaseMap();
             data.set('foo', { version: 2 });
@@ -193,7 +228,7 @@ describe(BaseMap.className, function() {
         });
 
         it('should allow to merge a Object', function() {
-            const testee = new BaseMap();
+            const testee = createTestee();
             testee.set('foo', { value: 'bar', version: 1 });
             const data = {
                 foo: {
