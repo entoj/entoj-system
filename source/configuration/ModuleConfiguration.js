@@ -44,10 +44,20 @@ class ModuleConfiguration extends Base {
 
         // Go
         this.createConfigurations();
+        this.changedConfigurations();
         this.updateConfigurations();
 
         // Watch for changes
-        this._rawConfigurations.events.on('change', () => this.updateConfigurations());
+        this.supressChanges = false;
+        this.rawConfigurations.events.on('change', () => {
+            if (this.supressChanges) {
+                return;
+            }
+            this.supressChanges = true;
+            this.changedConfigurations();
+            this.updateConfigurations();
+            this.supressChanges = false;
+        });
     }
 
     /**
@@ -99,6 +109,13 @@ class ModuleConfiguration extends Base {
     createConfigurations() {}
 
     /**
+     * Updates any dependent configs after a config value has changed
+     *
+     * @protected
+     */
+    changedConfigurations() {}
+
+    /**
      * Walks all configurations and replaces any templates
      * with their current value
      *
@@ -108,12 +125,12 @@ class ModuleConfiguration extends Base {
         // Create data
         const data = {};
         for (const key of this.rawConfigurations.keys()) {
-            if (typeof this.rawConfigurations.get(key) == 'string') {
+            if (typeof this.rawConfigurations.get(key).value == 'string') {
                 const parts = kebabCase(key).split('-');
                 const object = parts.shift();
                 const objectKey = camelCase(parts.join('-'));
-                data['${' + key + '}'] = this.rawConfigurations.get(key);
-                data['${' + object + '.' + objectKey + '}'] = this.rawConfigurations.get(key);
+                data['${' + key + '}'] = this.rawConfigurations.get(key).value;
+                data['${' + object + '.' + objectKey + '}'] = this.rawConfigurations.get(key).value;
             }
         }
 
@@ -146,16 +163,11 @@ class ModuleConfiguration extends Base {
         // Replace all templates
         this.configurations.clear();
         for (const key of this.rawConfigurations.keys()) {
-            this.configurations.set(key, this.rawConfigurations.get(key));
+            this.configurations.set(key, this.rawConfigurations.get(key).value);
             if (typeof this.configurations.get(key) == 'string') {
                 replaceTemplates(key, 0);
             }
         }
-        /*
-        console.log('updateConfigurations data=', data);
-        console.log('updateConfigurations rawConfigurations=', this.rawConfigurations);
-        console.log('updateConfigurations configurations=', this.configurations);
-        */
     }
 
     /**
@@ -177,7 +189,22 @@ class ModuleConfiguration extends Base {
      * @param {mixed} defaultValue
      */
     addConfiguration(name, path, defaultValue) {
-        this.rawConfigurations.set(name, this.getConfiguration(path, defaultValue));
+        this.rawConfigurations.set(name, {
+            path: path,
+            defaultValue: defaultValue,
+            value: this.getConfiguration(path, defaultValue)
+        });
+    }
+
+    /**
+     * @protected
+     * @param {String} name
+     * @param {mixed} value
+     */
+    updateConfiguration(name, value) {
+        const configuration = this.rawConfigurations.get(name);
+        configuration.value = value;
+        this.rawConfigurations.set(name, configuration);
     }
 }
 

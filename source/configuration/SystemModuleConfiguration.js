@@ -92,19 +92,17 @@ class SystemModuleConfiguration extends ModuleConfiguration {
         );
 
         this.addConfiguration('breakpoints', 'system.breakpoints', breakpoints);
-        this.addConfiguration(
-            'mediaQueries',
-            false,
-            this.generateMediaQueries(this.rawConfigurations.get('breakpoints'))
-        );
+        this.addConfiguration('mediaQueries', false, {});
     }
 
     /**
-     * Generates a list of media queries based on the configured breakpoints
-     *
-     * @protected
+     * @inheritDoc
      */
-    generateMediaQueries(breakpoints) {
+    changedConfigurations() {
+        super.changedConfigurations();
+
+        // Update mediaQueries
+        const breakpoints = this.rawConfigurations.get('breakpoints').value;
         const mediaQueries = {};
         for (const breakpointName in breakpoints) {
             const breakpoint = breakpoints[breakpointName];
@@ -128,7 +126,7 @@ class SystemModuleConfiguration extends ModuleConfiguration {
                     ')';
             }
         }
-        return mediaQueries;
+        this.updateConfiguration('mediaQueries', mediaQueries);
     }
 
     /**
@@ -150,6 +148,8 @@ class SystemModuleConfiguration extends ModuleConfiguration {
     }
 
     /**
+     * The base url path
+     *
      * @type {String}
      */
     get urlBase() {
@@ -157,6 +157,8 @@ class SystemModuleConfiguration extends ModuleConfiguration {
     }
 
     /**
+     * The url for a site
+     *
      * @type {String}
      */
     get urlSite() {
@@ -164,6 +166,8 @@ class SystemModuleConfiguration extends ModuleConfiguration {
     }
 
     /**
+     * The url for a entity category
+     *
      * @type {String}
      */
     get urlEntityCategory() {
@@ -171,6 +175,8 @@ class SystemModuleConfiguration extends ModuleConfiguration {
     }
 
     /**
+     * The url for a entity
+     *
      * @type {String}
      */
     get urlEntityId() {
