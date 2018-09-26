@@ -31,7 +31,7 @@ function spec(type, className, prepareParameters) {
     describe('#processChanges', function() {
         it('should invalidate the underlying repository when matching files are found', function() {
             const promise = co(function*() {
-                const testee = createTestee('${sites}/${site.name.urlify()}/data.json');
+                const testee = createTestee('${path.sites}/${site.name.urlify()}/data.json');
                 const input = {
                     files: [DIRECTORY_DELIMITER + 'base' + DIRECTORY_DELIMITER + 'data.json']
                 };
@@ -44,7 +44,7 @@ function spec(type, className, prepareParameters) {
 
         it('should not invalidate the underlying repository when no matching files found', function() {
             const promise = co(function*() {
-                const testee = createTestee('${sites}/${site.name.urlify()}/data.json');
+                const testee = createTestee('${path.sites}/${site.name.urlify()}/data.json');
                 const input = {
                     files: [DIRECTORY_DELIMITER + 'base' + DIRECTORY_DELIMITER + 'foo.json']
                 };

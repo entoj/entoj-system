@@ -59,11 +59,11 @@ describe(UrlsConfiguration.className, function() {
 
     describe('#resolveFilename', function() {
         it('should resolve a filename to a url if it exists', function() {
-            const urls = {};
+            const urls = { system: { path: { base: '' } } };
             const testee = createTestee(urls);
             const promise = testee
                 .resolveFilename(
-                    global.fixtures.pathesConfiguration.root + '/base/modules/m-teaser/m-teaser.md'
+                    global.fixtures.pathesConfiguration.sites + '/base/modules/m-teaser/m-teaser.md'
                 )
                 .then(function(url) {
                     expect(url).to.be.equal('/base/modules/m-teaser/m-teaser.md');
@@ -522,7 +522,7 @@ describe(UrlsConfiguration.className, function() {
         it('should resolve to a file when matched', function() {
             const file = new File({
                 filename:
-                    global.fixtures.pathesConfiguration.root +
+                    global.fixtures.pathesConfiguration.sites +
                     '/base/modules/m-teaser/examples/overview.j2'
             });
             file.site = global.fixtures.siteBase;
@@ -546,7 +546,7 @@ describe(UrlsConfiguration.className, function() {
         it('should resolve to a file when matched on a extended aspect', function() {
             const file = new File({
                 filename:
-                    global.fixtures.pathesConfiguration.root +
+                    global.fixtures.pathesConfiguration.sites +
                     '/base/modules/m-teaser/examples/overview.j2'
             });
             file.site = global.fixtures.siteBase;

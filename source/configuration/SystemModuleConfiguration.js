@@ -69,16 +69,20 @@ class SystemModuleConfiguration extends ModuleConfiguration {
         this.addMeta('path.entoj', 'system.path.entoj', '${path.base}');
         this.addMeta('path.cache', 'system.path.cache', '${path.base}/cache');
         this.addMeta('path.sites', 'system.path.sites', '${path.base}/sites');
-        this.addMeta('path.site', 'system.path.site', '${path.sites}/${site.name.toLowerCase()}');
+        this.addMeta(
+            'path.site',
+            'system.path.site',
+            '${path.sites}/${site.name.toLowerCase().dasherize()}'
+        );
         this.addMeta(
             'path.entityCategory',
             'system.path.entityCategory',
-            '${path.site}/${entityCategory.pluralName.toLowerCase()}'
+            '${path.site}/${entityCategory.pluralName.toLowerCase().dasherize()}'
         );
         this.addMeta(
             'path.entityId',
             'system.path.entityId',
-            '${path.entityCategory}/${entityCategory.shortName.toLowerCase()}-${entityId.name.toLowerCase()}'
+            '${path.entityCategory}/${entityCategory.shortName.toLowerCase()}-${entityId.name.toLowerCase().dasherize()}'
         );
 
         // Urls

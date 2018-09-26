@@ -13,8 +13,11 @@ const Site = require('../site/Site.js').Site;
 const assertParameter = require('../../utils/assert.js').assertParameter;
 const shortenMiddle = require('../../utils/string.js').shortenMiddle;
 const trimSlashesLeft = require('../../utils/string.js').trimSlashesLeft;
+const SystemModuleConfiguration = require('../../configuration/SystemModuleConfiguration.js')
+    .SystemModuleConfiguration;
 const path = require('path');
 const templateString = require('es6-template-strings');
+const merge = require('lodash.merge');
 
 /**
  * Holds all path related configuration.
@@ -25,32 +28,29 @@ const templateString = require('es6-template-strings');
  */
 class PathesConfiguration extends Base {
     /**
-     * @param {object} options
+     * @param {configuration.SystemModuleConfiguration} moduleConfiguration
      */
-    constructor(options) {
+    constructor(moduleConfiguration) {
         super();
 
-        const opts = options || {};
-        this._root = path.resolve(opts.root || __dirname);
-        this._data = this.renderTemplate(opts.dataTemplate || '${root}/data', {}, true);
-        this._entoj = this.renderTemplate(opts.entojTemplate || '${root}', {}, true);
-        this._cache = this.renderTemplate(opts.cacheTemplate || '${root}/cache', {}, true);
-        this._sites = this.renderTemplate(opts.sitesTemplate || '${root}/sites', {}, true);
-        this._siteTemplate = opts.siteTemplate || '${sites}/${site.name.toLowerCase()}';
-        this._entityCategoryTemplate =
-            opts.entityCategoryTemplate ||
-            '${sites}/${site.name.toLowerCase()}/${entityCategory.pluralName.toLowerCase()}';
-        this._entityTemplate =
-            opts.entityIdTemplate ||
-            opts.entityTemplate ||
-            '${sites}/${site.name.toLowerCase()}/${entityCategory.pluralName.toLowerCase()}/${entityCategory.shortName.toLowerCase()}-${entityId.name.toLowerCase()}';
+        // Check
+        assertParameter(
+            this,
+            'moduleConfiguration',
+            moduleConfiguration,
+            true,
+            SystemModuleConfiguration
+        );
+
+        // Add parameters
+        this._moduleConfiguration = moduleConfiguration;
     }
 
     /**
      * @inheritDoc
      */
     static get injections() {
-        return { parameters: ['model.configuration/PathesConfiguration.options'] };
+        return { parameters: [SystemModuleConfiguration] };
     }
 
     /**
@@ -61,28 +61,10 @@ class PathesConfiguration extends Base {
     }
 
     /**
-     * Updates configurations mostly for testing purposes
-     *
-     * @private
-     * @param {string} options
+     * @type {configuration.SystemModuleConfiguration}
      */
-    configure(options) {
-        const opts = options || {};
-        if (opts.root) {
-            this._root = path.resolve(opts.root);
-        }
-        if (opts.cacheTemplate) {
-            this._cache = this.renderTemplate(opts.cacheTemplate, {}, true);
-        }
-        if (opts.dataTemplate) {
-            this._data = this.renderTemplate(opts.dataTemplate, {}, true);
-        }
-        if (opts.entojTemplate) {
-            this._entoj = this.renderTemplate(opts.entojTemplate, {}, true);
-        }
-        if (opts.sitesTemplate) {
-            this._sites = this.renderTemplate(opts.sitesTemplate, {}, true);
-        }
+    get moduleConfiguration() {
+        return this._moduleConfiguration;
     }
 
     /**
@@ -97,22 +79,12 @@ class PathesConfiguration extends Base {
      * @returns {Promise.<string>|string}
      */
     renderTemplate(template, variables, directReturn) {
-        const data = Object.assign(
-            {
-                root: this.root,
-                cache: this.cache,
-                data: this.data,
-                entoj: this.entoj,
-                sites: this.sites,
-                siteTemplate: this._siteTemplate,
-                entityCategoryTemplate: this._entityCategoryTemplate,
-                entityTemplate: this._entityTemplate
-            },
-            variables
-        );
-        const passOne = templateString(template, data);
-        const passTwo = templateString(passOne, data);
-        const result = path.resolve(passTwo);
+        const configurationData = this.moduleConfiguration
+            ? this.moduleConfiguration.getConfigurationObject()
+            : {};
+        const data = merge({}, configurationData, variables);
+        //console.log(Object.keys(data));
+        const result = path.resolve(templateString(template, data));
         if (directReturn === true) {
             return result;
         }
@@ -127,7 +99,7 @@ class PathesConfiguration extends Base {
      * @type {String}
      */
     get root() {
-        return this._root;
+        return this.moduleConfiguration.pathBase;
     }
 
     /**
@@ -136,7 +108,7 @@ class PathesConfiguration extends Base {
      * @type {String}
      */
     get entoj() {
-        return this._entoj;
+        return this.moduleConfiguration.pathEntoj;
     }
 
     /**
@@ -147,7 +119,7 @@ class PathesConfiguration extends Base {
      * @type {String}
      */
     get cache() {
-        return this._cache;
+        return this.moduleConfiguration.pathCache;
     }
 
     /**
@@ -158,7 +130,7 @@ class PathesConfiguration extends Base {
      * @type {String}
      */
     get data() {
-        return this._data;
+        return this.moduleConfiguration.pathData;
     }
 
     /**
@@ -169,7 +141,7 @@ class PathesConfiguration extends Base {
      * @type {String}
      */
     get sites() {
-        return this._sites;
+        return this.moduleConfiguration.pathSites;
     }
 
     /**
@@ -279,9 +251,12 @@ class PathesConfiguration extends Base {
         assertParameter(this, 'site', site, true, Site);
 
         // Resolve path
-        return this.renderTemplate(this._siteTemplate + (customPath ? customPath : ''), {
-            site: site
-        });
+        return this.renderTemplate(
+            this.moduleConfiguration.pathSite + (customPath ? customPath : ''),
+            {
+                site: site
+            }
+        );
     }
 
     /**
@@ -298,10 +273,13 @@ class PathesConfiguration extends Base {
         assertParameter(this, 'entityCategory', entityCategory, true, EntityCategory);
 
         // Resolve path
-        return this.renderTemplate(this._entityCategoryTemplate + (customPath ? customPath : ''), {
-            site: site,
-            entityCategory: entityCategory
-        });
+        return this.renderTemplate(
+            this.moduleConfiguration.pathEntityCategory + (customPath ? customPath : ''),
+            {
+                site: site,
+                entityCategory: entityCategory
+            }
+        );
     }
 
     /**
@@ -317,9 +295,9 @@ class PathesConfiguration extends Base {
         assertParameter(this, 'entityId', entityId, true, EntityId);
         assertParameter(this, 'site', site, true, Site);
 
-        let template = this._entityTemplate;
+        let template = this.moduleConfiguration.pathEntityId;
         if (entityId.isGlobal) {
-            template = this._entityCategoryTemplate;
+            template = this.moduleConfiguration.pathEntityCategory;
         }
 
         // Resolve path

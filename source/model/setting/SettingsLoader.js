@@ -21,7 +21,7 @@ class SettingsLoader extends DataLoader {
         super(sitesRepository, pathesConfiguration, filenameTemplate);
 
         // Assign options
-        this._filenameTemplate = filenameTemplate || '${sites}/${site.name.urlify()}/settings.json';
+        this._filenameTemplate = filenameTemplate || '${path.site}/settings.json';
     }
 
     /**

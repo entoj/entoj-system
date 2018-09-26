@@ -46,31 +46,19 @@ function createStatic(options) {
     const opts = options || {};
     const result = {};
 
+    const settings = merge(
+        opts.settings,
+        { system: { path: { base: testFixture.pathToBase, data: testFixture.pathToData } } },
+        { system: { path: opts.pathesConfiguration } }
+    );
     result.pathToLibraries = testFixture.pathToLibraries;
-    result.globalConfiguration = new GlobalConfiguration(opts.settings);
+    result.globalConfiguration = new GlobalConfiguration(settings);
     result.buildConfiguration = new BuildConfiguration(opts.build);
     result.moduleConfiguration = new SystemModuleConfiguration(
         result.globalConfiguration,
         result.buildConfiguration
     );
-    result.pathesConfiguration = new PathesConfiguration(
-        merge(
-            {
-                root: testFixture.pathToSites,
-                dataTemplate: testFixture.pathToData,
-                sitesTemplate: '${root}',
-                siteTemplate: '${sites}/${site.name.toLowerCase()}',
-                entityCategoryTemplate:
-                    '${sites}/${site.name.toLowerCase()}/${entityCategory.pluralName.toLowerCase()}',
-                entityIdTemplate:
-                    '${sites}/${site.name.toLowerCase()}/${entityCategory.pluralName.toLowerCase()}/${entityCategory.shortName}-${entityId.name}',
-                entityIdGlobalTemplate:
-                    '${sites}/${site.name.toLowerCase()}/${entityCategory.pluralName.toLowerCase()}'
-            },
-            opts.pathesConfiguration
-        )
-    );
-
+    result.pathesConfiguration = new PathesConfiguration(result.moduleConfiguration);
     result.categoryGlobal = new EntityCategory({
         longName: 'Global',
         pluralName: 'Global',
