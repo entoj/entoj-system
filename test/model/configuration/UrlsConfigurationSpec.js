@@ -74,7 +74,7 @@ describe(UrlsConfiguration.className, function() {
 
     describe('#resolveSite', function() {
         it('should require a valid Site', function() {
-            const urls = { system: { url: { site: '${urlBase}/${site.name.toLowerCase()}' } } };
+            const urls = { system: { url: { site: '${url.base}/${site.name.toLowerCase()}' } } };
             const testee = createTestee(urls);
             expect(function() {
                 testee.resolveSite({});
@@ -83,7 +83,7 @@ describe(UrlsConfiguration.className, function() {
 
         it('should resolve to the configured path', function() {
             const urls = {
-                system: { url: { site: '${urlBase}/test/${site.name.toLowerCase()}' } }
+                system: { url: { site: '${url.base}/test/${site.name.toLowerCase()}' } }
             };
             const testee = createTestee(urls);
             const promise = testee.resolveSite(global.fixtures.siteBase).then(function(url) {
@@ -96,7 +96,7 @@ describe(UrlsConfiguration.className, function() {
     describe('#matchSite', function() {
         it('should resolve to false when no site matched', function() {
             const routes = {
-                system: { route: { site: '${routeBase}/:site' } }
+                system: { route: { site: '${route.base}/:site' } }
             };
             const testee = createTestee(routes);
             const promise = testee.matchSite('/foo').then(function(match) {
@@ -107,7 +107,7 @@ describe(UrlsConfiguration.className, function() {
 
         it('should resolve to the site when matched', function() {
             const routes = {
-                system: { route: { site: '${routeBase}/:site' } }
+                system: { route: { site: '${route.base}/:site' } }
             };
             const testee = createTestee(routes);
             const promise = testee.matchSite('/base').then(function(match) {
@@ -118,7 +118,7 @@ describe(UrlsConfiguration.className, function() {
 
         it('should only match complete pathes', function() {
             const routes = {
-                system: { route: { site: '${routeBase}/:site' } }
+                system: { route: { site: '${route.base}/:site' } }
             };
             const testee = createTestee(routes);
             const promise = testee.matchSite('/base/elements').then(function(match) {
@@ -130,7 +130,7 @@ describe(UrlsConfiguration.className, function() {
 
         it('should allow to match direct site pathes with partial=true', function() {
             const routes = {
-                system: { route: { site: '${routeBase}/:site' } }
+                system: { route: { site: '${route.base}/:site' } }
             };
             const testee = createTestee(routes);
             const promise = testee.matchSite('/base', true).then(function(match) {
@@ -141,7 +141,7 @@ describe(UrlsConfiguration.className, function() {
 
         it('should allow to match partial pathes with partial=true', function() {
             const routes = {
-                system: { route: { site: '${routeBase}/:site' } }
+                system: { route: { site: '${route.base}/:site' } }
             };
             const testee = createTestee(routes);
             const promise = testee
@@ -158,7 +158,7 @@ describe(UrlsConfiguration.className, function() {
         it('should require a valid Site and EntityCategory', function() {
             const urls = {
                 system: {
-                    url: { entityCategory: '${urlSite}/${entityCategory.longName.urlify()}' }
+                    url: { entityCategory: '${url.site}/${entityCategory.longName.urlify()}' }
                 }
             };
             const testee = createTestee(urls);
@@ -173,7 +173,7 @@ describe(UrlsConfiguration.className, function() {
         it('should resolve to the configured path', function() {
             const urls = {
                 system: {
-                    url: { entityCategory: '${urlSite}/${entityCategory.pluralName.urlify()}' }
+                    url: { entityCategory: '${url.site}/${entityCategory.pluralName.urlify()}' }
                 }
             };
             const testee = createTestee(urls);
@@ -189,7 +189,7 @@ describe(UrlsConfiguration.className, function() {
     describe('#matchEntityCategory', function() {
         it('should resolve to false when no category matched', function() {
             const routes = {
-                system: { route: { entityCategory: '${routeSite}/:entityCategory' } }
+                system: { route: { entityCategory: '${route.site}/:entityCategory' } }
             };
             const testee = createTestee(routes);
             const promise = testee.matchEntityCategory('/foo/bar').then(function(match) {
@@ -200,7 +200,7 @@ describe(UrlsConfiguration.className, function() {
 
         it('should resolve to the category when matched', function() {
             const routes = {
-                system: { route: { entityCategory: '${routeSite}/:entityCategory' } }
+                system: { route: { entityCategory: '${route.site}/:entityCategory' } }
             };
             const testee = createTestee(routes);
             const promise = testee.matchEntityCategory('/base/module-groups').then(function(match) {
@@ -212,7 +212,7 @@ describe(UrlsConfiguration.className, function() {
 
         it('should only match complete pathes', function() {
             const routes = {
-                system: { route: { entityCategory: '${routeSite}/:entityCategory' } }
+                system: { route: { entityCategory: '${route.site}/:entityCategory' } }
             };
             const testee = createTestee(routes);
             const promise = testee.matchEntityCategory('/base/elements/e001').then(function(match) {
@@ -224,7 +224,7 @@ describe(UrlsConfiguration.className, function() {
 
         it('should allow to match partial pathes with partial=true', function() {
             const routes = {
-                system: { route: { entityCategory: '${routeSite}/:entityCategory' } }
+                system: { route: { entityCategory: '${route.site}/:entityCategory' } }
             };
             const testee = createTestee(routes);
             const promise = testee
@@ -239,7 +239,7 @@ describe(UrlsConfiguration.className, function() {
 
         it('should match a direct category path with partial=true', function() {
             const routes = {
-                system: { route: { entityCategory: '${routeSite}/:entityCategory' } }
+                system: { route: { entityCategory: '${route.site}/:entityCategory' } }
             };
             const testee = createTestee(routes);
             const promise = testee
@@ -255,7 +255,7 @@ describe(UrlsConfiguration.className, function() {
     describe('#resolveEntityId', function() {
         it('should require a valid EntityId', function() {
             const urls = {
-                system: { url: { entityIde: '${urlBase}/${site.name.toLowerCase()}' } }
+                system: { url: { entityIde: '${url.base}/${site.name.toLowerCase()}' } }
             };
             const testee = createTestee(urls);
             expect(function() {
@@ -268,7 +268,7 @@ describe(UrlsConfiguration.className, function() {
                 system: {
                     url: {
                         entityId:
-                            '${urlBase}/${site.name.toLowerCase()}/${entityCategory.longName}/${entityId.name}'
+                            '${url.base}/${site.name.toLowerCase()}/${entityCategory.longName}/${entityId.name}'
                     }
                 }
             };
@@ -286,7 +286,7 @@ describe(UrlsConfiguration.className, function() {
                 system: {
                     url: {
                         entityCategory:
-                            '${urlBase}/${site.name.toLowerCase()}/${entityCategory.longName.toLowerCase()}'
+                            '${url.base}/${site.name.toLowerCase()}/${entityCategory.longName.toLowerCase()}'
                     }
                 }
             };
@@ -304,7 +304,7 @@ describe(UrlsConfiguration.className, function() {
         it('should resolve to false when no entity matched', function() {
             const routes = {
                 system: {
-                    route: { entityId: '${routeBase}/:site/:entityCategory/:entityId' }
+                    route: { entityId: '${route.base}/:site/:entityCategory/:entityId' }
                 }
             };
             const testee = createTestee(routes);
@@ -317,7 +317,7 @@ describe(UrlsConfiguration.className, function() {
         it('should resolve to the entity when matched', function() {
             const routes = {
                 system: {
-                    route: { entityId: '${routeBase}/:site/:entityCategory/:entityId' }
+                    route: { entityId: '${route.base}/:site/:entityCategory/:entityId' }
                 }
             };
             const testee = createTestee(routes);
@@ -338,7 +338,7 @@ describe(UrlsConfiguration.className, function() {
         it('should only match complete pathes', function() {
             const routes = {
                 system: {
-                    route: { entityId: '${routeBase}/:site/:entityCategory/:entityId' }
+                    route: { entityId: '${route.base}/:site/:entityCategory/:entityId' }
                 }
             };
             const testee = createTestee(routes);
@@ -355,7 +355,7 @@ describe(UrlsConfiguration.className, function() {
         it('should allow to match partial pathes with partial=true', function() {
             const routes = {
                 system: {
-                    route: { entityId: '${routeBase}/:site/:entityCategory/:entityId' }
+                    route: { entityId: '${route.base}/:site/:entityCategory/:entityId' }
                 }
             };
             const testee = createTestee(routes);
@@ -376,7 +376,7 @@ describe(UrlsConfiguration.className, function() {
             const urls = {
                 system: {
                     url: {
-                        entityId: '${urlBase}/${site.name.toLowerCase()}'
+                        entityId: '${url.base}/${site.name.toLowerCase()}'
                     }
                 }
             };
@@ -391,7 +391,7 @@ describe(UrlsConfiguration.className, function() {
                 system: {
                     url: {
                         entityId:
-                            '${urlBase}/${site.name.toLowerCase()}/${entityCategory.longName}/${entityId.name}'
+                            '${url.base}/${site.name.toLowerCase()}/${entityCategory.longName}/${entityId.name}'
                     }
                 }
             };
@@ -407,7 +407,7 @@ describe(UrlsConfiguration.className, function() {
                 system: {
                     url: {
                         entityId:
-                            '${urlBase}/${site.name.toLowerCase()}/${entityCategory.longName.toLowerCase()}'
+                            '${url.base}/${site.name.toLowerCase()}/${entityCategory.longName.toLowerCase()}'
                     }
                 }
             };
@@ -423,7 +423,7 @@ describe(UrlsConfiguration.className, function() {
         it('should resolve to false when no entity matched', function() {
             const routes = {
                 system: {
-                    route: { entityId: '${routeBase}/:site/:entityCategory/:entityId' }
+                    route: { entityId: '${route.base}/:site/:entityCategory/:entityId' }
                 }
             };
             const testee = createTestee(routes);
@@ -436,7 +436,7 @@ describe(UrlsConfiguration.className, function() {
         it('should resolve to the entity when matched', function() {
             const routes = {
                 system: {
-                    route: { entityId: '${routeBase}/:site/:entityCategory/:entityId' }
+                    route: { entityId: '${route.base}/:site/:entityCategory/:entityId' }
                 }
             };
             const testee = createTestee(routes);
@@ -457,7 +457,7 @@ describe(UrlsConfiguration.className, function() {
         it('should only match complete pathes', function() {
             const routes = {
                 system: {
-                    route: { entityId: '${routeBase}/:site/:entityCategory/:entityId' }
+                    route: { entityId: '${route.base}/:site/:entityCategory/:entityId' }
                 }
             };
             const testee = createTestee(routes);
@@ -474,7 +474,7 @@ describe(UrlsConfiguration.className, function() {
         it('should allow to match partial pathes with partial=true', function() {
             const routes = {
                 system: {
-                    route: { entityId: '${routeBase}/:site/:entityCategory/:entityId' }
+                    route: { entityId: '${route.base}/:site/:entityCategory/:entityId' }
                 }
             };
             const testee = createTestee(routes);
@@ -494,7 +494,7 @@ describe(UrlsConfiguration.className, function() {
         it('should resolve to false when no entity matched', function() {
             const routes = {
                 system: {
-                    route: { entityId: '${routeBase}/:site/:entityCategory/:entityId' }
+                    route: { entityId: '${route.base}/:site/:entityCategory/:entityId' }
                 }
             };
             const testee = createTestee(routes);
@@ -507,7 +507,7 @@ describe(UrlsConfiguration.className, function() {
         it('should resolve to a entity when matched', function() {
             const routes = {
                 system: {
-                    route: { entityId: '${routeBase}/:site/:entityCategory/:entityId' }
+                    route: { entityId: '${route.base}/:site/:entityCategory/:entityId' }
                 }
             };
             const testee = createTestee(routes);
@@ -530,7 +530,7 @@ describe(UrlsConfiguration.className, function() {
 
             const routes = {
                 system: {
-                    route: { entityId: '${routeBase}/:site/:entityCategory/:entityId' }
+                    route: { entityId: '${route.base}/:site/:entityCategory/:entityId' }
                 }
             };
             const testee = createTestee(routes);
@@ -554,7 +554,7 @@ describe(UrlsConfiguration.className, function() {
 
             const routes = {
                 system: {
-                    route: { entityId: '${routeBase}/:site/:entityCategory/:entityId' }
+                    route: { entityId: '${route.base}/:site/:entityCategory/:entityId' }
                 }
             };
             const testee = createTestee(routes);

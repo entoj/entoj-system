@@ -66,31 +66,57 @@ class SystemModuleConfiguration extends ModuleConfiguration {
      * @inheritDoc
      */
     createConfigurations() {
-        this.addConfiguration('urlBase', 'system.url.base', '');
-        this.addConfiguration('routeBase', 'system.route.base', '');
-        this.addConfiguration('urlSite', 'system.url.site', '${url.base}/${site.name.urlify()}');
-        this.addConfiguration('routeSite', 'system.route.site', '${urlBase}/:site');
+        // Pathes
+        this.addConfiguration('path.base', 'system.path.base', __dirname);
+        this.addConfiguration('path.data', 'system.path.data', '${path.base}/data');
+        this.addConfiguration('path.entoj', 'system.path.entoj', '${path.base}');
+        this.addConfiguration('path.cache', 'system.path.cache', '${path.base}/cache');
+        this.addConfiguration('path.sites', 'system.path.sites', '${path.base}/sites');
         this.addConfiguration(
-            'urlEntityCategory',
-            'system.url.entityCategory',
-            '${urlSite}/${entityCategory.pluralName.urlify()}'
+            'path.site',
+            'system.path.site',
+            '${path.sites}/${site.name.toLowerCase()}'
         );
         this.addConfiguration(
-            'routeEntityCategory',
-            'system.route.entityCategory',
-            '${routeSite}/:entityCategory'
+            'path.entityCategory',
+            'system.path.entityCategory',
+            '${path.site}/${entityCategory.pluralName.toLowerCase()}'
         );
         this.addConfiguration(
-            'urlEntityId',
-            'system.url.entityId',
-            '${urlEntityCategory}/${entityCategory.shortName.toLowerCase()}-${entityId.name.urlify()}'
-        );
-        this.addConfiguration(
-            'routeEntityId',
-            'system.route.entityId',
-            '${routeEntityCategory}/:entityId'
+            'path.entityId',
+            'system.path.entityId',
+            '${path.entityCategory}/${entityCategory.shortName.toLowerCase()}-${entityId.name.toLowerCase()}'
         );
 
+        // Urls
+        this.addConfiguration('url.base', 'system.url.base', '');
+        this.addConfiguration('url.site', 'system.url.site', '${url.base}/${site.name.urlify()}');
+        this.addConfiguration(
+            'url.entityCategory',
+            'system.url.entityCategory',
+            '${url.site}/${entityCategory.pluralName.urlify()}'
+        );
+        this.addConfiguration(
+            'url.entityId',
+            'system.url.entityId',
+            '${url.entityCategory}/${entityCategory.shortName.toLowerCase()}-${entityId.name.urlify()}'
+        );
+
+        // Routes
+        this.addConfiguration('route.base', 'system.route.base', '');
+        this.addConfiguration('route.site', 'system.route.site', '${route.base}/:site');
+        this.addConfiguration(
+            'route.entityCategory',
+            'system.route.entityCategory',
+            '${route.site}/:entityCategory'
+        );
+        this.addConfiguration(
+            'route.entityId',
+            'system.route.entityId',
+            '${route.entityCategory}/:entityId'
+        );
+
+        // Breakpoints
         this.addConfiguration('breakpoints', 'system.breakpoints', breakpoints);
         this.addConfiguration('mediaQueries', false, {});
     }
@@ -148,12 +174,40 @@ class SystemModuleConfiguration extends ModuleConfiguration {
     }
 
     /**
+     * @type {String}
+     */
+    get pathBase() {
+        return this.configurations.get('path.base');
+    }
+
+    /**
+     * @type {String}
+     */
+    get pathSite() {
+        return this.configurations.get('path.site');
+    }
+
+    /**
+     * @type {String}
+     */
+    get pathEntityCategory() {
+        return this.configurations.get('path.entityCategory');
+    }
+
+    /**
+     * @type {String}
+     */
+    get pathEntityId() {
+        return this.configurations.get('path.entityId');
+    }
+
+    /**
      * The base url path
      *
      * @type {String}
      */
     get urlBase() {
-        return this.configurations.get('urlBase');
+        return this.configurations.get('url.base');
     }
 
     /**
@@ -162,7 +216,7 @@ class SystemModuleConfiguration extends ModuleConfiguration {
      * @type {String}
      */
     get urlSite() {
-        return this.configurations.get('urlSite');
+        return this.configurations.get('url.site');
     }
 
     /**
@@ -171,7 +225,7 @@ class SystemModuleConfiguration extends ModuleConfiguration {
      * @type {String}
      */
     get urlEntityCategory() {
-        return this.configurations.get('urlEntityCategory');
+        return this.configurations.get('url.entityCategory');
     }
 
     /**
@@ -180,35 +234,35 @@ class SystemModuleConfiguration extends ModuleConfiguration {
      * @type {String}
      */
     get urlEntityId() {
-        return this.configurations.get('urlEntityId');
+        return this.configurations.get('url.entityId');
     }
 
     /**
      * @type {String}
      */
     get routeBase() {
-        return this.configurations.get('routeBase');
+        return this.configurations.get('route.base');
     }
 
     /**
      * @type {String}
      */
     get routeSite() {
-        return this.configurations.get('routeSite');
+        return this.configurations.get('route.site');
     }
 
     /**
      * @type {String}
      */
     get routeEntityCategory() {
-        return this.configurations.get('routeEntityCategory');
+        return this.configurations.get('route.entityCategory');
     }
 
     /**
      * @type {String}
      */
     get routeEntityId() {
-        return this.configurations.get('routeEntityId');
+        return this.configurations.get('route.entityId');
     }
 }
 

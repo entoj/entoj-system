@@ -126,11 +126,7 @@ class ModuleConfiguration extends Base {
         const data = {};
         for (const key of this.rawConfigurations.keys()) {
             if (typeof this.rawConfigurations.get(key).value == 'string') {
-                const parts = kebabCase(key).split('-');
-                const object = parts.shift();
-                const objectKey = camelCase(parts.join('-'));
                 data['${' + key + '}'] = this.rawConfigurations.get(key).value;
-                data['${' + object + '.' + objectKey + '}'] = this.rawConfigurations.get(key).value;
             }
         }
 
