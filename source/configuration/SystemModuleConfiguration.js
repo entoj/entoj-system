@@ -9,6 +9,7 @@ const BuildConfiguration = require('../model/configuration/BuildConfiguration.js
     .BuildConfiguration;
 const GlobalConfiguration = require('../model/configuration/GlobalConfiguration.js')
     .GlobalConfiguration;
+const path = require('path');
 
 /**
  * @ignore
@@ -47,11 +48,7 @@ class SystemModuleConfiguration extends ModuleConfiguration {
      */
     static get injections() {
         return {
-            parameters: [
-                GlobalConfiguration,
-                BuildConfiguration,
-                'configuration/SystemModuleConfiguration.options'
-            ]
+            parameters: [GlobalConfiguration, BuildConfiguration]
         };
     }
 
@@ -65,70 +62,66 @@ class SystemModuleConfiguration extends ModuleConfiguration {
     /**
      * @inheritDoc
      */
-    createConfigurations() {
+    createMeta() {
         // Pathes
-        this.addConfiguration('path.base', 'system.path.base', __dirname);
-        this.addConfiguration('path.data', 'system.path.data', '${path.base}/data');
-        this.addConfiguration('path.entoj', 'system.path.entoj', '${path.base}');
-        this.addConfiguration('path.cache', 'system.path.cache', '${path.base}/cache');
-        this.addConfiguration('path.sites', 'system.path.sites', '${path.base}/sites');
-        this.addConfiguration(
-            'path.site',
-            'system.path.site',
-            '${path.sites}/${site.name.toLowerCase()}'
-        );
-        this.addConfiguration(
+        this.addMeta('path.base', 'system.path.base', __dirname);
+        this.addMeta('path.data', 'system.path.data', '${path.base}/data');
+        this.addMeta('path.entoj', 'system.path.entoj', '${path.base}');
+        this.addMeta('path.cache', 'system.path.cache', '${path.base}/cache');
+        this.addMeta('path.sites', 'system.path.sites', '${path.base}/sites');
+        this.addMeta('path.site', 'system.path.site', '${path.sites}/${site.name.toLowerCase()}');
+        this.addMeta(
             'path.entityCategory',
             'system.path.entityCategory',
             '${path.site}/${entityCategory.pluralName.toLowerCase()}'
         );
-        this.addConfiguration(
+        this.addMeta(
             'path.entityId',
             'system.path.entityId',
             '${path.entityCategory}/${entityCategory.shortName.toLowerCase()}-${entityId.name.toLowerCase()}'
         );
 
         // Urls
-        this.addConfiguration('url.base', 'system.url.base', '');
-        this.addConfiguration('url.site', 'system.url.site', '${url.base}/${site.name.urlify()}');
-        this.addConfiguration(
+        this.addMeta('url.base', 'system.url.base', '');
+        this.addMeta('url.site', 'system.url.site', '${url.base}/${site.name.urlify()}');
+        this.addMeta(
             'url.entityCategory',
             'system.url.entityCategory',
             '${url.site}/${entityCategory.pluralName.urlify()}'
         );
-        this.addConfiguration(
+        this.addMeta(
             'url.entityId',
             'system.url.entityId',
             '${url.entityCategory}/${entityCategory.shortName.toLowerCase()}-${entityId.name.urlify()}'
         );
 
         // Routes
-        this.addConfiguration('route.base', 'system.route.base', '');
-        this.addConfiguration('route.site', 'system.route.site', '${route.base}/:site');
-        this.addConfiguration(
+        this.addMeta('route.base', 'system.route.base', '');
+        this.addMeta('route.site', 'system.route.site', '${route.base}/:site');
+        this.addMeta(
             'route.entityCategory',
             'system.route.entityCategory',
             '${route.site}/:entityCategory'
         );
-        this.addConfiguration(
+        this.addMeta(
             'route.entityId',
             'system.route.entityId',
             '${route.entityCategory}/:entityId'
         );
 
         // Breakpoints
-        this.addConfiguration('breakpoints', 'system.breakpoints', breakpoints);
-        this.addConfiguration('mediaQueries', false, {});
+        this.addMeta('breakpoints', 'system.breakpoints', breakpoints);
+        this.addMeta('mediaQueries', false, {});
     }
 
     /**
      * @inheritDoc
      */
-    changedConfigurations() {
-        super.changedConfigurations();
+    changedMeta() {
+        super.changedMeta();
 
         // Update mediaQueries
-        const breakpoints = this.rawConfigurations.get('breakpoints').value;
+        const breakpoints = this.meta.get('breakpoints').value;
         const mediaQueries = {};
         for (const breakpointName in breakpoints) {
             const breakpoint = breakpoints[breakpointName];
@@ -152,7 +145,21 @@ class SystemModuleConfiguration extends ModuleConfiguration {
                     ')';
             }
         }
-        this.updateConfiguration('mediaQueries', mediaQueries);
+        this.updateMeta('mediaQueries', mediaQueries);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    finalizeConfiguration() {
+        super.finalizeConfiguration();
+
+        // Pathes
+        this.configuration.set('path.base', path.resolve(this.configuration.get('path.base')));
+        this.configuration.set('path.data', path.resolve(this.configuration.get('path.data')));
+        this.configuration.set('path.entoj', path.resolve(this.configuration.get('path.entoj')));
+        this.configuration.set('path.cache', path.resolve(this.configuration.get('path.cache')));
+        this.configuration.set('path.sites', path.resolve(this.configuration.get('path.sites')));
     }
 
     /**
@@ -161,7 +168,7 @@ class SystemModuleConfiguration extends ModuleConfiguration {
      * @type {Object}
      */
     get breakpoints() {
-        return this.configurations.get('breakpoints');
+        return this.configuration.get('breakpoints');
     }
 
     /**
@@ -170,35 +177,63 @@ class SystemModuleConfiguration extends ModuleConfiguration {
      * @type {Object}
      */
     get mediaQueries() {
-        return this.configurations.get('mediaQueries');
+        return this.configuration.get('mediaQueries');
     }
 
     /**
      * @type {String}
      */
     get pathBase() {
-        return this.configurations.get('path.base');
+        return this.configuration.get('path.base');
+    }
+
+    /**
+     * @type {String}
+     */
+    get pathEntoj() {
+        return this.configuration.get('path.entoj');
+    }
+
+    /**
+     * @type {String}
+     */
+    get pathCache() {
+        return this.configuration.get('path.cache');
+    }
+
+    /**
+     * @type {String}
+     */
+    get pathData() {
+        return this.configuration.get('path.data');
+    }
+
+    /**
+     * @type {String}
+     */
+    get pathSites() {
+        return this.configuration.get('path.sites');
     }
 
     /**
      * @type {String}
      */
     get pathSite() {
-        return this.configurations.get('path.site');
+        return this.configuration.get('path.site');
     }
 
     /**
      * @type {String}
      */
     get pathEntityCategory() {
-        return this.configurations.get('path.entityCategory');
+        return this.configuration.get('path.entityCategory');
     }
 
     /**
      * @type {String}
      */
     get pathEntityId() {
-        return this.configurations.get('path.entityId');
+        return this.configuration.get('path.entityId');
     }
 
     /**
@@ -207,7 +242,7 @@ class SystemModuleConfiguration extends ModuleConfiguration {
      * @type {String}
      */
     get urlBase() {
-        return this.configurations.get('url.base');
+        return this.configuration.get('url.base');
     }
 
     /**
@@ -216,7 +251,7 @@ class SystemModuleConfiguration extends ModuleConfiguration {
      * @type {String}
      */
     get urlSite() {
-        return this.configurations.get('url.site');
+        return this.configuration.get('url.site');
     }
 
     /**
@@ -225,7 +260,7 @@ class SystemModuleConfiguration extends ModuleConfiguration {
      * @type {String}
      */
     get urlEntityCategory() {
-        return this.configurations.get('url.entityCategory');
+        return this.configuration.get('url.entityCategory');
     }
 
     /**
@@ -234,35 +269,35 @@ class SystemModuleConfiguration extends ModuleConfiguration {
      * @type {String}
      */
     get urlEntityId() {
-        return this.configurations.get('url.entityId');
+        return this.configuration.get('url.entityId');
     }
 
     /**
      * @type {String}
      */
     get routeBase() {
-        return this.configurations.get('route.base');
+        return this.configuration.get('route.base');
     }
 
     /**
      * @type {String}
      */
     get routeSite() {
-        return this.configurations.get('route.site');
+        return this.configuration.get('route.site');
     }
 
     /**
      * @type {String}
      */
     get routeEntityCategory() {
-        return this.configurations.get('route.entityCategory');
+        return this.configuration.get('route.entityCategory');
     }
 
     /**
      * @type {String}
      */
     get routeEntityId() {
-        return this.configurations.get('route.entityId');
+        return this.configuration.get('route.entityId');
     }
 }
 

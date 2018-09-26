@@ -11,8 +11,6 @@ const BuildConfiguration = require('../model/configuration/BuildConfiguration.js
 const GlobalConfiguration = require('../model/configuration/GlobalConfiguration.js')
     .GlobalConfiguration;
 const assertParameter = require('../utils/assert.js').assertParameter;
-const kebabCase = require('lodash.kebabcase');
-const camelCase = require('lodash.camelcase');
 
 /**
  * @memberOf configuration
@@ -38,24 +36,26 @@ class ModuleConfiguration extends Base {
         // Set
         this._globalConfiguration = globalConfiguration;
         this._buildConfiguration = buildConfiguration;
-        this._rawConfigurations = new BaseMap();
-        this._configurations = new BaseMap();
+        this._meta = new BaseMap();
+        this._configuration = new BaseMap();
         this._maxRecursionDepth = 10;
 
         // Go
-        this.createConfigurations();
-        this.changedConfigurations();
-        this.updateConfigurations();
+        this.createMeta();
+        this.changedMeta();
+        this.createConfiguration();
+        this.finalizeConfiguration();
 
         // Watch for changes
         this.supressChanges = false;
-        this.rawConfigurations.events.on('change', () => {
+        this.meta.events.on('change', () => {
             if (this.supressChanges) {
                 return;
             }
             this.supressChanges = true;
-            this.changedConfigurations();
-            this.updateConfigurations();
+            this.changedMeta();
+            this.createConfiguration();
+            this.finalizeConfiguration();
             this.supressChanges = false;
         });
     }
@@ -93,40 +93,65 @@ class ModuleConfiguration extends Base {
     /**
      * @type {base.BaseMap}
      */
-    get rawConfigurations() {
-        return this._rawConfigurations;
+    get meta() {
+        return this._meta;
     }
 
     /**
      * @type {base.BaseMap}
      */
-    get configurations() {
-        return this._configurations;
+    get configuration() {
+        return this._configuration;
     }
 
     /**
+     * @returns {Object}
      */
-    createConfigurations() {}
+    getConfigurationObject() {
+        const result = {};
+        for (const key of this.configuration.keys()) {
+            const value = this.configuration.get(key);
+            const pathParts = key.split('.');
+            let current = result;
+            for (let pathIndex = 0; pathIndex < pathParts.length; pathIndex++) {
+                const pathPart = pathParts[pathIndex];
+                if (pathIndex < pathParts.length - 1) {
+                    if (typeof current[pathPart] == 'undefined') {
+                        current[pathPart] = {};
+                    }
+                    current = current[pathPart];
+                } else if (pathIndex == pathParts.length - 1) {
+                    current[pathPart] = value;
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Add all needed meta data for configuration
+     */
+    createMeta() {}
 
     /**
      * Updates any dependent configs after a config value has changed
      *
      * @protected
      */
-    changedConfigurations() {}
+    changedMeta() {}
 
     /**
-     * Walks all configurations and replaces any templates
+     * Walks all configuration and replaces any templates
      * with their current value
      *
      * @protected
      */
-    updateConfigurations() {
+    createConfiguration() {
         // Create data
         const data = {};
-        for (const key of this.rawConfigurations.keys()) {
-            if (typeof this.rawConfigurations.get(key).value == 'string') {
-                data['${' + key + '}'] = this.rawConfigurations.get(key).value;
+        for (const key of this.meta.keys()) {
+            if (typeof this.meta.get(key).value == 'string') {
+                data['${' + key + '}'] = this.meta.get(key).value;
             }
         }
 
@@ -135,17 +160,17 @@ class ModuleConfiguration extends Base {
             if (count > this._maxRecursionDepth) {
                 throw new Error('Detected recursive template for ' + key);
             }
-            const matches = this.configurations.get(key).match(/\$\{[^}]+\}/);
+            const matches = this.configuration.get(key).match(/\$\{[^}]+\}/);
             let replaceCount = 0;
             if (matches && replaceCount < this._maxRecursionDepth) {
                 for (const match of matches) {
                     if (
                         typeof data[match] == 'string' &&
-                        typeof this.configurations.get(key) == 'string'
+                        typeof this.configuration.get(key) == 'string'
                     ) {
-                        this.configurations.set(
+                        this.configuration.set(
                             key,
-                            this.configurations.get(key).replace(match, data[match])
+                            this.configuration.get(key).replace(match, data[match])
                         );
                         replaceCount++;
                     }
@@ -157,21 +182,25 @@ class ModuleConfiguration extends Base {
         };
 
         // Replace all templates
-        this.configurations.clear();
-        for (const key of this.rawConfigurations.keys()) {
-            this.configurations.set(key, this.rawConfigurations.get(key).value);
-            if (typeof this.configurations.get(key) == 'string') {
+        this.configuration.clear();
+        for (const key of this.meta.keys()) {
+            this.configuration.set(key, this.meta.get(key).value);
+            if (typeof this.configuration.get(key) == 'string') {
                 replaceTemplates(key, 0);
             }
         }
     }
 
     /**
+     */
+    finalizeConfiguration() {}
+
+    /**
      * @protected
      * @param {String} path
      * @param {mixed} defaultValue
      */
-    getConfiguration(path, defaultValue) {
+    getConfigurationValue(path, defaultValue) {
         if (!path) {
             return defaultValue;
         }
@@ -184,11 +213,12 @@ class ModuleConfiguration extends Base {
      * @param {String} path
      * @param {mixed} defaultValue
      */
-    addConfiguration(name, path, defaultValue) {
-        this.rawConfigurations.set(name, {
+    addMeta(name, path, defaultValue) {
+        this.meta.set(name, {
+            name: name,
             path: path,
             defaultValue: defaultValue,
-            value: this.getConfiguration(path, defaultValue)
+            value: this.getConfigurationValue(path, defaultValue)
         });
     }
 
@@ -197,10 +227,10 @@ class ModuleConfiguration extends Base {
      * @param {String} name
      * @param {mixed} value
      */
-    updateConfiguration(name, value) {
-        const configuration = this.rawConfigurations.get(name);
+    updateMeta(name, value) {
+        const configuration = this.meta.get(name);
         configuration.value = value;
-        this.rawConfigurations.set(name, configuration);
+        this.meta.set(name, configuration);
     }
 }
 

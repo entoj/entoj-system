@@ -43,22 +43,27 @@ describe(SystemModuleConfiguration.className, function() {
         );
     };
 
-    xdescribe('Should make sure that references to other templates are resolved', function() {
-        const testee = createTestee({
-            system: {
-                url: {
-                    base: '',
-                    site: '${url.base}/${site.name.urlify()}',
-                    entityCategory: '${url.site}/${entityCartegory.shortName.urlify()}'
-                }
-            }
-        });
-        expect(testee.urlSite).to.be.equal('/${site.name.urlify()}');
-        expect(testee.urlEntityCategory).to.be.equal(
-            '/${site.name.urlify()}/${entityCartegory.shortName.urlify()}'
-        );
-    });
-
-    // Simple properties
-    baseSpec.assertProperty(createTestee(), ['urlBase', 'urlSite']);
+    // Path properties
+    baseSpec.assertProperty(createTestee(), [
+        'pathBase',
+        'pathEntoj',
+        'pathData',
+        'pathCache',
+        'pathSites',
+        'pathSite',
+        'pathEntityCategory',
+        'pathEntityId'
+    ]);
+    baseSpec.assertProperty(createTestee(), [
+        'urlBase',
+        'urlSite',
+        'urlEntityCategory',
+        'urlEntityId'
+    ]);
+    baseSpec.assertProperty(createTestee(), [
+        'routeBase',
+        'routeSite',
+        'routeEntityCategory',
+        'routeEntityId'
+    ]);
 });
