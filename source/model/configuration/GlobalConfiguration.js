@@ -14,22 +14,22 @@ const BaseMap = require('../../base/BaseMap.js').BaseMap;
  */
 class GlobalConfiguration extends Base {
     /**
-     * @param {object} options
+     * @param {Object} configuration
      */
-    constructor(options) {
+    constructor(configuration) {
         super();
 
         // Settings
         this._values = new BaseMap();
         this._values.load(this.defaults);
-        this._values.load(options);
+        this._values.load(configuration);
     }
 
     /**
      * @inheritDoc
      */
     static get injections() {
-        return { parameters: ['model.configuration/GlobalConfiguration.options'] };
+        return { parameters: ['model.configuration/GlobalConfiguration.configuration'] };
     }
 
     /**

@@ -40,6 +40,32 @@ const breakpoints = {
 };
 
 /**
+ * @ignore
+ */
+const entityCategories = [
+    {
+        longName: 'Global',
+        pluralName: 'Global',
+        isGlobal: true
+    },
+    {
+        longName: 'Atom'
+    },
+    {
+        longName: 'Molecule'
+    },
+    {
+        longName: 'Organism'
+    },
+    {
+        longName: 'Template'
+    },
+    {
+        longName: 'Page'
+    }
+];
+
+/**
  * @memberOf configuration
  */
 class SystemModuleConfiguration extends ModuleConfiguration {
@@ -63,6 +89,9 @@ class SystemModuleConfiguration extends ModuleConfiguration {
      * @inheritDoc
      */
     createMeta() {
+        // EntityCategories
+        this.addMeta('entityCategories', 'system.entity.categories', entityCategories);
+
         // Pathes
         this.addMeta('path.base', 'system.path.base', __dirname);
         this.addMeta('path.data', 'system.path.data', '${path.base}/data');
@@ -164,6 +193,15 @@ class SystemModuleConfiguration extends ModuleConfiguration {
         this.configuration.set('path.entoj', path.resolve(this.configuration.get('path.entoj')));
         this.configuration.set('path.cache', path.resolve(this.configuration.get('path.cache')));
         this.configuration.set('path.sites', path.resolve(this.configuration.get('path.sites')));
+    }
+
+    /**
+     * A list of all entity categories
+     *
+     * @type {Object}
+     */
+    get entityCategories() {
+        return this.configuration.get('entityCategories');
     }
 
     /**

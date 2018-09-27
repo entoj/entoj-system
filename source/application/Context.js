@@ -134,12 +134,12 @@ class Context extends Base {
         if (typeof singleton == 'undefined') {
             const typeKey = this.di.getKeyForType(type);
             if (this.di.mappings.has(typeKey)) {
-                isSingleton = this._di.mappings.get(typeKey).isSingleton;
+                isSingleton = this.di.mappings.get(typeKey).isSingleton;
             }
         }
 
         // Map type
-        this._di.map(
+        this.di.map(
             type,
             typeof configuration === 'function' ? configuration : configuration.type,
             isSingleton
@@ -154,18 +154,18 @@ class Context extends Base {
                 // Handle instanciation of array deps
                 if (name.startsWith('!')) {
                     const items = this.createInstances(configuration[name]);
-                    this._di.map(configuration.type.className + '.' + name.substring(1), items);
+                    this.di.map(configuration.type.className + '.' + name.substring(1), items);
                 }
                 // Handle configured instanciations
                 else if (typeof params[name] === 'function') {
-                    this._di.map(
+                    this.di.map(
                         configuration.type.className + '.' + name,
                         params[name](configuration[name])
                     );
                 }
                 // Handle simple mapping
                 else {
-                    this._di.map(configuration.type.className + '.' + name, configuration[name]);
+                    this.di.map(configuration.type.className + '.' + name, configuration[name]);
                 }
             }
         }
@@ -196,7 +196,7 @@ class Context extends Base {
 
         // Create instance
         const type = typeof configuration === 'function' ? configuration : configuration.type;
-        const result = this._di.create(type, options, singleton);
+        const result = this.di.create(type, options, singleton);
 
         return result;
     }
@@ -258,52 +258,44 @@ class Context extends Base {
     configureDependencies() {
         // Di
         this.logger.debug('Setup di');
-        this._di.map(DIContainer, this._di, true);
+        this.di.map(DIContainer, this.di, true);
 
         // Globals
-        this._di.map('cli/CliLogger.options', {});
-        this._di.map(FileWatcher, FileWatcher, true);
-        this._di.map(ModelSynchronizer, ModelSynchronizer, true);
-        this._di.map(Communication, Communication, true);
+        this.di.map('cli/CliLogger.options', {});
+        this.di.map(FileWatcher, FileWatcher, true);
+        this.di.map(ModelSynchronizer, ModelSynchronizer, true);
+        this.di.map(Communication, Communication, true);
 
         // Configs
         this.logger.debug('Setup configurations');
-        this._di.map(Context, this, true);
-        this._di.map(
-            'model.configuration/GlobalConfiguration.options',
+        this.di.map(Context, this, true);
+        this.di.map(
+            'model.configuration/GlobalConfiguration.configuration',
             this._configuration.settings || {}
         );
-        this._di.map(GlobalConfiguration, GlobalConfiguration, true);
-        this._di.map(
-            'model.configuration/PathesConfiguration.options',
-            this._configuration.pathes || {}
-        );
-        this._di.map(PathesConfiguration, PathesConfiguration, true);
-        this._di.map(
-            'model.configuration/UrlsConfiguration.options',
-            this._configuration.urls || {}
-        );
-        this._di.map(UrlsConfiguration, UrlsConfiguration, true);
-        this._di.map(
+        this.di.map(GlobalConfiguration, GlobalConfiguration, true);
+        this.di.map(PathesConfiguration, PathesConfiguration, true);
+        this.di.map(UrlsConfiguration, UrlsConfiguration, true);
+        this.di.map(
             'model.configuration/BuildConfiguration.options',
             this._configuration.build || {}
         );
         if (this._configuration.parameters && this._configuration.parameters.environment) {
-            this._di.map(
+            this.di.map(
                 'model.configuration/BuildConfiguration.environment',
                 this._configuration.parameters.environment
             );
         }
-        this._di.map(BuildConfiguration, BuildConfiguration, true);
-        this._di.map(SystemModuleConfiguration, SystemModuleConfiguration, true);
+        this.di.map(BuildConfiguration, BuildConfiguration, true);
+        this.di.map(SystemModuleConfiguration, SystemModuleConfiguration, true);
 
         // Repositories
         this.logger.debug('Setup repositories');
-        this._di.map(SitesRepository, SitesRepository, true);
-        this._di.map(EntityCategoriesRepository, EntityCategoriesRepository, true);
-        this._di.map(EntitiesRepository, EntitiesRepository, true);
-        this._di.map(FilesRepository, FilesRepository, true);
-        this._di.map(SettingsRepository, SettingsRepository, true);
+        this.di.map(SitesRepository, SitesRepository, true);
+        this.di.map(EntityCategoriesRepository, EntityCategoriesRepository, true);
+        this.di.map(EntitiesRepository, EntitiesRepository, true);
+        this.di.map(FilesRepository, FilesRepository, true);
+        this.di.map(SettingsRepository, SettingsRepository, true);
 
         // Sites
         this.logger.debug('Setup sites');
@@ -313,31 +305,11 @@ class Context extends Base {
             });
         }
 
-        // EntityCategories
-        this.logger.debug('Setup entity categories');
-        if (this._configuration.entityCategories && this._configuration.entityCategories.loader) {
-            this.mapType(
-                EntityCategoriesLoader,
-                true,
-                this._configuration.entityCategories.loader,
-                { plugins: this.createInstances.bind(this) }
-            );
-        }
-
-        // Entity Id parser
-        this.logger.debug('Setup entity id parser');
-        this._di.map(IdParser, CompactIdParser, true);
-        if (this._configuration.entities && this._configuration.entities.idParser) {
-            this.mapType(IdParser, true, this._configuration.entities.idParser);
-        }
-
         // Entities
         this.logger.debug('Setup entities');
-        if (this._configuration.entities && this._configuration.entities.loader) {
-            this.mapType(EntitiesLoader, true, this._configuration.entities.loader, {
-                plugins: this.createInstances.bind(this)
-            });
-        }
+        this.di.map(IdParser, CompactIdParser, true);
+        this.di.map(EntityCategoriesLoader, EntityCategoriesLoader, true);
+        this.di.map(EntitiesLoader, EntitiesLoader, true);
 
         // Global simple mappings
         this.logger.debug('Adding simple mappings');
@@ -376,9 +348,9 @@ class Context extends Base {
                 this.mapType(commandType, false, command);
                 commands.push(commandType);
             }
-            this._di.map('application/Runner.commands', commands);
+            this.di.map('application/Runner.commands', commands);
         } else {
-            this._di.map('application/Runner.commands', []);
+            this.di.map('application/Runner.commands', []);
         }
     }
 

@@ -189,61 +189,27 @@ function createStatic(options) {
 function createDynamic(configuration) {
     // Get fixture config
     let config = clone(testFixture.configuration);
+    config.mappings = config.mappings || [];
 
     // Add logger
     config.logger = {};
     config.logger.muted = true;
 
     // Add sites
-    config.sites = {};
-    config.sites.loader = {
+    config.mappings.push({
         type: require(ES_SOURCE + '/model/site').SitesLoader,
-        plugins: [require(ES_SOURCE + '/model/loader/documentation').PackagePlugin]
-    };
+        '!plugins': [require(ES_SOURCE + '/model/loader/documentation').PackagePlugin]
+    });
 
     // Add entities
-    config.entities = {};
-    config.entities.idParser = {
-        type: require(ES_SOURCE + '/parser/entity/CompactIdParser.js').CompactIdParser
-    };
-    config.entities.loader = {
+    config.mappings.push({
         type: require(ES_SOURCE + '/model/entity').EntitiesLoader,
-        plugins: [
+        '!plugins': [
             require(ES_SOURCE + '/model/loader/documentation').PackagePlugin,
             require(ES_SOURCE + '/model/loader/documentation').JinjaPlugin,
             require(ES_SOURCE + '/model/loader/documentation').MarkdownPlugin
         ]
-    };
-
-    // Add entityCategories
-    config.entityCategories = {};
-    config.entityCategories.loader = {
-        type: require(ES_SOURCE + '/model/entity').EntityCategoriesLoader,
-        categories: [
-            {
-                longName: 'Global',
-                pluralName: 'Global',
-                isGlobal: true,
-                shortName: 'o'
-            },
-            {
-                longName: 'Element'
-            },
-            {
-                longName: 'Module'
-            },
-            {
-                shortName: 'g',
-                longName: 'Module Group'
-            },
-            {
-                longName: 'Template'
-            },
-            {
-                longName: 'Page'
-            }
-        ]
-    };
+    });
 
     // Add environments
     config.environments = {

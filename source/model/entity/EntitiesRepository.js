@@ -243,7 +243,9 @@ class EntitiesRepository extends Repository {
             if (site) {
                 id.site = site;
             }
-            const entity = data.find((item) => item.id.isEqualTo(id, true));
+            const entity = data.find((item) => {
+                return item.id.isEqualTo(id, true);
+            });
             if (entity && id && id.site) {
                 return createEntityAspect(entity, id.site);
             }

@@ -6,6 +6,9 @@
  */
 const PluggableLoader = require('../loader/PluggableLoader.js').PluggableLoader;
 const EntityCategory = require('./EntityCategory.js').EntityCategory;
+const assertParameter = require('../../utils/assert.js').assertParameter;
+const SystemModuleConfiguration = require('../../configuration/SystemModuleConfiguration.js')
+    .SystemModuleConfiguration;
 
 /**
  * @class
@@ -19,11 +22,20 @@ class EntityCategoriesLoader extends PluggableLoader {
     /**
      * @ignore
      */
-    constructor(categories, plugins) {
+    constructor(moduleConfiguration, plugins) {
         super(plugins);
 
-        // Assign options
-        this._categories = categories || [];
+        // Check
+        assertParameter(
+            this,
+            'moduleConfiguration',
+            moduleConfiguration,
+            true,
+            SystemModuleConfiguration
+        );
+
+        // Add parameters
+        this._moduleConfiguration = moduleConfiguration;
     }
 
     /**
@@ -31,10 +43,7 @@ class EntityCategoriesLoader extends PluggableLoader {
      */
     static get injections() {
         return {
-            parameters: [
-                'model.entity/EntityCategoriesLoader.categories',
-                'model.entity/EntityCategoriesLoader.plugins'
-            ]
+            parameters: [SystemModuleConfiguration, 'model.entity/EntityCategoriesLoader.plugins']
         };
     }
 
@@ -46,11 +55,18 @@ class EntityCategoriesLoader extends PluggableLoader {
     }
 
     /**
+     * @type {configuration.SystemModuleConfiguration}
+     */
+    get moduleConfiguration() {
+        return this._moduleConfiguration;
+    }
+
+    /**
      * @returns {Promise.<Array>}
      */
     loadItems() {
         const result = [];
-        for (const config of this._categories) {
+        for (const config of this.moduleConfiguration.entityCategories) {
             const item = new EntityCategory(config);
             item.priority = result.length;
             result.push(item);

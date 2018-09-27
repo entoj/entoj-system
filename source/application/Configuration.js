@@ -147,18 +147,6 @@ class Configuration extends Base {
      * Creates a usable default configuration
      */
     setup() {
-        // Some helpers
-        const siteTemplate = this.options.siteTemplate || '${site.name.urlify()}';
-        const entityCategoryTemplate =
-            siteTemplate +
-            '/' +
-            (this.options.entityCategoryTemplate || '${entityCategory.pluralName.urlify()}');
-        const entityIdTemplate =
-            entityCategoryTemplate +
-            '/' +
-            (this.options.entityIdTemplate ||
-                '${entityCategory.shortName.urlify()}-${entityId.name.urlify()}');
-
         // Settings
         this.settings.add({
             formats: {
@@ -170,27 +158,6 @@ class Configuration extends Base {
             this.settings.add(this.options.settings);
         }
 
-        // Urls
-        this.urls.add({
-            root: '',
-            siteTemplate: '${root}/' + siteTemplate,
-            entityCategoryTemplate: '${root}/' + entityCategoryTemplate,
-            entityIdTemplate: '${root}/' + entityIdTemplate
-        });
-
-        // Pathes
-        this.pathes.add(
-            this.clean({
-                root: this.options.pathes.root,
-                entojTemplate: this.options.pathes.entoj || '${root}',
-                cacheTemplate: '${entoj}/cache',
-                sitesTemplate: '${root}/sites',
-                siteTemplate: '${sites}/' + siteTemplate,
-                entityCategoryTemplate: '${sites}/' + entityCategoryTemplate,
-                entityIdTemplate: '${sites}/' + entityIdTemplate
-            })
-        );
-
         // Sites
         this.mappings.add(require('../model/index.js').site.SitesLoader, {
             '!plugins': [
@@ -198,36 +165,6 @@ class Configuration extends Base {
                 require('../model/index.js').loader.documentation.MarkdownPlugin
             ]
         });
-
-        // EntityCategories
-        const entityCategories = this.options.entityCategories || [
-            {
-                longName: 'Global',
-                pluralName: 'Global',
-                isGlobal: true
-            },
-            {
-                longName: 'Atom'
-            },
-            {
-                longName: 'Molecule'
-            },
-            {
-                longName: 'Organism'
-            },
-            {
-                longName: 'Template'
-            },
-            {
-                longName: 'Page'
-            }
-        ];
-        this.mappings.add(
-            require('../model/index.js').entity.EntityCategoriesLoader,
-            this.clean({
-                categories: entityCategories
-            })
-        );
 
         // Entities
         this.mappings.add(require('../parser/index.js').entity.CompactIdParser, {
@@ -248,8 +185,7 @@ class Configuration extends Base {
                     }
                 },
                 require('../model/index.js').loader.documentation.JinjaPlugin,
-                require('../model/index.js').loader.documentation.ExamplePlugin,
-                require('../model/index.js').loader.documentation.StyleguidePlugin
+                require('../model/index.js').loader.documentation.ExamplePlugin
             ]
         });
 
@@ -258,20 +194,9 @@ class Configuration extends Base {
             '!plugins': [
                 require('../model/index.js').viewmodel.plugin.ViewModelImportPlugin,
                 require('../model/index.js').viewmodel.plugin.ViewModelLipsumPlugin,
-                require('../model/index.js').viewmodel.plugin.ViewModelLipsumHtmlPlugin,
-                require('../model/index.js').viewmodel.plugin.ViewModelTranslatePlugin
+                require('../model/index.js').viewmodel.plugin.ViewModelLipsumHtmlPlugin
             ]
         });
-
-        // Translations
-        this.mappings.add(
-            require('../model/index.js').translation.TranslationsLoader,
-            this.clean({
-                filenameTemplate:
-                    this.options.models.translationFileTemplate ||
-                    this.options.models.translationsFile
-            })
-        );
 
         // Settings
         this.mappings.add(
@@ -284,7 +209,6 @@ class Configuration extends Base {
         // ModelSynchronizer
         this.mappings.add(require('../watch/index.js').ModelSynchronizer, {
             '!plugins': [
-                require('../watch/index.js').ModelSynchronizerTranslationsPlugin,
                 require('../watch/index.js').ModelSynchronizerSettingsPlugin,
                 require('../watch/index.js').ModelSynchronizerEntitiesPlugin,
                 require('../watch/index.js').ModelSynchronizerSitesPlugin
@@ -369,12 +293,6 @@ class Configuration extends Base {
                 {
                     type: require('../nunjucks/index.js').filter.SvgViewBoxFilter,
                     basePath: this.options.filters.svgPath || '/'
-                },
-                {
-                    type: require('../nunjucks/index.js').filter.TranslateFilter
-                },
-                {
-                    type: require('../nunjucks/index.js').filter.TranslationsFilter
                 },
                 {
                     type: require('../nunjucks/index.js').filter.UniqueFilter
