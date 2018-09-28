@@ -233,8 +233,8 @@ describe('utils/string', function() {
             expect(trimQuotes('hi')).to.be.equal('hi');
             expect(trimQuotes('"hi')).to.be.equal('hi');
             expect(trimQuotes('hi"')).to.be.equal('hi');
-            expect(trimQuotes("'hi")).to.be.equal('hi');
-            expect(trimQuotes("hi'")).to.be.equal('hi');
+            expect(trimQuotes('\'hi')).to.be.equal('hi');
+            expect(trimQuotes('hi\'')).to.be.equal('hi');
             expect(trimQuotes('"\'hi"\'')).to.be.equal('hi');
         });
     });

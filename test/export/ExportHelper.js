@@ -117,13 +117,22 @@ function configure(options) {
     }
 
     // Runs a simple testfixture
-    function testRendererFixture(name, renderer, settings)
-    {
-        const promise = co(function*()
-        {
-            const ast = yield loadFixture(path.join(fixtureInputPath, '/' + name + '.input.j2'), 'ast');
-            const expected = yield loadFixture(path.join(fixtureExpectedPath, '/' + name + '.expected' + resultExtension));
-            const configuration = yield createConfiguration('base/elements/e-cta', 'e_cta', settings, undefined, renderer);
+    function testRendererFixture(name, renderer, settings) {
+        const promise = co(function*() {
+            const ast = yield loadFixture(
+                path.join(fixtureInputPath, '/' + name + '.input.j2'),
+                'ast'
+            );
+            const expected = yield loadFixture(
+                path.join(fixtureExpectedPath, '/' + name + '.expected' + resultExtension)
+            );
+            const configuration = yield createConfiguration(
+                'base/elements/e-cta',
+                'e_cta',
+                settings,
+                undefined,
+                renderer
+            );
             let result = '';
             try {
                 result = yield renderer.render(ast, configuration);
