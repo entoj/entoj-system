@@ -6,6 +6,7 @@ module.exports =
 {
     AssetUrlFilter: require('./AssetUrlFilter.js').AssetUrlFilter,
     AttributesFilter: require('./AttributesFilter.js').AttributesFilter,
+    ConfigurationFilter: require('./ConfigurationFilter.js').ConfigurationFilter,
     DebugFilter: require('./DebugFilter.js').DebugFilter,
     EmptyFilter: require('./EmptyFilter.js').EmptyFilter,
     Filter: require('./Filter.js').Filter,
