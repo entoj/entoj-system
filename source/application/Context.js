@@ -271,7 +271,7 @@ class Context extends Base {
         this.di.map(Context, this, true);
         this.di.map(
             'model.configuration/GlobalConfiguration.configuration',
-            this._configuration.settings || {}
+            this._configuration || {}
         );
         this.di.map(GlobalConfiguration, GlobalConfiguration, true);
         this.di.map(PathesConfiguration, PathesConfiguration, true);
@@ -299,11 +299,7 @@ class Context extends Base {
 
         // Sites
         this.logger.debug('Setup sites');
-        if (this._configuration.sites && this._configuration.sites.loader) {
-            this.mapType(SitesLoader, true, this._configuration.sites.loader, {
-                plugins: this.createInstances.bind(this)
-            });
-        }
+        this.di.map(SitesLoader, SitesLoader, true);
 
         // Entities
         this.logger.debug('Setup entities');

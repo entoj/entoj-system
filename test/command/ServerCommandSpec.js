@@ -53,28 +53,24 @@ describe(ServerCommand.className, function() {
             });
         });
 
-        it('should allow to configure the server port via options.port', function() {
+        it('should allow to configure the server port via SystemModuleConfiguration', function() {
             const promise = co(function*() {
-                const options = {
-                    port: 3200
-                };
-                const testee = new ServerCommand(global.fixtures.context, options);
+                global.fixtures.moduleConfiguration.configuration.set('server.port', 3200);
+                const testee = new ServerCommand(global.fixtures.context);
                 const server = yield testee.execute({ command: 'server' });
-                expect(server.port).to.be.equal(options.port);
+                expect(server.port).to.be.equal(3200);
             });
             return promise;
         });
 
         it('should allow to configure the server routes via options.routes', function() {
             const promise = co(function*() {
-                const options = {
-                    routes: [
-                        {
-                            type: Route
-                        }
-                    ]
-                };
-                const testee = new ServerCommand(global.fixtures.context, options);
+                const routes = [
+                    {
+                        type: Route
+                    }
+                ];
+                const testee = new ServerCommand(global.fixtures.context, routes);
                 const server = yield testee.execute({ command: 'server' });
                 expect(server.routes).to.have.length(1);
                 expect(server.routes[0]).to.be.instanceof(Route);

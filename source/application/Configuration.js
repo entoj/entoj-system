@@ -69,12 +69,12 @@ function add(data, key, type, sourceType, values) {
     // Get config
     let config = type
         ? data[key].find((i) => {
-            return (
-                i &&
+              return (
+                  i &&
                   (i.type === type ||
                       (i.type.className && type.className && i.type.className === type.className))
-            );
-        })
+              );
+          })
         : data[key];
     if (!config) {
         config = {
@@ -106,8 +106,6 @@ class Configuration extends Base {
 
         // Initialize
         this._options = options || {};
-        this._options.pathes = this._options.pathes || {};
-        this._options.filters = this._options.filters || {};
         this._options.models = this._options.models || {};
         this._options.server = this._options.server || {};
         (this._local = localConfiguration || {}), (this._settings = {});
@@ -311,30 +309,21 @@ class Configuration extends Base {
 
         // Server
         this.commands.add(require('../command/index.js').ServerCommand, {
-            options: {
-                port: this.options.server.port || this.local.port || 3000,
-                http2: this.options.server.http2 || this.local.http2 || false,
-                sslKey: this.options.server.sslKey || this.local.sslKey || false,
-                sslCert: this.options.server.sslCert || this.local.sslCert || false,
-                authentication: this.local.authentication || false,
-                credentials: this.options.server.credentials ||
-                    this.local.credentials || { username: 'entoj', password: 'entoj' },
-                routes: [
-                    {
-                        type: require('../server/index.js').route.StaticFileRoute,
-                        options: {
-                            basePath: '${sites}',
-                            allowedExtensions: this.options.server.staticExtensions
-                        }
-                    },
-                    {
-                        type: require('../server/index.js').route.EntityTemplateRoute,
-                        options: {
-                            basePath: '${sites}'
-                        }
+            routes: [
+                {
+                    type: require('../server/index.js').route.StaticFileRoute,
+                    options: {
+                        basePath: '${sites}',
+                        allowedExtensions: this.options.server.staticExtensions
                     }
-                ]
-            }
+                },
+                {
+                    type: require('../server/index.js').route.EntityTemplateRoute,
+                    options: {
+                        basePath: '${sites}'
+                    }
+                }
+            ]
         });
 
         // Config
@@ -360,20 +349,6 @@ class Configuration extends Base {
      */
     get settings() {
         return this._settings;
-    }
-
-    /**
-     * @type {Object}
-     */
-    get urls() {
-        return this._urls;
-    }
-
-    /**
-     * @type {Object}
-     */
-    get pathes() {
-        return this._pathes;
     }
 
     /**

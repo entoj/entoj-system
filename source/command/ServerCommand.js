@@ -7,6 +7,8 @@
 const Command = require('./Command.js').Command;
 const Server = require('../server/Server.js').Server;
 const Context = require('../application/Context.js').Context;
+const SystemModuleConfiguration = require('../configuration/SystemModuleConfiguration.js')
+    .SystemModuleConfiguration;
 const Communication = require('../application/Communication.js').Communication;
 const CliLogger = require('../cli/CliLogger.js').CliLogger;
 const ModelSynchronizer = require('../watch/ModelSynchronizer.js').ModelSynchronizer;
@@ -22,11 +24,11 @@ class ServerCommand extends Command {
      * @param {application.Context} context
      * @param {Object} options
      */
-    constructor(context, options) {
+    constructor(context, routes) {
         super(context);
 
         this._name = 'server';
-        this._options = options || {};
+        this._routes = routes || [];
         this._server = false;
     }
 
@@ -34,7 +36,7 @@ class ServerCommand extends Command {
      * @inheritDoc
      */
     static get injections() {
-        return { parameters: [Context, 'command/ServerCommand.options'] };
+        return { parameters: [Context, 'command/ServerCommand.routes'] };
     }
 
     /**
@@ -54,8 +56,8 @@ class ServerCommand extends Command {
     /**
      * @type {Object}
      */
-    get options() {
-        return this._options;
+    get routes() {
+        return this._routes;
     }
 
     /**
@@ -105,6 +107,9 @@ class ServerCommand extends Command {
             if (!scope.server) {
                 const logger = scope.createLogger('command.server');
 
+                // Create moduleConfiguration
+                const moduleConfiguration = scope.context.di.create(SystemModuleConfiguration);
+
                 // Start ipc communication
                 logger.info('Starting IPC server');
                 const com = scope.context.di.create(Communication);
@@ -121,33 +126,38 @@ class ServerCommand extends Command {
                 // prepare routes
                 const configure = logger.section('Configuring routes');
                 const routes = [];
-                if (Array.isArray(scope.options.routes)) {
-                    for (const route of scope.options.routes) {
-                        const work = logger.work(
-                            'Configuring route <' + route.type.className + '>'
-                        );
-                        const type = route.type;
-                        const mappings = new Map();
-                        for (const key in route) {
-                            if (key !== 'type') {
-                                mappings.set(type.className + '.' + key, route[key]);
-                            }
+                for (const route of scope.routes) {
+                    const work = logger.work('Configuring route <' + route.type.className + '>');
+                    const type = route.type;
+                    const mappings = new Map();
+                    for (const key in route) {
+                        if (key !== 'type') {
+                            mappings.set(type.className + '.' + key, route[key]);
                         }
-                        mappings.set(CliLogger, logger);
-                        const routeInstance = scope.context.di.create(type, mappings);
-                        if (!routeInstance) {
-                            throw new Error('Could not get instance of ' + type.className);
-                        }
-                        routes.push(routeInstance);
-                        logger.end(work);
                     }
+                    mappings.set(CliLogger, logger);
+                    const routeInstance = scope.context.di.create(type, mappings);
+                    if (!routeInstance) {
+                        throw new Error('Could not get instance of ' + type.className);
+                    }
+                    routes.push(routeInstance);
+                    logger.end(work);
                 }
                 logger.end(configure);
 
                 // create server
                 const start = logger.section('Starting server');
                 try {
-                    scope._server = new Server(logger, routes, scope.options);
+                    const options = {
+                        port: moduleConfiguration.serverPort,
+                        http2: moduleConfiguration.serverHttp2,
+                        sslKey: moduleConfiguration.serverSslKey,
+                        sslCert: moduleConfiguration.serverSslCert,
+                        authentication: moduleConfiguration.serverAuthentication,
+                        user: moduleConfiguration.serverUser,
+                        password: moduleConfiguration.serverPassword
+                    };
+                    scope._server = new Server(logger, routes, options);
                 } catch (error) {
                     ErrorHandler.error(scope, error);
                     logger.end(start, true);

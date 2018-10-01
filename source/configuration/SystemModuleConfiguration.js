@@ -145,6 +145,16 @@ class SystemModuleConfiguration extends ModuleConfiguration {
         // Breakpoints
         this.addMeta('breakpoints', 'system.breakpoints', breakpoints);
         this.addMeta('mediaQueries', false, {});
+
+        // Server
+        this.addMeta('server.port', 'system.server.port', 3000);
+        this.addMeta('server.http2', 'system.server.http2', false);
+        this.addMeta('server.sslKey', 'system.server.sslkey', __dirname + '/localhost.key');
+        this.addMeta('server.sslCert', 'system.server.sslcert', __dirname + '/localhost.crt');
+        this.addMeta('server.authentication', 'system.server.authentication', false);
+        this.addMeta('server.user', 'system.server.user', 'entoj');
+        this.addMeta('server.password', 'system.server.password', 'entoj');
+        this.addMeta('server.baseUrl', false, 'http://localhost:3000');
     }
 
     /**
@@ -193,12 +203,25 @@ class SystemModuleConfiguration extends ModuleConfiguration {
         this.configuration.set('path.entoj', path.resolve(this.configuration.get('path.entoj')));
         this.configuration.set('path.cache', path.resolve(this.configuration.get('path.cache')));
         this.configuration.set('path.sites', path.resolve(this.configuration.get('path.sites')));
+
+        // Server
+        this.configuration.set(
+            'server.baseUrl',
+            'http' +
+                (this.configuration.get('server.http2') ? 's' : '') +
+                '://localhost:' +
+                this.configuration.get('server.port')
+        );
     }
 
     /**
-     * A list of all entity categories
+     * A list of all entity category configurations.
      *
-     * @type {Object}
+     * The configurations are used to create EntityCategory objects from them.
+     * So you may use all defined fields of EntityCategory.
+     *
+     * @see {model.entity.EntityCategory}
+     * @type {Array}
      */
     get entityCategories() {
         return this.configuration.get('entityCategories');
@@ -207,6 +230,8 @@ class SystemModuleConfiguration extends ModuleConfiguration {
     /**
      * A map of all named breakpoints
      *
+     * You can specify the minWidth and maxWidth for each breakpoint.
+     *
      * @type {Object}
      */
     get breakpoints() {
@@ -214,7 +239,9 @@ class SystemModuleConfiguration extends ModuleConfiguration {
     }
 
     /**
-     * A map containing the derived media queries from breakpoints
+     * A map containing the derived media queries from breakpoints.
+     *
+     * Thse media queries are generated automatically.
      *
      * @type {Object}
      */
@@ -223,6 +250,8 @@ class SystemModuleConfiguration extends ModuleConfiguration {
     }
 
     /**
+     * The base or root path of a entoj project
+     *
      * @type {String}
      */
     get pathBase() {
@@ -230,6 +259,8 @@ class SystemModuleConfiguration extends ModuleConfiguration {
     }
 
     /**
+     * The path where entoj-confuguration.js lives
+     *
      * @type {String}
      */
     get pathEntoj() {
@@ -237,6 +268,8 @@ class SystemModuleConfiguration extends ModuleConfiguration {
     }
 
     /**
+     * The path to a cache or temp directory
+     *
      * @type {String}
      */
     get pathCache() {
@@ -244,6 +277,8 @@ class SystemModuleConfiguration extends ModuleConfiguration {
     }
 
     /**
+     * The path to a persistent data directory used to store project related data.
+     *
      * @type {String}
      */
     get pathData() {
@@ -251,6 +286,7 @@ class SystemModuleConfiguration extends ModuleConfiguration {
     }
 
     /**
+     * The path to the base directory for sites
      * @type {String}
      */
     get pathSites() {
@@ -258,6 +294,10 @@ class SystemModuleConfiguration extends ModuleConfiguration {
     }
 
     /**
+     * The path to a specific site.
+     *
+     * You have to use the ${site} variable if you happen to have more than one site.
+     *
      * @type {String}
      */
     get pathSite() {
@@ -265,6 +305,10 @@ class SystemModuleConfiguration extends ModuleConfiguration {
     }
 
     /**
+     * The path to a specific entity categery in a specific site.
+     *
+     * You have to use the ${site} and ${entityCategory} variable if you happen to have more than one category.
+     *
      * @type {String}
      */
     get pathEntityCategory() {
@@ -272,6 +316,10 @@ class SystemModuleConfiguration extends ModuleConfiguration {
     }
 
     /**
+     * The path to a specific entity in a specific site.
+     *
+     * You have to use the ${site}, ${entityCategory} and ${entityId} variable if you happen to have more than one entity.
+     *
      * @type {String}
      */
     get pathEntityId() {
@@ -340,6 +388,62 @@ class SystemModuleConfiguration extends ModuleConfiguration {
      */
     get routeEntityId() {
         return this.configuration.get('route.entityId');
+    }
+
+    /**
+     * @type {String}
+     */
+    get serverPort() {
+        return this.configuration.get('server.port');
+    }
+
+    /**
+     * @type {String}
+     */
+    get serverHttp2() {
+        return this.configuration.get('server.http2');
+    }
+
+    /**
+     * @type {String}
+     */
+    get serverSslKey() {
+        return this.configuration.get('server.sslKey');
+    }
+
+    /**
+     * @type {String}
+     */
+    get serverSslCert() {
+        return this.configuration.get('server.sslCert');
+    }
+
+    /**
+     * @type {String}
+     */
+    get serverAuthentication() {
+        return this.configuration.get('server.authentication');
+    }
+
+    /**
+     * @type {String}
+     */
+    get serverUser() {
+        return this.configuration.get('server.user');
+    }
+
+    /**
+     * @type {String}
+     */
+    get serverPassword() {
+        return this.configuration.get('server.password');
+    }
+
+    /**
+     * @type {String}
+     */
+    get serverBaseUrl() {
+        return this.configuration.get('server.baseUrl');
     }
 }
 
