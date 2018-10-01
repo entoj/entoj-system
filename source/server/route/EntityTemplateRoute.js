@@ -20,27 +20,6 @@ const co = require('co');
 const fs = require('co-fs-extra');
 
 /**
- * Page cache
- * @type {Map}
- */
-const pages = new Map();
-let pageCacheEnabled = false;
-
-/**
- * Enables the page cache
- */
-function enablePageCache() {
-    pageCacheEnabled = true;
-}
-
-/**
- * Disables the page cache
- */
-function disablePageCache() {
-    pageCacheEnabled = false;
-}
-
-/**
  * A route to server any entity related nunjucks files
  *
  * @memberOf server.routes
@@ -148,18 +127,6 @@ class EntityTemplateRoute extends Route {
     renderTemplate(path, request) {
         const scope = this;
         const promise = co(function*() {
-            // Check cache
-            if (pageCacheEnabled) {
-                if (pages.has(request.url)) {
-                    const work = scope.cliLogger.work(
-                        'Serving url <' + request.url + '> using cache'
-                    );
-                    const html = pages.get(request.url);
-                    scope.cliLogger.end(work);
-                    return html;
-                }
-            }
-
             // Check file hit
             let data = yield scope.urlsConfiguration.matchEntityFile(path);
             let filename;
@@ -219,18 +186,6 @@ class EntityTemplateRoute extends Route {
                 return;
             }
 
-            // Check cache
-            if (pageCacheEnabled) {
-                if (pages.has(request.url)) {
-                    const work = scope.cliLogger.work(
-                        'Serving url <' + request.url + '> using cache'
-                    );
-                    response.send(pages.get(request.url));
-                    scope.cliLogger.end(work);
-                    return;
-                }
-            }
-
             // Render template
             const work = scope.cliLogger.work('Serving url <' + request.url + '>');
             const html = yield scope.renderTemplate(request.path, request);
@@ -238,11 +193,6 @@ class EntityTemplateRoute extends Route {
                 scope.cliLogger.end(work, 'Rendering template failed');
                 next();
                 return;
-            }
-
-            // Update cache
-            if (pageCacheEnabled) {
-                pages.set(request.url, html);
             }
 
             // Send
@@ -271,5 +221,3 @@ class EntityTemplateRoute extends Route {
  * @ignore
  */
 module.exports.EntityTemplateRoute = EntityTemplateRoute;
-module.exports.enablePageCache = enablePageCache;
-module.exports.disablePageCache = disablePageCache;
