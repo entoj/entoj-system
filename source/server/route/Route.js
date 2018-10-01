@@ -57,6 +57,11 @@ class Route extends Base {
     }
 
     /**
+     * @return {void}
+     */
+    afterRegistration() {}
+
+    /**
      * Adds a route to static files located at basePath
      *
      * @protected
@@ -135,6 +140,7 @@ class Route extends Base {
      */
     register(server) {
         this._server = server;
+        this.afterRegistration();
         return Promise.resolve();
     }
 }

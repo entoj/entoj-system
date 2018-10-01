@@ -101,18 +101,6 @@ class GuiTemplateRoute extends Route {
             urls: synchronize(urlsConfiguration)
         };
 
-        // Routes
-        this._routes = [];
-        if (routes && Array.isArray(routes)) {
-            for (const routeConfig of routes) {
-                const route = {
-                    url: routeConfig.url || '/',
-                    template: routeConfig.template || 'index.j2'
-                };
-                this._routes.push(route);
-            }
-        }
-
         // Options
         const opts = options || {};
         this.templatePaths = opts.templatePaths || __dirname;
@@ -120,6 +108,21 @@ class GuiTemplateRoute extends Route {
 
         // Configure nunjucks
         this._nunjucks.templatePaths = this.templatePaths;
+
+        // Handlers
+        this._handlers = [];
+
+        // Routes
+        if (routes && Array.isArray(routes)) {
+            for (const route of routes) {
+                this.addTemplateHandler(
+                    route.url || '/',
+                    route.template,
+                    route.authenticate,
+                    route.resolver
+                );
+            }
+        }
     }
 
     /**
@@ -235,6 +238,17 @@ class GuiTemplateRoute extends Route {
     /**
      * @inheritDoc
      */
+    afterRegistration() {
+        if (this.server) {
+            for (const handler of this._handlers) {
+                this.server.express.all(handler.route, handler.handler);
+            }
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
     renderTemplate(filename, request, model) {
         const tpl = fs.readFileSync(filename, { encoding: 'utf8' });
         this.nunjucks.addGlobal('request', request);
@@ -258,7 +272,7 @@ class GuiTemplateRoute extends Route {
         const scope = this;
         const handler = (request, response, next) => {
             co(function*() {
-                scope.logger.trace('Trying route ' + route + ' for template ' + template);
+                scope.logger.debug('Trying route ' + route + ' for template ' + template);
 
                 const model = Object.assign({}, scope.defaultModel);
                 model.location = {
@@ -296,12 +310,12 @@ class GuiTemplateRoute extends Route {
 
                 // Check if valid page
                 if (request.params.entityId === 'examples') {
-                    scope.logger.trace('Skipping route ' + route + ': examples');
+                    scope.logger.debug('Skipping route ' + route + ': examples');
                     next();
                     return;
                 }
                 if (request.params.site && !model.location.site) {
-                    scope.logger.trace('Skipping route ' + route + ': missing site');
+                    scope.logger.debug('Skipping route ' + route + ': missing site');
                     next();
                     return;
                 }
@@ -310,12 +324,12 @@ class GuiTemplateRoute extends Route {
                     request.params.entityCategory &&
                     !model.location.entityCategory
                 ) {
-                    scope.logger.trace('Skipping route ' + route + ': missing entityCategory');
+                    scope.logger.debug('Skipping route ' + route + ': missing entityCategory');
                     next();
                     return;
                 }
                 if (request.params.entityId && !model.location.entity) {
-                    scope.logger.trace('Skipping route ' + route + ': missing entity');
+                    scope.logger.debug('Skipping route ' + route + ': missing entity');
                     next();
                     return;
                 }
@@ -325,25 +339,26 @@ class GuiTemplateRoute extends Route {
                 for (const templatePath of scope.templatePaths) {
                     if (!filename) {
                         filename = path.join(templatePath, '/' + template);
+                        scope.logger.debug('Trying template ' + filename + ' for route ' + route);
                         if (!fs.existsSync(filename)) {
                             filename = false;
                         }
                     }
                 }
                 if (!filename) {
-                    scope.logger.trace('Skipping route ' + route + ': missing template file');
+                    scope.logger.debug('Skipping route ' + route + ': missing template file');
                     next();
                     return;
                 }
 
                 // Check authentication
                 if (authenticate && !scope.server.authenticate(request, response, next)) {
-                    scope.logger.trace('Skipping route ' + route + ': failed autohorization');
+                    scope.logger.debug('Skipping route ' + route + ': failed autohorization');
                     return;
                 }
 
                 // Render
-                scope.logger.trace('Rendering route ' + route);
+                scope.logger.debug('Rendering route ' + route);
                 const templateShort = yield scope.pathesConfiguration.shorten(template);
                 const work = scope.cliLogger.work(
                     'Serving template <' + templateShort + '> for <' + request.url + '>'
@@ -353,7 +368,10 @@ class GuiTemplateRoute extends Route {
                 scope.cliLogger.end(work);
             });
         };
-        this.server.express.all(route, handler);
+        this._handlers.push({ route: route, handler: handler });
+        if (this.server) {
+            this.server.express.all(route, handler);
+        }
     }
 }
 
