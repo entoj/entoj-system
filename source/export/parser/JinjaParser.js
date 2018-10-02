@@ -433,6 +433,12 @@ class JinjaParser extends Parser
                     parse(node.expr, result);
                     break;
 
+                case 'In':
+                    parse(node.left, result);
+                    result.push(new OperandNode({ value: 'in' }));
+                    parse(node.right, result);
+                    break;
+
                 case 'Not':
                     result.push(new BooleanOperandNode({ value: 'not' }));
                     parse(node.target, result);

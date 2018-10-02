@@ -381,6 +381,41 @@
         },
         {
             "type": "TextNode",
+            "value": "\n<!-- in operator -->\n"
+        },
+        {
+            "type": "IfNode",
+            "children": [
+                {
+                    "type": "TextNode",
+                    "value": "SOCIAL"
+                }
+            ],
+            "condition": {
+                "type": "ConditionNode",
+                "children": [
+                    {
+                        "type": "LiteralNode",
+                        "value": "social"
+                    },
+                    {
+                        "type": "OperandNode",
+                        "value": "in"
+                    },
+                    {
+                        "type": "VariableNode",
+                        "fields": [
+                            "model",
+                            "view"
+                        ]
+                    }
+                ]
+            },
+            "elseIfChildren": [],
+            "elseChildren": []
+        },
+        {
+            "type": "TextNode",
             "value": "\n"
         }
     ]

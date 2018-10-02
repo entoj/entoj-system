@@ -16,3 +16,5 @@
 {% set value = type if type else '' %}
 <!-- with a function call -->
 {% if model.copy() %}COPY{% endif %}
+<!-- in operator -->
+{% if 'social' in model.view %}SOCIAL{% endif %}
