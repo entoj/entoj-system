@@ -99,6 +99,13 @@ describe(BaseMap.className, function() {
             expect(testee.getByPath('map.path.to')).to.be.equal('map');
         });
 
+        it('should support wildcards at the end of a path', function() {
+            const testee = createTestee();
+            testee.set('object', { path: { to: 'object', other: 'wildcard' } });
+
+            expect(testee.getByPath('object.path.*')).to.be.deep.equal({ to: 'object', other: 'wildcard' });
+        });
+
         it('should return undefined when path is not found and no defaultValue given', function() {
             const testee = createTestee();
             testee.set('object', { path: { to: 'object' } });

@@ -81,7 +81,13 @@ class BaseMap extends BaseMixin(Map) {
         // Walk path and find value
         const names = path.split('.');
         let current = this;
+        let index = 0;
         for (const name of names) {
+            // See if it is a * at the end
+            if (name == '*' && index == names.length - 1) {
+                return current;
+            }
+
             // Try to get value at current name
             if (current instanceof Map) {
                 current = current.get(name);
@@ -95,6 +101,9 @@ class BaseMap extends BaseMixin(Map) {
             if (typeof current === 'undefined') {
                 return defaultValue;
             }
+
+            // Inc index
+            index++;
         }
 
         return current;
