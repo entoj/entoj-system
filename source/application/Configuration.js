@@ -196,14 +196,6 @@ class Configuration extends Base {
             ]
         });
 
-        // Settings
-        this.mappings.add(
-            require('../model/index.js').setting.SettingsLoader,
-            this.clean({
-                filenameTemplate: this.options.models.settingsFile
-            })
-        );
-
         // ModelSynchronizer
         this.mappings.add(require('../watch/index.js').ModelSynchronizer, {
             '!plugins': [
