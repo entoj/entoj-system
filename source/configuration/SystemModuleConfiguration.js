@@ -114,6 +114,9 @@ class SystemModuleConfiguration extends ModuleConfiguration {
             '${path.entityCategory}/${entityCategory.shortName.toLowerCase()}-${entityId.name.toLowerCase().dasherize()}'
         );
 
+        // Filenames
+        this.addMeta('filename.settings', 'system.filename.settings', '${path.site}/settings.json');
+
         // Urls
         this.addMeta('url.base', 'system.url.base', '');
         this.addMeta('url.site', 'system.url.site', '${url.base}/${site.name.urlify()}');
@@ -287,6 +290,7 @@ class SystemModuleConfiguration extends ModuleConfiguration {
 
     /**
      * The path to the base directory for sites
+     *
      * @type {String}
      */
     get pathSites() {
@@ -295,8 +299,6 @@ class SystemModuleConfiguration extends ModuleConfiguration {
 
     /**
      * The path to a specific site.
-     *
-     * You have to use the ${site} variable if you happen to have more than one site.
      *
      * @type {String}
      */
@@ -307,8 +309,6 @@ class SystemModuleConfiguration extends ModuleConfiguration {
     /**
      * The path to a specific entity categery in a specific site.
      *
-     * You have to use the ${site} and ${entityCategory} variable if you happen to have more than one category.
-     *
      * @type {String}
      */
     get pathEntityCategory() {
@@ -318,12 +318,21 @@ class SystemModuleConfiguration extends ModuleConfiguration {
     /**
      * The path to a specific entity in a specific site.
      *
-     * You have to use the ${site}, ${entityCategory} and ${entityId} variable if you happen to have more than one entity.
-     *
      * @type {String}
      */
     get pathEntityId() {
         return this.configuration.get('path.entityId');
+    }
+
+    /**
+     * The path to the settings file for a site.
+     *
+     * You should to use the ${path.site} variable if you happen to have more than one site.
+     *
+     * @type {String}
+     */
+    get filenameSettings() {
+        return this.configuration.get('filename.settings');
     }
 
     /**

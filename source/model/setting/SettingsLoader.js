@@ -5,8 +5,11 @@
  * @ignore
  */
 const DataLoader = require('../data/DataLoader.js').DataLoader;
+const SystemModuleConfiguration = require('../../configuration/SystemModuleConfiguration.js').SystemModuleConfiguration;
 const PathesConfiguration = require('../configuration/PathesConfiguration.js').PathesConfiguration;
 const SitesRepository = require('../site/SitesRepository.js').SitesRepository;
+const assertParameter = require('../../utils/assert.js').assertParameter;
+
 
 /**
  * @class
@@ -17,11 +20,11 @@ class SettingsLoader extends DataLoader {
     /**
      * @ignore
      */
-    constructor(sitesRepository, pathesConfiguration, filenameTemplate) {
-        super(sitesRepository, pathesConfiguration, filenameTemplate);
+    constructor(sitesRepository, pathesConfiguration, moduleConfiguration) {
+        super(sitesRepository, pathesConfiguration, moduleConfiguration.filenameSettings);
 
-        // Assign options
-        this._filenameTemplate = filenameTemplate || '${path.site}/settings.json';
+        // Check params
+        assertParameter(this, 'moduleConfiguration', moduleConfiguration, true, SystemModuleConfiguration);
     }
 
     /**
@@ -32,7 +35,7 @@ class SettingsLoader extends DataLoader {
             parameters: [
                 SitesRepository,
                 PathesConfiguration,
-                'model.setting/SettingsLoader.filenameTemplate'
+                SystemModuleConfiguration
             ]
         };
     }

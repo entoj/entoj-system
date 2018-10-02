@@ -14,6 +14,11 @@ describe(SettingsLoader.className, function() {
      * DataLoader Test
      */
     dataLoaderSpec(SettingsLoader, 'model.setting/SettingsLoader', function(parameters) {
+        if (parameters.length == 1) {
+            global.fixtures.moduleConfiguration.configuration.set('filename.settings', parameters[0]);
+            parameters = [];
+        }
+        parameters.unshift(global.fixtures.moduleConfiguration);
         parameters.unshift(global.fixtures.pathesConfiguration);
         parameters.unshift(global.fixtures.sitesRepository);
         return parameters;

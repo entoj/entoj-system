@@ -24,11 +24,12 @@ describe(SettingFilter.className, function() {
      */
     beforeEach(function() {
         global.fixtures = projectFixture.createStatic();
+        global.fixtures.moduleConfiguration.configuration.set('filename.settings', ES_FIXTURES + '/model/SettingsModel.json');
         global.fixtures.settingsRepository = new SettingsRepository(
             new SettingsLoader(
                 global.fixtures.sitesRepository,
                 global.fixtures.pathesConfiguration,
-                ES_FIXTURES + '/model/SettingsModel.json'
+                global.fixtures.moduleConfiguration
             )
         );
     });
