@@ -60,10 +60,36 @@ describe(DIContainer.className, function() {
         }
     }
 
+    class Dealer extends Base {
+        constructor(cars, options) {
+            super();
+            this.cars = cars;
+            this.options = options;
+        }
+
+        static get className() {
+            return 'Dealer';
+        }
+
+        static get injections() {
+            return this._injections;
+        }
+    }
+
     describe('#create & #map', function() {
-        it('should return undefined if given type is falsy', function() {
+        it('should throw when giving a falsy type to create', function() {
             const testee = new DIContainer();
-            expect(testee.create()).to.be.undefined;
+            expect(() => testee.create()).to.throw();
+        });
+
+        it('should throw when giving a falsy type to map', function() {
+            const testee = new DIContainer();
+            expect(() => testee.map()).to.throw();
+        });
+
+        it('should throw when giving a undefined value to map', function() {
+            const testee = new DIContainer();
+            expect(() => testee.map('name')).to.throw();
         });
 
         it('should return a instance of given type', function() {
@@ -144,6 +170,50 @@ describe(DIContainer.className, function() {
             Car._injections = { parameters: [Color] };
             expect(testee.create(Car).color).to.be.equal(color);
             expect(testee.create(Car).color).to.be.equal(color);
+        });
+
+        describe('mode=instance', function() {
+            it('should ensure to create a instance when given a class as a named parameter', function() {
+                const testee = new DIContainer();
+                testee.map('color', ShinyColor);
+                Car._injections = { parameters: ['color'], modes: ['instance'] };
+                const car = testee.create(Car);
+                expect(car).to.be.instanceof(Car);
+                expect(car.color).to.be.instanceof(ShinyColor);
+            });
+
+            it('should ensure to create a instance when given a configuration as a named parameter', function() {
+                const testee = new DIContainer();
+                testee.map('color', {
+                    type: ShinyColor
+                });
+                Car._injections = { parameters: ['color'], modes: ['instance'] };
+                const car = testee.create(Car);
+                expect(car).to.be.instanceof(Car);
+                expect(car.color).to.be.instanceof(ShinyColor);
+            });
+
+            it('should ensure to create instances when given a class or configuration in a array', function() {
+                const testee = new DIContainer();
+                testee.map(Color, ShinyColor);
+                testee.map('cars', [
+                    new Car(),
+                    Car,
+                    {
+                        type: Car,
+                        arguments: [[Color, Color]]
+                    }
+                ]);
+                Car._injections = { parameters: [Color] };
+                Dealer._injections = { parameters: ['cars'], modes: ['instance'] };
+                const dealer = testee.create(Dealer);
+                expect(dealer.cars).to.have.length(3);
+                expect(dealer.cars[0]).to.be.instanceof(Car);
+                expect(dealer.cars[1]).to.be.instanceof(Car);
+                expect(dealer.cars[1].color).to.be.instanceof(ShinyColor);
+                expect(dealer.cars[2]).to.be.instanceof(Car);
+                expect(dealer.cars[2].color).to.be.instanceof(Color);
+            });
         });
 
         it('should allow to override mappings', function() {
