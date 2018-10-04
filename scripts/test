@@ -10,12 +10,25 @@ MOCHA=$SELF/../node_modules/mocha/bin/mocha
 _MOCHA=$SELF/../node_modules/mocha/bin/_mocha
 ISTANBUL=$SELF/../node_modules/istanbul/lib/cli.js
 CODE_COVERAGE="false"
+TEST_GLOB="*"
+MOCHA_OPTS=""
 
 # Prepare options
-for arg do
-  shift
-  [ "$arg" = "--coverage" ] && CODE_COVERAGE="true" && continue
-  set -- "$@" "$arg"
+while [[ $# -gt 0 ]]; do
+    key="$1"
+    case "$key" in
+        --coverage)
+        CODE_COVERAGE="true"
+        ;;
+        --glob)
+        shift
+        TEST_GLOB="$1"
+        ;;
+        *)
+        MOCHA_OPTS="${MOCHA_OPTS}$key "
+        ;;
+    esac
+    shift
 done
 
 # Prepare runner
@@ -29,4 +42,4 @@ if [ "$CODE_COVERAGE" == "true" ]
 fi
 
 # Doit
-$RUNNER "$@" "./test/**/*Spec.js";
+$RUNNER $MOCHA_OPTS "./test/**/${TEST_GLOB}Spec.js";
