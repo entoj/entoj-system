@@ -106,11 +106,7 @@ class Configuration extends Base {
 
         // Initialize
         this._options = options || {};
-        this._options.models = this._options.models || {};
-        this._options.server = this._options.server || {};
-        (this._local = localConfiguration || {}), (this._settings = {});
-        this._urls = {};
-        this._pathes = {};
+        this._local = localConfiguration || {};
         this._mappings = [];
         this._commands = [];
         this._build = {
@@ -121,12 +117,8 @@ class Configuration extends Base {
         // Add functions
         this.mappings.add = (type, sourceType, values) =>
             add(this, 'mappings', type, sourceType, values);
-        this.settings.add = (type, sourceType, values) =>
-            add(this, 'settings', type, sourceType, values);
         this.commands.add = (type, sourceType, values) =>
             add(this, 'commands', type, sourceType, values);
-        this.pathes.add = (values) => Object.assign(this._pathes, values);
-        this.urls.add = (values) => Object.assign(this._urls, values);
         this.build.add = (values) => Object.assign(this._build, values);
         this.build.environments.add = (values) => Object.assign(this._build.environments, values);
 
@@ -145,17 +137,6 @@ class Configuration extends Base {
      * Creates a usable default configuration
      */
     setup() {
-        // Settings
-        this.settings.add({
-            formats: {
-                date: 'DD.MM.YYYY',
-                number: '0.00'
-            }
-        });
-        if (this.options.settings) {
-            this.settings.add(this.options.settings);
-        }
-
         // Sites
         this.mappings.add(require('../model/index.js').site.SitesLoader, {
             '!plugins': [
@@ -167,7 +148,7 @@ class Configuration extends Base {
         // Entities
         this.mappings.add(require('../parser/index.js').entity.CompactIdParser, {
             options: {
-                useNumbers: this.options.entityIdUseNumbers || false
+                useNumbers: false
             }
         });
         this.mappings.add(require('../model/index.js').entity.EntitiesLoader, {
@@ -208,7 +189,7 @@ class Configuration extends Base {
         // Nunjucks filter & tags
         this.mappings.add(require('../nunjucks/index.js').Environment, {
             options: {
-                templatePaths: this.pathes.root + '/sites'
+                templatePaths: '${path.sites}'
             },
             '!tags': [
                 {
@@ -217,8 +198,7 @@ class Configuration extends Base {
             ],
             '!filters': this.clean([
                 {
-                    type: require('../nunjucks/index.js').filter.AssetUrlFilter,
-                    baseUrl: this.options.filters.assetUrl
+                    type: require('../nunjucks/index.js').filter.AssetUrlFilter
                 },
                 {
                     type: require('../nunjucks/index.js').filter.AttributesFilter
@@ -230,20 +210,13 @@ class Configuration extends Base {
                     type: require('../nunjucks/index.js').filter.EmptyFilter
                 },
                 {
-                    type: require('../nunjucks/index.js').filter.FormatDateFilter
-                },
-                {
-                    type: require('../nunjucks/index.js').filter.FormatNumberFilter
-                },
-                {
                     type: require('../nunjucks/index.js').filter.HyphenateFilter
                 },
                 {
                     type: require('../nunjucks/index.js').filter.JsonEncodeFilter
                 },
                 {
-                    type: require('../nunjucks/index.js').filter.LinkUrlFilter,
-                    dataProperties: this.options.filters.linkProperties
+                    type: require('../nunjucks/index.js').filter.LinkUrlFilter
                 },
                 {
                     type: require('../nunjucks/index.js').filter.LipsumFilter
@@ -255,8 +228,7 @@ class Configuration extends Base {
                     type: require('../nunjucks/index.js').filter.MarkdownFilter
                 },
                 {
-                    type: require('../nunjucks/index.js').filter.MarkupFilter,
-                    styles: this.options.filters.markupStyles
+                    type: require('../nunjucks/index.js').filter.MarkupFilter
                 },
                 {
                     type: require('../nunjucks/index.js').filter.MediaQueryFilter
@@ -277,12 +249,10 @@ class Configuration extends Base {
                     type: require('../nunjucks/index.js').filter.SettingFilter
                 },
                 {
-                    type: require('../nunjucks/index.js').filter.SvgUrlFilter,
-                    baseUrl: this.options.filters.svgUrl || '/'
+                    type: require('../nunjucks/index.js').filter.SvgUrlFilter
                 },
                 {
-                    type: require('../nunjucks/index.js').filter.SvgViewBoxFilter,
-                    basePath: this.options.filters.svgPath || '/'
+                    type: require('../nunjucks/index.js').filter.SvgViewBoxFilter
                 },
                 {
                     type: require('../nunjucks/index.js').filter.UniqueFilter
@@ -305,21 +275,17 @@ class Configuration extends Base {
                 {
                     type: require('../server/index.js').route.StaticFileRoute,
                     options: {
-                        basePath: '${sites}',
-                        allowedExtensions: this.options.server.staticExtensions
+                        basePath: '${path.sites}'
                     }
                 },
                 {
                     type: require('../server/index.js').route.EntityTemplateRoute,
                     options: {
-                        basePath: '${sites}'
+                        basePath: '${path.sites}'
                     }
                 }
             ]
         });
-
-        // Config
-        this.commands.add(require('../command/index.js').ConfigCommand);
     }
 
     /**
@@ -334,13 +300,6 @@ class Configuration extends Base {
      */
     get local() {
         return this._local;
-    }
-
-    /**
-     * @type {Object}
-     */
-    get settings() {
-        return this._settings;
     }
 
     /**
