@@ -51,7 +51,7 @@ function convertToLiterals(parameters, configuration) {
                 (parameter.type.indexOf('Enumeration') > -1 ||
                     parameter.type.indexOf('String') > -1)
             ) {
-                parameter.value = "'" + parameter.value + "'";
+                parameter.value = '\'' + parameter.value + '\'';
             }
         }
         return result;

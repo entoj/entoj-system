@@ -5,11 +5,11 @@
  * @ignore
  */
 const DataLoader = require('../data/DataLoader.js').DataLoader;
-const SystemModuleConfiguration = require('../../configuration/SystemModuleConfiguration.js').SystemModuleConfiguration;
+const SystemModuleConfiguration = require('../../configuration/SystemModuleConfiguration.js')
+    .SystemModuleConfiguration;
 const PathesConfiguration = require('../configuration/PathesConfiguration.js').PathesConfiguration;
 const SitesRepository = require('../site/SitesRepository.js').SitesRepository;
 const assertParameter = require('../../utils/assert.js').assertParameter;
-
 
 /**
  * @class
@@ -24,7 +24,13 @@ class SettingsLoader extends DataLoader {
         super(sitesRepository, pathesConfiguration, moduleConfiguration.filenameSettings);
 
         // Check params
-        assertParameter(this, 'moduleConfiguration', moduleConfiguration, true, SystemModuleConfiguration);
+        assertParameter(
+            this,
+            'moduleConfiguration',
+            moduleConfiguration,
+            true,
+            SystemModuleConfiguration
+        );
     }
 
     /**
@@ -32,11 +38,7 @@ class SettingsLoader extends DataLoader {
      */
     static get injections() {
         return {
-            parameters: [
-                SitesRepository,
-                PathesConfiguration,
-                SystemModuleConfiguration
-            ]
+            parameters: [SitesRepository, PathesConfiguration, SystemModuleConfiguration]
         };
     }
 
