@@ -101,7 +101,27 @@ class DIContainer extends Base {
     }
 
     /**
+     * Get the mapping information for the given type
+     *
+     * @protected
+     * @param {string|Class} type
+     * @returns {mixed}
+     */
+    getMappingForType(type) {
+        if (!type) {
+            throw new TypeError(this.className + ' - Tried to get mapping for a falsy type');
+        }
+        const key = this.getKeyForType(type);
+        if (!this.mappings.has(key)) {
+            return false;
+        }
+        return this.mappings.get(key);
+    }
+
+    /**
      * Maps type to value.
+     *
+     * When the mapping already exists the singleton flag is only touched when isSingleton is either true or false.
      *
      * * If type and value are classes this becomes a type to type mapping
      * * If type is a string this becomes a named value mapping
@@ -109,33 +129,93 @@ class DIContainer extends Base {
      *
      * @param {string|Class} type
      * @param {*} the value used for type when creating objects
-     * @param {bool} isSingleton
+     * @param {bool} [isSingleton]
      * @returns {void}
      */
     map(type, value, isSingleton) {
+        const currentMapping = this.getMappingForType(type);
+        const singleton = currentMapping
+            ? typeof isSingleton != 'undefined'
+                ? isSingleton
+                : currentMapping.isSingleton
+            : currentMapping.isSingleton || isSingleton || false;
         const typeKey = this.getKeyForType(type);
-        const mapping = this.prepareMapping(type, value, isSingleton);
+        const mapping = this.prepareMapping(type, value, singleton);
         this.mappings.set(typeKey, mapping);
     }
 
     /**
-     * Maps a type via a configuration object
+     * Maps type to value as a singleton
      *
-     * @param {Object} confguration
+     * * If type and value are classes this becomes a type to type mapping
+     * * If type is a string this becomes a named value mapping
+     * * If type is a class and value not this becomes a implicit singleton
+     *
+     * @param {string|Class} type
+     * @param {*} the value used for type when creating objects
      * @returns {void}
      */
-    mapConfiguration(confguration) {
-        // Map main
+    mapAsSingleton(type, value) {
+        this.map(type, value, true);
+    }
+
+    /**
+     * Maps a type via a configuration object.
+     * Parameters will get mapped seperatly as long as the are named dependencies.
+     *
+     * {
+     *   type: Class,
+     *   sourceType: Class,
+     *   singleton: Boolean,
+     *   parameters: [
+     *     [name, value]
+     *   ]
+     * }
+     *
+     * @param {Object} confguration
+     * @param {Boolean} [replace]
+     * @returns {void}
+     */
+    mapViaConfiguration(configuration, replace) {
+        if (!configuration || !isPlainObject(configuration)) {
+            throw new TypeError(this.className + ' - Tried to map a invalid configuration');
+        }
+        if (!configuration.type) {
+            throw new TypeError(this.className + ' - Tried to map a configuration without a type');
+        }
+
+        // Map
         this.map(
-            confguration.sourceType || confguration.type,
-            confguration.value,
-            confguration.isSingleton || false
+            configuration.sourceType || configuration.type,
+            configuration.type,
+            configuration.isSingleton
         );
 
         // Map parameters
-        if (confguration.parameters) {
-            for (const parameter of confguration.parameters) {
-                //const type = parameter
+        if (
+            typeof configuration.type != 'string' &&
+            configuration.parameters &&
+            configuration.parameters.length
+        ) {
+            for (const parameter of configuration.parameters) {
+                if (
+                    !Array.isArray(parameter) ||
+                    parameter.length != 2 ||
+                    typeof parameter[0] != 'string'
+                ) {
+                    continue;
+                }
+                const name = configuration.type.className + '.' + parameter[0];
+                if (replace == true) {
+                    this.map(name, parameter[1]);
+                } else {
+                    const currentMapping = this.getMappingForType(name);
+                    let value = parameter[1];
+                    if (currentMapping && Array.isArray(currentMapping.value)) {
+                        value = currentMapping.value.concat(parameter[1]);
+                    }
+                    this.map(name, value);
+                }
             }
         }
     }

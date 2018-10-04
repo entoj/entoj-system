@@ -76,20 +76,177 @@ describe(DIContainer.className, function() {
         }
     }
 
-    describe('#create & #map', function() {
-        it('should throw when giving a falsy type to create', function() {
-            const testee = new DIContainer();
-            expect(() => testee.create()).to.throw();
-        });
-
-        it('should throw when giving a falsy type to map', function() {
+    describe('#map', function() {
+        it('should throw when given a falsy type', function() {
             const testee = new DIContainer();
             expect(() => testee.map()).to.throw();
         });
 
-        it('should throw when giving a undefined value to map', function() {
+        it('should throw when given a undefined value', function() {
             const testee = new DIContainer();
             expect(() => testee.map('name')).to.throw();
+        });
+
+        it('should create a mapping', function() {
+            const testee = new DIContainer();
+            testee.map('name', 'Bruce');
+            expect(testee.getMappingForType('name')).to.be.deep.equal({
+                type: undefined,
+                isSingleton: false,
+                value: 'Bruce'
+            });
+        });
+
+        it('should overwrite existing mappings', function() {
+            const testee = new DIContainer();
+            testee.map('name', Base, true);
+            testee.map('name', 'Clark', false);
+            expect(testee.getMappingForType('name')).to.be.deep.equal({
+                type: undefined,
+                isSingleton: false,
+                value: 'Clark'
+            });
+        });
+
+        it('should preserve the singleton flag from a existing mapping if not specified', function() {
+            const testee = new DIContainer();
+            testee.map(Base, Base, true);
+            testee.map(Base, DIContainer);
+            expect(testee.getMappingForType(Base)).to.be.deep.equal({
+                type: DIContainer,
+                isSingleton: true,
+                value: undefined
+            });
+        });
+    });
+
+    describe('#mapAsSingleton', function() {
+        it('should throw when given a falsy type', function() {
+            const testee = new DIContainer();
+            expect(() => testee.mapAsSingleton()).to.throw();
+        });
+
+        it('should throw when given a undefined value', function() {
+            const testee = new DIContainer();
+            expect(() => testee.mapAsSingleton('name')).to.throw();
+        });
+
+        it('should create a singleton mapping', function() {
+            const testee = new DIContainer();
+            testee.mapAsSingleton(Base, Base);
+            expect(testee.getMappingForType(Base)).to.be.deep.equal({
+                type: Base,
+                isSingleton: true,
+                value: undefined
+            });
+        });
+    });
+
+    describe('#mapViaConfiguration', function() {
+        it('should throw when given a falsy configuration', function() {
+            const testee = new DIContainer();
+            expect(() => testee.mapViaConfiguration()).to.throw();
+        });
+
+        it('should throw when given no type', function() {
+            const testee = new DIContainer();
+            expect(() => testee.mapViaConfiguration({})).to.throw();
+        });
+
+        it('should create a mapping', function() {
+            const testee = new DIContainer();
+            testee.mapViaConfiguration({
+                type: Base
+            });
+            expect(testee.getMappingForType(Base)).to.be.deep.equal({
+                type: Base,
+                isSingleton: false,
+                value: undefined
+            });
+        });
+
+        it('should allow to remap types', function() {
+            const testee = new DIContainer();
+            testee.map(Base, Base, true);
+            testee.mapViaConfiguration({
+                type: DIContainer,
+                sourceType: Base
+            });
+            expect(testee.getMappingForType(Base)).to.be.deep.equal({
+                type: DIContainer,
+                isSingleton: true,
+                value: undefined
+            });
+        });
+
+        it('should update a existing mapping', function() {
+            const testee = new DIContainer();
+            testee.map(Base, Base, true);
+            testee.mapViaConfiguration({
+                type: Base
+            });
+            expect(testee.getMappingForType(Base)).to.be.deep.equal({
+                type: Base,
+                isSingleton: true,
+                value: undefined
+            });
+        });
+
+        it('should allow to map named parameters', function() {
+            const testee = new DIContainer();
+            testee.mapViaConfiguration({
+                type: Base,
+                parameters: [['name', 'Clark']]
+            });
+            expect(testee.getMappingForType('Base.name')).to.be.deep.equal({
+                type: undefined,
+                isSingleton: false,
+                value: 'Clark'
+            });
+        });
+
+        it('should update a existing parameter mapping', function() {
+            const testee = new DIContainer();
+            testee.mapViaConfiguration({
+                type: Base,
+                parameters: [['name', ['Clark']]]
+            });
+            testee.mapViaConfiguration({
+                type: Base,
+                parameters: [['name', ['Bruce']]]
+            });
+            expect(testee.getMappingForType('Base.name')).to.be.deep.equal({
+                type: undefined,
+                isSingleton: false,
+                value: ['Clark', 'Bruce']
+            });
+        });
+
+        it('should replace a existing parameter mapping when replace = true', function() {
+            const testee = new DIContainer();
+            testee.mapViaConfiguration({
+                type: Base,
+                parameters: [['name', 'Clark']]
+            });
+            testee.mapViaConfiguration(
+                {
+                    type: Base,
+                    parameters: [['name', 'Bruce']]
+                },
+                true
+            );
+            expect(testee.getMappingForType('Base.name')).to.be.deep.equal({
+                type: undefined,
+                isSingleton: false,
+                value: 'Bruce'
+            });
+        });
+    });
+
+    xdescribe('#create', function() {
+        it('should throw when giving a falsy type to create', function() {
+            const testee = new DIContainer();
+            expect(() => testee.create()).to.throw();
         });
 
         it('should return a instance of given type', function() {
