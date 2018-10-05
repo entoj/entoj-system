@@ -73,7 +73,8 @@ class EntitiesLoader extends PluggableLoader {
                 IdParser,
                 PathesConfiguration,
                 'model.entity/EntitiesLoader.plugins'
-            ]
+            ],
+            modes: [false, false, false, false, 'instance']
         };
     }
 

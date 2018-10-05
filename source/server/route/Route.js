@@ -50,6 +50,14 @@ class Route extends Base {
     }
 
     /**
+     * @type {cli.CliLogger}
+     */
+    set cliLogger(value) {
+        assertParameter(this, 'cliLogger', value, true, CliLogger);
+        this._cliLogger = value;
+    }
+
+    /**
      * @type {express}
      */
     get server() {

@@ -35,7 +35,7 @@ class GuiTemplateRoute extends Route {
      * @param {model.site.SitesRepository} sitesRepository
      * @param {model.entity.EntityCategoriesRepository} entityCategoriesRepository
      * @param {model.entity.EntitiesRepository} entitiesRepository
-     * @param {configuration.SystemModuleConfiguration} SystemModuleConfiguration
+     * @param {configuration.SystemModuleConfiguration} moduleConfiguration
      * @param {model.configuration.UrlsConfiguration} urlsConfiguration
      * @param {model.configuration.PathesConfiguration} pathesConfiguration
      * @param {model.configuration.BuildConfiguration} buildConfiguration

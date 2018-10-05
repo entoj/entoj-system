@@ -46,7 +46,10 @@ class ModelSynchronizer extends Base {
      * @inheritDoc
      */
     static get injections() {
-        return { parameters: [CliLogger, FileWatcher, 'watch/ModelSynchronizer.plugins'] };
+        return {
+            parameters: [CliLogger, FileWatcher, 'watch/ModelSynchronizer.plugins'],
+            modes: [false, false, 'instance']
+        };
     }
 
     /**

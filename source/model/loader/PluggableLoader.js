@@ -51,7 +51,11 @@ class PluggableLoader extends Loader {
         const scope = this;
         const promise = co(function*() {
             for (const plugin of scope._plugins) {
-                yield plugin.execute(item);
+                if (typeof plugin.execute == 'function') {
+                    yield plugin.execute(item);
+                } else {
+                    throw new Error(this.className + ' - Invalid plugin found');
+                }
             }
             return true;
         });

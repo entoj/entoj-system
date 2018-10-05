@@ -12,6 +12,7 @@ const EntitiesRepository = require('../model/entity/EntitiesRepository.js').Enti
 const PathesConfiguration = require('../model/configuration/PathesConfiguration.js')
     .PathesConfiguration;
 const Template = require('./Template.js').Template;
+const Filter = require('./filter/Filter.js').Filter;
 const assertParameter = require('../utils/assert.js').assertParameter;
 const waitForPromise = require('../utils/synchronize.js').waitForPromise;
 const nunjucks = require('nunjucks');
@@ -74,7 +75,11 @@ class Environment extends BaseMixin(nunjucks.Environment) {
         // Add filters
         if (Array.isArray(this._filters)) {
             for (const filter of this._filters) {
-                filter.register(this);
+                if (filter instanceof Filter) {
+                    filter.register(this);
+                } else {
+                    throw new Error('Environment was configured with invalid Filter');
+                }
             }
         }
 
@@ -98,7 +103,8 @@ class Environment extends BaseMixin(nunjucks.Environment) {
                 'nunjucks/Environment.filters',
                 'nunjucks/Environment.tags',
                 'nunjucks/Environment.options'
-            ]
+            ],
+            modes: [false, false, false, 'instance', 'instance']
         };
     }
 

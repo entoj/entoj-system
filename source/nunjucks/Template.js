@@ -123,6 +123,9 @@ class Template extends Base {
      */
     getInclude(name, site) {
         const items = synchronize.execute(this._entitiesRepository, 'getItems');
+        if (!items) {
+            return false;
+        }
         for (const item of items) {
             // Get all matching macros
             const macros = item.documentation.filter((doc) => {

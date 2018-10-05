@@ -55,7 +55,8 @@ class LintCommand extends Command {
                 PathesConfiguration,
                 'command/LintCommand.linters',
                 'command/LintCommand.options'
-            ]
+            ],
+            modes: [false, false, false, 'instance']
         };
     }
 

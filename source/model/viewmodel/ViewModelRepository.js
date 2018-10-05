@@ -53,7 +53,8 @@ class ViewModelRepository extends Base {
                 EntitiesRepository,
                 PathesConfiguration,
                 'model.viewmodel/ViewModelRepository.plugins'
-            ]
+            ],
+            modes: [false, false, 'instance']
         };
     }
 

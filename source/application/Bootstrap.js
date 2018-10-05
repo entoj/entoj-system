@@ -7,6 +7,7 @@
 const Base = require('../Base.js').Base;
 const DIContainer = require('../utils/DIContainer.js').DIContainer;
 const merge = require('lodash.merge');
+const fs = require('fs');
 
 /**
  * The application bootstrapper
@@ -52,7 +53,7 @@ class Bootstrap extends Base {
      * Adds the given configuration
      */
     addConfiguration(configuration) {
-        this.configuration = merge(this.configuration, configuration);
+        this._configuration = merge(this._configuration, configuration);
     }
 
     /**
@@ -241,30 +242,29 @@ class Bootstrap extends Base {
     /**
      * @protected
      */
-    modules() {}
+    modules() {
+        const root = process.cwd();
+        const packages = JSON.parse(fs.readFileSync(root + '/package.json'));
+        for (const pck in packages.dependencies) {
+            if (pck.startsWith('entoj-')) {
+                const module = require(root + '/node_modules/' + pck);
+                if (module && module.configure) {
+                    module.configure(this);
+                }
+            }
+        }
+    }
 
     /**
      * Starts the configuration bootstrapping
      */
     start() {
         this.prepare();
-        if (typeof bootstrapper == 'function') {
+        if (typeof this._bootstrapper == 'function') {
             this._bootstrapper(this);
         }
         this.modules();
         this.finalize();
-    }
-
-    /**
-     * Registers a module
-     *
-     * @param {Object} module
-     * @param {Object} options
-     */
-    register(module) {
-        if (module && typeof module.register === 'function') {
-            module.register(this);
-        }
     }
 }
 

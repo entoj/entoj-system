@@ -10,7 +10,6 @@ const Context = require('../application/Context.js').Context;
 const SystemModuleConfiguration = require('../configuration/SystemModuleConfiguration.js')
     .SystemModuleConfiguration;
 const Communication = require('../application/Communication.js').Communication;
-const CliLogger = require('../cli/CliLogger.js').CliLogger;
 const ModelSynchronizer = require('../watch/ModelSynchronizer.js').ModelSynchronizer;
 const EntitiesRepository = require('../model/entity/EntitiesRepository.js').EntitiesRepository;
 const ErrorHandler = require('../error/ErrorHandler.js').ErrorHandler;
@@ -36,7 +35,10 @@ class ServerCommand extends Command {
      * @inheritDoc
      */
     static get injections() {
-        return { parameters: [Context, 'command/ServerCommand.routes'] };
+        return {
+            parameters: [Context, 'command/ServerCommand.routes'],
+            modes: [false, 'instance']
+        };
     }
 
     /**
@@ -127,20 +129,9 @@ class ServerCommand extends Command {
                 const configure = logger.section('Configuring routes');
                 const routes = [];
                 for (const route of scope.routes) {
-                    const work = logger.work('Configuring route <' + route.type.className + '>');
-                    const type = route.type;
-                    const mappings = new Map();
-                    for (const key in route) {
-                        if (key !== 'type') {
-                            mappings.set(type.className + '.' + key, route[key]);
-                        }
-                    }
-                    mappings.set(CliLogger, logger);
-                    const routeInstance = scope.context.di.create(type, mappings);
-                    if (!routeInstance) {
-                        throw new Error('Could not get instance of ' + type.className);
-                    }
-                    routes.push(routeInstance);
+                    const work = logger.work('Configuring route <' + route.className + '>');
+                    route.cliLogger = logger;
+                    routes.push(route);
                     logger.end(work);
                 }
                 logger.end(configure);

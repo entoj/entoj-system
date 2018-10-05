@@ -43,7 +43,10 @@ class SitesLoader extends PluggableLoader {
      * @inheritDoc
      */
     static get injections() {
-        return { parameters: [PathesConfiguration, 'model.site/SitesLoader.plugins'] };
+        return {
+            parameters: [PathesConfiguration, 'model.site/SitesLoader.plugins'],
+            modes: [false, 'instance']
+        };
     }
 
     /**
