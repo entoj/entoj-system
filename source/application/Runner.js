@@ -5,8 +5,10 @@
  * @ignore
  */
 const Base = require('../Base.js').Base;
-const Context = require('../application/Context.js').Context;
+const DIContainer = require('../utils/DIContainer.js').DIContainer;
 const CliLogger = require('../cli/CliLogger.js').CliLogger;
+const SystemModuleConfiguration = require('../configuration/SystemModuleConfiguration.js')
+    .SystemModuleConfiguration;
 const PathesConfiguration = require('../model/configuration/PathesConfiguration.js')
     .PathesConfiguration;
 const assertParameter = require('../utils/assert.js').assertParameter;
@@ -23,17 +25,19 @@ const chalk = require('chalk');
  */
 class Runner extends Base {
     /**
-     * @param {Context} context
+     * @param {utils.DIContainer} diContainer
+     * @param {cli.CliLogger} cliLogger
+     * @param {Array} commands
      */
-    constructor(context, cliLogger, commands) {
+    constructor(diContainer, cliLogger, commands) {
         super();
 
         //Check params
-        assertParameter(this, 'context', context, true, Context);
+        assertParameter(this, 'diContainer', diContainer, true, DIContainer);
         assertParameter(this, 'cliLogger', cliLogger, true, CliLogger);
 
         // Add initial values
-        this._context = context;
+        this._diContainer = diContainer;
         this._cliLogger = cliLogger;
         this._commands = [];
 
@@ -41,7 +45,7 @@ class Runner extends Base {
         if (Array.isArray(commands)) {
             for (const command of commands) {
                 this._commands.push(
-                    this.context.di.create(typeof command === 'function' ? command : command.type)
+                    this.diContainer.create(typeof command === 'function' ? command : command.type)
                 );
             }
         }
@@ -52,7 +56,7 @@ class Runner extends Base {
      */
     static get injections() {
         /* istanbul ignore next */
-        return { parameters: [Context, CliLogger, 'application/Runner.commands'] };
+        return { parameters: [DIContainer, CliLogger, 'application/Runner.commands'] };
     }
 
     /**
@@ -63,14 +67,14 @@ class Runner extends Base {
     }
 
     /**
-     * @type {Context}
+     * @type {utils.DIContainer}
      */
-    get context() {
-        return this._context;
+    get diContainer() {
+        return this._diContainer;
     }
 
     /**
-     * @type {Context}
+     * @type {cli.CliLogger}
      */
     get cliLogger() {
         return this._cliLogger;
@@ -171,16 +175,16 @@ class Runner extends Base {
         const scope = this;
         metrics.start(scope.className + '::run');
         let handled = false;
-        this._context.parameters._ = this._context.parameters._ || [];
-        this._context.parameters.command = this._context.parameters._.length
-            ? this._context.parameters._.shift()
+        const moduleConfiguration = this.diContainer.create(SystemModuleConfiguration);
+        moduleConfiguration.cliArguments.command = moduleConfiguration.cliArguments._.length
+            ? moduleConfiguration.cliArguments._.shift()
             : false;
-        this._context.parameters.action = this._context.parameters._.length
-            ? this._context.parameters._.shift()
+        moduleConfiguration.cliArguments.action = moduleConfiguration.cliArguments._.length
+            ? moduleConfiguration.cliArguments._.shift()
             : false;
         const promise = co(function*() {
             for (const command of scope._commands) {
-                const result = yield command.execute(scope._context.parameters);
+                const result = yield command.execute(moduleConfiguration.cliArguments);
                 if (result !== false) {
                     handled = true;
                 }
@@ -190,15 +194,15 @@ class Runner extends Base {
                 scope.help();
             }
             metrics.stop(scope.className + '::run');
-            if (typeof scope.context.parameters.performance != 'undefined') {
+            if (typeof moduleConfiguration.cliArguments.performance != 'undefined') {
                 let patterns = undefined;
-                if (typeof scope.context.parameters.performance == 'string') {
-                    patterns = scope.context.parameters.performance.split(',');
+                if (typeof moduleConfiguration.cliArguments.performance == 'string') {
+                    patterns = moduleConfiguration.cliArguments.performance.split(',');
                 }
                 metrics.show(patterns);
 
-                const pathesConfiguration = scope.context.di.create(PathesConfiguration);
-                const performanceLabel = scope.context.parameters.performanceLabel || '';
+                const pathesConfiguration = scope.diContainer.create(PathesConfiguration);
+                const performanceLabel = moduleConfiguration.cliArguments.performanceLabel || '';
                 const filename = yield pathesConfiguration.resolveCache(
                     '/metrics/performance-' + performanceLabel.urlify() + '-' + Date.now() + '.json'
                 );

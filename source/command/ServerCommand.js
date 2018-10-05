@@ -6,7 +6,7 @@
  */
 const Command = require('./Command.js').Command;
 const Server = require('../server/Server.js').Server;
-const Context = require('../application/Context.js').Context;
+const DIContainer = require('../utils/DIContainer.js').DIContainer;
 const SystemModuleConfiguration = require('../configuration/SystemModuleConfiguration.js')
     .SystemModuleConfiguration;
 const Communication = require('../application/Communication.js').Communication;
@@ -20,11 +20,11 @@ const co = require('co');
  */
 class ServerCommand extends Command {
     /**
-     * @param {application.Context} context
-     * @param {Object} options
+     * @param {utils.DIContainer} diContainer
+     * @param {Array} routes
      */
-    constructor(context, routes) {
-        super(context);
+    constructor(diContainer, routes) {
+        super(diContainer);
 
         this._name = 'server';
         this._routes = routes || [];
@@ -36,7 +36,7 @@ class ServerCommand extends Command {
      */
     static get injections() {
         return {
-            parameters: [Context, 'command/ServerCommand.routes'],
+            parameters: [DIContainer, 'command/ServerCommand.routes'],
             modes: [false, 'instance']
         };
     }
@@ -89,7 +89,7 @@ class ServerCommand extends Command {
         }
         const scope = this;
         co(function*() {
-            const entityRepository = scope.context.di.create(EntitiesRepository);
+            const entityRepository = scope.diContainer.create(EntitiesRepository);
             for (const lintResult of lintResults) {
                 const entityAspect = yield entityRepository.getById(lintResult.entity);
                 if (entityAspect && entityAspect.entity) {
@@ -110,11 +110,11 @@ class ServerCommand extends Command {
                 const logger = scope.createLogger('command.server');
 
                 // Create moduleConfiguration
-                const moduleConfiguration = scope.context.di.create(SystemModuleConfiguration);
+                const moduleConfiguration = scope.diContainer.create(SystemModuleConfiguration);
 
                 // Start ipc communication
                 logger.info('Starting IPC server');
-                const com = scope.context.di.create(Communication);
+                const com = scope.diContainer.create(Communication);
                 com.events.on('find-server', () => {
                     if (scope.server && scope.server.baseUrl) {
                         com.send('found-server', scope.server.baseUrl);
@@ -158,7 +158,7 @@ class ServerCommand extends Command {
                 yield scope.server.start();
 
                 // start synchronizer
-                const modelSynchronizer = scope.context.di.create(ModelSynchronizer);
+                const modelSynchronizer = scope.diContainer.create(ModelSynchronizer);
                 yield modelSynchronizer.start();
 
                 // Done

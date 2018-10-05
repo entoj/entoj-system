@@ -128,7 +128,9 @@ class Exporter extends Base {
             if (!entity) {
                 /* istanbul ignore next */
                 throw new Error(
-                    scope.className + '::createContext - could not find entity for ' + entityQuery
+                    scope.className +
+                        '::createConfiguration - could not find entity for ' +
+                        entityQuery
                 );
             }
 
@@ -142,7 +144,9 @@ class Exporter extends Base {
                 );
                 if (!macro || !macro.file) {
                     /* istanbul ignore next */
-                    scope.logger.debug('::createContext - could not find macro ' + macroQuery);
+                    scope.logger.debug(
+                        '::createConfiguration - could not find macro ' + macroQuery
+                    );
                 }
             }
 

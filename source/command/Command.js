@@ -5,7 +5,7 @@
  * @ignore
  */
 const Base = require('../Base.js').Base;
-const Context = require('../application/Context.js').Context;
+const DIContainer = require('../utils/DIContainer.js').DIContainer;
 const BaseMap = require('../base/BaseMap.js').BaseMap;
 const CliLogger = require('../cli/CliLogger.js').CliLogger;
 const assertParameter = require('../utils/assert.js').assertParameter;
@@ -16,25 +16,24 @@ const assertParameter = require('../utils/assert.js').assertParameter;
  */
 class Command extends Base {
     /**
-     * @param {String} name
-     * @param {application.Context} context
+     * @param {utils.DIContainer} diContainer
      */
-    constructor(context) {
+    constructor(diContainer) {
         super();
 
         //Check params
-        assertParameter(this, 'context', context, true, Context);
+        assertParameter(this, 'diContainer', diContainer, true, DIContainer);
 
         // Assign options
         this._name = [];
-        this._context = context;
+        this._diContainer = diContainer;
     }
 
     /**
      * @inheritDoc
      */
     static get injections() {
-        return { parameters: [Context] };
+        return { parameters: [DIContainer] };
     }
 
     /**
@@ -45,10 +44,10 @@ class Command extends Base {
     }
 
     /**
-     * @param {object} parameters
+     * @type {utils.DIContainer}
      */
-    createLogger(prefix) {
-        return this.context.di.create(CliLogger, new BaseMap({ 'cli/CliLogger.prefix': prefix }));
+    get diContainer() {
+        return this._diContainer;
     }
 
     /**
@@ -65,19 +64,20 @@ class Command extends Base {
     }
 
     /**
-     * @type {application.Context}
-     */
-    get context() {
-        return this._context;
-    }
-
-    /**
      * Returns a object describing the command and it's parameters
      *
      * @type {Object}
      */
     get help() {
         return { name: this._name };
+    }
+
+    /**
+     * @protected
+     * @param {object} parameters
+     */
+    createLogger(prefix) {
+        return this.diContainer.create(CliLogger, new BaseMap({ 'cli/CliLogger.prefix': prefix }));
     }
 
     /**
@@ -100,7 +100,7 @@ class Command extends Base {
      * @returns {Promise<Boolean>}
      */
     execute(parameters) {
-        if (parameters && this._name.indexOf(parameters.command) > -1) {
+        if (parameters && this.name.indexOf(parameters.command) > -1) {
             return this.dispatch(parameters.action, parameters);
         }
         return Promise.resolve(false);

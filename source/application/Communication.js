@@ -19,7 +19,8 @@ const co = require('co');
  */
 class Communication extends Base {
     /**
-     * @param {Context} context
+     * @param {cli.CliLogger} cliLogger
+     * @param {String} [id]
      */
     constructor(cliLogger, id) {
         super();
@@ -56,7 +57,7 @@ class Communication extends Base {
     }
 
     /**
-     * @type {Context}
+     * @type {cli.CliLogger}
      */
     get cliLogger() {
         return this._cliLogger;

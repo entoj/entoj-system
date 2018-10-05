@@ -5,13 +5,12 @@
  * @ignore
  */
 const Command = require('./Command.js').Command;
-const Context = require('../application/Context.js').Context;
+const DIContainer = require('../utils/DIContainer.js').DIContainer;
 const GlobalRepository = require('../model/GlobalRepository.js').GlobalRepository;
 const PathesConfiguration = require('../model/configuration/PathesConfiguration.js')
     .PathesConfiguration;
 const ModelSynchronizer = require('../watch/ModelSynchronizer.js').ModelSynchronizer;
 const Communication = require('../application/Communication.js').Communication;
-const assertParameter = require('../utils/assert.js').assertParameter;
 const waitForPromise = require('../utils/synchronize.js').waitForPromise;
 const ErrorHandler = require('../error/ErrorHandler.js').ErrorHandler;
 const chalk = require('chalk');
@@ -22,24 +21,17 @@ const co = require('co');
  */
 class LintCommand extends Command {
     /**
+     * @param {utils.DIContainer} diContainer
+     * @param {Array} linters
+     * @param {Object} [options]
      */
-    constructor(context, globalRepository, pathesConfiguration, linters, options) {
-        super(context);
-
-        //Check params
-        assertParameter(this, 'globalRepository', globalRepository, true, GlobalRepository);
-        assertParameter(
-            this,
-            'pathesConfiguration',
-            pathesConfiguration,
-            true,
-            PathesConfiguration
-        );
+    constructor(diContainer, linters, options) {
+        super(diContainer);
 
         // Assign options
         this._name = 'lint';
-        this._globalRepository = globalRepository;
-        this._pathesConfiguration = pathesConfiguration;
+        this._globalRepository = diContainer.create(GlobalRepository);
+        this._pathesConfiguration = diContainer.create(PathesConfiguration);
         this._linters = linters || [];
         this._options = options || {};
     }
@@ -49,14 +41,8 @@ class LintCommand extends Command {
      */
     static get injections() {
         return {
-            parameters: [
-                Context,
-                GlobalRepository,
-                PathesConfiguration,
-                'command/LintCommand.linters',
-                'command/LintCommand.options'
-            ],
-            modes: [false, false, false, 'instance']
+            parameters: [DIContainer, 'command/LintCommand.linters', 'command/LintCommand.options'],
+            modes: [false, 'instance']
         };
     }
 
@@ -134,7 +120,7 @@ class LintCommand extends Command {
         const scope = this;
         const logger = scope.createLogger('command.lint');
         const promise = co(function*() {
-            const com = scope.context.di.create(Communication);
+            const com = scope.diContainer.create(Communication);
             const query = (parameters && parameters._ && parameters._[0]) || '*';
             const section = logger.section('Linting <' + query + '>');
             const sectionResult = {
@@ -259,7 +245,7 @@ class LintCommand extends Command {
         const scope = this;
         const promise = co(function*() {
             const logger = scope.createLogger('command.lint.watch');
-            const modelSynchronizer = scope.context.di.create(ModelSynchronizer);
+            const modelSynchronizer = scope.diContainer.create(ModelSynchronizer);
             yield scope.lint(parameters, true);
             yield modelSynchronizer.start();
             /* istanbul ignore next */

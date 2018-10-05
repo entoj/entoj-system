@@ -7,7 +7,7 @@
 const Command = require('./Command.js').Command;
 const Base = require('../Base.js').Base;
 const Task = require('../task/Task.js').Task;
-const Context = require('../application/Context.js').Context;
+const DIContainer = require('../utils/DIContainer.js').DIContainer;
 const WriteFilesTask = require('../task/WriteFilesTask.js').WriteFilesTask;
 const DecorateTask = require('../task/DecorateTask.js').DecorateTask;
 const PathesConfiguration = require('../model/configuration/PathesConfiguration.js')
@@ -24,10 +24,10 @@ const gitRev = require('git-rev-promises');
  */
 class ExportCommand extends Command {
     /**
-     * @param {application.Context} context
+     * @param {utils.DIContainer} diContainer
      */
-    constructor(context) {
-        super(context);
+    constructor(diContainer) {
+        super(diContainer);
 
         // Assign options
         this._name = ['export'];
@@ -41,7 +41,7 @@ class ExportCommand extends Command {
      * @inheritDoc
      */
     static get injections() {
-        return { parameters: [Context] };
+        return { parameters: [DIContainer] };
     }
 
     /**
@@ -142,9 +142,9 @@ class ExportCommand extends Command {
             const logger = scope.createLogger(scope.loggerPrefix + '.' + scope.exportName);
             const mapping = new Map();
             mapping.set(CliLogger, logger);
-            const pathesConfiguration = scope.context.di.create(PathesConfiguration);
-            const moduleConfiguration = scope.context.di.create(scope.moduleConfigurationClass);
-            const buildConfiguration = scope.context.di.create(BuildConfiguration);
+            const pathesConfiguration = scope.diContainer.create(PathesConfiguration);
+            const moduleConfiguration = scope.diContainer.create(scope.moduleConfigurationClass);
+            const buildConfiguration = scope.diContainer.create(BuildConfiguration);
             let prepend = false;
             if (buildConfiguration.get('export.banner', false)) {
                 prepend = '/** ' + buildConfiguration.get('export.banner', false) + ' **/';
@@ -162,10 +162,10 @@ class ExportCommand extends Command {
                 },
                 decoratePrepend: prepend
             });
-            let task = scope.context.di.create(scope.exportTaskClass, mapping);
-            task = task.pipe(scope.context.di.create(DecorateTask, mapping));
+            let task = scope.diContainer.create(scope.exportTaskClass, mapping);
+            task = task.pipe(scope.diContainer.create(DecorateTask, mapping));
             task = yield scope.addTasks(task, mapping);
-            task = task.pipe(scope.context.di.create(WriteFilesTask, mapping));
+            task = task.pipe(scope.diContainer.create(WriteFilesTask, mapping));
             yield task.run(buildConfiguration, options);
             return true;
         }).catch(ErrorHandler.handler(scope));

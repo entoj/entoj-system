@@ -1,14 +1,6 @@
 'use strict';
 
 /**
- * Creates the application base config
- */
-function configure(options, localConfiguration) {
-    const Configuration = require('./application/Configuration.js').Configuration;
-    return new Configuration(options, localConfiguration);
-}
-
-/**
  * Sets the log level of the internal intel logger
  */
 function setLogLevel(level) {
@@ -27,7 +19,6 @@ module.exports = {
     cli: require('./cli/index.js'),
     command: require('./command/index.js'),
     configuration: require('./configuration/index.js'),
-    configure: configure,
     error: require('./error/index.js'),
     export: require('./export/index.js'),
     formatter: require('./formatter/index.js'),

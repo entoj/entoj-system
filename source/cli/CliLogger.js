@@ -25,7 +25,8 @@ require('date-format-lite');
  */
 class CliLogger extends Base {
     /**
-     * @param {Context} context
+     * @param {String} [prefix]
+     * @param {Object} [options]
      */
     constructor(prefix, options) {
         super();

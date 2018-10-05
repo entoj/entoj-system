@@ -89,6 +89,9 @@ class SystemModuleConfiguration extends ModuleConfiguration {
      * @inheritDoc
      */
     createMeta() {
+        // Cli
+        this.addMeta('cli.arguments', 'system.cli.arguments', { _: [] });
+
         // EntityCategories
         this.addMeta('entityCategories', 'system.entity.categories', entityCategories);
 
@@ -215,6 +218,15 @@ class SystemModuleConfiguration extends ModuleConfiguration {
                 '://localhost:' +
                 this.configuration.get('server.port')
         );
+    }
+
+    /**
+     * The parsed arguments to the shell entry point.
+     *
+     * @type {Object}
+     */
+    get cliArguments() {
+        return this.configuration.get('cli.arguments');
     }
 
     /**

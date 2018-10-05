@@ -6,7 +6,7 @@
  */
 const Command = require('./Command.js').Command;
 const GlobalRepository = require('../model/GlobalRepository.js').GlobalRepository;
-const Context = require('../application/Context.js').Context;
+const DIContainer = require('../utils/DIContainer.js').DIContainer;
 const ContentKind = require('../model/ContentKind.js').ContentKind;
 const PathesConfiguration = require('../model/configuration/PathesConfiguration.js')
     .PathesConfiguration;
@@ -22,10 +22,10 @@ const fs = require('co-fs-extra');
  */
 class ConfigCommand extends Command {
     /**
-     * @param {application.Context} context
+     * @param {utils.DIContainer} diContainer
      */
-    constructor(context) {
-        super(context);
+    constructor(diContainer) {
+        super(diContainer);
 
         // Assign options
         this._name = ['config'];
@@ -36,7 +36,7 @@ class ConfigCommand extends Command {
      * @inheritDoc
      */
     static get injections() {
-        return { parameters: [Context] };
+        return { parameters: [DIContainer] };
     }
 
     /**
@@ -120,8 +120,8 @@ class ConfigCommand extends Command {
             const section = logger.section('Proccesing export config for <' + query + '>');
             const mapping = new Map();
             mapping.set(CliLogger, logger);
-            const pathesConfiguration = scope.context.di.create(PathesConfiguration);
-            const globalRepository = scope.context.di.create(GlobalRepository);
+            const pathesConfiguration = scope.diContainer.create(PathesConfiguration);
+            const globalRepository = scope.diContainer.create(GlobalRepository);
             const entities = yield globalRepository.resolveEntities(query);
             for (const entity of entities) {
                 const work = logger.work('Processing config for <' + entity.pathString + '>');
