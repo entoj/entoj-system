@@ -31,7 +31,7 @@ function spec(type, className, prepareParameters, settings) {
     };
 
     // Simple properties
-    baseSpec.assertProperty(createTestee(), ['context', 'help']);
+    baseSpec.assertProperty(createTestee(), ['diContainer', 'help']);
     baseSpec.assertProperty(createTestee(), ['name'], ['command']);
 
     describe('#createLogger()', function() {

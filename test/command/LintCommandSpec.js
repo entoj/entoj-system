@@ -23,14 +23,8 @@ describe(LintCommand.className, function() {
     // Adds necessary parameters to create a testee
     function prepareParameters(parameters) {
         global.fixtures = projectFixture.createDynamic();
-        global.fixtures.context.di.map(Communication, Communication, false);
-        return [
-            global.fixtures.context,
-            global.fixtures.globalRepository,
-            global.fixtures.pathesConfiguration,
-            [],
-            { exitCodes: false }
-        ];
+        global.fixtures.diContainer.map(Communication, Communication, false);
+        return [global.fixtures.diContainer, [], { exitCodes: false }];
     }
 
     /**
@@ -38,17 +32,11 @@ describe(LintCommand.className, function() {
      */
     beforeEach(function() {
         global.fixtures = projectFixture.createDynamic();
-        global.fixtures.context.di.map(Communication, Communication, false);
+        global.fixtures.diContainer.map(Communication, Communication, false);
     });
 
     function createTestee(linters) {
-        return new LintCommand(
-            global.fixtures.context,
-            global.fixtures.globalRepository,
-            global.fixtures.pathesConfiguration,
-            linters,
-            { exitCodes: false }
-        );
+        return new LintCommand(global.fixtures.diContainer, linters, { exitCodes: false });
     }
 
     describe('#execute', function() {

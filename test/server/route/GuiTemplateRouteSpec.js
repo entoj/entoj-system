@@ -56,6 +56,7 @@ describe(GuiTemplateRoute.className, function() {
 
     // Create a initialized testee
     const createTestee = function(routes, options) {
+        global.fixtures = projectFixture.createStatic();
         global.fixtures.nunjucks = new Environment(
             global.fixtures.entitiesRepository,
             global.fixtures.pathesConfiguration,

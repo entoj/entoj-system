@@ -32,7 +32,7 @@ const SystemModuleConfiguration = require(ES_SOURCE + '/configuration/SystemModu
     .SystemModuleConfiguration;
 const File = require(ES_SOURCE + '/model/file/File.js').File;
 const ContentType = require(ES_SOURCE + '/model/ContentType.js').ContentType;
-const Context = require(ES_SOURCE + '/application/Context.js').Context;
+const Bootstrap = require(ES_SOURCE + '/application/Bootstrap.js').Bootstrap;
 const glob = require(ES_SOURCE + '/utils/glob.js');
 const synchronize = require(ES_SOURCE + '/utils/synchronize.js');
 const clone = require('lodash.clone');
@@ -188,65 +188,66 @@ function createStatic(options) {
  */
 function createDynamic(configuration) {
     // Get fixture config
-    let config = clone(testFixture.configuration);
-    config.mappings = config.mappings || [];
-
-    // Add logger
-    config.logger = {};
-    config.logger.muted = true;
+    const bootstrap = new Bootstrap(false, clone(testFixture.configuration));
+    bootstrap.start();
 
     // Add sites
-    config.mappings.push({
-        type: require(ES_SOURCE + '/model/site').SitesLoader,
-        '!plugins': [require(ES_SOURCE + '/model/loader/documentation').PackagePlugin]
+    /*
+    bootstrap.di.mapParameters(require(ES_SOURCE + '/model/site').SitesLoader, {
+        plugins: [require(ES_SOURCE + '/model/loader/documentation').PackagePlugin]
     });
+    */
 
     // Add entities
-    config.mappings.push({
-        type: require(ES_SOURCE + '/model/entity').EntitiesLoader,
-        '!plugins': [
+    /*
+    bootstrap.di.mapParameters(require(ES_SOURCE + '/model/entity').EntitiesLoader, {
+        plugins: [
             require(ES_SOURCE + '/model/loader/documentation').PackagePlugin,
             require(ES_SOURCE + '/model/loader/documentation').JinjaPlugin,
             require(ES_SOURCE + '/model/loader/documentation').MarkdownPlugin
         ]
     });
-
-    // Add environments
-    config.environments = {
-        development: {}
-    };
+    */
 
     // apply custom configuration
+    /*
     if (typeof configuration == 'function') {
         config = configuration(config);
     } else {
         config = merge(config, configuration);
     }
+    */
+    if (configuration) {
+        console.log(configuration);
+        process.exit();
+    }
 
-    // create context
+    // create di
     const result = {};
-    result.context = new Context(config);
+    result.diContainer = bootstrap.di;
 
     // map defaults
-    result.context.di.map('cli/CliLogger.options', { muted: config.logger.muted || false });
-    result.context.di.map('model.configuration/BuildConfiguration.options', {
-        environments: config.environments
+    result.diContainer.mapParameters(CliLogger, {
+        options: { muted: true }
+    });
+    result.diContainer.mapParameters(BuildConfiguration, {
+        environments: bootstrap.configuration.environments || {}
     });
 
     // create global instances
     result.pathToLibraries = testFixture.pathToLibraries;
-    result.moduleConfiguration = result.context.di.create(SystemModuleConfiguration);
-    result.pathesConfiguration = result.context.di.create(PathesConfiguration);
-    result.sitesRepository = result.context.di.create(SitesRepository);
-    result.entitiesRepository = result.context.di.create(EntitiesRepository);
-    result.entityCategoriesRepository = result.context.di.create(EntityCategoriesRepository);
-    result.viewModelRepository = result.context.di.create(ViewModelRepository);
-    result.globalRepository = result.context.di.create(GlobalRepository);
-    result.filesRepository = result.context.di.create(FilesRepository);
-    result.buildConfiguration = result.context.di.create(BuildConfiguration);
-    result.urlsConfiguration = result.context.di.create(UrlsConfiguration);
-    result.globalConfiguration = result.context.di.create(GlobalConfiguration);
-    result.cliLogger = result.context.di.create(CliLogger);
+    result.moduleConfiguration = result.diContainer.create(SystemModuleConfiguration);
+    result.pathesConfiguration = result.diContainer.create(PathesConfiguration);
+    result.sitesRepository = result.diContainer.create(SitesRepository);
+    result.entitiesRepository = result.diContainer.create(EntitiesRepository);
+    result.entityCategoriesRepository = result.diContainer.create(EntityCategoriesRepository);
+    result.viewModelRepository = result.diContainer.create(ViewModelRepository);
+    result.globalRepository = result.diContainer.create(GlobalRepository);
+    result.filesRepository = result.diContainer.create(FilesRepository);
+    result.buildConfiguration = result.diContainer.create(BuildConfiguration);
+    result.urlsConfiguration = result.diContainer.create(UrlsConfiguration);
+    result.globalConfiguration = result.diContainer.create(GlobalConfiguration);
+    result.cliLogger = result.diContainer.create(CliLogger);
 
     // create shortcuts
     result.siteBase = synchronize.execute(result.sitesRepository, 'findBy', [{ name: 'Base' }]);

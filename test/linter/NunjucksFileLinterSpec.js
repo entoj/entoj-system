@@ -26,7 +26,7 @@ describe(NunjucksFileLinter.className, function() {
      */
     fileLinterSpec(NunjucksFileLinter, 'linter/NunjucksFileLinter', fixture, (parameters) => {
         const fixture = projectFixture.createDynamic();
-        const entityRenderer = fixture.context.di.create(EntityRenderer);
+        const entityRenderer = fixture.diContainer.create(EntityRenderer);
         while (parameters.length < 2) {
             parameters.push(undefined);
         }

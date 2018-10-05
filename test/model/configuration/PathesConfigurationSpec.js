@@ -24,6 +24,7 @@ describe(PathesConfiguration.className, function() {
     baseSpec(PathesConfiguration, 'model.configuration/PathesConfiguration', prepareParameters);
 
     function prepareParameters(parameters) {
+        global.fixtures = projectFixture.createStatic();
         parameters.unshift(global.fixtures.moduleConfiguration);
         return parameters;
     }
@@ -31,11 +32,8 @@ describe(PathesConfiguration.className, function() {
     /**
      * PathesConfiguration Tests
      */
-    beforeEach(function() {
-        global.fixtures = projectFixture.createStatic();
-    });
-
     const createTestee = function(configuration) {
+        global.fixtures = projectFixture.createStatic();
         global.fixtures.globalConfiguration = new GlobalConfiguration(configuration);
         global.fixtures.moduleConfiguration = new SystemModuleConfiguration(
             global.fixtures.globalConfiguration,

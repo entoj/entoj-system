@@ -23,7 +23,7 @@ describe(ServerCommand.className, function() {
     // Adds necessary parameters to create a testee
     function prepareParameters(parameters) {
         global.fixtures = projectFixture.createDynamic();
-        return [global.fixtures.context];
+        return [global.fixtures.diContainer];
     }
 
     /**
@@ -45,7 +45,7 @@ describe(ServerCommand.className, function() {
     describe('#execute', function() {
         it('should start a webserver', function(done) {
             co(function*() {
-                const testee = new ServerCommand(global.fixtures.context);
+                const testee = new ServerCommand(global.fixtures.diContainer);
                 const server = yield testee.execute({ command: 'server' });
                 request(server.express)
                     .get('/')
@@ -56,7 +56,7 @@ describe(ServerCommand.className, function() {
         it('should allow to configure the server port via SystemModuleConfiguration', function() {
             const promise = co(function*() {
                 global.fixtures.moduleConfiguration.configuration.set('server.port', 3200);
-                const testee = new ServerCommand(global.fixtures.context);
+                const testee = new ServerCommand(global.fixtures.diContainer);
                 const server = yield testee.execute({ command: 'server' });
                 expect(server.port).to.be.equal(3200);
             });
@@ -65,12 +65,8 @@ describe(ServerCommand.className, function() {
 
         it('should allow to configure the server routes via options.routes', function() {
             const promise = co(function*() {
-                const routes = [
-                    {
-                        type: Route
-                    }
-                ];
-                const testee = new ServerCommand(global.fixtures.context, routes);
+                const routes = [global.fixtures.diContainer.create(Route)];
+                const testee = new ServerCommand(global.fixtures.diContainer, routes);
                 const server = yield testee.execute({ command: 'server' });
                 expect(server.routes).to.have.length(1);
                 expect(server.routes[0]).to.be.instanceof(Route);

@@ -18,7 +18,7 @@ describe(NunjucksLinter.className, function() {
      */
     linterSpec(NunjucksLinter, 'linter/NunjucksLinter', {}, () => {
         const fixture = projectFixture.createDynamic();
-        const entityRenderer = fixture.context.di.create(EntityRenderer);
+        const entityRenderer = fixture.diContainer.create(EntityRenderer);
         return [entityRenderer];
     });
 
@@ -27,7 +27,7 @@ describe(NunjucksLinter.className, function() {
      */
     beforeEach(function() {
         global.fixtures = projectFixture.createDynamic();
-        global.fixtures.entityRenderer = global.fixtures.context.di.create(EntityRenderer);
+        global.fixtures.entityRenderer = global.fixtures.diContainer.create(EntityRenderer);
     });
 
     describe('#lint()', function() {

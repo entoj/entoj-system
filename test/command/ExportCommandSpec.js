@@ -16,7 +16,7 @@ describe(ExportCommand.className, function() {
      */
     function prepareParameters() {
         const fixture = projectFixture.createDynamic();
-        return [fixture.context];
+        return [fixture.diContainer];
     }
 
     exportCommandSpec(ExportCommand, 'command/ExportCommand', prepareParameters, {
