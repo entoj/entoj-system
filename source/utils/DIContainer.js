@@ -6,6 +6,7 @@
  */
 const Base = require('../Base.js').Base;
 const isPlainObject = require('lodash.isplainobject');
+const assertClass = require('../utils/assert.js').assertClass;
 
 /**
  * @class
@@ -58,6 +59,8 @@ class DIContainer extends Base {
     }
 
     /**
+     * Creates a mapping object
+     *
      * @protected
      * @param {string|Class} type
      * @param {*} the value used for type when creating objects
@@ -119,6 +122,28 @@ class DIContainer extends Base {
     }
 
     /**
+     * Get the mapping information for the given type
+     *
+     * @protected
+     * @param {string|Class} type
+     * @returns {mixed}
+     */
+    getMappingForDerivatives(type) {
+        if (!type || typeof type.className == 'undefined') {
+            throw new TypeError(
+                this.className + ' - Tried to get derivatives mapping for non class type'
+            );
+        }
+        const mappings = [];
+        for (const mapping of this.mappings.values()) {
+            if (assertClass(mapping.type, type)) {
+                mappings.push(mapping);
+            }
+        }
+        return mappings;
+    }
+
+    /**
      * Maps type to value.
      *
      * When the mapping already exists the singleton flag is only touched when isSingleton is either true or false.
@@ -133,12 +158,14 @@ class DIContainer extends Base {
      * @returns {void}
      */
     map(type, value, isSingleton) {
-        const currentMapping = this.getMappingForType(type);
-        const singleton = currentMapping
-            ? typeof isSingleton != 'undefined'
-                ? isSingleton
-                : currentMapping.isSingleton
-            : currentMapping.isSingleton || isSingleton || false;
+        // Get singleton
+        let singleton = isSingleton;
+        if (typeof isSingleton == 'undefined') {
+            const currentMapping = this.getMappingForType(type);
+            singleton = currentMapping ? currentMapping.isSingleton : false;
+        }
+
+        // Map
         const typeKey = this.getKeyForType(type);
         const mapping = this.prepareMapping(type, value, singleton);
         this.mappings.set(typeKey, mapping);
@@ -156,7 +183,61 @@ class DIContainer extends Base {
      * @returns {void}
      */
     mapAsSingleton(type, value) {
-        this.map(type, value, true);
+        this.map(type, value ? value : type, true);
+    }
+
+    /**
+     * Maps parameters for a type.
+     * Parameters will get mapped seperatly as long as they are named dependencies.
+     *
+     * {
+     *   type: Class,
+     *   sourceType: Class,
+     *   singleton: Boolean,
+     *   parameters: [
+     *     [name, value]
+     *   ]
+     * }
+     *
+     * @param {Object} confguration
+     * @param {Boolean} [replace]
+     * @returns {void}
+     */
+    mapParameters(type, parameters, replace) {
+        if (!type || typeof type != 'function') {
+            throw new TypeError(this.className + ' - Tried to map parameters for a invalid type');
+        }
+        if (!isPlainObject(parameters) && !Array.isArray(parameters)) {
+            return;
+        }
+
+        // Check type mapping
+        if (!this.getMappingForType(type)) {
+            this.map(type, type);
+        }
+
+        // Map each parameter
+        const params = isPlainObject(parameters) ? Object.entries(parameters) : parameters;
+        for (const parameter of params) {
+            if (
+                !Array.isArray(parameter) ||
+                parameter.length != 2 ||
+                typeof parameter[0] != 'string'
+            ) {
+                continue;
+            }
+            const name = type.className + '.' + parameter[0];
+            if (replace == true) {
+                this.map(name, parameter[1]);
+            } else {
+                const currentMapping = this.getMappingForType(name);
+                let value = parameter[1];
+                if (currentMapping && Array.isArray(currentMapping.value)) {
+                    value = currentMapping.value.concat(parameter[1]);
+                }
+                this.map(name, value);
+            }
+        }
     }
 
     /**
@@ -192,31 +273,8 @@ class DIContainer extends Base {
         );
 
         // Map parameters
-        if (
-            typeof configuration.type != 'string' &&
-            configuration.parameters &&
-            configuration.parameters.length
-        ) {
-            for (const parameter of configuration.parameters) {
-                if (
-                    !Array.isArray(parameter) ||
-                    parameter.length != 2 ||
-                    typeof parameter[0] != 'string'
-                ) {
-                    continue;
-                }
-                const name = configuration.type.className + '.' + parameter[0];
-                if (replace == true) {
-                    this.map(name, parameter[1]);
-                } else {
-                    const currentMapping = this.getMappingForType(name);
-                    let value = parameter[1];
-                    if (currentMapping && Array.isArray(currentMapping.value)) {
-                        value = currentMapping.value.concat(parameter[1]);
-                    }
-                    this.map(name, value);
-                }
-            }
+        if (typeof configuration.type == 'function') {
+            this.mapParameters(configuration.type, configuration.parameters);
         }
     }
 

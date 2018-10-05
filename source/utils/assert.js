@@ -18,18 +18,20 @@ function assertClass(type, className) {
     if (!type || typeof type.className === 'undefined' || !className) {
         return false;
     }
-    if (type.className === className) {
+    const classNameString =
+        typeof className.className !== 'undefined' ? className.className : className;
+    if (type.className === classNameString) {
         return true;
     }
     if (type.prototype && Object.getPrototypeOf(type.prototype)) {
-        return assertClass(Object.getPrototypeOf(type.prototype), className);
+        return assertClass(Object.getPrototypeOf(type.prototype), classNameString);
     }
     if (
         type.constructor &&
         type.constructor.prototype &&
         Object.getPrototypeOf(type.constructor.prototype)
     ) {
-        return assertClass(Object.getPrototypeOf(type.constructor.prototype), className);
+        return assertClass(Object.getPrototypeOf(type.constructor.prototype), classNameString);
     }
     return false;
 }

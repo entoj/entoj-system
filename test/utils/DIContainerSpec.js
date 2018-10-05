@@ -126,9 +126,14 @@ describe(DIContainer.className, function() {
             expect(() => testee.mapAsSingleton()).to.throw();
         });
 
-        it('should throw when given a undefined value', function() {
+        it('should uses type as vale when value is undefined', function() {
             const testee = new DIContainer();
-            expect(() => testee.mapAsSingleton('name')).to.throw();
+            testee.mapAsSingleton(Base);
+            expect(testee.getMappingForType(Base)).to.be.deep.equal({
+                type: Base,
+                isSingleton: true,
+                value: undefined
+            });
         });
 
         it('should create a singleton mapping', function() {
@@ -138,6 +143,45 @@ describe(DIContainer.className, function() {
                 type: Base,
                 isSingleton: true,
                 value: undefined
+            });
+        });
+    });
+
+    describe('#mapParameters', function() {
+        it('should throw when given a falsy type', function() {
+            const testee = new DIContainer();
+            expect(() => testee.mapParameters()).to.throw();
+        });
+
+        it('should create a mapping for each named parameter', function() {
+            const testee = new DIContainer();
+            testee.mapParameters(Base, { name: 'Kent' });
+            expect(testee.getMappingForType('Base.name')).to.be.deep.equal({
+                type: undefined,
+                isSingleton: false,
+                value: 'Kent'
+            });
+        });
+
+        it('should update a existing parameter mapping', function() {
+            const testee = new DIContainer();
+            testee.mapParameters(Base, { name: ['Clark'] });
+            testee.mapParameters(Base, { name: ['Bruce'] });
+            expect(testee.getMappingForType('Base.name')).to.be.deep.equal({
+                type: undefined,
+                isSingleton: false,
+                value: ['Clark', 'Bruce']
+            });
+        });
+
+        it('should replace a existing parameter mapping when replace = true', function() {
+            const testee = new DIContainer();
+            testee.mapParameters(Base, { name: ['Clark'] });
+            testee.mapParameters(Base, { name: ['Bruce'] }, true);
+            expect(testee.getMappingForType('Base.name')).to.be.deep.equal({
+                type: undefined,
+                isSingleton: false,
+                value: ['Bruce']
             });
         });
     });
@@ -243,7 +287,32 @@ describe(DIContainer.className, function() {
         });
     });
 
-    xdescribe('#create', function() {
+    describe('#getMappingForDerivatives', function() {
+        it('should throw when given a non class type', function() {
+            const testee = new DIContainer();
+            expect(() => testee.getMappingForDerivatives()).to.throw();
+        });
+
+        it('should return a list of mappings', function() {
+            const testee = new DIContainer();
+            testee.map(Color, Color);
+            testee.map(ShinyColor, ShinyColor);
+            expect(testee.getMappingForDerivatives(Base)).to.be.deep.equal([
+                {
+                    type: Color,
+                    isSingleton: false,
+                    value: undefined
+                },
+                {
+                    type: ShinyColor,
+                    isSingleton: false,
+                    value: undefined
+                }
+            ]);
+        });
+    });
+
+    describe('#create', function() {
         it('should throw when giving a falsy type to create', function() {
             const testee = new DIContainer();
             expect(() => testee.create()).to.throw();
