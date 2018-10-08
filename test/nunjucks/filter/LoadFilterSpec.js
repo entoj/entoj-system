@@ -41,5 +41,14 @@ describe(LoadFilter.className, function() {
             expect(result).to.be.ok;
             expect(result.link).to.be.equal('https://www.google.com');
         });
+
+        it('should allow to load remote files', function() {
+            const testee = new LoadFilter(global.fixtures.viewModelRepository).filter();
+            const result = testee(
+                'https://raw.githubusercontent.com/sitepoint-editors/json-examples/master/src/db.json'
+            );
+            expect(result).to.be.ok;
+            expect(result.clients).to.have.length(5);
+        });
     });
 });
