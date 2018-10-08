@@ -52,6 +52,40 @@ describe(EntityRenderer.className, function() {
         );
     }
 
+    describe('#templatePathes', function() {
+        it('should allow to set a template path as a string', function() {
+            const testee = createTestee();
+            testee.templatePaths = '/tmp';
+            expect(testee.templatePaths).to.be.deep.equal(['/tmp']);
+        });
+
+        it('should allow to set template pathes with variables', function() {
+            const testee = createTestee();
+            testee.templatePaths = ['${path.cache}'];
+            expect(testee.templatePaths).to.be.deep.equal([
+                global.fixtures.pathesConfiguration.cache
+            ]);
+        });
+    });
+
+    describe('#renderString', function() {
+        it('should render the given template', function() {
+            const promise = co(function*() {
+                const testee = createTestee();
+                const source = yield testee.renderString(
+                    '{{ name }} - {{ hero }}',
+                    'just/a/path/to/file.j2',
+                    false,
+                    false,
+                    { name: 'Clark' },
+                    { hero: 'Superman' }
+                );
+                expect(source).to.be.equal('Clark - Superman');
+            });
+            return promise;
+        });
+    });
+
     describe('#renderForUrl', function() {
         it('should render the template for a valid url', function() {
             const promise = co(function*() {

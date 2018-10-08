@@ -5,7 +5,6 @@
  * @ignore
  */
 const Base = require('../Base.js').Base;
-const BaseMap = require('../base/BaseMap.js').BaseMap;
 const UrlsConfiguration = require('../model/configuration/UrlsConfiguration.js').UrlsConfiguration;
 const Environment = require('./Environment.js').Environment;
 const PathesConfiguration = require('../model/configuration/PathesConfiguration.js')
@@ -121,7 +120,7 @@ class EntityRenderer extends Base {
      * @param {Object} globals
      * @returns Promise<String>
      */
-    renderString(content, filename, entity, site, data, configuration, globals) {
+    renderString(content, filename, entity, site, data, globals) {
         const location = {
             site: site,
             entity: entity
@@ -143,7 +142,7 @@ class EntityRenderer extends Base {
      * @param {Object} globals
      * @returns Promise<String>
      */
-    renderForUrl(path, data, configuration, globals) {
+    renderForUrl(path, data, globals) {
         const scope = this;
         const promise = co(function*() {
             // Check file hit
@@ -168,7 +167,6 @@ class EntityRenderer extends Base {
                 match.entity,
                 match.site,
                 data,
-                configuration,
                 globals
             );
             return html;
