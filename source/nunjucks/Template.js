@@ -15,28 +15,6 @@ const urls = require('../utils/urls.js');
 const activateEnvironment = require('../utils/string.js').activateEnvironment;
 const unique = require('lodash.uniq');
 const assertParameter = require('../utils/assert.js').assertParameter;
-const crypto = require('crypto');
-
-/**
- * Template cache
- * @type {Map}
- */
-const templates = new Map();
-let templateCacheEnabled = false;
-
-/**
- * Enables the template cache
- */
-function enableTemplateCache() {
-    templateCacheEnabled = true;
-}
-
-/**
- * Disables the template cache
- */
-function disableTemplateCache() {
-    templateCacheEnabled = false;
-}
 
 /**
  * @memberOf nunjucks
@@ -171,19 +149,6 @@ class Template extends Base {
         // Get site
         const site = location && location.site ? location.site : false;
 
-        // Check cache
-        let hash = false;
-        if (templateCacheEnabled) {
-            hash = crypto
-                .createHash('md5')
-                .update((site ? site.name : 'Default') + '::' + content)
-                .digest('hex');
-            if (templates.has(hash)) {
-                this.logger.verbose('Using cached template');
-                return templates.get(hash);
-            }
-        }
-
         // Memorize call
         if (location && location.entity) {
             this._calls[location.entity.pathString] = this._calls[location.entity.pathString] || [];
@@ -216,11 +181,6 @@ class Template extends Base {
         // Activate environments
         result = activateEnvironment(result, this._environment);
 
-        // Update cache
-        if (templateCacheEnabled) {
-            templates.set(hash, result);
-        }
-
         this.logger.verbose('Prepared Template');
         return result;
     }
@@ -231,5 +191,3 @@ class Template extends Base {
  * @ignore
  */
 module.exports.Template = Template;
-module.exports.enableTemplateCache = enableTemplateCache;
-module.exports.disableTemplateCache = disableTemplateCache;
