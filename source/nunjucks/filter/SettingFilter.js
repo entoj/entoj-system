@@ -7,6 +7,7 @@
 const Filter = require('./Filter.js').Filter;
 const SettingsRepository = require('../../model/setting/SettingsRepository.js').SettingsRepository;
 const waitForPromise = require('../../utils/synchronize.js').waitForPromise;
+const assertParameter = require('../../utils/assert.js').assertParameter;
 
 /**
  * @memberOf nunjucks.filter
@@ -18,6 +19,9 @@ class SettingFilter extends Filter {
     constructor(settingsRepository) {
         super();
         this._name = 'settings';
+
+        // Check params
+        assertParameter(this, 'settingsRepository', settingsRepository, true, SettingsRepository);
 
         // Assign options
         this._settingsRepository = settingsRepository;
@@ -50,13 +54,7 @@ class SettingFilter extends Filter {
     filter() {
         const scope = this;
         return function(value, context) {
-            // Check for repo
-            if (!scope.settingsRepository) {
-                scope.logger.warn('Missing settingsRepository');
-                return scope.applyCallbacks({}, arguments);
-            }
-
-            // Use value or key for settings
+            // Check key for settings
             if (!value || typeof value !== 'string') {
                 scope.logger.warn('Missing key for settings', value);
                 return scope.applyCallbacks({}, arguments);

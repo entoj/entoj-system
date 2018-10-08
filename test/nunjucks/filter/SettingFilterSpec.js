@@ -17,14 +17,19 @@ describe(SettingFilter.className, function() {
     /**
      * Filter Test
      */
-    filterSpec(SettingFilter, 'nunjucks.filter/SettingFilter');
+    filterSpec(SettingFilter, 'nunjucks.filter/SettingFilter', () => [
+        global.fixtures.settingsRepository
+    ]);
 
     /**
      * SettingFilter Test
      */
     beforeEach(function() {
         global.fixtures = projectFixture.createStatic();
-        global.fixtures.moduleConfiguration.configuration.set('filename.settings', ES_FIXTURES + '/model/SettingsModel.json');
+        global.fixtures.moduleConfiguration.configuration.set(
+            'filename.settings',
+            ES_FIXTURES + '/model/SettingsModel.json'
+        );
         global.fixtures.settingsRepository = new SettingsRepository(
             new SettingsLoader(
                 global.fixtures.sitesRepository,
@@ -36,7 +41,7 @@ describe(SettingFilter.className, function() {
 
     describe('#filter()', function() {
         it('should return a empty object for a unknown setting', function() {
-            const testee = new SettingFilter().filter();
+            const testee = new SettingFilter(global.fixtures.settingsRepository).filter();
             expect(testee()).to.be.deep.equal({});
             expect(testee('not.there')).to.be.deep.equal({});
         });
