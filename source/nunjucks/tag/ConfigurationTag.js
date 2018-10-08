@@ -5,18 +5,22 @@
  * @ignore
  */
 const Tag = require('./Tag.js').Tag;
-const BaseMap = require('../../base/BaseMap.js').BaseMap;
+const ModuleConfigurations = require('../../configuration/ModuleConfigurations.js')
+    .ModuleConfigurations;
 
 /**
+ * Updates module configurations from a template.
+ *
  * @memberOf nunjucks.tag
  */
 class ConfigurationTag extends Tag {
     /**
      */
-    constructor() {
+    constructor(moduleConfigurations) {
         super();
 
         // Assign options
+        this._moduleConfigurations = moduleConfigurations;
         this._hasBody = false;
     }
 
@@ -30,21 +34,48 @@ class ConfigurationTag extends Tag {
     /**
      * @inheritDoc
      */
+    static get injections() {
+        return { parameters: [ModuleConfigurations] };
+    }
+
+    /**
+     * @inheritDoc
+     */
     get name() {
         return ['configuration'];
+    }
+
+    /**
+     * @type {configurations.ModuleConfigurations}
+     */
+    get moduleConfigurations() {
+        return this._moduleConfigurations;
     }
 
     /**
      * @inheritDoc
      */
     generate(context, params, caller) {
-        if (!params.value || !params.name) {
+        if (!params.value || !params.key) {
             return '';
         }
-        if (!context.env.globals.__configuration__) {
-            context.env.globals.__configuration__ = new BaseMap();
+        const name = params.name || 'system';
+        const moduleConfiguration = this.moduleConfigurations.get(name);
+        if (!moduleConfiguration) {
+            this.logger.warn(this.className + ' - could not find module configuration ' + name);
+            return '';
         }
-        context.env.globals.__configuration__.setByPath(params.name, params.value);
+        try {
+            moduleConfiguration[params.key] = params.value;
+        } catch (e) {
+            this.logger.warn(
+                this.className +
+                    ' - could not update ' +
+                    params.key +
+                    ' on module configuration ' +
+                    name
+            );
+        }
         return '';
     }
 }
