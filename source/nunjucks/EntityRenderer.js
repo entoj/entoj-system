@@ -128,7 +128,6 @@ class EntityRenderer extends Base {
         };
         this.nunjucks.addGlobal('global', {});
         this.nunjucks.addGlobal('location', location);
-        this.nunjucks.addGlobal('__configuration__', new BaseMap(configuration));
         if (globals) {
             for (const key in globals) {
                 this.nunjucks.addGlobal(key, globals[key]);

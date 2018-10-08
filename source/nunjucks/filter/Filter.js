@@ -105,7 +105,6 @@ class Filter extends Base {
                 : this.environment.globals || {};
         const result = {
             global: globals.global || {},
-            configuration: globals.__configuration__ || new BaseMap({}),
             location: globals.location || {},
             request: globals.request || false
         };
