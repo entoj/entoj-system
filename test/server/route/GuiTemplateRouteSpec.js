@@ -112,7 +112,7 @@ describe(GuiTemplateRoute.className, function() {
 
         it('should serve .j2 files from a directory', function(done) {
             const testee = createTestee(undefined, { templatePaths: ES_FIXTURES + '/gui/default' });
-            testee.addTemplateHandler('/', 'sites.j2', true);
+            testee.addTemplateHandler('/', 'sites.j2');
             routeSpec.createServer([testee]);
             global.fixtures.server.addRoute(testee);
             global.fixtures.server.start().then(function(server) {
@@ -120,6 +120,69 @@ describe(GuiTemplateRoute.className, function() {
                     .get('/')
                     .expect(200)
                     .expect(/Sites/m, done);
+            });
+        });
+
+        it('should skip invalid sites', function(done) {
+            const testee = createTestee(undefined, { templatePaths: ES_FIXTURES + '/gui/default' });
+            testee.addTemplateHandler('/:site/:entityCategory/:entityId', 'location.j2', true);
+            routeSpec.createServer([testee]);
+            global.fixtures.server.addRoute(testee);
+            global.fixtures.server.start().then(function(server) {
+                request(server)
+                    .get('/notexisting/modules/m-teaser')
+                    .expect(404, done);
+            });
+        });
+
+        it('should skip invalid entity categories', function(done) {
+            const testee = createTestee(undefined, { templatePaths: ES_FIXTURES + '/gui/default' });
+            testee.addTemplateHandler('/:site/:entityCategory/:entityId', 'location.j2', true);
+            routeSpec.createServer([testee]);
+            global.fixtures.server.addRoute(testee);
+            global.fixtures.server.start().then(function(server) {
+                request(server)
+                    .get('/base/nonexisting/m-teaser')
+                    .expect(404, done);
+            });
+        });
+
+        it('should skip invalid entities', function(done) {
+            const testee = createTestee(undefined, { templatePaths: ES_FIXTURES + '/gui/default' });
+            testee.addTemplateHandler('/:site/:entityCategory/:entityId', 'location.j2', true);
+            routeSpec.createServer([testee]);
+            global.fixtures.server.addRoute(testee);
+            global.fixtures.server.start().then(function(server) {
+                request(server)
+                    .get('/base/modules/nonexisting')
+                    .expect(404, done);
+            });
+        });
+
+        it('should populate the location with site, entityCategory and entity', function(done) {
+            const testee = createTestee(undefined, { templatePaths: ES_FIXTURES + '/gui/default' });
+            testee.addTemplateHandler('/:site/:entityCategory/:entityId', 'location.j2');
+            routeSpec.createServer([testee]);
+            global.fixtures.server.addRoute(testee);
+            global.fixtures.server.start().then(function(server) {
+                request(server)
+                    .get('/base/modules/m-teaser')
+                    .expect(200)
+                    .expect(/Site: Base/m)
+                    .expect(/EntityCategory: Module/m)
+                    .expect(/Entity: \/base\/modules\/m-teaser/m, done);
+            });
+        });
+
+        it('should allow to require authentication', function(done) {
+            const testee = createTestee(undefined, { templatePaths: ES_FIXTURES + '/gui/default' });
+            testee.addTemplateHandler('/', 'sites.j2', true);
+            routeSpec.createServer([testee], { system: { server: { authentication: true } } });
+            global.fixtures.server.addRoute(testee);
+            global.fixtures.server.start().then(function(server) {
+                request(server)
+                    .get('/')
+                    .expect(401, done);
             });
         });
 

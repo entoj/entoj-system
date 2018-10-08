@@ -37,10 +37,10 @@ function spec(type, className, prepareParameters) {
     });
 
     // Create a initialized server
-    spec.createServer = function(routes) {
+    spec.createServer = function(routes, configuration) {
         const cliLogger = new CliLogger('', { muted: true });
         global.fixtures.moduleConfiguration = new SystemModuleConfiguration(
-            new GlobalConfiguration(),
+            new GlobalConfiguration(configuration),
             new BuildConfiguration()
         );
         global.fixtures.server = new Server(cliLogger, global.fixtures.moduleConfiguration, routes);

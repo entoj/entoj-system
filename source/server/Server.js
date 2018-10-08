@@ -141,7 +141,6 @@ class Server extends Base {
                 response.statusCode = 401;
                 response.setHeader('WWW-Authenticate', 'Basic realm="Patternlab"');
                 response.end('Access denied');
-                next();
                 return false;
             }
         }

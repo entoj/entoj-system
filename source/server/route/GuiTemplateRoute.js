@@ -309,25 +309,17 @@ class GuiTemplateRoute extends Route {
                 }
 
                 // Check if valid page
-                if (request.params.entityId === 'examples') {
-                    scope.logger.debug('Skipping route ' + route + ': examples');
-                    next();
-                    return;
-                }
                 if (request.params.site && !model.location.site) {
-                    scope.logger.debug('Skipping route ' + route + ': missing site');
+                    scope.logger.debug('Skipping route ' + route + ': no valid site site');
                     next();
                     return;
                 }
-                if (
-                    !request.params.entityId &&
-                    request.params.entityCategory &&
-                    !model.location.entityCategory
-                ) {
+                if (request.params.entityCategory && !model.location.entityCategory) {
                     scope.logger.debug('Skipping route ' + route + ': missing entityCategory');
                     next();
                     return;
                 }
+                //console.log(request.params.entityId, model.location.entity);
                 if (request.params.entityId && !model.location.entity) {
                     scope.logger.debug('Skipping route ' + route + ': missing entity');
                     next();
