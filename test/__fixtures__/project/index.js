@@ -189,25 +189,6 @@ function createStatic(options) {
 function createDynamic(configuration) {
     // Get fixture config
     const bootstrap = new Bootstrap(false, clone(testFixture.configuration));
-    bootstrap.start();
-
-    // Add sites
-    /*
-    bootstrap.di.mapParameters(require(ES_SOURCE + '/model/site').SitesLoader, {
-        plugins: [require(ES_SOURCE + '/model/loader/documentation').PackagePlugin]
-    });
-    */
-
-    // Add entities
-    /*
-    bootstrap.di.mapParameters(require(ES_SOURCE + '/model/entity').EntitiesLoader, {
-        plugins: [
-            require(ES_SOURCE + '/model/loader/documentation').PackagePlugin,
-            require(ES_SOURCE + '/model/loader/documentation').JinjaPlugin,
-            require(ES_SOURCE + '/model/loader/documentation').MarkdownPlugin
-        ]
-    });
-    */
 
     // apply custom configuration
     /*

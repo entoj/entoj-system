@@ -26,6 +26,9 @@ class Bootstrap extends Base {
         this._configuration = configuration || {};
         this._bootstrapper = bootstrapper;
         this._di = new DIContainer();
+
+        // Go
+        this.start();
     }
 
     /**
@@ -222,6 +225,20 @@ class Bootstrap extends Base {
         this.di.mapParameters(require('../model/configuration/index.js').GlobalConfiguration, {
             configuration: this.configuration
         });
+
+        // module configurations
+        this.logger.debug('Module configurations');
+        const moduleConfigurations = this.di.create(
+            require('../configuration/ModuleConfigurations.js').ModuleConfigurations
+        );
+        const moduleConfigurationMappings = this.di.getMappingForDerivatives(
+            require('../configuration/ModuleConfiguration.js').ModuleConfiguration
+        );
+        if (moduleConfigurationMappings && moduleConfigurationMappings.length) {
+            for (const moduleConfigurationMapping of moduleConfigurationMappings) {
+                moduleConfigurations.register(this.di.create(moduleConfigurationMapping.type));
+            }
+        }
 
         // commands
         this.logger.debug('Setup commands');

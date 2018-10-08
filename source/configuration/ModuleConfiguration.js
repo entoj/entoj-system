@@ -36,6 +36,7 @@ class ModuleConfiguration extends Base {
         // Set
         this._globalConfiguration = globalConfiguration;
         this._buildConfiguration = buildConfiguration;
+        this._name = '';
         this._meta = new BaseMap();
         this._configuration = new BaseMap();
         this._maxRecursionDepth = 10;
@@ -74,6 +75,13 @@ class ModuleConfiguration extends Base {
      */
     static get className() {
         return 'configuration/ModuleConfiguration';
+    }
+
+    /**
+     * @type {String}
+     */
+    get name() {
+        return this._name;
     }
 
     /**
@@ -130,6 +138,8 @@ class ModuleConfiguration extends Base {
 
     /**
      * Add all needed meta data for configuration
+     *
+     * @protected
      */
     createMeta() {}
 
@@ -192,6 +202,7 @@ class ModuleConfiguration extends Base {
     }
 
     /**
+     * @protected
      */
     finalizeConfiguration() {}
 

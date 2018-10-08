@@ -72,6 +72,14 @@ class SystemModuleConfiguration extends ModuleConfiguration {
     /**
      * @inheritDoc
      */
+    constructor(globalConfiguration, buildConfiguration) {
+        super(globalConfiguration, buildConfiguration);
+        this._name = 'system';
+    }
+
+    /**
+     * @inheritDoc
+     */
     static get injections() {
         return {
             parameters: [GlobalConfiguration, BuildConfiguration]
@@ -93,7 +101,7 @@ class SystemModuleConfiguration extends ModuleConfiguration {
         this.addMeta('cli.arguments', 'system.cli.arguments', { _: [] });
 
         // EntityCategories
-        this.addMeta('entityCategories', 'system.entity.categories', entityCategories);
+        this.addMeta('entity.categories', 'system.entity.categories', entityCategories);
 
         // Pathes
         this.addMeta('path.base', 'system.path.base', __dirname);
@@ -155,10 +163,18 @@ class SystemModuleConfiguration extends ModuleConfiguration {
         // Server
         this.addMeta('server.port', 'system.server.port', 3000);
         this.addMeta('server.http2', 'system.server.http2', false);
-        this.addMeta('server.sslKey', 'system.server.sslkey', __dirname + '/localhost.key');
-        this.addMeta('server.sslCert', 'system.server.sslcert', __dirname + '/localhost.crt');
+        this.addMeta(
+            'server.sslKey',
+            'system.server.sslkey',
+            __dirname + '/../server/localhost.key'
+        );
+        this.addMeta(
+            'server.sslCert',
+            'system.server.sslcert',
+            __dirname + '/../server/localhost.crt'
+        );
         this.addMeta('server.authentication', 'system.server.authentication', false);
-        this.addMeta('server.user', 'system.server.user', 'entoj');
+        this.addMeta('server.username', 'system.server.username', 'entoj');
         this.addMeta('server.password', 'system.server.password', 'entoj');
         this.addMeta('server.baseUrl', false, 'http://localhost:3000');
     }
@@ -239,7 +255,7 @@ class SystemModuleConfiguration extends ModuleConfiguration {
      * @type {Array}
      */
     get entityCategories() {
-        return this.configuration.get('entityCategories');
+        return this.configuration.get('entity.categories');
     }
 
     /**
@@ -449,8 +465,8 @@ class SystemModuleConfiguration extends ModuleConfiguration {
     /**
      * @type {String}
      */
-    get serverUser() {
-        return this.configuration.get('server.user');
+    get serverUsername() {
+        return this.configuration.get('server.username');
     }
 
     /**
