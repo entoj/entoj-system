@@ -11,8 +11,7 @@ if (process.argv.length > 1 && process.argv[process.argv.length - 2] == '--confi
 const bootstrap = new Bootstrap(configuration, {
     system: { cli: { arguments: require('minimist')(process.argv.splice(2)) } }
 });
-bootstrap.start();
 
-// Rusn
+// Run
 const runner = bootstrap.di.create(Runner);
 runner.run();
