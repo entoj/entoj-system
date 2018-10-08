@@ -6,6 +6,8 @@
  */
 const Base = require('../Base.js').Base;
 const BaseArray = require('../base/BaseArray.js').BaseArray;
+const SystemModuleConfiguration = require('../configuration/SystemModuleConfiguration.js')
+    .SystemModuleConfiguration;
 const Route = require('./route/Route.js').Route;
 const CliLogger = require('../cli/CliLogger.js').CliLogger;
 const assertParameter = require('../utils/assert.js').assertParameter;
@@ -33,28 +35,27 @@ const instances = new BaseArray();
 class Server extends Base {
     /**
      * @param {CliLogger} cliLogger
-     * @param {object} [routes]
-     * @param {object} [options]
+     * @param {configuration.SystemModuleConfiguration} [moduleConfiguration]
+     * @param {Array} [routes]
      */
-    constructor(cliLogger, routes, options) {
+    constructor(cliLogger, moduleConfiguration, routes) {
         super();
 
         // Check params
         assertParameter(this, 'cliLogger', cliLogger, true, CliLogger);
+        assertParameter(
+            this,
+            'moduleConfiguration',
+            moduleConfiguration,
+            true,
+            SystemModuleConfiguration
+        );
 
         // Add initial values
-        const opts = options || {};
-        this._cliLogger = cliLogger;
-        this._http2 = opts.http2 || false;
-        this._port = opts.port || 3000;
-        this._express = express();
         this._routes = [];
-        this._sslKey = opts.sslKey || __dirname + '/localhost.key';
-        this._sslCert = opts.sslCert || __dirname + '/localhost.crt';
-        this._baseUrl = 'http' + (this._http2 ? 's' : '') + '://localhost:' + this._port;
-        this.options = opts;
-        this.options.authentication = opts.authentication || false;
-        this.options.credentials = opts.credentials || { username: 'entoj', password: 'entoj' };
+        this._cliLogger = cliLogger;
+        this._moduleConfiguration = moduleConfiguration;
+        this._express = express();
 
         // Add settings
         this.express.use(compression());
@@ -72,7 +73,7 @@ class Server extends Base {
      * @inheritDoc
      */
     static get injections() {
-        return { parameters: [CliLogger, 'server/Server.routes', 'server/Server.options'] };
+        return { parameters: [CliLogger, SystemModuleConfiguration, 'server/Server.routes'] };
     }
 
     /**
@@ -98,24 +99,10 @@ class Server extends Base {
     }
 
     /**
-     * @let {String}
+     * @let {configuration.SystemModuleConfiuration}
      */
-    get port() {
-        return this._port;
-    }
-
-    /**
-     * @let {String}
-     */
-    get http2() {
-        return this._http2;
-    }
-
-    /**
-     * @let {String}
-     */
-    get baseUrl() {
-        return this._baseUrl;
+    get moduleConfiguration() {
+        return this._moduleConfiguration;
     }
 
     /**
@@ -144,15 +131,15 @@ class Server extends Base {
      * @return {Promise}
      */
     authenticate(request, response, next) {
-        if (this.options.authentication) {
+        if (this.moduleConfiguration.serverAuthentication) {
             const authed = basicAuth(request);
             if (
                 !authed ||
-                authed.name !== this.options.credentials.username ||
-                authed.pass !== this.options.credentials.password
+                authed.name !== this.moduleConfiguration.serverUsername ||
+                authed.pass !== this.moduleConfiguration.serverÜassword
             ) {
                 response.statusCode = 401;
-                response.setHeader('WWW-Authenticate', 'Basic realm="example"');
+                response.setHeader('WWW-Authenticate', 'Basic realm="Patternlab"');
                 response.end('Access denied');
                 next();
                 return false;
@@ -186,21 +173,29 @@ class Server extends Base {
 
         const scope = this;
         return new Promise(function(resolve, reject) {
-            if (scope.http2) {
+            if (scope.moduleConfiguration.serverHttp2) {
                 const options = {
-                    key: fs.readFileSync(scope._sslKey),
-                    cert: fs.readFileSync(scope._sslCert)
+                    key: fs.readFileSync(scope.moduleConfiguration.serverSslKey),
+                    cert: fs.readFileSync(scope.moduleConfiguration.serverSslCert)
                 };
                 const work = scope.cliLogger.work(
-                    'Starting <http/2> server at <https://localhost:' + scope.port + '>'
+                    'Starting <http/2> server at <https://localhost:' +
+                        scope.moduleConfiguration.serverPort +
+                        '>'
                 );
-                scope._server = spdy.createServer(options, scope.express).listen(scope.port);
+                scope._server = spdy
+                    .createServer(options, scope.express)
+                    .listen(scope.moduleConfiguration.serverPort);
                 scope.cliLogger.end(work);
             } else {
                 const work = scope.cliLogger.info(
-                    'Starting <http> server at <http://localhost:' + scope.port + '>'
+                    'Starting <http> server at <http://localhost:' +
+                        scope.moduleConfiguration.serverPort +
+                        '>'
                 );
-                scope._server = http.createServer(scope.express).listen(scope.port);
+                scope._server = http
+                    .createServer(scope.express)
+                    .listen(scope.moduleConfiguration.serverPort);
                 scope.cliLogger.end(work);
             }
             Server.instances.push(scope);

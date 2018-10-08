@@ -6,6 +6,12 @@
  */
 const Server = require(ES_SOURCE + '/server/Server.js').Server;
 const CliLogger = require(ES_SOURCE + '/cli/CliLogger.js').CliLogger;
+const GlobalConfiguration = require(ES_SOURCE + '/model/configuration/GlobalConfiguration.js')
+    .GlobalConfiguration;
+const BuildConfiguration = require(ES_SOURCE + '/model/configuration/BuildConfiguration.js')
+    .BuildConfiguration;
+const SystemModuleConfiguration = require(ES_SOURCE + '/configuration/SystemModuleConfiguration.js')
+    .SystemModuleConfiguration;
 const baseSpec = require(ES_TEST + '/BaseShared.js').spec;
 
 /**
@@ -33,7 +39,11 @@ function spec(type, className, prepareParameters) {
     // Create a initialized server
     spec.createServer = function(routes) {
         const cliLogger = new CliLogger('', { muted: true });
-        global.fixtures.server = new Server(cliLogger, routes);
+        global.fixtures.moduleConfiguration = new SystemModuleConfiguration(
+            new GlobalConfiguration(),
+            new BuildConfiguration()
+        );
+        global.fixtures.server = new Server(cliLogger, global.fixtures.moduleConfiguration, routes);
     };
 
     // create a testee

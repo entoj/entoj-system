@@ -139,16 +139,7 @@ class ServerCommand extends Command {
                 // create server
                 const start = logger.section('Starting server');
                 try {
-                    const options = {
-                        port: moduleConfiguration.serverPort,
-                        http2: moduleConfiguration.serverHttp2,
-                        sslKey: moduleConfiguration.serverSslKey,
-                        sslCert: moduleConfiguration.serverSslCert,
-                        authentication: moduleConfiguration.serverAuthentication,
-                        user: moduleConfiguration.serverUser,
-                        password: moduleConfiguration.serverPassword
-                    };
-                    scope._server = new Server(logger, routes, options);
+                    scope._server = new Server(logger, moduleConfiguration, routes);
                 } catch (error) {
                     ErrorHandler.error(scope, error);
                     logger.end(start, true);

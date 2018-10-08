@@ -6,6 +6,12 @@
 const Server = require(ES_SOURCE + '/server/Server.js').Server;
 const Route = require(ES_SOURCE + '/server/route/Route.js').Route;
 const CliLogger = require(ES_SOURCE + '/cli/CliLogger.js').CliLogger;
+const GlobalConfiguration = require(ES_SOURCE + '/model/configuration/GlobalConfiguration.js')
+    .GlobalConfiguration;
+const BuildConfiguration = require(ES_SOURCE + '/model/configuration/BuildConfiguration.js')
+    .BuildConfiguration;
+const SystemModuleConfiguration = require(ES_SOURCE + '/configuration/SystemModuleConfiguration.js')
+    .SystemModuleConfiguration;
 const baseSpec = require(ES_TEST + '/BaseShared.js').spec;
 const request = require('supertest');
 const sinon = require('sinon');
@@ -20,7 +26,11 @@ describe(Server.className, function() {
      */
     baseSpec(Server, 'server/Server', function(parameters) {
         const cliLogger = new CliLogger('', { muted: true });
-        return [cliLogger];
+        const moduleConfiguration = new SystemModuleConfiguration(
+            new GlobalConfiguration(),
+            new BuildConfiguration()
+        );
+        return [cliLogger, moduleConfiguration];
     });
 
     /**
@@ -43,32 +53,21 @@ describe(Server.className, function() {
     // Create a initialized testee
     const createTestee = function(routes, options) {
         const cliLogger = new CliLogger('', { muted: true });
-        return new Server(cliLogger, routes, options);
+        const moduleConfiguration = new SystemModuleConfiguration(
+            new GlobalConfiguration(options),
+            new BuildConfiguration()
+        );
+        return new Server(cliLogger, moduleConfiguration, routes);
     };
 
-    describe('#constructor', function() {
-        it('should per default listen on port 3000 with http2 off', function() {
-            const testee = createTestee();
-            expect(testee.port).to.be.equal(3000);
-            expect(testee.http2).to.be.not.ok;
-        });
-
-        it('should allow to configure port and http2 via options', function() {
-            const options = {
-                port: 443,
-                http2: true
-            };
-            const testee = createTestee(undefined, options);
-            expect(testee.port).to.be.equal(443);
-            expect(testee.http2).to.be.ok;
-        });
-    });
-
     describe('#start', function() {
-        it('should start a http server', function(done) {
+        it('should start a http server listening on the configured port', function(done) {
             global.fixtures.server = createTestee();
             global.fixtures.server.express.use(express.static(ES_FIXTURES + '/files'));
             global.fixtures.server.start().then(function(server) {
+                expect(server.address().port).to.be.equal(
+                    global.fixtures.server.moduleConfiguration.serverPort
+                );
                 request(server)
                     .get('/js/js-01.js')
                     .expect(200, done);
@@ -77,7 +76,11 @@ describe(Server.className, function() {
 
         it('should start a https server', function(done) {
             const options = {
-                http2: true
+                system: {
+                    server: {
+                        http2: true
+                    }
+                }
             };
             global.fixtures.server = createTestee(undefined, options);
             global.fixtures.server.express.use(express.static(ES_FIXTURES + '/files'));
@@ -89,7 +92,11 @@ describe(Server.className, function() {
 
         xit('should allow to add http basic auth', function(done) {
             const options = {
-                authentication: true
+                system: {
+                    server: {
+                        authentication: true
+                    }
+                }
             };
             global.fixtures.server = createTestee(undefined, options);
             global.fixtures.server.express.use(express.static(ES_FIXTURES + '/files'));
