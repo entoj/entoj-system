@@ -29,7 +29,6 @@ class LinterResult extends ValueObject {
         fields.linter = '';
         fields.contentType = ContentType.ANY;
         fields.contentKind = ContentKind.UNKNOWN;
-        fields.success = false;
         fields.warningCount = 0;
         fields.errorCount = 0;
         fields.messages = [];
@@ -85,11 +84,7 @@ class LinterResult extends ValueObject {
      * @type {Boolean}
      */
     get success() {
-        return this._success;
-    }
-
-    set success(value) {
-        this._success = value;
+        return this._warningCount == 0 && this._errorCount == 0;
     }
 
     /**

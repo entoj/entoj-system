@@ -31,7 +31,7 @@ describe(LinterResult.className, function() {
         ContentKind.CSS,
         ContentKind.UNKOWN
     );
-    baseSpec.assertProperty(new LinterResult(), ['success'], true, false);
+    baseSpec.assertProperty(new LinterResult(), ['success']);
     baseSpec.assertProperty(new LinterResult(), ['warningCount'], 10, 0);
     baseSpec.assertProperty(new LinterResult(), ['errorCount'], 5, 0);
     baseSpec.assertProperty(new LinterResult(), ['messages'], [{}], []);

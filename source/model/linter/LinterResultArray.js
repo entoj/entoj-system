@@ -16,13 +16,19 @@ class LinterResultArray extends SearchableArray {
     /**
      * @ignore
      */
-    constructor(...args) {
-        super(...args);
+    constructor(data) {
+        super();
 
         // Initial values
         this._warningCount = 0;
         this._errorCount = 0;
         this._success = true;
+
+        // Initial import
+        if (data) {
+            this.import(data);
+            this.updateSummary();
+        }
 
         // Listen for changes
         this.events.on('change', this.updateSummary.bind(this));
@@ -42,8 +48,12 @@ class LinterResultArray extends SearchableArray {
         this._warningCount = 0;
         this._errorCount = 0;
         for (const item of this) {
-            this._warningCount += item.warningCount;
-            this._errorCount += item.errorCount;
+            if (item && typeof item.warningCount != 'undefined') {
+                this._warningCount += item.warningCount;
+            }
+            if (item && typeof item.errorCount != 'undefined') {
+                this._errorCount += item.errorCount;
+            }
         }
         this._success = this._warningCount === 0 && this._errorCount === 0;
     }
@@ -88,14 +98,20 @@ class LinterResultArray extends SearchableArray {
     import(data) {
         const items = Array.isArray(data) ? data : [data];
         for (const item of items) {
-            let linterResult = this.findBy({
-                linter: data.linter
-            });
-            if (!linterResult) {
-                linterResult = new LinterResult();
-                this.push(linterResult);
+            if (item.linter) {
+                let linterResult = this.findBy({
+                    linter: item.linter
+                });
+                if (!linterResult) {
+                    linterResult = new LinterResult();
+                    linterResult.dehydrate(item);
+                    this.push(linterResult);
+                } else {
+                    linterResult.dehydrate(item);
+                }
+            } else {
+                this.push(item);
             }
-            linterResult.dehydrate(item);
         }
     }
 }

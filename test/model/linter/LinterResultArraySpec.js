@@ -21,6 +21,77 @@ describe(LinterResultArray.className, function() {
     /**
      * LinterResultArray Test
      */
+    describe('#success', function() {
+        it('should return the accumulated success state', function() {
+            const input = [
+                {
+                    linter: 'LinterName1',
+                    warningCount: 1
+                },
+                {
+                    linter: 'LinterName2'
+                }
+            ];
+            const testee = new LinterResultArray(input);
+            expect(testee.success).to.have.be.equal(false);
+        });
+    });
+
+    describe('#warningCount', function() {
+        it('should return the accumulated warning count', function() {
+            const input = [
+                {
+                    linter: 'LinterName1',
+                    warningCount: 1
+                },
+                {
+                    linter: 'LinterName2',
+                    warningCount: 3
+                }
+            ];
+            const testee = new LinterResultArray(input);
+            expect(testee.warningCount).to.have.be.equal(4);
+        });
+    });
+
+    describe('#errorCount', function() {
+        it('should return the accumulated error count', function() {
+            const input = [
+                {
+                    linter: 'LinterName1',
+                    success: true,
+                    errorCount: 1
+                },
+                {
+                    linter: 'LinterName2',
+                    success: false,
+                    errorCount: 2
+                }
+            ];
+            const testee = new LinterResultArray(input);
+            expect(testee.errorCount).to.have.be.equal(3);
+        });
+    });
+
+    describe('#successForKind', function() {
+        it('should return the success flag for the given content kind', function() {
+            const input = [
+                {
+                    linter: 'LinterName1',
+                    contentKind: ContentKind.CSS
+                },
+                {
+                    linter: 'LinterName2',
+                    contentKind: ContentKind.JS,
+                    errorCount: 2
+                }
+            ];
+            const testee = new LinterResultArray(input);
+            expect(testee.successForKind(ContentKind.CSS)).to.have.be.ok;
+            expect(testee.successForKind(ContentKind.JS)).to.have.be.not.ok;
+        });
+    });
+
     describe('#import', function() {
         it('should import a single object', function() {
             const testee = new LinterResultArray();
@@ -62,7 +133,7 @@ describe(LinterResultArray.className, function() {
             expect(testee[1].linter).to.be.equal(input[1].linter);
         });
 
-        it('should update existing objects based on zthe linter name', function() {
+        it('should update existing objects based on the linter name', function() {
             const testee = new LinterResultArray();
             const input1 = {
                 linter: 'LinterName',
