@@ -28,7 +28,7 @@
         "date-format-lite": "^17.7.0",
         "deasync": "^0.1.13",
         "docblock-parser": "^1.0.0",
-        "entoj-test-fixture": "^0.9.11",
+        "entoj-test-fixture": "^0.10.0",
         "es6-template-strings": "^2.0.1",
         "express": "^4.16.3",
         "git-rev-promises": "^1.0.8",
