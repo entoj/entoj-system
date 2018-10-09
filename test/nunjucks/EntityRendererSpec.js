@@ -9,6 +9,7 @@ const Filters = require(ES_SOURCE + '/nunjucks/filter/index.js');
 const baseSpec = require(ES_TEST + '/BaseShared.js').spec;
 const projectFixture = require(ES_FIXTURES + '/project/index.js');
 const co = require('co');
+const isWin32 = process.platform == 'win32';
 
 /**
  * Spec
@@ -56,7 +57,7 @@ describe(EntityRenderer.className, function() {
         it('should allow to set a template path as a string', function() {
             const testee = createTestee();
             testee.templatePaths = '/tmp';
-            expect(testee.templatePaths).to.be.deep.equal(['/tmp']);
+            expect(testee.templatePaths).to.be.deep.equal([isWin32 ? 'C:\\tmp' : '/tmp']);
         });
 
         it('should allow to set template pathes with variables', function() {
