@@ -7,6 +7,8 @@
 const Filter = require('./Filter.js').Filter;
 const PathesConfiguration = require('../../model/configuration/PathesConfiguration.js')
     .PathesConfiguration;
+const SystemModuleConfiguration = require('../../configuration/SystemModuleConfiguration.js')
+    .SystemModuleConfiguration;
 const assertParameter = require('../../utils/assert.js').assertParameter;
 const pathes = require('../../utils/pathes.js');
 const fs = require('fs');
@@ -19,11 +21,17 @@ class SvgViewBoxFilter extends Filter {
     /**
      * @inheritDocs
      */
-    constructor(pathesConfiguration, basePath) {
+    constructor(moduleConfiguration, pathesConfiguration) {
         super();
-        this._name = 'svgViewBox';
 
         // Check params
+        assertParameter(
+            this,
+            'moduleConfiguration',
+            moduleConfiguration,
+            true,
+            SystemModuleConfiguration
+        );
         assertParameter(
             this,
             'pathesConfiguration',
@@ -33,7 +41,8 @@ class SvgViewBoxFilter extends Filter {
         );
 
         // Assign options
-        this._basePath = basePath || '/';
+        this._name = 'svgViewBox';
+        this._moduleConfiguration = moduleConfiguration;
         this._pathesConfiguration = pathesConfiguration;
     }
 
@@ -48,25 +57,16 @@ class SvgViewBoxFilter extends Filter {
      * @inheritDocs
      */
     static get injections() {
-        return { parameters: [PathesConfiguration, 'nunjucks.filter/SvgViewBoxFilter.basePath'] };
+        return {
+            parameters: [SystemModuleConfiguration, PathesConfiguration]
+        };
     }
 
     /**
-     * @type {String}
+     * @type {configuration.SystemModuleConfiguration}
      */
-    get basePath() {
-        return this._basePath;
-    }
-
-    /**
-     * @returns {String}
-     */
-    getBasePath(globals) {
-        let result = this._basePath;
-        if (this.environment && this.environment.buildConfiguration) {
-            result = this.environment.buildConfiguration.get('filters.svgPath', this._basePath);
-        }
-        return templateString(result, globals.location || {});
+    get moduleConfiguration() {
+        return this._moduleConfiguration;
     }
 
     /**
@@ -77,18 +77,23 @@ class SvgViewBoxFilter extends Filter {
     }
 
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
     filter(value) {
         const scope = this;
         return function(value) {
             let result = '0 0 0 0';
             const globals = scope.getGlobals(this);
-            const filename = pathes.concat(
-                scope.pathesConfiguration.sites,
-                scope.getBasePath(globals),
-                value + '.svg'
+            let filename = pathes.concat(
+                templateString(
+                    scope.moduleConfiguration.filterSvgViewBoxBasePath,
+                    globals.location || {}
+                ),
+                value
             );
+            if (!filename.endsWith('.svg')) {
+                filename += '.svg';
+            }
             if (fs.existsSync(filename)) {
                 const icon = fs.readFileSync(filename, { encoding: 'utf8' });
                 const viewbox = icon.match(/viewBox="([^"]*)"/i);
@@ -98,7 +103,7 @@ class SvgViewBoxFilter extends Filter {
             } else {
                 scope.logger.warn('Could not locate svg <' + filename + '>');
             }
-            return scope.applyCallbacks(result, arguments);
+            return scope.applyCallbacks(result, arguments, { asset: value });
         };
     }
 }

@@ -177,6 +177,16 @@ class SystemModuleConfiguration extends ModuleConfiguration {
         this.addMeta('server.username', 'system.server.username', 'entoj');
         this.addMeta('server.password', 'system.server.password', 'entoj');
         this.addMeta('server.baseUrl', false, 'http://localhost:3000');
+
+        // Filters
+        this.addMeta('filter.assetUrl.baseUrl', 'system.filter.assetUrl.baseUrl', '/');
+        this.addMeta('filter.svgUrl.baseUrl', 'system.filter.svgUrl.baseUrl', '/');
+        this.addMeta('filter.svgViewBox.basePath', 'system.filter.svgViewBox.basePath', '/');
+        this.addMeta('filter.linkUrl.properties', 'system.filter.linkUrl.properties', ['url']);
+        this.addMeta('filter.markup.styles', 'system.filter.markup.styles', {
+            plain: 'plain',
+            html: 'html'
+        });
     }
 
     /**
@@ -481,6 +491,41 @@ class SystemModuleConfiguration extends ModuleConfiguration {
      */
     get serverBaseUrl() {
         return this.configuration.get('server.baseUrl');
+    }
+
+    /**
+     * @type {String}
+     */
+    get filterAssetUrlBaseUrl() {
+        return this.configuration.get('filter.assetUrl.baseUrl');
+    }
+
+    /**
+     * @type {String}
+     */
+    get filterSvgUrlBaseUrl() {
+        return this.configuration.get('filter.svgUrl.baseUrl');
+    }
+
+    /**
+     * @type {String}
+     */
+    get filterSvgViewBoxBaseUrl() {
+        return this.configuration.get('filter.svgViewBox.basePath');
+    }
+
+    /**
+     * @type {Array}
+     */
+    get filterLinkUrlProperties() {
+        return this.configuration.get('filter.linkUrl.properties');
+    }
+
+    /**
+     * @type {Array}
+     */
+    get filterMarkupStyles() {
+        return this.configuration.get('filter.markup.styles');
     }
 }
 

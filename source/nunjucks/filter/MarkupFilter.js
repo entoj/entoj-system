@@ -8,6 +8,9 @@ const Filter = require('./Filter.js').Filter;
 const createRandomNumberGenerator = require('../../utils/random.js').createRandomNumberGenerator;
 const striptags = require('striptags');
 const htmlify = require('../../utils/string.js').htmlify;
+const SystemModuleConfiguration = require('../../configuration/SystemModuleConfiguration.js')
+    .SystemModuleConfiguration;
+const assertParameter = require('../../utils/assert.js').assertParameter;
 
 /**
  * @memberOf nunjucks.filter
@@ -16,10 +19,20 @@ class MarkupFilter extends Filter {
     /**
      * @inheritDoc
      */
-    constructor(styles) {
+    constructor(moduleConfiguration) {
         super();
-        this._name = 'markup';
-        this._styles = styles ? styles : { plain: 'plain' };
+        // Check
+        assertParameter(
+            this,
+            'moduleConfiguration',
+            moduleConfiguration,
+            true,
+            SystemModuleConfiguration
+        );
+
+        // Assign options
+        this._name = ['markup'];
+        this._moduleConfiguration = moduleConfiguration;
     }
 
     /**
@@ -30,35 +43,36 @@ class MarkupFilter extends Filter {
     }
 
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
     static get injections() {
-        return { parameters: ['nunjucks.filter/MarkupFilter.styles'] };
+        return { parameters: [SystemModuleConfiguration] };
     }
 
     /**
-     * @type {Object}
+     * @type {configuration.SystemModuleConfiguration}
      */
-    get styles() {
-        return this._styles;
+    get moduleConfiguration() {
+        return this._moduleConfiguration;
     }
 
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
     filter() {
         const scope = this;
         return function(value, style) {
             const result = value || '';
-            const styleName = scope.styles[style] || 'default';
+            const styleName = scope.moduleConfiguration.filterMarkupStyles[style] || 'html';
+            // Strip tags?
             if (styleName == 'plain') {
                 return striptags(result);
             }
+            // Cheap test if tags there?
             if (result.indexOf('<') > -1) {
                 return result;
             }
-            const globals =
-                this && this.env && this.env.globals ? this.env.globals : { location: {} };
+            const globals = scope.getGlobals(this);
             const useStaticContent = scope.useStaticContent(globals.request);
             const tags = [
                 {

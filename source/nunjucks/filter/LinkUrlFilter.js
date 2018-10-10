@@ -6,6 +6,9 @@
  */
 const Filter = require('./Filter.js').Filter;
 const isPlainObject = require('lodash.isplainobject');
+const SystemModuleConfiguration = require('../../configuration/SystemModuleConfiguration.js')
+    .SystemModuleConfiguration;
+const assertParameter = require('../../utils/assert.js').assertParameter;
 
 /**
  * Generates a link url fro the given link object.
@@ -17,30 +20,46 @@ class LinkUrlFilter extends Filter {
     /**
      * @inheritDocs
      */
-    constructor(dataProperties) {
+    constructor(moduleConfiguration) {
         super();
-        this._name = ['linkUrl', 'link'];
+
+        // Check
+        assertParameter(
+            this,
+            'moduleConfiguration',
+            moduleConfiguration,
+            true,
+            SystemModuleConfiguration
+        );
 
         // Assign options
-        this.dataProperties = dataProperties || ['url'];
+        this._name = ['linkUrl', 'link'];
+        this._moduleConfiguration = moduleConfiguration;
     }
 
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
     static get injections() {
-        return { parameters: ['nunjucks.filter/LinkUrlFilter.dataProperties'] };
+        return { parameters: [SystemModuleConfiguration] };
     }
 
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
     static get className() {
         return 'nunjucks.filter/LinkUrlFilter';
     }
 
     /**
-     * @inheritDocs
+     * @type {configuration.SystemModuleConfiguration}
+     */
+    get moduleConfiguration() {
+        return this._moduleConfiguration;
+    }
+
+    /**
+     * @inheritDoc
      */
     filter() {
         const scope = this;
@@ -49,14 +68,14 @@ class LinkUrlFilter extends Filter {
             if (typeof value === 'string') {
                 result = value;
             } else if (isPlainObject(value)) {
-                for (const dataProperty of scope.dataProperties) {
+                for (const dataProperty of scope.moduleConfiguration.filterLinkUrlProperties) {
                     if (typeof value[dataProperty] === 'string') {
                         result = value[dataProperty];
                     }
                 }
             }
             return scope.applyCallbacks(result, arguments, {
-                dataProperties: scope.dataProperties
+                properties: scope.moduleConfiguration.filterLinkUrlProperties
             });
         };
     }

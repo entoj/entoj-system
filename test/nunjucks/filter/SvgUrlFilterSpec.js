@@ -6,6 +6,12 @@
 const SvgUrlFilter = require(ES_SOURCE + '/nunjucks/filter/SvgUrlFilter.js').SvgUrlFilter;
 const filterSpec = require(ES_TEST + '/nunjucks/filter/FilterShared.js').spec;
 const Environment = require(ES_SOURCE + '/nunjucks/Environment.js').Environment;
+const GlobalConfiguration = require(ES_SOURCE + '/model/configuration/GlobalConfiguration.js')
+    .GlobalConfiguration;
+const BuildConfiguration = require(ES_SOURCE + '/model/configuration/BuildConfiguration.js')
+    .BuildConfiguration;
+const SystemModuleConfiguration = require(ES_SOURCE + '/configuration/SystemModuleConfiguration.js')
+    .SystemModuleConfiguration;
 const projectFixture = require(ES_FIXTURES + '/project/index.js');
 
 /**
@@ -15,45 +21,54 @@ describe(SvgUrlFilter.className, function() {
     /**
      * Filter Test
      */
-    filterSpec(SvgUrlFilter, 'nunjucks.filter/SvgUrlFilter');
+    filterSpec(SvgUrlFilter, 'nunjucks.filter/SvgUrlFilter', () => [
+        new SystemModuleConfiguration(new GlobalConfiguration(), new BuildConfiguration())
+    ]);
 
     /**
      * SettingFilter Test
      */
+
+    // Creates a initialized testee
+    function createTestee(configuration) {
+        return new SvgUrlFilter(
+            new SystemModuleConfiguration(
+                new GlobalConfiguration(configuration),
+                new BuildConfiguration()
+            )
+        );
+    }
+
     describe('#filter()', function() {
         it('should return a svg sprite url', function() {
-            const testee = new SvgUrlFilter().filter();
+            const testee = createTestee().filter();
             expect(testee('arrow')).to.be.equal('/arrow.svg#icon');
+            expect(testee('arrow.svg')).to.be.equal('/arrow.svg#icon');
         });
 
-        it('should allow to configure the svg base url', function() {
-            const testee = new SvgUrlFilter('/path/to/svg').filter();
-            expect(testee('arrow')).to.be.equal('/path/to/svg/arrow.svg#icon');
+        it('should allow to configure the base url', function() {
+            const testee = createTestee({
+                system: { filter: { svgUrl: { baseUrl: '/base/assets' } } }
+            }).filter();
+            expect(testee('boo.svg')).to.be.equal('/base/assets/boo.svg#icon');
+            expect(testee('/hotshit/boo')).to.be.equal('/base/assets/hotshit/boo.svg#icon');
         });
 
-        it('should allow to override the base url via buildConfiguration filters.svgUrl', function() {
-            const options = {
-                build: {
-                    default: 'development',
-                    environments: {
-                        development: {
-                            filters: {
-                                svgUrl: '/build/specific'
-                            }
-                        }
-                    }
-                }
-            };
-            const fixture = projectFixture.createStatic(options);
+        it('should allow to use variables in the base url', function() {
+            const fixture = projectFixture.createStatic();
             const environment = new Environment(
                 fixture.entitiesRepository,
                 fixture.pathesConfiguration,
                 fixture.buildConfiguration
             );
-            const filter = new SvgUrlFilter();
+            environment.addGlobal('location', { site: fixture.siteBase });
+            const filter = createTestee({
+                system: { filter: { svgUrl: { baseUrl: '${url.site}/assets' } } }
+            });
             filter.register(environment);
             const testee = filter.filter();
-            expect(testee('boo')).to.be.equal('/build/specific/boo.svg#icon');
+            expect(testee('boo.svg')).to.be.equal('/base/assets/boo.svg#icon');
+            expect(testee('/hotshit/boo')).to.be.equal('/base/assets/hotshit/boo.svg#icon');
         });
     });
 });

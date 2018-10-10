@@ -5,8 +5,11 @@
  * @ignore
  */
 const Filter = require('./Filter.js').Filter;
+const SystemModuleConfiguration = require('../../configuration/SystemModuleConfiguration.js')
+    .SystemModuleConfiguration;
 const urls = require('../../utils/urls.js');
 const templateString = require('es6-template-strings');
+const assertParameter = require('../../utils/assert.js').assertParameter;
 
 /**
  * Generates a asset url.
@@ -17,19 +20,28 @@ class AssetUrlFilter extends Filter {
     /**
      * @inheritDoc
      */
-    constructor(baseUrl) {
+    constructor(moduleConfiguration) {
         super();
-        this._name = ['assetUrl', 'asset'];
+
+        // Check
+        assertParameter(
+            this,
+            'moduleConfiguration',
+            moduleConfiguration,
+            true,
+            SystemModuleConfiguration
+        );
 
         // Assign options
-        this._baseUrl = baseUrl || '/';
+        this._name = ['assetUrl', 'asset'];
+        this._moduleConfiguration = moduleConfiguration;
     }
 
     /**
      * @inheritDoc
      */
     static get injections() {
-        return { parameters: ['nunjucks.filter/AssetUrlFilter.baseUrl'] };
+        return { parameters: [SystemModuleConfiguration] };
     }
 
     /**
@@ -40,14 +52,10 @@ class AssetUrlFilter extends Filter {
     }
 
     /**
-     * @returns {String}
+     * @type {configuration.SystemModuleConfiguration}
      */
-    getBaseUrl(globals) {
-        let result = this._baseUrl;
-        if (this.environment && this.environment.buildConfiguration) {
-            result = this.environment.buildConfiguration.get('filters.assetUrl', this._baseUrl);
-        }
-        return templateString(result, globals.location || {});
+    get moduleConfiguration() {
+        return this._moduleConfiguration;
     }
 
     /**
@@ -57,7 +65,13 @@ class AssetUrlFilter extends Filter {
         const scope = this;
         return function(value) {
             const globals = scope.getGlobals(this);
-            const result = urls.concat(scope.getBaseUrl(globals), value);
+            const result = urls.concat(
+                templateString(
+                    scope.moduleConfiguration.filterAssetUrlBaseUrl,
+                    globals.location || {}
+                ),
+                value
+            );
             return scope.applyCallbacks(result, arguments, { asset: value });
         };
     }
