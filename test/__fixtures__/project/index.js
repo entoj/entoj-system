@@ -191,16 +191,8 @@ function createDynamic(configuration) {
     const bootstrap = new Bootstrap(false, clone(testFixture.configuration));
 
     // apply custom configuration
-    /*
-    if (typeof configuration == 'function') {
-        config = configuration(config);
-    } else {
-        config = merge(config, configuration);
-    }
-    */
     if (configuration) {
-        console.log(configuration);
-        process.exit();
+        bootstrap.addConfiguration(configuration);
     }
 
     // create di
@@ -244,3 +236,6 @@ function createDynamic(configuration) {
  */
 module.exports.createStatic = createStatic;
 module.exports.createDynamic = createDynamic;
+module.exports.pathToBase = testFixture.pathToBase;
+module.exports.pathToSites = testFixture.pathToSites;
+module.exports.pathToData = testFixture.pathToData;

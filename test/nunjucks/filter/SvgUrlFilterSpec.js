@@ -55,16 +55,16 @@ describe(SvgUrlFilter.className, function() {
         });
 
         it('should allow to use variables in the base url', function() {
-            const fixture = projectFixture.createStatic();
+            const fixture = projectFixture.createStatic({
+                settings: { system: { filter: { svgUrl: { baseUrl: '${url.site}/assets' } } } }
+            });
             const environment = new Environment(
                 fixture.entitiesRepository,
                 fixture.pathesConfiguration,
                 fixture.buildConfiguration
             );
             environment.addGlobal('location', { site: fixture.siteBase });
-            const filter = createTestee({
-                system: { filter: { svgUrl: { baseUrl: '${url.site}/assets' } } }
-            });
+            const filter = new SvgUrlFilter(fixture.moduleConfiguration);
             filter.register(environment);
             const testee = filter.filter();
             expect(testee('boo.svg')).to.be.equal('/base/assets/boo.svg#icon');

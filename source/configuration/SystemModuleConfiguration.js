@@ -510,7 +510,7 @@ class SystemModuleConfiguration extends ModuleConfiguration {
     /**
      * @type {String}
      */
-    get filterSvgViewBoxBaseUrl() {
+    get filterSvgViewBoxBasePath() {
         return this.configuration.get('filter.svgViewBox.basePath');
     }
 

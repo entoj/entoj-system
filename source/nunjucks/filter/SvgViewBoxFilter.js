@@ -5,8 +5,6 @@
  * @ignore
  */
 const Filter = require('./Filter.js').Filter;
-const PathesConfiguration = require('../../model/configuration/PathesConfiguration.js')
-    .PathesConfiguration;
 const SystemModuleConfiguration = require('../../configuration/SystemModuleConfiguration.js')
     .SystemModuleConfiguration;
 const assertParameter = require('../../utils/assert.js').assertParameter;
@@ -32,18 +30,10 @@ class SvgViewBoxFilter extends Filter {
             true,
             SystemModuleConfiguration
         );
-        assertParameter(
-            this,
-            'pathesConfiguration',
-            pathesConfiguration,
-            true,
-            PathesConfiguration
-        );
 
         // Assign options
         this._name = 'svgViewBox';
         this._moduleConfiguration = moduleConfiguration;
-        this._pathesConfiguration = pathesConfiguration;
     }
 
     /**
@@ -58,7 +48,7 @@ class SvgViewBoxFilter extends Filter {
      */
     static get injections() {
         return {
-            parameters: [SystemModuleConfiguration, PathesConfiguration]
+            parameters: [SystemModuleConfiguration]
         };
     }
 
@@ -67,13 +57,6 @@ class SvgViewBoxFilter extends Filter {
      */
     get moduleConfiguration() {
         return this._moduleConfiguration;
-    }
-
-    /**
-     * @type {model.configuration.PathesConfiguration}
-     */
-    get pathesConfiguration() {
-        return this._pathesConfiguration;
     }
 
     /**
