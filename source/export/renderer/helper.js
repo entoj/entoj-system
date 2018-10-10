@@ -13,7 +13,7 @@ const co = require('co');
 
 /**
  * @param {Object} parameters
- * @param {export.JspConfiguration} configuration
+ * @param {export.Configuration} configuration
  * @return {Promise<Object>}
  */
 function convertToNodes(parameters, configuration) {
@@ -32,7 +32,7 @@ function convertToNodes(parameters, configuration) {
 
 /**
  * @param {Object} parameters
- * @param {export.JspConfiguration} configuration
+ * @param {export.Configuration} configuration
  * @return {Promise<Object>}
  */
 function convertToLiterals(parameters, configuration) {
@@ -111,11 +111,14 @@ function prepareDocumentedParameters(macroConfiguration) {
 /**
  * @param {export.ast.Node} node
  * @param {Object} macroConfiguration
- * @param {export.JspConfiguration} configuration
+ * @param {export.Configuration} configuration
  * @param {String} resultType
  * @return {mixed}
  */
 function prepareParameters(node, macroConfiguration, configuration, resultType) {
+    if (!node || !macroConfiguration) {
+        return false;
+    }
     const scope = this;
     const promise = co(function*() {
         let result = prepareDocumentedParameters(macroConfiguration);

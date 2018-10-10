@@ -27,7 +27,7 @@ describe(SettingFilter.className, function() {
     beforeEach(function() {
         global.fixtures = projectFixture.createStatic();
         global.fixtures.moduleConfiguration.configuration.set(
-            'filename.settings',
+            'filenameSettings',
             ES_FIXTURES + '/model/SettingsModel.json'
         );
         global.fixtures.settingsRepository = new SettingsRepository(

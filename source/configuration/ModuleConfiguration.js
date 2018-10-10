@@ -39,6 +39,7 @@ class ModuleConfiguration extends Base {
         this._name = '';
         this._meta = new BaseMap();
         this._configuration = new BaseMap();
+        this._templateVariables = {};
         this._maxRecursionDepth = 10;
 
         // Go
@@ -101,6 +102,13 @@ class ModuleConfiguration extends Base {
     /**
      * @type {base.BaseMap}
      */
+    get templateVariables() {
+        return this._templateVariables;
+    }
+
+    /**
+     * @type {base.BaseMap}
+     */
     get meta() {
         return this._meta;
     }
@@ -115,11 +123,45 @@ class ModuleConfiguration extends Base {
     /**
      * @returns {Object}
      */
-    getConfigurationObject() {
+    getMetaAsObject() {
+        const result = {};
+        for (const key of this.meta.keys()) {
+            const meta = this.meta.get(key);
+            const pathParts = key.split('.');
+            let current = result;
+            for (let pathIndex = 0; pathIndex < pathParts.length; pathIndex++) {
+                const pathPart = pathParts[pathIndex];
+                if (pathIndex < pathParts.length - 1) {
+                    if (typeof current[pathPart] == 'undefined') {
+                        current[pathPart] = {};
+                    }
+                    current = current[pathPart];
+                } else if (pathIndex == pathParts.length - 1) {
+                    current[pathPart] = meta.defaultValue;
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
+     * @returns {Object}
+     */
+    getConfigurationAsObject() {
         const result = {};
         for (const key of this.configuration.keys()) {
             const value = this.configuration.get(key);
-            const pathParts = key.split('.');
+            const meta = this.meta.get(key);
+            let pathParts = [];
+            if (meta && meta.path) {
+                pathParts = meta.path.split('.');
+                if (pathParts.length > 1) {
+                    pathParts.shift();
+                }
+            } else {
+                pathParts = key.split('.');
+            }
+
             let current = result;
             for (let pathIndex = 0; pathIndex < pathParts.length; pathIndex++) {
                 const pathPart = pathParts[pathIndex];
@@ -157,11 +199,22 @@ class ModuleConfiguration extends Base {
      * @protected
      */
     createConfiguration() {
-        // Create data
-        const data = {};
+        // Create template variables
+        this._templateVariables = {};
         for (const key of this.meta.keys()) {
-            if (typeof this.meta.get(key).value == 'string') {
-                data['${' + key + '}'] = this.meta.get(key).value;
+            const meta = this.meta.get(key);
+            if (typeof meta.value == 'string') {
+                // Add key
+                this._templateVariables['${' + key + '}'] = meta.value;
+
+                // Add path minus namespace (namespace.yyy.xxxx)
+                if (meta.path) {
+                    const pathParts = meta.path.split('.');
+                    if (pathParts.length > 1) {
+                        pathParts.shift();
+                        this._templateVariables['${' + pathParts.join('.') + '}'] = meta.value;
+                    }
+                }
             }
         }
 
@@ -175,12 +228,14 @@ class ModuleConfiguration extends Base {
             if (matches && replaceCount < this._maxRecursionDepth) {
                 for (const match of matches) {
                     if (
-                        typeof data[match] == 'string' &&
+                        typeof this._templateVariables[match] == 'string' &&
                         typeof this.configuration.get(key) == 'string'
                     ) {
                         this.configuration.set(
                             key,
-                            this.configuration.get(key).replace(match, data[match])
+                            this.configuration
+                                .get(key)
+                                .replace(match, this._templateVariables[match])
                         );
                         replaceCount++;
                     }

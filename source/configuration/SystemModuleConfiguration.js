@@ -98,92 +98,88 @@ class SystemModuleConfiguration extends ModuleConfiguration {
      */
     createMeta() {
         // Cli
-        this.addMeta('cli.arguments', 'system.cli.arguments', { _: [] });
+        this.addMeta('cliArguments', 'system.cli.arguments', { _: [] });
 
         // EntityCategories
-        this.addMeta('entity.categories', 'system.entity.categories', entityCategories);
+        this.addMeta('entityCategories', 'system.entity.categories', entityCategories);
 
         // Pathes
-        this.addMeta('path.base', 'system.path.base', __dirname);
-        this.addMeta('path.data', 'system.path.data', '${path.base}/data');
-        this.addMeta('path.entoj', 'system.path.entoj', '${path.base}');
-        this.addMeta('path.cache', 'system.path.cache', '${path.base}/cache');
-        this.addMeta('path.sites', 'system.path.sites', '${path.base}/sites');
+        this.addMeta('pathBase', 'system.path.base', __dirname);
+        this.addMeta('pathData', 'system.path.data', '${path.base}/data');
+        this.addMeta('pathEntoj', 'system.path.entoj', '${path.base}');
+        this.addMeta('pathCache', 'system.path.cache', '${path.base}/cache');
+        this.addMeta('pathSites', 'system.path.sites', '${path.base}/sites');
         this.addMeta(
-            'path.site',
+            'pathSite',
             'system.path.site',
             '${path.sites}/${site.name.toLowerCase().dasherize()}'
         );
         this.addMeta(
-            'path.entityCategory',
+            'pathEntityCategory',
             'system.path.entityCategory',
             '${path.site}/${entityCategory.pluralName.toLowerCase().dasherize()}'
         );
         this.addMeta(
-            'path.entityId',
+            'pathEntityId',
             'system.path.entityId',
             '${path.entityCategory}/${entityCategory.shortName.toLowerCase()}-${entityId.name.toLowerCase().dasherize()}'
         );
 
         // Filenames
-        this.addMeta('filename.settings', 'system.filename.settings', '${path.site}/settings.json');
+        this.addMeta('filenameSettings', 'system.filename.settings', '${path.site}/settings.json');
 
         // Urls
-        this.addMeta('url.base', 'system.url.base', '');
-        this.addMeta('url.site', 'system.url.site', '${url.base}/${site.name.urlify()}');
+        this.addMeta('urlBase', 'system.url.base', '');
+        this.addMeta('urlSite', 'system.url.site', '${url.base}/${site.name.urlify()}');
         this.addMeta(
-            'url.entityCategory',
+            'urlEntityCategory',
             'system.url.entityCategory',
             '${url.site}/${entityCategory.pluralName.urlify()}'
         );
         this.addMeta(
-            'url.entityId',
+            'urlEntityId',
             'system.url.entityId',
             '${url.entityCategory}/${entityCategory.shortName.toLowerCase()}-${entityId.name.urlify()}'
         );
 
         // Routes
-        this.addMeta('route.base', 'system.route.base', '');
-        this.addMeta('route.site', 'system.route.site', '${route.base}/:site');
+        this.addMeta('routeBase', 'system.route.base', '');
+        this.addMeta('routeSite', 'system.route.site', '${route.base}/:site');
         this.addMeta(
-            'route.entityCategory',
+            'routeEntityCategory',
             'system.route.entityCategory',
             '${route.site}/:entityCategory'
         );
-        this.addMeta(
-            'route.entityId',
-            'system.route.entityId',
-            '${route.entityCategory}/:entityId'
-        );
+        this.addMeta('routeEntityId', 'system.route.entityId', '${route.entityCategory}/:entityId');
 
         // Breakpoints
         this.addMeta('breakpoints', 'system.breakpoints', breakpoints);
         this.addMeta('mediaQueries', false, {});
 
         // Server
-        this.addMeta('server.port', 'system.server.port', 3000);
-        this.addMeta('server.http2', 'system.server.http2', false);
+        this.addMeta('serverPort', 'system.server.port', 3000);
+        this.addMeta('serverHttp2', 'system.server.http2', false);
         this.addMeta(
-            'server.sslKey',
+            'serverSslKey',
             'system.server.sslkey',
             __dirname + '/../server/localhost.key'
         );
         this.addMeta(
-            'server.sslCert',
+            'serverSslCert',
             'system.server.sslcert',
             __dirname + '/../server/localhost.crt'
         );
-        this.addMeta('server.authentication', 'system.server.authentication', false);
-        this.addMeta('server.username', 'system.server.username', 'entoj');
-        this.addMeta('server.password', 'system.server.password', 'entoj');
-        this.addMeta('server.baseUrl', false, 'http://localhost:3000');
+        this.addMeta('serverAuthentication', 'system.server.authentication', false);
+        this.addMeta('serverUsername', 'system.server.username', 'entoj');
+        this.addMeta('serverPassword', 'system.server.password', 'entoj');
+        this.addMeta('serverBaseUrl', false, 'http://localhost:3000');
 
         // Filters
-        this.addMeta('filter.assetUrl.baseUrl', 'system.filter.assetUrl.baseUrl', '/');
-        this.addMeta('filter.svgUrl.baseUrl', 'system.filter.svgUrl.baseUrl', '/');
-        this.addMeta('filter.svgViewBox.basePath', 'system.filter.svgViewBox.basePath', '/');
-        this.addMeta('filter.linkUrl.properties', 'system.filter.linkUrl.properties', ['url']);
-        this.addMeta('filter.markup.styles', 'system.filter.markup.styles', {
+        this.addMeta('filterAssetUrlBaseUrl', 'system.filter.assetUrl.baseUrl', '/');
+        this.addMeta('filterSvgUrlBaseUrl', 'system.filter.svgUrl.baseUrl', '/');
+        this.addMeta('filterSvgViewBoxBasePath', 'system.filter.svgViewBox.basePath', '/');
+        this.addMeta('filterLinkUrlProperties', 'system.filter.linkUrl.properties', ['url']);
+        this.addMeta('filterMarkupStyles', 'system.filter.markup.styles', {
             plain: 'plain',
             html: 'html'
         });
@@ -230,19 +226,19 @@ class SystemModuleConfiguration extends ModuleConfiguration {
         super.finalizeConfiguration();
 
         // Pathes
-        this.configuration.set('path.base', path.resolve(this.configuration.get('path.base')));
-        this.configuration.set('path.data', path.resolve(this.configuration.get('path.data')));
-        this.configuration.set('path.entoj', path.resolve(this.configuration.get('path.entoj')));
-        this.configuration.set('path.cache', path.resolve(this.configuration.get('path.cache')));
-        this.configuration.set('path.sites', path.resolve(this.configuration.get('path.sites')));
+        this.configuration.set('pathBase', path.resolve(this.configuration.get('pathBase')));
+        this.configuration.set('pathData', path.resolve(this.configuration.get('pathData')));
+        this.configuration.set('pathEntoj', path.resolve(this.configuration.get('pathEntoj')));
+        this.configuration.set('pathCache', path.resolve(this.configuration.get('pathCache')));
+        this.configuration.set('pathSites', path.resolve(this.configuration.get('pathSites')));
 
         // Server
         this.configuration.set(
-            'server.baseUrl',
+            'serverBaseUrl',
             'http' +
-                (this.configuration.get('server.http2') ? 's' : '') +
+                (this.configuration.get('serverHttp2') ? 's' : '') +
                 '://localhost:' +
-                this.configuration.get('server.port')
+                this.configuration.get('serverPort')
         );
     }
 
@@ -252,7 +248,7 @@ class SystemModuleConfiguration extends ModuleConfiguration {
      * @type {Object}
      */
     get cliArguments() {
-        return this.configuration.get('cli.arguments');
+        return this.configuration.get('cliArguments');
     }
 
     /**
@@ -265,7 +261,7 @@ class SystemModuleConfiguration extends ModuleConfiguration {
      * @type {Array}
      */
     get entityCategories() {
-        return this.configuration.get('entity.categories');
+        return this.configuration.get('entityCategories');
     }
 
     /**
@@ -296,7 +292,7 @@ class SystemModuleConfiguration extends ModuleConfiguration {
      * @type {String}
      */
     get pathBase() {
-        return this.configuration.get('path.base');
+        return this.configuration.get('pathBase');
     }
 
     /**
@@ -305,7 +301,7 @@ class SystemModuleConfiguration extends ModuleConfiguration {
      * @type {String}
      */
     get pathEntoj() {
-        return this.configuration.get('path.entoj');
+        return this.configuration.get('pathEntoj');
     }
 
     /**
@@ -314,7 +310,7 @@ class SystemModuleConfiguration extends ModuleConfiguration {
      * @type {String}
      */
     get pathCache() {
-        return this.configuration.get('path.cache');
+        return this.configuration.get('pathCache');
     }
 
     /**
@@ -323,7 +319,7 @@ class SystemModuleConfiguration extends ModuleConfiguration {
      * @type {String}
      */
     get pathData() {
-        return this.configuration.get('path.data');
+        return this.configuration.get('pathData');
     }
 
     /**
@@ -332,7 +328,7 @@ class SystemModuleConfiguration extends ModuleConfiguration {
      * @type {String}
      */
     get pathSites() {
-        return this.configuration.get('path.sites');
+        return this.configuration.get('pathSites');
     }
 
     /**
@@ -341,7 +337,7 @@ class SystemModuleConfiguration extends ModuleConfiguration {
      * @type {String}
      */
     get pathSite() {
-        return this.configuration.get('path.site');
+        return this.configuration.get('pathSite');
     }
 
     /**
@@ -350,7 +346,7 @@ class SystemModuleConfiguration extends ModuleConfiguration {
      * @type {String}
      */
     get pathEntityCategory() {
-        return this.configuration.get('path.entityCategory');
+        return this.configuration.get('pathEntityCategory');
     }
 
     /**
@@ -359,7 +355,7 @@ class SystemModuleConfiguration extends ModuleConfiguration {
      * @type {String}
      */
     get pathEntityId() {
-        return this.configuration.get('path.entityId');
+        return this.configuration.get('pathEntityId');
     }
 
     /**
@@ -370,7 +366,7 @@ class SystemModuleConfiguration extends ModuleConfiguration {
      * @type {String}
      */
     get filenameSettings() {
-        return this.configuration.get('filename.settings');
+        return this.configuration.get('filenameSettings');
     }
 
     /**
@@ -379,7 +375,7 @@ class SystemModuleConfiguration extends ModuleConfiguration {
      * @type {String}
      */
     get urlBase() {
-        return this.configuration.get('url.base');
+        return this.configuration.get('urlBase');
     }
 
     /**
@@ -388,7 +384,7 @@ class SystemModuleConfiguration extends ModuleConfiguration {
      * @type {String}
      */
     get urlSite() {
-        return this.configuration.get('url.site');
+        return this.configuration.get('urlSite');
     }
 
     /**
@@ -397,7 +393,7 @@ class SystemModuleConfiguration extends ModuleConfiguration {
      * @type {String}
      */
     get urlEntityCategory() {
-        return this.configuration.get('url.entityCategory');
+        return this.configuration.get('urlEntityCategory');
     }
 
     /**
@@ -406,126 +402,126 @@ class SystemModuleConfiguration extends ModuleConfiguration {
      * @type {String}
      */
     get urlEntityId() {
-        return this.configuration.get('url.entityId');
+        return this.configuration.get('urlEntityId');
     }
 
     /**
      * @type {String}
      */
     get routeBase() {
-        return this.configuration.get('route.base');
+        return this.configuration.get('routeBase');
     }
 
     /**
      * @type {String}
      */
     get routeSite() {
-        return this.configuration.get('route.site');
+        return this.configuration.get('routeSite');
     }
 
     /**
      * @type {String}
      */
     get routeEntityCategory() {
-        return this.configuration.get('route.entityCategory');
+        return this.configuration.get('routeEntityCategory');
     }
 
     /**
      * @type {String}
      */
     get routeEntityId() {
-        return this.configuration.get('route.entityId');
+        return this.configuration.get('routeEntityId');
     }
 
     /**
      * @type {String}
      */
     get serverPort() {
-        return this.configuration.get('server.port');
+        return this.configuration.get('serverPort');
     }
 
     /**
      * @type {String}
      */
     get serverHttp2() {
-        return this.configuration.get('server.http2');
+        return this.configuration.get('serverHttp2');
     }
 
     /**
      * @type {String}
      */
     get serverSslKey() {
-        return this.configuration.get('server.sslKey');
+        return this.configuration.get('serverSslKey');
     }
 
     /**
      * @type {String}
      */
     get serverSslCert() {
-        return this.configuration.get('server.sslCert');
+        return this.configuration.get('serverSslCert');
     }
 
     /**
      * @type {String}
      */
     get serverAuthentication() {
-        return this.configuration.get('server.authentication');
+        return this.configuration.get('serverAuthentication');
     }
 
     /**
      * @type {String}
      */
     get serverUsername() {
-        return this.configuration.get('server.username');
+        return this.configuration.get('serverUsername');
     }
 
     /**
      * @type {String}
      */
     get serverPassword() {
-        return this.configuration.get('server.password');
+        return this.configuration.get('serverPassword');
     }
 
     /**
      * @type {String}
      */
     get serverBaseUrl() {
-        return this.configuration.get('server.baseUrl');
+        return this.configuration.get('serverBaseUrl');
     }
 
     /**
      * @type {String}
      */
     get filterAssetUrlBaseUrl() {
-        return this.configuration.get('filter.assetUrl.baseUrl');
+        return this.configuration.get('filterAssetUrlBaseUrl');
     }
 
     /**
      * @type {String}
      */
     get filterSvgUrlBaseUrl() {
-        return this.configuration.get('filter.svgUrl.baseUrl');
+        return this.configuration.get('filterSvgUrlBaseUrl');
     }
 
     /**
      * @type {String}
      */
     get filterSvgViewBoxBasePath() {
-        return this.configuration.get('filter.svgViewBox.basePath');
+        return this.configuration.get('filterSvgViewBoxBasePath');
     }
 
     /**
      * @type {Array}
      */
     get filterLinkUrlProperties() {
-        return this.configuration.get('filter.linkUrl.properties');
+        return this.configuration.get('filterLinkUrlProperties');
     }
 
     /**
      * @type {Array}
      */
     get filterMarkupStyles() {
-        return this.configuration.get('filter.markup.styles');
+        return this.configuration.get('filterMarkupStyles');
     }
 }
 

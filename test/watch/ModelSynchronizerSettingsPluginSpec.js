@@ -23,7 +23,7 @@ describe(ModelSynchronizerSettingsPlugin.className, function() {
         'watch/ModelSynchronizerSettingsPlugin',
         function(parameters, fileTemplate) {
             const fixture = projectFixture.createDynamic();
-            fixture.moduleConfiguration.configuration.set('filename.settings', fileTemplate);
+            fixture.moduleConfiguration.configuration.set('filenameSettings', fileTemplate);
             const dataLoader = new SettingsLoader(
                 fixture.sitesRepository,
                 fixture.pathesConfiguration,

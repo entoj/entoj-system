@@ -80,7 +80,7 @@ class PathesConfiguration extends Base {
      */
     renderTemplate(template, variables, directReturn) {
         const configurationData = this.moduleConfiguration
-            ? this.moduleConfiguration.getConfigurationObject()
+            ? this.moduleConfiguration.getConfigurationAsObject()
             : {};
         const data = merge({}, configurationData, variables);
         //console.log(Object.keys(data));

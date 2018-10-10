@@ -39,11 +39,11 @@ function spec(type, className, prepareParameters) {
         GlobalConfiguration
     );
 
-    describe('#getConfigurationObject', function() {
+    describe('#getConfigurationAsObject', function() {
         it('should return a object with pathes converted to a object structure', function() {
             const testee = createTestee();
-            testee.addMeta('the.answer', 'the.answer', 42);
-            expect(testee.getConfigurationObject().the.answer).to.be.equal(42);
+            testee.addMeta('the.answer', 'namespace.the.answer', 42);
+            expect(testee.getConfigurationAsObject().the.answer).to.be.equal(42);
         });
     });
 
@@ -93,9 +93,16 @@ function spec(type, className, prepareParameters) {
 
         it('should resolve any templates', function() {
             const testee = createTestee();
-            testee.addMeta('base', 'system.base', 'base');
-            testee.addMeta('extended', 'system.extended', '${base}/extended');
+            testee.addMeta('base', 'global.base', 'base');
+            testee.addMeta('extended', 'global.extended', '${base}/extended');
             expect(testee.configuration.get('extended')).to.be.equal('base/extended');
+        });
+
+        it('should allow to use the path name minus the namespace in templates', function() {
+            const testee = createTestee();
+            testee.addMeta('pathBase', 'global.path.base', '/foo');
+            testee.addMeta('pathSites', 'global.path.sites', '${path.base}/sites');
+            expect(testee.configuration.get('pathSites')).to.be.equal('/foo/sites');
         });
 
         it('should throw an error when endless recursion is detected', function() {

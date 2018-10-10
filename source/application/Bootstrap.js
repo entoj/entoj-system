@@ -106,13 +106,13 @@ class Bootstrap extends Base {
             require('../parser/entity/IdParser.js').IdParser,
             require('../parser/entity/CompactIdParser.js').CompactIdParser
         );
-        this.di.mapAsSingleton(require('../model/entity/index.js').EntityCategoriesLoader);
-        this.di.mapAsSingleton(require('../model/entity/index.js').EntitiesLoader);
         this.di.mapParameters(require('../parser/index.js').entity.CompactIdParser, {
             options: {
                 useNumbers: false
             }
         });
+        this.di.mapAsSingleton(require('../model/entity/index.js').EntityCategoriesLoader);
+        this.di.mapAsSingleton(require('../model/entity/index.js').EntitiesLoader);
         this.di.mapParameters(require('../model/index.js').entity.EntitiesLoader, {
             plugins: [
                 require('../model/index.js').loader.documentation.PackagePlugin,

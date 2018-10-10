@@ -15,7 +15,10 @@ describe(SettingsLoader.className, function() {
      */
     dataLoaderSpec(SettingsLoader, 'model.setting/SettingsLoader', function(parameters) {
         if (parameters.length == 1) {
-            global.fixtures.moduleConfiguration.configuration.set('filename.settings', parameters[0]);
+            global.fixtures.moduleConfiguration.configuration.set(
+                'filenameSettings',
+                parameters[0]
+            );
             parameters = [];
         }
         parameters.unshift(global.fixtures.moduleConfiguration);
