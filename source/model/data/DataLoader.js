@@ -38,7 +38,7 @@ class DataLoader extends Loader {
         // Assign options
         this._sitesRepository = sitesRepository;
         this._pathesConfiguration = pathesConfiguration;
-        this._filenameTemplate = filenameTemplate || '${path.site}/data.json';
+        this._filenameTemplate = filenameTemplate || '${system.path.site}/data.json';
         this._dataClass = Data;
     }
 

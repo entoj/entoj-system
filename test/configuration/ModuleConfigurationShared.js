@@ -40,9 +40,9 @@ function spec(type, className, prepareParameters) {
     );
 
     describe('#getConfigurationAsObject', function() {
-        it('should return a object with pathes converted to a object structure', function() {
+        it('should return a object with meta pathes converted to a object structure', function() {
             const testee = createTestee();
-            testee.addMeta('the.answer', 'namespace.the.answer', 42);
+            testee.addMeta('the.answer', 'the.answer', 42);
             expect(testee.getConfigurationAsObject().the.answer).to.be.equal(42);
         });
     });
@@ -101,14 +101,14 @@ function spec(type, className, prepareParameters) {
         it('should allow to use the path name minus the namespace in templates', function() {
             const testee = createTestee();
             testee.addMeta('pathBase', 'global.path.base', '/foo');
-            testee.addMeta('pathSites', 'global.path.sites', '${path.base}/sites');
+            testee.addMeta('pathSites', 'global.path.sites', '${global.path.base}/sites');
             expect(testee.configuration.get('pathSites')).to.be.equal('/foo/sites');
         });
 
         it('should throw an error when endless recursion is detected', function() {
             const testee = createTestee();
             expect(function() {
-                testee.addMeta('extended', 'system.extended', '${extended}/extended');
+                testee.addMeta('extended', 'system.extended', '${system.extended}/extended');
             }).to.throw();
         });
     });

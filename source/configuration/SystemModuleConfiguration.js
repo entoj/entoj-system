@@ -104,53 +104,61 @@ class SystemModuleConfiguration extends ModuleConfiguration {
         this.addMeta('entityCategories', 'system.entity.categories', entityCategories);
 
         // Pathes
-        this.addMeta('pathBase', 'system.path.base', __dirname);
-        this.addMeta('pathData', 'system.path.data', '${path.base}/data');
-        this.addMeta('pathEntoj', 'system.path.entoj', '${path.base}');
-        this.addMeta('pathCache', 'system.path.cache', '${path.base}/cache');
-        this.addMeta('pathSites', 'system.path.sites', '${path.base}/sites');
+        this.addMeta('pathBase', 'system.path.base', '/path/to/project');
+        this.addMeta('pathData', 'system.path.data', '${system.path.base}/data');
+        this.addMeta('pathEntoj', 'system.path.entoj', '${system.path.base}');
+        this.addMeta('pathCache', 'system.path.cache', '${system.path.base}/cache');
+        this.addMeta('pathSites', 'system.path.sites', '${system.path.base}/sites');
         this.addMeta(
             'pathSite',
             'system.path.site',
-            '${path.sites}/${site.name.toLowerCase().dasherize()}'
+            '${system.path.sites}/${site.name.toLowerCase().dasherize()}'
         );
         this.addMeta(
             'pathEntityCategory',
             'system.path.entityCategory',
-            '${path.site}/${entityCategory.pluralName.toLowerCase().dasherize()}'
+            '${system.path.site}/${entityCategory.pluralName.toLowerCase().dasherize()}'
         );
         this.addMeta(
             'pathEntityId',
             'system.path.entityId',
-            '${path.entityCategory}/${entityCategory.shortName.toLowerCase()}-${entityId.name.toLowerCase().dasherize()}'
+            '${system.path.entityCategory}/${entityCategory.shortName.toLowerCase()}-${entityId.name.toLowerCase().dasherize()}'
         );
 
         // Filenames
-        this.addMeta('filenameSettings', 'system.filename.settings', '${path.site}/settings.json');
+        this.addMeta(
+            'filenameSettings',
+            'system.filename.settings',
+            '${system.path.site}/settings.json'
+        );
 
         // Urls
         this.addMeta('urlBase', 'system.url.base', '');
-        this.addMeta('urlSite', 'system.url.site', '${url.base}/${site.name.urlify()}');
+        this.addMeta('urlSite', 'system.url.site', '${system.url.base}/${site.name.urlify()}');
         this.addMeta(
             'urlEntityCategory',
             'system.url.entityCategory',
-            '${url.site}/${entityCategory.pluralName.urlify()}'
+            '${system.url.site}/${entityCategory.pluralName.urlify()}'
         );
         this.addMeta(
             'urlEntityId',
             'system.url.entityId',
-            '${url.entityCategory}/${entityCategory.shortName.toLowerCase()}-${entityId.name.urlify()}'
+            '${system.url.entityCategory}/${entityCategory.shortName.toLowerCase()}-${entityId.name.urlify()}'
         );
 
         // Routes
         this.addMeta('routeBase', 'system.route.base', '');
-        this.addMeta('routeSite', 'system.route.site', '${route.base}/:site');
+        this.addMeta('routeSite', 'system.route.site', '${system.route.base}/:site');
         this.addMeta(
             'routeEntityCategory',
             'system.route.entityCategory',
-            '${route.site}/:entityCategory'
+            '${system.route.site}/:entityCategory'
         );
-        this.addMeta('routeEntityId', 'system.route.entityId', '${route.entityCategory}/:entityId');
+        this.addMeta(
+            'routeEntityId',
+            'system.route.entityId',
+            '${system.route.entityCategory}/:entityId'
+        );
 
         // Breakpoints
         this.addMeta('breakpoints', 'system.breakpoints', breakpoints);
@@ -161,12 +169,12 @@ class SystemModuleConfiguration extends ModuleConfiguration {
         this.addMeta('serverHttp2', 'system.server.http2', false);
         this.addMeta(
             'serverSslKey',
-            'system.server.sslkey',
+            'system.server.sslKey',
             __dirname + '/../server/localhost.key'
         );
         this.addMeta(
             'serverSslCert',
-            'system.server.sslcert',
+            'system.server.sslCert',
             __dirname + '/../server/localhost.crt'
         );
         this.addMeta('serverAuthentication', 'system.server.authentication', false);
@@ -361,7 +369,7 @@ class SystemModuleConfiguration extends ModuleConfiguration {
     /**
      * The path to the settings file for a site.
      *
-     * You should to use the ${path.site} variable if you happen to have more than one site.
+     * You should to use the ${system.path.site} variable if you happen to have more than one site.
      *
      * @type {String}
      */
@@ -388,7 +396,7 @@ class SystemModuleConfiguration extends ModuleConfiguration {
     }
 
     /**
-     * The url for a entity category
+     * The url for a entity category (which lives inside a site)
      *
      * @type {String}
      */
@@ -397,7 +405,7 @@ class SystemModuleConfiguration extends ModuleConfiguration {
     }
 
     /**
-     * The url for a entity
+     * The url for a entity (which lives inside a entity category)
      *
      * @type {String}
      */

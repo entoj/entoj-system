@@ -121,13 +121,20 @@ class ModuleConfiguration extends Base {
     }
 
     /**
+     * @param  {function} filter
      * @returns {Object}
      */
-    getMetaAsObject() {
+    getMetaAsObject(filter) {
         const result = {};
         for (const key of this.meta.keys()) {
             const meta = this.meta.get(key);
-            const pathParts = key.split('.');
+            if (!meta.path) {
+                continue;
+            }
+            const pathParts = meta.path.split('.');
+            if (filter && !filter(pathParts)) {
+                continue;
+            }
             let current = result;
             for (let pathIndex = 0; pathIndex < pathParts.length; pathIndex++) {
                 const pathPart = pathParts[pathIndex];
@@ -145,23 +152,18 @@ class ModuleConfiguration extends Base {
     }
 
     /**
+     * @param  {function} filter
      * @returns {Object}
      */
-    getConfigurationAsObject() {
+    getConfigurationAsObject(filter) {
         const result = {};
         for (const key of this.configuration.keys()) {
             const value = this.configuration.get(key);
             const meta = this.meta.get(key);
-            let pathParts = [];
-            if (meta && meta.path) {
-                pathParts = meta.path.split('.');
-                if (pathParts.length > 1) {
-                    pathParts.shift();
-                }
-            } else {
-                pathParts = key.split('.');
+            const pathParts = meta && meta.path ? meta.path.split('.') : key.split('.');
+            if (filter && !filter(pathParts)) {
+                continue;
             }
-
             let current = result;
             for (let pathIndex = 0; pathIndex < pathParts.length; pathIndex++) {
                 const pathPart = pathParts[pathIndex];
@@ -207,13 +209,9 @@ class ModuleConfiguration extends Base {
                 // Add key
                 this._templateVariables['${' + key + '}'] = meta.value;
 
-                // Add path minus namespace (namespace.yyy.xxxx)
+                // Add path
                 if (meta.path) {
-                    const pathParts = meta.path.split('.');
-                    if (pathParts.length > 1) {
-                        pathParts.shift();
-                        this._templateVariables['${' + pathParts.join('.') + '}'] = meta.value;
-                    }
+                    this._templateVariables['${' + meta.path + '}'] = meta.value;
                 }
             }
         }

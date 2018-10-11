@@ -78,7 +78,9 @@ describe(SvgViewBoxFilter.className, function() {
             const fixture = projectFixture.createStatic({
                 settings: {
                     system: {
-                        filter: { svgViewBox: { basePath: '${path.site}/global/assets/svg' } }
+                        filter: {
+                            svgViewBox: { basePath: '${system.path.site}/global/assets/svg' }
+                        }
                     }
                 }
             });

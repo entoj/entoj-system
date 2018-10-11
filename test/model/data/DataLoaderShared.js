@@ -43,7 +43,9 @@ function spec(type, className, prepareParameters) {
         });
 
         it('should resolve to Data instances for each loaded file from a site', function() {
-            const testee = createTestee('${path.sites}/${site.name.urlify()}/translations.json');
+            const testee = createTestee(
+                '${system.path.sites}/${site.name.urlify()}/translations.json'
+            );
             const promise = co(function*() {
                 const items = yield testee.load();
                 expect(items.length).to.be.equal(2);

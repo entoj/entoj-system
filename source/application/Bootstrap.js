@@ -156,7 +156,7 @@ class Bootstrap extends Base {
         // Nunjucks filter & tags
         this.di.mapParameters(require('../nunjucks/index.js').Environment, {
             options: {
-                templatePaths: '${path.sites}'
+                templatePaths: '${system.path.sites}'
             },
             tags: [require('../nunjucks/index.js').tag.ConfigurationTag],
             filters: [
@@ -197,7 +197,7 @@ class Bootstrap extends Base {
                         [
                             'options',
                             {
-                                basePath: '${path.sites}'
+                                basePath: '${system.path.sites}'
                             }
                         ]
                     ]
@@ -208,7 +208,7 @@ class Bootstrap extends Base {
                         [
                             'options',
                             {
-                                basePath: '${path.sites}'
+                                basePath: '${system.path.sites}'
                             }
                         ]
                     ]

@@ -63,7 +63,7 @@ describe(AssetUrlFilter.className, function() {
             );
             environment.addGlobal('location', { site: fixture.siteBase });
             const filter = createTestee({
-                system: { filter: { assetUrl: { baseUrl: '${url.site}/assets' } } }
+                system: { filter: { assetUrl: { baseUrl: '${system.url.site}/assets' } } }
             });
             filter.register(environment);
             const testee = filter.filter();

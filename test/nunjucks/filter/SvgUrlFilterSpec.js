@@ -56,7 +56,9 @@ describe(SvgUrlFilter.className, function() {
 
         it('should allow to use variables in the base url', function() {
             const fixture = projectFixture.createStatic({
-                settings: { system: { filter: { svgUrl: { baseUrl: '${url.site}/assets' } } } }
+                settings: {
+                    system: { filter: { svgUrl: { baseUrl: '${system.url.site}/assets' } } }
+                }
             });
             const environment = new Environment(
                 fixture.entitiesRepository,

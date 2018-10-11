@@ -68,7 +68,7 @@ describe(PathesConfiguration.className, function() {
 
         it('should generate a cache path based on given template', function() {
             const testee = createTestee({
-                system: { path: { base: __dirname, cache: '${path.base}/c' } }
+                system: { path: { base: __dirname, cache: '${system.path.base}/c' } }
             });
             expect(testee.cache).to.be.equal(path.resolve(__dirname + '/c'));
         });
@@ -80,7 +80,7 @@ describe(PathesConfiguration.className, function() {
 
         it('should generate a data path based on given template', function() {
             const testee = createTestee({
-                system: { path: { base: __dirname, data: '${path.base}/d' } }
+                system: { path: { base: __dirname, data: '${system.path.base}/d' } }
             });
             expect(testee.data).to.be.equal(path.resolve(__dirname + '/d'));
         });
@@ -92,7 +92,7 @@ describe(PathesConfiguration.className, function() {
 
         it('should generate a sites path based on given template', function() {
             const testee = createTestee({
-                system: { path: { base: __dirname, sites: '${path.base}/tpl' } }
+                system: { path: { base: __dirname, sites: '${system.path.base}/tpl' } }
             });
             expect(testee.sites).to.be.equal(path.resolve(__dirname + '/tpl'));
         });
@@ -102,7 +102,7 @@ describe(PathesConfiguration.className, function() {
         it('should return a path based on the configured cache template', function() {
             const promise = co(function*() {
                 const testee = createTestee({
-                    system: { path: { base: __dirname, cache: '${path.base}/yes' } }
+                    system: { path: { base: __dirname, cache: '${system.path.base}/yes' } }
                 });
                 const result = yield testee.resolveCache('css');
                 expect(result).to.be.equal(testee.root + path.sep + 'yes' + path.sep + 'css');
@@ -115,7 +115,9 @@ describe(PathesConfiguration.className, function() {
         it('should return a path based on the given site', function() {
             const promise = co(function*() {
                 const testee = createTestee({
-                    system: { path: { base: __dirname, site: '${path.sites}/yes/${site.name}' } }
+                    system: {
+                        path: { base: __dirname, site: '${system.path.sites}/yes/${site.name}' }
+                    }
                 });
                 const result = yield testee.resolveSite(global.fixtures.siteBase);
                 expect(result).to.be.equal(
@@ -128,7 +130,9 @@ describe(PathesConfiguration.className, function() {
         it('should allow to add a custom path', function() {
             const promise = co(function*() {
                 const testee = createTestee({
-                    system: { path: { base: __dirname, site: '${path.sites}/yes/${site.name}' } }
+                    system: {
+                        path: { base: __dirname, site: '${system.path.sites}/yes/${site.name}' }
+                    }
                 });
                 const result = yield testee.resolveSite(global.fixtures.siteBase, '/${site.name}');
                 expect(result).to.be.equal(
@@ -154,7 +158,7 @@ describe(PathesConfiguration.className, function() {
                     system: {
                         path: {
                             base: __dirname,
-                            entityCategory: '${path.site}/${entityCategory.shortName}'
+                            entityCategory: '${system.path.site}/${entityCategory.shortName}'
                         }
                     }
                 });
@@ -175,7 +179,7 @@ describe(PathesConfiguration.className, function() {
                     system: {
                         path: {
                             base: __dirname,
-                            entityCategory: '${path.site}/${entityCategory.shortName}'
+                            entityCategory: '${system.path.site}/${entityCategory.shortName}'
                         }
                     }
                 });
@@ -205,7 +209,8 @@ describe(PathesConfiguration.className, function() {
                     system: {
                         path: {
                             base: __dirname,
-                            entityCategory: '${path.site}/${entityCategory.pluralName.urlify()}'
+                            entityCategory:
+                                '${system.path.site}/${entityCategory.pluralName.urlify()}'
                         }
                     }
                 });
@@ -234,7 +239,7 @@ describe(PathesConfiguration.className, function() {
                     system: {
                         path: {
                             base: __dirname,
-                            entityId: '${path.entityCategory}/${entityId.name}'
+                            entityId: '${system.path.entityCategory}/${entityId.name}'
                         }
                     }
                 });
@@ -260,7 +265,7 @@ describe(PathesConfiguration.className, function() {
                     system: {
                         path: {
                             base: __dirname,
-                            entityCategory: '${path.site}/${entityCategory.shortName}'
+                            entityCategory: '${system.path.site}/${entityCategory.shortName}'
                         }
                     }
                 });
@@ -278,7 +283,7 @@ describe(PathesConfiguration.className, function() {
                     system: {
                         path: {
                             base: __dirname,
-                            entityId: '${path.entityCategory}/${entityId.name}'
+                            entityId: '${system.path.entityCategory}/${entityId.name}'
                         }
                     }
                 });
@@ -309,7 +314,7 @@ describe(PathesConfiguration.className, function() {
                     system: {
                         path: {
                             base: __dirname,
-                            entityId: '${path.entityCategory}/${entityId.name}'
+                            entityId: '${system.path.entityCategory}/${entityId.name}'
                         }
                     }
                 });
@@ -340,7 +345,7 @@ describe(PathesConfiguration.className, function() {
                     system: {
                         path: {
                             base: __dirname,
-                            entityId: '${path.entityCategory}/${entityId.name}'
+                            entityId: '${system.path.entityCategory}/${entityId.name}'
                         }
                     }
                 });
@@ -366,7 +371,7 @@ describe(PathesConfiguration.className, function() {
                     system: {
                         path: {
                             base: __dirname,
-                            entityCategory: '${path.site}/${entityCategory.shortName}'
+                            entityCategory: '${system.path.site}/${entityCategory.shortName}'
                         }
                     }
                 });
@@ -384,7 +389,7 @@ describe(PathesConfiguration.className, function() {
                     system: {
                         path: {
                             base: __dirname,
-                            entityId: '${path.entityCategory}/${entityId.name}'
+                            entityId: '${system.path.entityCategory}/${entityId.name}'
                         }
                     }
                 });
@@ -415,7 +420,7 @@ describe(PathesConfiguration.className, function() {
                     system: {
                         path: {
                             base: __dirname,
-                            entityId: '${path.entityCategory}/${entityId.name}'
+                            entityId: '${system.path.entityCategory}/${entityId.name}'
                         }
                     }
                 });
@@ -446,7 +451,7 @@ describe(PathesConfiguration.className, function() {
                     system: {
                         path: {
                             base: __dirname,
-                            site: '${path.sites}/yes/${site.name}'
+                            site: '${system.path.sites}/yes/${site.name}'
                         }
                     }
                 });
@@ -462,7 +467,7 @@ describe(PathesConfiguration.className, function() {
                     system: {
                         path: {
                             base: __dirname,
-                            site: '${path.sites}/yes/${site.name}'
+                            site: '${system.path.sites}/yes/${site.name}'
                         }
                     }
                 });
@@ -478,7 +483,7 @@ describe(PathesConfiguration.className, function() {
                     system: {
                         path: {
                             base: __dirname,
-                            site: '${path.sites}/yes/${site.name}'
+                            site: '${system.path.sites}/yes/${site.name}'
                         }
                     }
                 });
@@ -496,7 +501,7 @@ describe(PathesConfiguration.className, function() {
                     system: {
                         path: {
                             base: __dirname,
-                            entityId: '${path.entityCategory}/${entityId.name}'
+                            entityId: '${system.path.entityCategory}/${entityId.name}'
                         }
                     }
                 });
@@ -522,7 +527,7 @@ describe(PathesConfiguration.className, function() {
                     system: {
                         path: {
                             base: __dirname,
-                            entityId: '${path.entityCategory}/${entityId.name}'
+                            entityId: '${system.path.entityCategory}/${entityId.name}'
                         }
                     }
                 });
@@ -551,7 +556,7 @@ describe(PathesConfiguration.className, function() {
                         }
                     }
                 });
-                const result = yield testee.resolve('${path.cache}/css');
+                const result = yield testee.resolve('${system.path.cache}/css');
                 expect(result).to.be.equal(testee.root + path.sep + 'cache' + path.sep + 'css');
             });
             return promise;
@@ -566,7 +571,9 @@ describe(PathesConfiguration.className, function() {
                         }
                     }
                 });
-                const result = yield testee.resolve('${path.cache}/css/${foo}', { foo: 'bar' });
+                const result = yield testee.resolve('${system.path.cache}/css/${foo}', {
+                    foo: 'bar'
+                });
                 expect(result).to.be.equal(
                     testee.root + path.sep + 'cache' + path.sep + 'css' + path.sep + 'bar'
                 );
@@ -580,7 +587,7 @@ describe(PathesConfiguration.className, function() {
                     system: {
                         path: {
                             base: __dirname,
-                            entityId: '${path.entityCategory}//${entityId.name}'
+                            entityId: '${system.path.entityCategory}//${entityId.name}'
                         }
                     }
                 });
