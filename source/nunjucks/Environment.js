@@ -148,9 +148,10 @@ class Environment extends BaseMixin(nunjucks.Environment) {
         this._templatePaths = [];
         if (Array.isArray(value)) {
             for (const templatePath of value) {
-                this._templatePaths.push(
-                    waitForPromise(this.pathesConfiguration.resolve(templatePath))
-                );
+                const resolvedPath = waitForPromise(this.pathesConfiguration.resolve(templatePath));
+                if (this._templatePaths.indexOf(resolvedPath) == -1) {
+                    this._templatePaths.push(resolvedPath);
+                }
             }
         } else {
             this._templatePaths.push(waitForPromise(this.pathesConfiguration.resolve(value || '')));

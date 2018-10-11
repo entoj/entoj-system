@@ -45,6 +45,47 @@ describe(Environment.className, function() {
         );
     }
 
+    describe('#templatePaths', function() {
+        it('should allow to specify a single path as a string', function() {
+            const testee = createTestee();
+            testee.templatePaths = global.fixtures.pathesConfiguration.sites;
+            expect(testee.templatePaths).to.be.deep.equal([
+                global.fixtures.pathesConfiguration.sites
+            ]);
+        });
+
+        it('should allow to specify a array of pathes', function() {
+            const testee = createTestee();
+            testee.templatePaths = [
+                global.fixtures.pathesConfiguration.sites,
+                global.fixtures.pathesConfiguration.data
+            ];
+            expect(testee.templatePaths).to.be.deep.equal([
+                global.fixtures.pathesConfiguration.sites,
+                global.fixtures.pathesConfiguration.data
+            ]);
+        });
+
+        it('should resolve any pathes given', function() {
+            const testee = createTestee();
+            testee.templatePaths = ['${system.path.sites}'];
+            expect(testee.templatePaths).to.be.deep.equal([
+                global.fixtures.pathesConfiguration.sites
+            ]);
+        });
+
+        it('should eliminate duplicates', function() {
+            const testee = createTestee();
+            testee.templatePaths = [
+                '${system.path.sites}',
+                global.fixtures.pathesConfiguration.sites
+            ];
+            expect(testee.templatePaths).to.be.deep.equal([
+                global.fixtures.pathesConfiguration.sites
+            ]);
+        });
+    });
+
     describe('#renderString', function() {
         it('should add all necessary includes to render a template', function() {
             const testee = createTestee(global.fixtures.pathesConfiguration.sites);

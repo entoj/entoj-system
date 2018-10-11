@@ -445,7 +445,7 @@ describe(PathesConfiguration.className, function() {
     });
 
     describe('#resolve', function() {
-        it('should return false when no value object given', function() {
+        it('should return false when no value given', function() {
             const promise = co(function*() {
                 const testee = createTestee({
                     system: {
@@ -461,7 +461,7 @@ describe(PathesConfiguration.className, function() {
             return promise;
         });
 
-        it('should return false when unknown value object given', function() {
+        it('should return false when unknown value given', function() {
             const promise = co(function*() {
                 const testee = createTestee({
                     system: {
