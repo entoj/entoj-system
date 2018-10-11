@@ -62,7 +62,7 @@ describe(EntityRenderer.className, function() {
 
         it('should allow to set template pathes with variables', function() {
             const testee = createTestee();
-            testee.templatePaths = ['${path.cache}'];
+            testee.templatePaths = ['${system.path.cache}'];
             expect(testee.templatePaths).to.be.deep.equal([
                 global.fixtures.pathesConfiguration.cache
             ]);

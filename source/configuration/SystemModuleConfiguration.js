@@ -180,7 +180,7 @@ class SystemModuleConfiguration extends ModuleConfiguration {
         this.addMeta('serverAuthentication', 'system.server.authentication', false);
         this.addMeta('serverUsername', 'system.server.username', 'entoj');
         this.addMeta('serverPassword', 'system.server.password', 'entoj');
-        this.addMeta('serverBaseUrl', false, 'http://localhost:3000');
+        this.addMeta('serverBaseUrl', 'system.server.baseUrl', 'http://localhost:3000');
 
         // Filters
         this.addMeta('filterAssetUrlBaseUrl', 'system.filter.assetUrl.baseUrl', '/');

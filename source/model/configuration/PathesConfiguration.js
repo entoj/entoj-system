@@ -83,7 +83,6 @@ class PathesConfiguration extends Base {
             ? this.moduleConfiguration.getConfigurationAsObject()
             : {};
         const data = merge({}, configurationData, variables);
-        //console.log(Object.keys(data));
         const result = path.resolve(templateString(template, data));
         if (directReturn === true) {
             return result;
