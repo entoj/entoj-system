@@ -247,7 +247,13 @@ class TemplateRoute extends Route {
                         'Trying template ' + filename + ' for route ' + resolvedRoute
                     );
                 }
-
+                if (!filename.endsWith('.j2')) {
+                    scope.logger.debug(
+                        'Skipping route ' + resolvedRoute + ': only j2 template files allowed'
+                    );
+                    next();
+                    return;
+                }
                 if (!templateContents && fs.existsSync(filename)) {
                     templateContents = fs.readFileSync(filename, { encoding: 'utf8' });
                 }

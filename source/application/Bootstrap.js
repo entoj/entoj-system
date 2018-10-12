@@ -66,19 +66,26 @@ class Bootstrap extends Base {
      */
     prepare() {
         // Configure logger
-        const intel = require('intel');
-        const logger = intel.getLogger('entoj');
-        if (this.configuration.system.cli.arguments.v) {
-            logger.setLevel(intel.WARN);
-        }
-        if (this.configuration.system.cli.arguments.vv) {
-            logger.setLevel(intel.INFO);
-        }
-        if (this.configuration.system.cli.arguments.vvv) {
-            logger.setLevel(intel.DEBUG);
-        }
-        if (this.configuration.system.cli.arguments.vvvv) {
-            logger.setLevel(intel.TRACE);
+        if (
+            this.configuration &&
+            this.configuration.system &&
+            this.configuration.system.cli &&
+            this.configuration.system.cli.arguments
+        ) {
+            const intel = require('intel');
+            const logger = intel.getLogger('entoj');
+            if (this.configuration.system.cli.arguments.v) {
+                logger.setLevel(intel.WARN);
+            }
+            if (this.configuration.system.cli.arguments.vv) {
+                logger.setLevel(intel.INFO);
+            }
+            if (this.configuration.system.cli.arguments.vvv) {
+                logger.setLevel(intel.DEBUG);
+            }
+            if (this.configuration.system.cli.arguments.vvvv) {
+                logger.setLevel(intel.TRACE);
+            }
         }
 
         // Di
