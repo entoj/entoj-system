@@ -121,6 +121,37 @@ class ModuleConfiguration extends Base {
     }
 
     /**
+     * Replaces any variables in value with their current configuration value
+     */
+    resolveConfiguration(value) {
+        // Replace templates for a key
+        const replaceTemplates = (value, count) => {
+            let result = value;
+            if (count > this._maxRecursionDepth) {
+                throw new Error('Detected recursive template for ' + value);
+            }
+            const matches = value.match(/\$\{[^}]+\}/);
+            let replaceCount = 0;
+            if (matches && replaceCount < this._maxRecursionDepth) {
+                for (const match of matches) {
+                    if (
+                        typeof this._templateVariables[match] == 'string' &&
+                        typeof value == 'string'
+                    ) {
+                        result = result.replace(match, this._templateVariables[match]);
+                        replaceCount++;
+                    }
+                }
+            }
+            if (replaceCount > 0) {
+                result = replaceTemplates(result, count + 1);
+            }
+            return result;
+        };
+        return replaceTemplates(value, 0);
+    }
+
+    /**
      * @param  {function} filter
      * @returns {Object}
      */

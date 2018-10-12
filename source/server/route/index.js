@@ -5,5 +5,6 @@ module.exports = {
     Route: require('./Route.js').Route,
     EntityTemplateRoute: require('./EntityTemplateRoute.js').EntityTemplateRoute,
     GuiTemplateRoute: require('./GuiTemplateRoute.js').GuiTemplateRoute,
-    StaticFileRoute: require('./StaticFileRoute.js').StaticFileRoute
+    StaticFileRoute: require('./StaticFileRoute.js').StaticFileRoute,
+    TemplateRoute: require('./TemplateRoute.js').TemplateRoute
 };

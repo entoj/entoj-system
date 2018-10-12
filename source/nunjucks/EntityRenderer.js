@@ -44,7 +44,9 @@ class EntityRenderer extends Base {
         this._pathesConfiguration = pathesConfiguration;
         this._urlsConfiguration = urlsConfiguration;
         this._nunjucks = nunjucks;
-        this.templatePaths = opts.templatePaths || pathesConfiguration.sites;
+
+        // Add template pathes
+        this.addTemplatePath(opts.templatePaths || pathesConfiguration.sites);
     }
 
     /**
@@ -72,24 +74,14 @@ class EntityRenderer extends Base {
      * @type {Array}
      */
     get templatePaths() {
-        return this._templatePaths;
+        return this.nunjucks.templatePaths;
     }
 
     /**
-     * @type {Array}
+     * Adds the given pathes to templatePaths
      */
-    set templatePaths(value) {
-        this._templatePaths = [];
-        if (Array.isArray(value)) {
-            for (const templatePath of value) {
-                this._templatePaths.push(
-                    waitForPromise(this.pathesConfiguration.resolve(templatePath))
-                );
-            }
-        } else {
-            this._templatePaths.push(waitForPromise(this.pathesConfiguration.resolve(value || '')));
-        }
-        this.nunjucks.templatePaths = this._templatePaths;
+    addTemplatePath(...templatePaths) {
+        this.nunjucks.addTemplatePath(...templatePaths);
     }
 
     /**
@@ -123,7 +115,8 @@ class EntityRenderer extends Base {
     renderString(content, filename, entity, site, data, globals) {
         const location = {
             site: site,
-            entity: entity
+            entity: entity,
+            entityCategory: entity ? entity.id.category : false
         };
         this.nunjucks.addGlobal('global', {});
         this.nunjucks.addGlobal('location', location);

@@ -144,6 +144,37 @@ class DIContainer extends Base {
     }
 
     /**
+     * Creates a map from te given arguments configuration
+     *
+     * @param {Object} confguration
+     * @param {Boolean} [replace]
+     * @returns {void}
+     */
+    prepareArguments(type, args) {
+        if (!args || !Array.isArray(args)) {
+            return new Map();
+        }
+
+        // Create correct name for each argument
+        const result = new Map();
+        for (const arg of args) {
+            if (!Array.isArray(arg) || arg.length != 2) {
+                continue;
+            }
+            if (typeof arg[0] == 'string') {
+                let name = arg[0];
+                if (!name.startsWith(type.className)) {
+                    name = type.className + '.' + name;
+                }
+                result.set(name, arg[1]);
+            } else {
+                result.set(arg[0], arg[1]);
+            }
+        }
+        return result;
+    }
+
+    /**
      * Maps type to value.
      *
      * When the mapping already exists the singleton flag is only touched when isSingleton is either true or false.
@@ -385,7 +416,7 @@ class DIContainer extends Base {
                                 // configuration
                                 parameterValue[index] = this.create(
                                     item.type,
-                                    new Map(item.arguments || [])
+                                    this.prepareArguments(item.type, item.arguments)
                                 );
                             } else if (typeof item == 'function') {
                                 // constructor
@@ -400,7 +431,7 @@ class DIContainer extends Base {
                         // configuration
                         parameterValue = this.create(
                             parameterValue.type,
-                            new Map(parameterValue.arguments || [])
+                            this.prepareArguments(parameterValue.type, parameterValue.arguments)
                         );
                     }
                 }

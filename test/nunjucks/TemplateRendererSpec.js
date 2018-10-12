@@ -3,9 +3,10 @@
 /**
  * Requirements
  */
-const EntityRenderer = require(ES_SOURCE + '/nunjucks/EntityRenderer.js').EntityRenderer;
+const TemplateRenderer = require(ES_SOURCE + '/nunjucks/TemplateRenderer.js').TemplateRenderer;
 const Environment = require(ES_SOURCE + '/nunjucks/Environment.js').Environment;
 const Filters = require(ES_SOURCE + '/nunjucks/filter/index.js');
+const ContentKind = require(ES_SOURCE + '/model/ContentKind.js').ContentKind;
 const baseSpec = require(ES_TEST + '/BaseShared.js').spec;
 const projectFixture = require(ES_FIXTURES + '/project/index.js');
 const co = require('co');
@@ -14,11 +15,11 @@ const isWin32 = process.platform == 'win32';
 /**
  * Spec
  */
-describe(EntityRenderer.className, function() {
+describe(TemplateRenderer.className, function() {
     /**
      * Base Test
      */
-    baseSpec(EntityRenderer, 'nunjucks/EntityRenderer', function(parameters) {
+    baseSpec(TemplateRenderer, 'nunjucks/TemplateRenderer', function(parameters) {
         const environment = new Environment(
             global.fixtures.entitiesRepository,
             global.fixtures.pathesConfiguration,
@@ -39,18 +40,20 @@ describe(EntityRenderer.className, function() {
     });
 
     // Creates a initialized testee
-    function createTestee(templatePaths) {
+    function createTestee(templatePaths, models, types) {
         const environment = new Environment(
             global.fixtures.entitiesRepository,
             global.fixtures.pathesConfiguration,
             global.fixtures.buildConfiguration,
             [new Filters.ModuleClassesFilter()]
         );
-        return new EntityRenderer(
+        return new TemplateRenderer(
             global.fixtures.urlsConfiguration,
             global.fixtures.pathesConfiguration,
             environment,
-            { templatePaths: templatePaths }
+            templatePaths,
+            models,
+            types
         );
     }
 
@@ -70,55 +73,51 @@ describe(EntityRenderer.className, function() {
         });
     });
 
-    describe('#renderString', function() {
+    describe('#render', function() {
         it('should render the given template', function() {
             const promise = co(function*() {
                 const testee = createTestee();
-                const source = yield testee.renderString(
+                const source = yield testee.render(
                     '{{ name }} - {{ hero }}',
                     'just/a/path/to/file.j2',
-                    false,
-                    false,
-                    { name: 'Clark' },
-                    { hero: 'Superman' }
+                    { name: 'Clark', hero: 'Superman' }
                 );
                 expect(source).to.be.equal('Clark - Superman');
             });
             return promise;
         });
-    });
 
-    describe('#renderForUrl', function() {
-        it('should render the template for a valid url', function() {
+        it('should provide access to entoj.type', function() {
             const promise = co(function*() {
-                const testee = createTestee();
-                const source = yield testee.renderForUrl(
-                    'base/elements/e-cta/examples/overview.j2'
+                const testee = createTestee(undefined, undefined, [ContentKind]);
+                const source = yield testee.render('{{ entoj.type.ContentKind.CSS }}');
+                expect(source).to.be.equal('css');
+            });
+            return promise;
+        });
+
+        it('should provide access to entoj.model', function() {
+            const promise = co(function*() {
+                const testee = createTestee(undefined, [global.fixtures.entitiesRepository], []);
+                const source = yield testee.render(
+                    '{{ entoj.model.entities.getById("e-cta").idString }}'
                 );
-                expect(source).to.be.ok;
+                expect(source).to.be.equal('e-cta');
             });
             return promise;
         });
 
-        it('should resolve to false for a invalid url', function() {
+        it('should provide access to entoj.location', function() {
             const promise = co(function*() {
-                const testee = createTestee();
-                const source = yield testee.renderForUrl('base/elements/e-cta/examples/missing.j2');
-                expect(source).to.be.not.ok;
-            });
-            return promise;
-        });
-
-        it('should throw a exception when the template contains errors', function() {
-            const promise = co(function*() {
-                const testee = createTestee();
-                let error;
-                try {
-                    yield testee.renderForUrl('base/elements/e-cta/examples/failure.j2');
-                } catch (e) {
-                    error = e;
-                }
-                expect(error).to.be.ok;
+                const entity = yield global.fixtures.entitiesRepository.getById('e-cta');
+                const testee = createTestee(undefined, [global.fixtures.entitiesRepository], []);
+                const source = yield testee.render(
+                    '{{ entoj.location.site.name }}-{{ entoj.location.entityCategory.pluralName }}-{{ entoj.location.entity.idString }}',
+                    undefined,
+                    undefined,
+                    { entity: entity }
+                );
+                expect(source).to.be.equal('Base-Elements-e-cta');
             });
             return promise;
         });

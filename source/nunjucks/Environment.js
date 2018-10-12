@@ -57,13 +57,9 @@ class Environment extends BaseMixin(nunjucks.Environment) {
         this._pathesConfiguration = pathesConfiguration;
         this._filters = filters || [];
         this._tags = tags || [];
-        this.templatePaths = opts.templatePaths;
-        this._template = new Template(
-            entitiesRepository,
-            this.templatePaths,
-            this.buildConfiguration.environment
-        );
-        this._loader = new FileLoader(this.templatePaths, this._template, this);
+        this._templatePaths = [];
+        this._template = new Template(entitiesRepository, [], this.buildConfiguration.environment);
+        this._loader = new FileLoader([], this._template, this);
         this._callbacks = {};
 
         // Add loader
@@ -88,6 +84,11 @@ class Environment extends BaseMixin(nunjucks.Environment) {
             for (const tag of this._tags) {
                 tag.register(this);
             }
+        }
+
+        // Add template pathes
+        if (opts.templatePaths) {
+            this.addTemplatePath(opts.templatePaths);
         }
     }
 
@@ -135,33 +136,12 @@ class Environment extends BaseMixin(nunjucks.Environment) {
     /**
      * Returns the template root pathes used for resolving templates.
      *
+     * Don't add values directly because they are not persisted.
+     *
      * @type {Array}
      */
     get templatePaths() {
         return this._templatePaths.slice();
-    }
-
-    /**
-     * @type {Array}
-     */
-    set templatePaths(value) {
-        this._templatePaths = [];
-        if (Array.isArray(value)) {
-            for (const templatePath of value) {
-                const resolvedPath = waitForPromise(this.pathesConfiguration.resolve(templatePath));
-                if (this._templatePaths.indexOf(resolvedPath) == -1) {
-                    this._templatePaths.push(resolvedPath);
-                }
-            }
-        } else {
-            this._templatePaths.push(waitForPromise(this.pathesConfiguration.resolve(value || '')));
-        }
-        if (this.loader) {
-            this.loader.setSearchPaths(this._templatePaths);
-        }
-        if (this.template) {
-            this.template.templatePaths = this._templatePaths;
-        }
     }
 
     /**
@@ -179,6 +159,7 @@ class Environment extends BaseMixin(nunjucks.Environment) {
     }
 
     /**
+     * @protected
      * @param {String} content
      * @param {Mixed} context
      * @param {Object} options
@@ -188,6 +169,28 @@ class Environment extends BaseMixin(nunjucks.Environment) {
         const template = this._template.prepare(content, this.globals['location']);
         const result = super.renderString(template, context, options);
         return result;
+    }
+
+    /**
+     * Adds the given pathes to templatePaths
+     */
+    addTemplatePath(...templatePaths) {
+        for (const templatePath of templatePaths) {
+            if (Array.isArray(templatePath)) {
+                this.addTemplatePath(...templatePath);
+            } else {
+                const resolvedPath = waitForPromise(this.pathesConfiguration.resolve(templatePath));
+                if (this._templatePaths.indexOf(resolvedPath) == -1) {
+                    this._templatePaths.push(resolvedPath);
+                }
+            }
+        }
+        if (this.loader) {
+            this.loader.setSearchPaths(this._templatePaths);
+        }
+        if (this.template) {
+            this.template.templatePaths = this._templatePaths;
+        }
     }
 
     /**
