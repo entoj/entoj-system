@@ -224,14 +224,10 @@ class Bootstrap extends Base {
         this.di.mapParameters(require('../command/index.js').ServerCommand, {
             routes: [
                 {
-                    type: require('../server/index.js').route.StaticFileRoute,
+                    type: require('../server/index.js').route.StaticRoute,
                     arguments: [
-                        [
-                            'options',
-                            {
-                                basePath: '${system.path.sites}'
-                            }
-                        ]
+                        ['staticPaths', '${system.path.sites}'],
+                        ['staticHandlers', [{ route: '${system.route.site}/*' }]]
                     ]
                 },
                 {
@@ -241,19 +237,6 @@ class Bootstrap extends Base {
                         ['templateHandlers', [{ route: '${system.route.site}/*' }]]
                     ]
                 }
-                /*
-                {
-                    type: require('../server/index.js').route.EntityTemplateRoute,
-                    arguments: [
-                        [
-                            'options',
-                            {
-                                basePath: '${system.path.sites}'
-                            }
-                        ]
-                    ]
-                }
-                */
             ]
         });
     }

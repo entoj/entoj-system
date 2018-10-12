@@ -181,6 +181,18 @@ class SystemModuleConfiguration extends ModuleConfiguration {
         this.addMeta('serverUsername', 'system.server.username', 'entoj');
         this.addMeta('serverPassword', 'system.server.password', 'entoj');
         this.addMeta('serverBaseUrl', 'system.server.baseUrl', 'http://localhost:3000');
+        this.addMeta('serverAllowedStaticExtensions', 'system.server.allowedStaticExtensions', [
+            '.css',
+            '.png',
+            '.jpg',
+            '.gif',
+            '.svg',
+            '.woff',
+            '.woff2',
+            '.json',
+            '.ico',
+            '.html'
+        ]);
 
         // Filters
         this.addMeta('filterAssetUrlBaseUrl', 'system.filter.assetUrl.baseUrl', '/');
@@ -495,6 +507,13 @@ class SystemModuleConfiguration extends ModuleConfiguration {
      */
     get serverBaseUrl() {
         return this.configuration.get('serverBaseUrl');
+    }
+
+    /**
+     * @type {String}
+     */
+    get serverAllowedStaticExtensions() {
+        return this.configuration.get('serverAllowedStaticExtensions');
     }
 
     /**
