@@ -3,7 +3,7 @@
 /**
  * Requirements
  */
-const StaticFileRoute = require(ES_SOURCE + '/server/route/StaticFileRoute.js').StaticFileRoute;
+const StaticRoute = require(ES_SOURCE + '/server/route/StaticRoute.js').StaticRoute;
 const CliLogger = require(ES_SOURCE + '/cli/CliLogger.js').CliLogger;
 const routeSpec = require('./RouteShared.js').spec;
 const projectFixture = require(ES_FIXTURES + '/project/index.js');
@@ -13,28 +13,36 @@ const request = require('supertest');
 /**
  * Spec
  */
-describe(StaticFileRoute.className, function() {
+describe(StaticRoute.className, function() {
     /**
      * Route Test
      */
-    routeSpec(StaticFileRoute, 'server.route/StaticFileRoute', function(parameters) {
-        return [global.fixtures.cliLogger, global.fixtures.pathesConfiguration];
+    routeSpec(StaticRoute, 'server.route/StaticRoute', function(parameters) {
+        return [
+            global.fixtures.cliLogger,
+            global.fixtures.pathesConfiguration,
+            global.fixtures.moduleConfiguration
+        ];
     });
 
     /**
-     * StaticFileRoute Test
+     * StaticRoute Test
      */
     beforeEach(function() {
         global.fixtures = projectFixture.createStatic();
     });
 
     // Create a initialized testee
-    const createTestee = function(allowedExtensions) {
+    const createTestee = function(allowedExtensions, staticPaths, staticHandlers) {
         const cliLogger = new CliLogger('', { muted: true });
-        return new StaticFileRoute(cliLogger, global.fixtures.pathesConfiguration, {
-            basePath: testFixture.pathToSites,
-            allowedExtensions: allowedExtensions
-        });
+        return new StaticRoute(
+            cliLogger,
+            global.fixtures.pathesConfiguration,
+            global.fixtures.moduleConfiguration,
+            allowedExtensions,
+            staticPaths || testFixture.pathToSites,
+            staticHandlers || [{ route: '/*' }]
+        );
     };
 
     describe('serving...', function() {
@@ -77,6 +85,17 @@ describe(StaticFileRoute.className, function() {
                 request(server)
                     .get('/base/global/assets/css/exampl.css')
                     .expect(404, done);
+            });
+        });
+
+        it('should allow to require authentication for a route', function(done) {
+            const testee = createTestee(false, false, [{ route: '/*', authenticate: true }]);
+            routeSpec.createServer([testee], { system: { server: { authentication: true } } });
+            global.fixtures.server.addRoute(testee);
+            global.fixtures.server.start().then(function(server) {
+                request(server)
+                    .get('/base/global/assets/css/examples.css')
+                    .expect(401, done);
             });
         });
     });

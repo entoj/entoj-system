@@ -33,7 +33,7 @@ class StaticRoute extends Route {
         cliLogger,
         pathesConfiguration,
         moduleConfiguration,
-        allowedExtensions,
+        allowedStaticExtensions,
         staticPaths,
         staticHandlers
     ) {
