@@ -65,6 +65,22 @@ class Bootstrap extends Base {
      * @protected
      */
     prepare() {
+        // Configure logger
+        const intel = require('intel');
+        const logger = intel.getLogger('entoj');
+        if (this.configuration.system.cli.arguments.v) {
+            logger.setLevel(intel.WARN);
+        }
+        if (this.configuration.system.cli.arguments.vv) {
+            logger.setLevel(intel.INFO);
+        }
+        if (this.configuration.system.cli.arguments.vvv) {
+            logger.setLevel(intel.DEBUG);
+        }
+        if (this.configuration.system.cli.arguments.vvvv) {
+            logger.setLevel(intel.TRACE);
+        }
+
         // Di
         this.logger.debug('Setup di');
         this.di.mapAsSingleton(DIContainer, this.di);
@@ -153,6 +169,22 @@ class Bootstrap extends Base {
             ]
         });
 
+        // Nunjucks TemplateRenderer
+        this.di.mapParameters(require('../nunjucks/index.js').TemplateRenderer, {
+            models: [
+                require('../model/site/SitesRepository.js').SitesRepository,
+                require('../model/entity/EntityCategoriesRepository.js').EntityCategoriesRepository,
+                require('../model/entity/EntitiesRepository.js').EntitiesRepository,
+                require('../model/configuration/UrlsConfiguration.js').UrlsConfiguration
+            ],
+            types: [
+                require('../model/ContentKind.js').ContentKind,
+                require('../model/ContentType.js').ContentType,
+                require('../model/documentation/DocumentationType.js').DocumentationType,
+                require('../model/entity/EntityCategoryType.js').EntityCategoryType
+            ]
+        });
+
         // Nunjucks filter & tags
         this.di.mapParameters(require('../nunjucks/index.js').Environment, {
             options: {
@@ -203,6 +235,14 @@ class Bootstrap extends Base {
                     ]
                 },
                 {
+                    type: require('../server/index.js').route.TemplateRoute,
+                    arguments: [
+                        ['templatePaths', '${system.path.sites}'],
+                        ['templateHandlers', [{ route: '${system.route.site}/*' }]]
+                    ]
+                }
+                /*
+                {
                     type: require('../server/index.js').route.EntityTemplateRoute,
                     arguments: [
                         [
@@ -213,6 +253,7 @@ class Bootstrap extends Base {
                         ]
                     ]
                 }
+                */
             ]
         });
     }
