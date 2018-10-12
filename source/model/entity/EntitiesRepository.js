@@ -16,13 +16,7 @@ const metrics = require('../../utils/performance.js').__metrics;
 const co = require('co');
 
 /**
- * EntityAspect cache
- */
-let entityAspectCacheEnabled = false;
-const entityAspectCache = {};
-
-/**
- * Creates a EntityAspect and caches it if enabled
+ * Creates a EntityAspect
  *
  * @param {model.entity.Entity} entity
  * @param {model.site.Site} site
@@ -30,32 +24,9 @@ const entityAspectCache = {};
  */
 function createEntityAspect(entity, site) {
     metrics.start('EntitiesRepository::createEntityAspect');
-    if (!entityAspectCacheEnabled) {
-        metrics.stop('EntitiesRepository::createEntityAspect');
-        return new EntityAspect(entity, site);
-    }
-    metrics.start('EntitiesRepository::createEntityAspect - key');
-    const key = site.name + '::' + entity.idString;
-    metrics.stop('EntitiesRepository::createEntityAspect - key');
-    if (!entityAspectCacheEnabled || !entityAspectCache[key]) {
-        entityAspectCache[key] = new EntityAspect(entity, site);
-    }
+    const result = new EntityAspect(entity, site);
     metrics.stop('EntitiesRepository::createEntityAspect');
-    return entityAspectCache[key];
-}
-
-/**
- * Enables the EntityAspect cache
- */
-function enableEntityAspectCache() {
-    entityAspectCacheEnabled = true;
-}
-
-/**
- * Disables the EntityAspect cache
- */
-function disableEntityAspectCache() {
-    entityAspectCacheEnabled = false;
+    return result;
 }
 
 /**
@@ -261,5 +232,3 @@ class EntitiesRepository extends Repository {
  * @ignore
  */
 module.exports.EntitiesRepository = EntitiesRepository;
-module.exports.enableEntityAspectCache = enableEntityAspectCache;
-module.exports.disableEntityAspectCache = disableEntityAspectCache;

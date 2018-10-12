@@ -39,6 +39,14 @@ function spec(type, className, prepareParameters) {
         GlobalConfiguration
     );
 
+    describe('#getMetaAsObject', function() {
+        it('should return a object with meta pathes converted to a object structure', function() {
+            const testee = createTestee();
+            testee.addMeta('the.answer', 'the.answer', 42);
+            expect(testee.getMetaAsObject().the.answer).to.be.equal(42);
+        });
+    });
+
     describe('#getConfigurationAsObject', function() {
         it('should return a object with meta pathes converted to a object structure', function() {
             const testee = createTestee();

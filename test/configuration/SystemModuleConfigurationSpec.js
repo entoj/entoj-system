@@ -66,4 +66,21 @@ describe(SystemModuleConfiguration.className, function() {
         'routeEntityCategory',
         'routeEntityId'
     ]);
+    baseSpec.assertProperty(createTestee(), [
+        'serverHttp2',
+        'serverPort',
+        'serverSslCert',
+        'serverSslKey',
+        'serverAuthentication',
+        'serverUsername',
+        'serverPassword',
+        'serverAllowedStaticExtensions'
+    ]);
+    baseSpec.assertProperty(createTestee(), [
+        'filterAssetUrlBaseUrl',
+        'filterSvgUrlBaseUrl',
+        'filterSvgViewBoxBasePath',
+        'filterLinkUrlProperties',
+        'filterMarkupStyles'
+    ]);
 });
