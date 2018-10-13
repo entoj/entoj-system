@@ -69,7 +69,7 @@ class LoadFilter extends Filter {
         const scope = this;
         return function(value) {
             if (!isString(value)) {
-                return value;
+                return scope.applyCallbacks(value, arguments);
             }
 
             // See if it's a url
@@ -83,24 +83,19 @@ class LoadFilter extends Filter {
                         scope.logger.warn('Failed loading model from ' + value);
                     }
                 }
-                return data;
+                return scope.applyCallbacks(data, arguments);
             }
 
             // Load internal models
             const globals = scope.getGlobals(this);
-            const language =
-                globals.configuration && typeof globals.configuration.getByPath == 'function'
-                    ? globals.configuration.getByPath('language', false)
-                    : false;
             const site = globals.location.site || false;
             const useStaticContent = scope.useStaticContent(globals.request);
             const viewModel = synchronize.execute(scope.viewModelRepository, 'getByPath', [
                 value,
                 site,
-                useStaticContent,
-                { language: language }
+                useStaticContent
             ]);
-            return viewModel.data;
+            return scope.applyCallbacks(viewModel.data, arguments);
         };
     }
 }

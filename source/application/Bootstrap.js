@@ -197,12 +197,14 @@ class Bootstrap extends Base {
             options: {
                 templatePaths: '${system.path.sites}'
             },
-            tags: [require('../nunjucks/index.js').tag.ConfigurationTag],
+            tags: [require('../nunjucks/index.js').tag.EntojConfigurationTag],
             filters: [
                 require('../nunjucks/index.js').filter.AssetUrlFilter,
                 require('../nunjucks/index.js').filter.AttributesFilter,
                 require('../nunjucks/index.js').filter.DebugFilter,
                 require('../nunjucks/index.js').filter.EmptyFilter,
+                require('../nunjucks/index.js').filter.EntojConfigurationFilter,
+                require('../nunjucks/index.js').filter.GetFilter,
                 require('../nunjucks/index.js').filter.HyphenateFilter,
                 require('../nunjucks/index.js').filter.JsonEncodeFilter,
                 require('../nunjucks/index.js').filter.LinkUrlFilter,
@@ -213,7 +215,6 @@ class Bootstrap extends Base {
                 require('../nunjucks/index.js').filter.MediaQueryFilter,
                 require('../nunjucks/index.js').filter.ModuleClassesFilter,
                 require('../nunjucks/index.js').filter.NotEmptyFilter,
-                require('../nunjucks/index.js').filter.GetFilter,
                 require('../nunjucks/index.js').filter.SetFilter,
                 require('../nunjucks/index.js').filter.SettingFilter,
                 require('../nunjucks/index.js').filter.SvgUrlFilter,

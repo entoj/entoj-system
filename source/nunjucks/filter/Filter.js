@@ -5,7 +5,6 @@
  * @ignore
  */
 const Base = require('../../Base.js').Base;
-const BaseMap = require('../../base/BaseMap.js').BaseMap;
 
 /**
  * Base class for nunjucks filters.
@@ -104,9 +103,9 @@ class Filter extends Base {
                 ? context.env.globals
                 : this.environment.globals || {};
         const result = {
-            global: globals.global || {},
-            location: globals.location || {},
-            request: globals.request || false
+            global: globals.entoj.global || {},
+            location: globals.entoj.location || {},
+            request: globals.entoj.request || false
         };
         return result;
     }
