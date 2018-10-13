@@ -55,6 +55,38 @@ function spec(type, className, prepareParameters) {
         });
     });
 
+    describe('#has', function() {
+        it('should return true when the given configuration exists', function() {
+            const testee = createTestee();
+            testee.addMeta('theAnswer', 'the.answer', 42);
+            expect(testee.has('theAnswer')).to.be.ok;
+            expect(testee.has('the.answer')).to.be.ok;
+        });
+
+        it('should return false when the given configuration does not exist', function() {
+            const testee = createTestee();
+            testee.addMeta('theAnswer', 'the.answer', 42);
+            expect(testee.has('theQuestion')).to.be.not.ok;
+            expect(testee.has('the.question')).to.be.not.ok;
+        });
+    });
+
+    describe('#get', function() {
+        it('should return the value of the given configuration', function() {
+            const testee = createTestee();
+            testee.addMeta('theAnswer', 'the.answer', 42);
+            expect(testee.get('theAnswer')).to.be.equal(42);
+            expect(testee.get('the.answer')).to.be.equal(42);
+        });
+
+        it('should return undefined when the given configuration does not exist', function() {
+            const testee = createTestee();
+            testee.addMeta('theAnswer', 'the.answer', 42);
+            expect(testee.get('theQuestion')).to.be.undefined;
+            expect(testee.get('the.question')).to.be.undefined;
+        });
+    });
+
     describe('#getConfigurationValue', function() {
         it('should return the default value when path does not exist', function() {
             const testee = createTestee();

@@ -73,8 +73,7 @@ class SystemModuleConfiguration extends ModuleConfiguration {
      * @inheritDoc
      */
     constructor(globalConfiguration, buildConfiguration) {
-        super(globalConfiguration, buildConfiguration);
-        this._name = 'system';
+        super(globalConfiguration, buildConfiguration, 'system');
     }
 
     /**

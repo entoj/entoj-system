@@ -6,6 +6,7 @@ module.exports = {
     AttributesFilter: require('./AttributesFilter.js').AttributesFilter,
     DebugFilter: require('./DebugFilter.js').DebugFilter,
     EmptyFilter: require('./EmptyFilter.js').EmptyFilter,
+    EntojConfiguration: require('./EntojConfiguration.js').EntojConfiguration,
     Filter: require('./Filter.js').Filter,
     GetFilter: require('./GetFilter.js').GetFilter,
     HyphenateFilter: require('./HyphenateFilter.js').HyphenateFilter,

@@ -20,7 +20,7 @@ class ModuleConfiguration extends Base {
      * @param {model.configuration.GlobalConfiguration} globalConfiguration
      * @param {model.configuration.BuildConfiguration} buildConfiguration
      */
-    constructor(globalConfiguration, buildConfiguration) {
+    constructor(globalConfiguration, buildConfiguration, name) {
         super();
 
         //Check params
@@ -36,7 +36,7 @@ class ModuleConfiguration extends Base {
         // Set
         this._globalConfiguration = globalConfiguration;
         this._buildConfiguration = buildConfiguration;
-        this._name = '';
+        this._name = name || '';
         this._meta = new BaseMap();
         this._configuration = new BaseMap();
         this._templateVariables = {};
@@ -67,7 +67,11 @@ class ModuleConfiguration extends Base {
      */
     static get injections() {
         return {
-            parameters: [GlobalConfiguration, BuildConfiguration]
+            parameters: [
+                GlobalConfiguration,
+                BuildConfiguration,
+                'configuration/ModuleConfiguration.name'
+            ]
         };
     }
 
@@ -326,6 +330,68 @@ class ModuleConfiguration extends Base {
         const configuration = this.meta.get(name);
         configuration.value = value;
         this.meta.set(name, configuration);
+    }
+
+    /**
+     * @param {String} name
+     * @returns {Boolean}
+     */
+    has(name) {
+        if (this.configuration.has(name)) {
+            return true;
+        }
+        for (const meta of this.meta.values()) {
+            if (meta.path == name) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @param {String} name
+     * @returns {mixed}
+     */
+    get(name) {
+        if (this.configuration.has(name)) {
+            return this.configuration.get(name);
+        }
+        for (const meta of this.meta.values()) {
+            if (meta.path == name) {
+                return this.configuration.get(meta.name);
+            }
+        }
+        return undefined;
+    }
+
+    /**
+     * Updates a configuration.
+     * This relies on a defined setter.
+     *
+     * @param {String} name
+     * @param {mixed} value
+     * @returns {mixed}
+     */
+    set(name, value) {
+        if (this.meta.has(name)) {
+            try {
+                this[name] = value;
+                return true;
+            } catch (e) {
+                return false;
+            }
+        }
+        for (const meta of this.meta.values()) {
+            if (meta.path == name) {
+                try {
+                    this[meta.name] = value;
+                    return true;
+                } catch (e) {
+                    return false;
+                }
+            }
+        }
+        return false;
     }
 }
 

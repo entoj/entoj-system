@@ -13,7 +13,7 @@ const ModuleConfigurations = require('../../configuration/ModuleConfigurations.j
  *
  * @memberOf nunjucks.tag
  */
-class ConfigurationTag extends Tag {
+class EntojConfigurationTag extends Tag {
     /**
      */
     constructor(moduleConfigurations) {
@@ -28,7 +28,7 @@ class ConfigurationTag extends Tag {
      * @inheritDoc
      */
     static get className() {
-        return 'nunjucks.tag/ConfigurationTag';
+        return 'nunjucks.tag/EntojConfigurationTag';
     }
 
     /**
@@ -42,7 +42,7 @@ class ConfigurationTag extends Tag {
      * @inheritDoc
      */
     get name() {
-        return ['configuration'];
+        return ['entojConfiguration'];
     }
 
     /**
@@ -59,21 +59,21 @@ class ConfigurationTag extends Tag {
         if (!params.value || !params.key) {
             return '';
         }
-        const name = params.name || 'system';
-        const moduleConfiguration = this.moduleConfigurations.get(name);
+        const moduleName = params.moduleName || 'system';
+        const moduleConfiguration = this.moduleConfigurations.get(moduleName);
         if (!moduleConfiguration) {
-            this.logger.warn(this.className + ' - could not find module configuration ' + name);
+            this.logger.warn(
+                this.className + ' - could not find module configuration ' + moduleName
+            );
             return '';
         }
-        try {
-            moduleConfiguration[params.key] = params.value;
-        } catch (e) {
+        if (!moduleConfiguration.set(params.key, params.value)) {
             this.logger.warn(
                 this.className +
                     ' - could not update ' +
                     params.key +
                     ' on module configuration ' +
-                    name
+                    moduleName
             );
         }
         return '';
@@ -84,4 +84,4 @@ class ConfigurationTag extends Tag {
  * Exports
  * @ignore
  */
-module.exports.ConfigurationTag = ConfigurationTag;
+module.exports.EntojConfigurationTag = EntojConfigurationTag;
