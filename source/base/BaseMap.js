@@ -15,7 +15,7 @@ const merge = require('lodash.merge');
  */
 class BaseMap extends BaseMixin(Map) {
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
     constructor(data) {
         super();
@@ -25,7 +25,7 @@ class BaseMap extends BaseMixin(Map) {
     }
 
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
     static get className() {
         return 'base/BaseMap';

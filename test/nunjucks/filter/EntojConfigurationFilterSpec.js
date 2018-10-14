@@ -31,27 +31,48 @@ describe(EntojConfigurationFilter.className, function() {
     /**
      * EntojConfigurationFilter Test
      */
+    class TestModuleConfiguration extends ModuleConfiguration {
+        constructor(globalConfiguration, buildConfiguration) {
+            super(globalConfiguration, buildConfiguration, 'test');
+        }
+
+        createMeta() {
+            this.addMeta('foo', 'test.foo', 'bar');
+            this.addMeta('bar', 'test.bar', 'foo');
+        }
+
+        get foo() {
+            return this.configuration.get('foo');
+        }
+
+        get bar() {
+            return this.configuration.get('bar');
+        }
+
+        set bar(value) {
+            this.configuration.set('bar', value);
+        }
+    }
+
     const createTestee = function() {
-        global.fixtures = {
-            global: new ModuleConfiguration(new GlobalConfiguration(), new BuildConfiguration())
-        };
-        global.fixtures.global.addMeta('foo', 'global.foo', 'bar');
         return new EntojConfigurationFilter(
-            new ModuleConfigurations({ global: global.fixtures.global })
+            new ModuleConfigurations([
+                new TestModuleConfiguration(new GlobalConfiguration(), new BuildConfiguration())
+            ])
         );
     };
 
     describe('#filter()', function() {
         it('should return a existing configuration value', function() {
             const testee = createTestee().filter();
-            expect(testee('foo', 'global')).to.be.equal('bar');
-            expect(testee('global.foo', 'global')).to.be.equal('bar');
+            expect(testee('foo')).to.be.equal('bar');
+            expect(testee('test.foo')).to.be.equal('bar');
         });
 
         it('should return a undefined for a non existing configuration value', function() {
             const testee = createTestee().filter();
-            expect(testee('bar', 'global')).to.be.undefined;
-            expect(testee('global.bar', 'global')).to.be.undefined;
+            expect(testee('zonk')).to.be.undefined;
+            expect(testee('test.zonk')).to.be.undefined;
         });
     });
 });

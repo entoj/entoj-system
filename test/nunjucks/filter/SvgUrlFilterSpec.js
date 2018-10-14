@@ -65,7 +65,7 @@ describe(SvgUrlFilter.className, function() {
                 fixture.pathesConfiguration,
                 fixture.buildConfiguration
             );
-            environment.addGlobal('location', { site: fixture.siteBase });
+            environment.addGlobal('entoj', { location: { site: fixture.siteBase } });
             const filter = new SvgUrlFilter(fixture.moduleConfiguration);
             filter.register(environment);
             const testee = filter.filter();

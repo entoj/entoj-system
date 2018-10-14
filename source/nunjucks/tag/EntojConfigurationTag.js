@@ -59,22 +59,25 @@ class EntojConfigurationTag extends Tag {
         if (!params.value || !params.key) {
             return '';
         }
-        const moduleName = params.moduleName || 'system';
-        const moduleConfiguration = this.moduleConfigurations.get(moduleName);
-        if (!moduleConfiguration) {
-            this.logger.warn(
-                this.className + ' - could not find module configuration ' + moduleName
-            );
-            return '';
-        }
-        if (!moduleConfiguration.set(params.key, params.value)) {
-            this.logger.warn(
-                this.className +
-                    ' - could not update ' +
-                    params.key +
-                    ' on module configuration ' +
-                    moduleName
-            );
+        if (params.moduleName) {
+            const moduleConfiguration = this.moduleConfigurations.items.get(params.moduleName);
+            if (!moduleConfiguration) {
+                this.logger.warn(
+                    this.className + ' - could not find module configuration ' + params.moduleName
+                );
+                return '';
+            }
+            if (!moduleConfiguration.set(params.key, params.value)) {
+                this.logger.warn(
+                    this.className +
+                        ' - could not update ' +
+                        params.key +
+                        ' on module configuration ' +
+                        params.moduleName
+                );
+            }
+        } else {
+            this.moduleConfigurations.setConfiguration(params.key, params.value);
         }
         return '';
     }

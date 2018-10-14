@@ -103,9 +103,9 @@ class Filter extends Base {
                 ? context.env.globals
                 : this.environment.globals || {};
         const result = {
-            global: globals.entoj.global || {},
-            location: globals.entoj.location || {},
-            request: globals.entoj.request || false
+            global: (globals.entoj && globals.entoj.global) || {},
+            location: (globals.entoj && globals.entoj.location) || {},
+            request: (globals.entoj && globals.entoj.request) || false
         };
         return result;
     }

@@ -35,9 +35,6 @@ describe(EntojConfigurationTag.className, function() {
             super(globalConfiguration, buildConfiguration, 'test');
         }
 
-        /**
-         * @inheritDoc
-         */
         createMeta() {
             this.addMeta('foo', 'test.foo', 'bar');
             this.addMeta('bar', 'test.bar', 'foo');
@@ -61,12 +58,13 @@ describe(EntojConfigurationTag.className, function() {
             globalConfiguration: new GlobalConfiguration(),
             buildConfiguration: new BuildConfiguration()
         };
-        global.fixtures.moduleConfiguration = new TestModuleConfiguration(
-            global.fixtures.globalConfiguration,
-            global.fixtures.buildConfiguration
-        );
         return new EntojConfigurationTag(
-            new ModuleConfigurations({ test: global.fixtures.moduleConfiguration })
+            new ModuleConfigurations([
+                new TestModuleConfiguration(
+                    global.fixtures.globalConfiguration,
+                    global.fixtures.buildConfiguration
+                )
+            ])
         );
     };
 
@@ -77,7 +75,7 @@ describe(EntojConfigurationTag.className, function() {
             testee.register(environment);
             const template = "{% entojConfiguration moduleName='test', key='bar', value='fooz' %}";
             environment.renderString(template);
-            expect(testee.moduleConfigurations.get('test').bar).to.be.equal('fooz');
+            expect(testee.moduleConfigurations.items.get('test').bar).to.be.equal('fooz');
         });
 
         it('should not throw an error when module configuration does not exists', function() {

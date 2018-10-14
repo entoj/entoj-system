@@ -62,25 +62,40 @@ class EntojConfigurationFilter extends Filter {
     filter() {
         const scope = this;
         return function(value, moduleName) {
-            const mName = moduleName || 'system';
-            const moduleConfiguration = scope.moduleConfigurations.get(mName);
-            if (!moduleConfiguration) {
-                scope.logger.warn(
-                    scope.className + ' - could not find module configuration ' + mName
-                );
-                return scope.applyCallbacks(undefined, arguments);
-            }
-            if (!moduleConfiguration.has(value)) {
-                scope.logger.warn(
-                    scope.className +
-                        ' - could not read ' +
-                        value +
-                        ' from module configuration ' +
-                        mName
-                );
-            }
+            if (moduleName) {
+                const moduleConfiguration = scope.moduleConfigurations.items.get(moduleName);
+                if (!moduleConfiguration) {
+                    scope.logger.warn(
+                        scope.className + ' - could not find module configuration ' + moduleName
+                    );
+                    return scope.applyCallbacks(undefined, arguments);
+                }
+                if (!moduleConfiguration.has(value)) {
+                    scope.logger.warn(
+                        scope.className +
+                            ' - could not read ' +
+                            value +
+                            ' from module configuration ' +
+                            moduleName
+                    );
+                }
 
-            return scope.applyCallbacks(moduleConfiguration.get(value), arguments);
+                return scope.applyCallbacks(moduleConfiguration.get(value), arguments);
+            } else {
+                if (!scope.moduleConfigurations.hasConfiguration(value)) {
+                    scope.logger.warn(
+                        scope.className +
+                            ' - could not read ' +
+                            value +
+                            ' from module configurations'
+                    );
+                }
+
+                return scope.applyCallbacks(
+                    scope.moduleConfigurations.getConfiguration(value),
+                    arguments
+                );
+            }
         };
     }
 }

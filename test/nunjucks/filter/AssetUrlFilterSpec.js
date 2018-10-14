@@ -61,7 +61,7 @@ describe(AssetUrlFilter.className, function() {
                 fixture.pathesConfiguration,
                 fixture.buildConfiguration
             );
-            environment.addGlobal('location', { site: fixture.siteBase });
+            environment.addGlobal('entoj', { location: { site: fixture.siteBase } });
             const filter = createTestee({
                 system: { filter: { assetUrl: { baseUrl: '${system.url.site}/assets' } } }
             });
