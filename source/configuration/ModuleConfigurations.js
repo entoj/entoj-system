@@ -52,6 +52,11 @@ class ModuleConfigurations extends Base {
      */
     resolveConfiguration(value) {
         let result = value;
+        // We do it twice to work around the order of configurations
+        // @todo if there is a smarter way - go ahead
+        for (const moduleConfiguration of this.items.values()) {
+            result = moduleConfiguration.resolveConfiguration(result);
+        }
         for (const moduleConfiguration of this.items.values()) {
             result = moduleConfiguration.resolveConfiguration(result);
         }

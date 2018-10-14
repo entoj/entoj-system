@@ -9,6 +9,8 @@ const GlobalConfiguration = require(ES_SOURCE + '/model/configuration/GlobalConf
     .GlobalConfiguration;
 const SystemModuleConfiguration = require(ES_SOURCE + '/configuration/SystemModuleConfiguration.js')
     .SystemModuleConfiguration;
+const ModuleConfigurations = require(ES_SOURCE + '/configuration/ModuleConfigurations.js')
+    .ModuleConfigurations;
 const projectFixture = require(ES_FIXTURES + '/project/index.js');
 const baseSpec = require(ES_TEST + '/BaseShared.js').spec;
 const path = require('path');
@@ -25,7 +27,7 @@ describe(PathesConfiguration.className, function() {
 
     function prepareParameters(parameters) {
         global.fixtures = projectFixture.createStatic();
-        parameters.unshift(global.fixtures.moduleConfiguration);
+        parameters.unshift(global.fixtures.moduleConfigurations);
         return parameters;
     }
 
@@ -39,7 +41,10 @@ describe(PathesConfiguration.className, function() {
             global.fixtures.globalConfiguration,
             global.fixtures.buildConfiguration
         );
-        return new PathesConfiguration(global.fixtures.moduleConfiguration);
+        global.fixtures.moduleConfigurations = new ModuleConfigurations([
+            global.fixtures.moduleConfiguration
+        ]);
+        return new PathesConfiguration(global.fixtures.moduleConfigurations);
     };
 
     /**

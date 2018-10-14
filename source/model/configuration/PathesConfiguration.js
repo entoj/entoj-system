@@ -13,8 +13,8 @@ const Site = require('../site/Site.js').Site;
 const assertParameter = require('../../utils/assert.js').assertParameter;
 const shortenMiddle = require('../../utils/string.js').shortenMiddle;
 const trimSlashesLeft = require('../../utils/string.js').trimSlashesLeft;
-const SystemModuleConfiguration = require('../../configuration/SystemModuleConfiguration.js')
-    .SystemModuleConfiguration;
+const ModuleConfigurations = require('../../configuration/ModuleConfigurations.js')
+    .ModuleConfigurations;
 const path = require('path');
 const templateString = require('es6-template-strings');
 const merge = require('lodash.merge');
@@ -28,29 +28,29 @@ const merge = require('lodash.merge');
  */
 class PathesConfiguration extends Base {
     /**
-     * @param {configuration.SystemModuleConfiguration} moduleConfiguration
+     * @param {configuration.ModuleConfigurations} moduleConfigurations
      */
-    constructor(moduleConfiguration) {
+    constructor(moduleConfigurations) {
         super();
 
         // Check
         assertParameter(
             this,
-            'moduleConfiguration',
-            moduleConfiguration,
+            'moduleConfigurations',
+            moduleConfigurations,
             true,
-            SystemModuleConfiguration
+            ModuleConfigurations
         );
 
         // Add parameters
-        this._moduleConfiguration = moduleConfiguration;
+        this._moduleConfigurations = moduleConfigurations;
     }
 
     /**
      * @inheritDoc
      */
     static get injections() {
-        return { parameters: [SystemModuleConfiguration] };
+        return { parameters: [ModuleConfigurations] };
     }
 
     /**
@@ -61,10 +61,10 @@ class PathesConfiguration extends Base {
     }
 
     /**
-     * @type {configuration.SystemModuleConfiguration}
+     * @type {configuration.ModuleConfigurations}
      */
-    get moduleConfiguration() {
-        return this._moduleConfiguration;
+    get moduleConfigurations() {
+        return this._moduleConfigurations;
     }
 
     /**
@@ -79,11 +79,8 @@ class PathesConfiguration extends Base {
      * @returns {Promise.<string>|string}
      */
     renderTemplate(template, variables, directReturn) {
-        const configurationData = this.moduleConfiguration
-            ? this.moduleConfiguration.getConfigurationAsObject()
-            : {};
-        const data = merge({}, configurationData, variables);
-        const result = path.resolve(templateString(template, data));
+        const resolvedTemplates = this.moduleConfigurations.resolveConfiguration(template);
+        const result = path.resolve(templateString(resolvedTemplates, variables));
         if (directReturn === true) {
             return result;
         }
@@ -98,7 +95,7 @@ class PathesConfiguration extends Base {
      * @type {String}
      */
     get root() {
-        return this.moduleConfiguration.pathBase;
+        return this.moduleConfigurations.items.get('system').pathBase;
     }
 
     /**
@@ -107,7 +104,7 @@ class PathesConfiguration extends Base {
      * @type {String}
      */
     get entoj() {
-        return this.moduleConfiguration.pathEntoj;
+        return this.moduleConfigurations.items.get('system').pathEntoj;
     }
 
     /**
@@ -118,7 +115,7 @@ class PathesConfiguration extends Base {
      * @type {String}
      */
     get cache() {
-        return this.moduleConfiguration.pathCache;
+        return this.moduleConfigurations.items.get('system').pathCache;
     }
 
     /**
@@ -129,7 +126,7 @@ class PathesConfiguration extends Base {
      * @type {String}
      */
     get data() {
-        return this.moduleConfiguration.pathData;
+        return this.moduleConfigurations.items.get('system').pathData;
     }
 
     /**
@@ -140,7 +137,7 @@ class PathesConfiguration extends Base {
      * @type {String}
      */
     get sites() {
-        return this.moduleConfiguration.pathSites;
+        return this.moduleConfigurations.items.get('system').pathSites;
     }
 
     /**
@@ -251,7 +248,7 @@ class PathesConfiguration extends Base {
 
         // Resolve path
         return this.renderTemplate(
-            this.moduleConfiguration.pathSite + (customPath ? customPath : ''),
+            this.moduleConfigurations.items.get('system').pathSite + (customPath ? customPath : ''),
             {
                 site: site
             }
@@ -273,7 +270,8 @@ class PathesConfiguration extends Base {
 
         // Resolve path
         return this.renderTemplate(
-            this.moduleConfiguration.pathEntityCategory + (customPath ? customPath : ''),
+            this.moduleConfigurations.items.get('system').pathEntityCategory +
+                (customPath ? customPath : ''),
             {
                 site: site,
                 entityCategory: entityCategory
@@ -294,9 +292,9 @@ class PathesConfiguration extends Base {
         assertParameter(this, 'entityId', entityId, true, EntityId);
         assertParameter(this, 'site', site, true, Site);
 
-        let template = this.moduleConfiguration.pathEntityId;
+        let template = this.moduleConfigurations.items.get('system').pathEntityId;
         if (entityId.isGlobal) {
-            template = this.moduleConfiguration.pathEntityCategory;
+            template = this.moduleConfigurations.items.get('system').pathEntityCategory;
         }
 
         // Resolve path

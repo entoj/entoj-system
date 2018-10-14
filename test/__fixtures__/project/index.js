@@ -61,7 +61,7 @@ function createStatic(options) {
         result.buildConfiguration
     );
     result.moduleConfigurations = new ModuleConfigurations([result.moduleConfiguration]);
-    result.pathesConfiguration = new PathesConfiguration(result.moduleConfiguration);
+    result.pathesConfiguration = new PathesConfiguration(result.moduleConfigurations);
     result.categoryGlobal = new EntityCategory({
         longName: 'Global',
         pluralName: 'Global',
