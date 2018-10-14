@@ -6,8 +6,8 @@
  */
 const Route = require('./Route.js').Route;
 const CliLogger = require('../../cli/CliLogger.js').CliLogger;
-const SystemModuleConfiguration = require('../../configuration/SystemModuleConfiguration.js')
-    .SystemModuleConfiguration;
+const ModuleConfigurations = require('../../configuration/ModuleConfigurations.js')
+    .ModuleConfigurations;
 const UrlsConfiguration = require('../../model/configuration/UrlsConfiguration.js')
     .UrlsConfiguration;
 const PathesConfiguration = require('../../model/configuration/PathesConfiguration.js')
@@ -29,7 +29,7 @@ class TemplateRoute extends Route {
      * @param {cli.CliLogger} cliLogger
      * @param {model.configuration.UrlsConfiguration} urlsConfiguration
      * @param {model.configuration.PathesConfiguration} pathesConfiguration
-     * @param {configuration.SystemModuleConfiguration} moduleConfiguration
+     * @param {configuration.ModuleConfigurations} moduleConfigurations
      * @param {nunjucks.TemplateRenderer} templateRenderer
      * @param {Array} templatePaths
      */
@@ -37,7 +37,7 @@ class TemplateRoute extends Route {
         cliLogger,
         urlsConfiguration,
         pathesConfiguration,
-        moduleConfiguration,
+        moduleConfigurations,
         templateRenderer,
         templatePaths,
         templateHandlers
@@ -55,17 +55,17 @@ class TemplateRoute extends Route {
         );
         assertParameter(
             this,
-            'moduleConfiguration',
-            moduleConfiguration,
+            'moduleConfigurations',
+            moduleConfigurations,
             true,
-            SystemModuleConfiguration
+            ModuleConfigurations
         );
         assertParameter(this, 'templateRenderer', templateRenderer, true, TemplateRenderer);
 
         // Assign options
         this._pathesConfiguration = pathesConfiguration;
         this._urlsConfiguration = urlsConfiguration;
-        this._moduleConfiguration = moduleConfiguration;
+        this._moduleConfigurations = moduleConfigurations;
         this._templateRenderer = templateRenderer;
         this._templateHandlers = [];
 
@@ -95,7 +95,7 @@ class TemplateRoute extends Route {
                 CliLogger,
                 UrlsConfiguration,
                 PathesConfiguration,
-                SystemModuleConfiguration,
+                ModuleConfigurations,
                 TemplateRenderer,
                 'server.route/TemplateRoute.templatePaths',
                 'server.route/TemplateRoute.templateHandlers'
@@ -139,10 +139,10 @@ class TemplateRoute extends Route {
     }
 
     /**
-     * @type {configuration.SystemModuleConfiguration}
+     * @type {configuration.ModuleConfigurations}
      */
-    get moduleConfiguration() {
-        return this._moduleConfiguration;
+    get moduleConfigurations() {
+        return this._moduleConfigurations;
     }
 
     /**
@@ -168,7 +168,7 @@ class TemplateRoute extends Route {
      * @inheritDoc
      */
     addTemplateHandler(route, template, authenticate) {
-        const resolvedRoute = this.moduleConfiguration.resolveConfiguration(route);
+        const resolvedRoute = this.moduleConfigurations.resolveConfiguration(route);
         const scope = this;
         const handler = (request, response, next) => {
             co(function*() {

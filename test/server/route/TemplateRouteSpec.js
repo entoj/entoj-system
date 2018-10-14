@@ -37,7 +37,7 @@ describe(TemplateRoute.className, function() {
             cliLogger,
             global.fixtures.urlsConfiguration,
             global.fixtures.pathesConfiguration,
-            global.fixtures.moduleConfiguration,
+            global.fixtures.moduleConfigurations,
             global.fixtures.templateRenderer
         ];
     });
@@ -79,7 +79,7 @@ describe(TemplateRoute.className, function() {
             cliLogger,
             global.fixtures.urlsConfiguration,
             global.fixtures.pathesConfiguration,
-            global.fixtures.moduleConfiguration,
+            global.fixtures.moduleConfigurations,
             global.fixtures.templateRenderer,
             templatePaths,
             templateHandlers || [{ route: '${system.route.site}/*' }]

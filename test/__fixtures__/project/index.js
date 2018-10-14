@@ -30,6 +30,8 @@ const GlobalRepository = require(ES_SOURCE + '/model/GlobalRepository.js').Globa
 const CompactIdParser = require(ES_SOURCE + '/parser/entity/CompactIdParser.js').CompactIdParser;
 const SystemModuleConfiguration = require(ES_SOURCE + '/configuration/SystemModuleConfiguration.js')
     .SystemModuleConfiguration;
+const ModuleConfigurations = require(ES_SOURCE + '/configuration/ModuleConfigurations.js')
+    .ModuleConfigurations;
 const File = require(ES_SOURCE + '/model/file/File.js').File;
 const ContentType = require(ES_SOURCE + '/model/ContentType.js').ContentType;
 const Bootstrap = require(ES_SOURCE + '/application/Bootstrap.js').Bootstrap;
@@ -58,6 +60,7 @@ function createStatic(options) {
         result.globalConfiguration,
         result.buildConfiguration
     );
+    result.moduleConfigurations = new ModuleConfigurations([result.moduleConfiguration]);
     result.pathesConfiguration = new PathesConfiguration(result.moduleConfiguration);
     result.categoryGlobal = new EntityCategory({
         longName: 'Global',
@@ -210,6 +213,8 @@ function createDynamic(configuration) {
     // create global instances
     result.pathToLibraries = testFixture.pathToLibraries;
     result.moduleConfiguration = result.diContainer.create(SystemModuleConfiguration);
+    //result.moduleConfigurations = new ModuleConfigurations([result.moduleConfiguration]);
+    result.moduleConfigurations = result.diContainer.create(ModuleConfigurations);
     result.pathesConfiguration = result.diContainer.create(PathesConfiguration);
     result.sitesRepository = result.diContainer.create(SitesRepository);
     result.entitiesRepository = result.diContainer.create(EntitiesRepository);

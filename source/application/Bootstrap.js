@@ -103,6 +103,7 @@ class Bootstrap extends Base {
         this.di.mapAsSingleton(require('../model/configuration/index.js').PathesConfiguration);
         this.di.mapAsSingleton(require('../model/configuration/index.js').UrlsConfiguration);
         this.di.mapAsSingleton(require('../model/configuration/index.js').BuildConfiguration);
+        this.di.mapAsSingleton(require('../configuration/index.js').ModuleConfigurations);
         this.di.mapAsSingleton(require('../configuration/index.js').SystemModuleConfiguration);
 
         // Repositories
