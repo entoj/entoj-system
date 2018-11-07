@@ -240,13 +240,13 @@ class Node extends Base
             {
                 for (const node of this[iterableField])
                 {
-                    if (node && node.find)
+                    if (node instanceof Node)
                     {
                         const found = node.find(type, properties);
                         if (found)
                         {
                             return found;
-                        }    
+                        }
                     }
                 }
             }
