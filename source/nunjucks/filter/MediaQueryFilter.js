@@ -60,7 +60,7 @@ class MediaQueryFilter extends Filter
         const scope = this;
         return function (value)
         {
-            return scope.applyCallbacks(scope._mediaQueries[value] || '', arguments);
+            return scope.applyCallbacks(scope._mediaQueries[value] || value, arguments);
         };
     }
 }
