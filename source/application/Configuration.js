@@ -345,6 +345,9 @@ class Configuration extends Base
                             baseUrl: this.options.filters.assetUrl
                         },
                         {
+                            type: require('../nunjucks/index.js').filter.AttributeFilter
+                        },
+                        {
                             type: require('../nunjucks/index.js').filter.AttributesFilter
                         },
                         {
