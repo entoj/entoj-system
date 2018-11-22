@@ -332,6 +332,12 @@ class Configuration extends Base
                 {
                     templatePaths: this.pathes.root + '/sites'
                 },
+                '!helpers':
+                    [
+                        {
+                            type: require('../nunjucks/index.js').helper.LipsumHelper
+                        }
+                    ],
                 '!tags':
                     [
                         {

@@ -26,9 +26,10 @@ class Environment extends BaseMixin(nunjucks.Environment)
      * @param {BuildConfiguration} buildConfiguration
      * @param {Array} filters
      * @param {Array} tags
+     * @param {Array} helpers
      * @param {Object} options
      */
-    constructor(entitiesRepository, pathesConfiguration, buildConfiguration, filters, tags, options)
+    constructor(entitiesRepository, pathesConfiguration, buildConfiguration, filters, tags, helpers, options)
     {
         const opts = options || {};
         opts.autoescape = false;
@@ -42,6 +43,7 @@ class Environment extends BaseMixin(nunjucks.Environment)
         // Add options
         this._buildConfiguration = buildConfiguration;
         this._pathesConfiguration = pathesConfiguration;
+        this._helpers = helpers || [];
         this._filters = filters || [];
         this._tags = tags || [];
         this.templatePaths = opts.templatePaths;
@@ -54,6 +56,15 @@ class Environment extends BaseMixin(nunjucks.Environment)
 
         // Add globals
         this.addGlobal('environment', this.buildConfiguration);
+
+        // Add helpers
+        if (Array.isArray(this._helpers))
+        {
+            for (const helper of this._helpers)
+            {
+                helper.register(this);
+            }
+        }
 
         // Add filters
         if (Array.isArray(this._filters))
@@ -81,7 +92,8 @@ class Environment extends BaseMixin(nunjucks.Environment)
     static get injections()
     {
         return { 'parameters': [EntitiesRepository, PathesConfiguration, BuildConfiguration,
-            'nunjucks/Environment.filters', 'nunjucks/Environment.tags', 'nunjucks/Environment.options'] };
+            'nunjucks/Environment.filters', 'nunjucks/Environment.tags', 'nunjucks/Environment.helpers',
+            'nunjucks/Environment.options'] };
     }
 
 
@@ -181,6 +193,7 @@ class Environment extends BaseMixin(nunjucks.Environment)
     renderString(content, context, options)
     {
         const template = this._template.prepare(content, this.globals['location']);
+        this.logger.debug(template);
         const result = super.renderString(template, context, options);
         return result;
     }
