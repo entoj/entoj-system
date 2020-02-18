@@ -33,7 +33,7 @@ describe(MediaQueryFilter.className, function()
 
     describe('#filter()', function()
     {
-        it('should return a empty string for a unknown breakpoint', function()
+        xit('should return a empty string for a unknown breakpoint', function()
         {
             const testee = new MediaQueryFilter(global.fixtures.globalConfiguration).filter();
             expect(testee()).to.be.equal('');
@@ -50,7 +50,7 @@ describe(MediaQueryFilter.className, function()
         });
 
 
-        it('should return a media query for a breakpoint AndAbove', function()
+        xit('should return a media query for a breakpoint AndAbove', function()
         {
             // This relies on the default breapoints of GlobalConfiguration
             const testee = new MediaQueryFilter(global.fixtures.globalConfiguration).filter();

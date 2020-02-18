@@ -5,8 +5,6 @@
  * @ignore
  */
 const Filter = require('./Filter.js').Filter;
-const kebabCase = require('lodash.kebabcase');
-const isPlainObject = require('lodash.isplainobject');
 const htmlEncode = require('htmlencode').htmlEncode;
 
 
