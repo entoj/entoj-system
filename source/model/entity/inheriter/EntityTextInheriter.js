@@ -25,14 +25,14 @@ class EntityTextInheriter extends EntityInheriter
 
 
     /**
-     * @inheritDocs
+     * @inheritDoc
      */
     inherit(sites, entity, entityAspect)
     {
-        let items = [];
+        const items = [];
         for (const site of sites)
         {
-            items = entity.documentation.filter(doc => doc.contentKind === ContentKind.TEXT && doc.site === site);
+            items.push(...entity.documentation.filter(doc => doc.contentKind === ContentKind.TEXT && doc.site === site));
         }
         entityAspect.documentation.load(items);
     }
