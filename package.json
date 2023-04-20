@@ -58,7 +58,7 @@
     "moment": "^2.22.2",
     "node-ipc": "^9.1.1",
     "numeral": "^2.0.6",
-    "nunjucks": "3.0.1",
+    "nunjucks": "3.2.4",
     "performance-now": "^2.1.0",
     "request": "^2.88.0",
     "routes": "^2.1.0",
