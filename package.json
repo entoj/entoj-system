@@ -33,7 +33,7 @@
     "express": "^4.16.4",
     "git-rev-promises": "^1.0.8",
     "glob": "^7.1.3",
-    "gulp": "^3.9.1",
+    "gulp": "^4.0.0",
     "gulp-zip": "^4.2.0",
     "htmlencode": "0.0.4",
     "hyphenation.de": "^0.2.1",
